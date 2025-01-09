@@ -12,6 +12,7 @@ import { useTheme } from "@/theme";
 
 import Typography from "@/components/atoms/Typography/Typography";
 import { TypographySize, TypographyVariant } from "@/theme/styling/types";
+import { useNavigation } from "@react-navigation/native";
 
 const { width, height } = Dimensions.get("window");
 
@@ -91,6 +92,7 @@ function OnboardingSwiper() {
   //  const { t } = useTranslation(["startup"]);
   const [currentSlideIndex, setCurrentSlideIndex] = useState(0);
   const ref = useRef<FlatList<SlideItem>>(null);
+  const navigation = useNavigation();
 
   const updateCurrentSlideIndex = (e: {
     nativeEvent: { contentOffset: { x: any } };
@@ -166,6 +168,9 @@ function OnboardingSwiper() {
       />
       <Indicator />
       <Pressable
+        onPress={() => {
+          navigation.navigate("LoginScreen" as never);
+        }}
         style={({ pressed }) => [
           {
             opacity: pressed ? 0.7 : 1,

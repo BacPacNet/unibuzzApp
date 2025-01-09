@@ -4,6 +4,8 @@ export type RootStackParamList = {
   OnboardingScreen: undefined;
   //Startup: undefined;
   Example: undefined;
+  LoginScreen: undefined;
+  Timeline: undefined;
 };
 
 export type RootScreenProps<
