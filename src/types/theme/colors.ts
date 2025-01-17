@@ -1,3 +1,3 @@
-import type { UnionConfiguration } from './config';
+import type { UnionConfiguration } from "./config";
 
-export type Colors = UnionConfiguration['colors'];
+export type Colors = UnionConfiguration["colors"];
