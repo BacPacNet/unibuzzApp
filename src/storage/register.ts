@@ -50,6 +50,6 @@ export const getRegisterData = async () => {
   }
 };
 
-export const removeRegisterData = () => {
+export const removeRegisterData = async () => {
   storage.delete(StorageKeys.REGISTER_DATA);
 };

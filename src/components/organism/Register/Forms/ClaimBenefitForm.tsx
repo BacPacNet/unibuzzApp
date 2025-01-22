@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React from "react";
 import { useFormContext, Controller } from "react-hook-form";
 import { View, Text, TouchableOpacity } from "react-native";
 
@@ -6,22 +6,19 @@ import Title from "@/components/atoms/Title";
 import SupportingText from "@/components/atoms/SupportingText";
 import CustomTextInput from "@/components/atoms/CustomTextInput";
 
-import { OtpInput } from "react-native-otp-entry";
+import ReusableButton from "@/components/atoms/ReusableButton";
 
 const ClaimBenefitForm = ({
   onSubmit,
+  isPending,
 }: {
   onSubmit: (data: any) => Promise<void>;
+  isPending: boolean;
 }) => {
-  const [countdown, setCountdown] = useState(30);
-  const [isCounting, setIsCounting] = useState(false);
   const {
-    register,
     formState: { errors: ClaimBenefit },
     control,
-    getValues,
-    setError,
-    clearErrors,
+
     handleSubmit,
   } = useFormContext();
 
@@ -59,29 +56,26 @@ const ClaimBenefitForm = ({
               </Text>
             )}
           </View>
-          <TouchableOpacity
-            className={`border border-primary-500  py-3 rounded-lg w-full mb-2`}
-            //   onPress={handleSubmit(onSubmit)}
-          >
-            <Text className="text-center text-primary-500 font-bold">
-              Confirm Code
-            </Text>
-          </TouchableOpacity>
 
+          <ReusableButton
+            buttonText="Confirm Code"
+            variant="border_primary"
+            activityIndicatorColor="#6744FF"
+            textStyle="text-primary-500"
+          />
           <Text className="text-xs text-neutral-500 text-center mb-4">
             Plan will immediately apply to account after confirmation.
           </Text>
         </View>
       </View>
 
-      <TouchableOpacity
-        className={`bg-primary-500 py-3 rounded-lg w-full mb-4`}
+      <ReusableButton
         onPress={handleSubmit(onSubmit)}
-      >
-        <Text className="text-center text-white font-bold">
-          Complete Sign Up
-        </Text>
-      </TouchableOpacity>
+        buttonText="Complete Sign Up"
+        variant="primary"
+        disabled={isPending}
+        isLoading={isPending}
+      />
     </View>
   );
 };

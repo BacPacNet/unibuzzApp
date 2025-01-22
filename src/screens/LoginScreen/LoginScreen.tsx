@@ -19,6 +19,7 @@ import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { RootStackParamList } from "@/types/navigation";
 import { Eye, EyeClosed } from "iconoir-react-native";
+import ReusableButton from "@/components/atoms/ReusableButton";
 //import { styles } from "./style";
 type LoginScreenNavigationProp = StackNavigationProp<
   RootStackParamList,
@@ -163,35 +164,20 @@ function LoginScreen() {
             <Text className="text-xs ">Forgot Password?</Text>
           </TouchableOpacity>
 
-          <TouchableOpacity
+          <ReusableButton
             onPress={handleSubmitLogin(onSubmit)}
+            buttonText="Log in"
+            variant="primary"
             disabled={isPending}
-            className={`bg-primary-500 py-3 mt-4 rounded-lg ${isPending ? "opacity-50" : ""}`}
-          >
-            {isPending ? (
-              <ActivityIndicator color="#fff" />
-            ) : (
-              <Text className="text-center text-white font-bold">Log in</Text>
-            )}
-          </TouchableOpacity>
+            isLoading={isPending}
+          />
         </View>
         {/* </Card> */}
 
-        {/* <TouchableOpacity className="mt-4" onPress={() => {}}>
-          <Text className="text-center">
-            No account yet?{" "}
-            <Text
-              onPress={() => navigation.navigate("RegisterScreen")}
-              className="text-primary-500 font-bold"
-            >
-              Create an account
-            </Text>
-          </Text>
-        </TouchableOpacity> */}
         <TouchableOpacity
           onPress={() => navigation.navigate("RegisterScreen")}
           disabled={isPending}
-          className={`border border-neutral-300 py-3 mt-1 rounded-lg ${isPending ? "opacity-50" : ""}`}
+          className={`border border-neutral-300 py-3  rounded-lg ${isPending ? "opacity-50" : ""}`}
         >
           {isPending ? (
             <ActivityIndicator color="#fff" />

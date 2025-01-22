@@ -1,6 +1,13 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useFormContext, Controller } from "react-hook-form";
-import { View, Text, TouchableOpacity, ActivityIndicator } from "react-native";
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  ActivityIndicator,
+  KeyboardAvoidingView,
+  Platform,
+} from "react-native";
 
 import Title from "@/components/atoms/Title";
 import SupportingText from "@/components/atoms/SupportingText";
@@ -8,6 +15,7 @@ import CustomTextInput from "@/components/atoms/CustomTextInput";
 
 import { OtpInput } from "react-native-otp-entry";
 import { useHandleLoginEmailVerificationGenerate } from "@/services/auth";
+import ReusableButton from "@/components/atoms/ReusableButton";
 
 interface Props {
   isVerificationSuccess: boolean;
@@ -37,8 +45,8 @@ const LoginVerificationForm = ({
     useHandleLoginEmailVerificationGenerate();
 
   const setOtpValue = () => {
-    if (otpRef.current?.setValue) {
-      otpRef.current.setValue(otp);
+    if (otpRef?.current?.setValue) {
+      otpRef?.current?.setValue(otp);
     }
   };
 
@@ -104,7 +112,7 @@ const LoginVerificationForm = ({
                   onBlur={onBlur}
                   onChangeText={(value) => onChange(value)}
                   value={value}
-                  error={!!VerificationFormErrors.email}
+                  error={!!VerificationFormErrors?.email}
                   disable={true}
                 />
               )}
@@ -117,25 +125,22 @@ const LoginVerificationForm = ({
                 },
               }}
             />
-            {VerificationFormErrors.email && (
+            {VerificationFormErrors?.email && (
               <Text className="text-red-500 text-sm mt-1">
-                {VerificationFormErrors.email.message?.toString()}
+                {VerificationFormErrors?.email?.message?.toString()}
               </Text>
             )}
           </View>
-          <TouchableOpacity
-            disabled={isCounting}
-            className={`border border-primary-500  py-3 rounded-lg w-full mb-2`}
+
+          <ReusableButton
             onPress={() => handleLoginEmailSendCode()}
-          >
-            {isPending ? (
-              <ActivityIndicator color="#6744FF" />
-            ) : (
-              <Text className="text-center text-primary-500 font-bold">
-                Send Code
-              </Text>
-            )}
-          </TouchableOpacity>
+            buttonText="Send Code"
+            variant="border_primary"
+            activityIndicatorColor="#6744FF"
+            disabled={isCounting}
+            isLoading={isPending}
+            textStyle="text-primary-500"
+          />
           {isCounting && (
             <Text className="text-xs text-neutral-500 text-center">
               Resend Available after {countdown}s
@@ -144,53 +149,56 @@ const LoginVerificationForm = ({
         </View>
       </View>
       {/* otp  */}
-      <View>
-        <View className="my-4">
-          <Text className="font-medium text-neutral-900 mb-2">
-            Input Verification Code
-          </Text>
-
-          <Controller
-            control={control}
-            render={({ field: { onChange, onBlur, value } }) => {
-              return (
-                <OtpInput
-                  ref={otpRef}
-                  type="numeric"
-                  numberOfDigits={6}
-                  onTextChange={(text) => onChange(text)}
-                  focusColor="#6744FF"
-                  theme={{
-                    containerStyle: { width: 300, gap: 10 },
-                    pinCodeContainerStyle: { height: 50 },
-                  }}
-                />
-              );
-            }}
-            name="verificationOtp"
-            rules={{
-              required: "Please enter your verification OTP!",
-              minLength: { value: 6, message: "OTP must be 6 digits!" },
-            }}
-          />
-          {VerificationFormErrors.verificationOtp && (
-            <Text className="text-red-500 text-sm mt-1">
-              {VerificationFormErrors.verificationOtp.message?.toString()}
+      <KeyboardAvoidingView
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        className=""
+      >
+        <View className="">
+          <View className="my-4">
+            <Text className="font-medium text-neutral-900 mb-2">
+              Input Verification Code
             </Text>
-          )}
+
+            <Controller
+              control={control}
+              render={({ field: { onChange, onBlur, value } }) => {
+                return (
+                  <OtpInput
+                    ref={otpRef}
+                    type="numeric"
+                    numberOfDigits={6}
+                    onTextChange={(text) => onChange(text)}
+                    focusColor="#6744FF"
+                    autoFocus={false}
+                    theme={{
+                      containerStyle: { width: 300, gap: 10 },
+                      pinCodeContainerStyle: { height: 50 },
+                    }}
+                  />
+                );
+              }}
+              name="verificationOtp"
+              rules={{
+                required: "Please enter your verification OTP!",
+                minLength: { value: 6, message: "OTP must be 6 digits!" },
+              }}
+            />
+            {VerificationFormErrors?.verificationOtp && (
+              <Text className="text-red-500 text-sm mt-1">
+                {VerificationFormErrors?.verificationOtp?.message?.toString()}
+              </Text>
+            )}
+          </View>
+
+          <ReusableButton
+            onPress={handleSubmit(onSubmit)}
+            buttonText="Confirm"
+            variant="primary"
+            disabled={verificationIsPending}
+            isLoading={verificationIsPending}
+          />
         </View>
-        <TouchableOpacity
-          disabled={verificationIsPending}
-          className={`bg-primary-500 py-3 rounded-lg w-full mb-4`}
-          onPress={handleSubmit(onSubmit)}
-        >
-          {verificationIsPending ? (
-            <ActivityIndicator color="#fff" />
-          ) : (
-            <Text className="text-center text-white font-bold">Confirm</Text>
-          )}
-        </TouchableOpacity>
-      </View>
+      </KeyboardAvoidingView>
     </View>
   );
 };

@@ -25,7 +25,7 @@ const register = async (
   return result;
 };
 
-export const useHandleLogin = (isRemove: boolean = false) => {
+export const useHandleLogin = () => {
   //  const [, setRefreshCookieValue] = useCookie("uni_user_refresh_token");
   const toast = useToast();
   const { setAuthenticated } = useAuth();
@@ -38,9 +38,7 @@ export const useHandleLogin = (isRemove: boolean = false) => {
       await storeUserProfile(response.userProfile);
       setAuthenticated();
       toast.show("Login Successfull");
-      if (isRemove) {
-        removeRegisterData();
-      }
+
       //  setRefreshCookieValue(
       //    response.tokens.refresh.token,
       //    response.tokens.refresh.expires
@@ -53,6 +51,7 @@ export const useHandleLogin = (isRemove: boolean = false) => {
 };
 
 export const useHandleRegister = () => {
+  const toast = useToast();
   return useMutation({
     mutationFn: (data: Omit<RegisterForm, "confirmPassword" | "tnc">) =>
       register(data),
@@ -65,8 +64,10 @@ export const useHandleRegister = () => {
     //   //    response.tokens.refresh.expires
     //   //  );
     // },
+
     onError(error: any) {
       console.log("Axios error:", error.response?.data.message);
+      toast.show(error.response?.data.message || "Something went wrong");
     },
   });
 };

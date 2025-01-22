@@ -15,6 +15,7 @@ import { RootStackParamList } from "@/types/navigation";
 import Title from "@/components/atoms/Title";
 import SupportingText from "@/components/atoms/SupportingText";
 import CustomTextInput from "@/components/atoms/CustomTextInput";
+import ReusableButton from "@/components/atoms/ReusableButton";
 type Props = {
   isPending: boolean;
   onSubmit: (data: any) => Promise<void>;
@@ -222,7 +223,7 @@ const AccountCreationForm = ({ isPending, onSubmit }: Props) => {
           )}
         </View>
 
-        <TouchableOpacity
+        {/* <TouchableOpacity
           disabled={isPending}
           className={`bg-primary-500 py-3 rounded-lg ${isPending ? "opacity-50" : ""}`}
           onPress={handleSubmit(onSubmit)}
@@ -234,7 +235,14 @@ const AccountCreationForm = ({ isPending, onSubmit }: Props) => {
               Create an account
             </Text>
           )}
-        </TouchableOpacity>
+        </TouchableOpacity> */}
+        <ReusableButton
+          onPress={handleSubmit(onSubmit)}
+          disabled={isPending}
+          buttonText="Create an account"
+          variant="primary"
+          isLoading={isPending}
+        />
 
         {/* Google Signup
         <TouchableOpacity className="mt-4 py-3 border border-gray-300 rounded-lg flex flex-row justify-center items-center">

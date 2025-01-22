@@ -18,6 +18,7 @@ import { CheckCircleSolid } from "iconoir-react-native";
 import UniversityLogoPlaceHolder from "@/assets/unibuzz_rounded.svg";
 import { useHandleUniversityEmailVerificationGenerate } from "@/services/auth";
 import { storeRegisterData } from "@/storage/register";
+import ReusableButton from "@/components/atoms/ReusableButton";
 
 type Props = {
   onSubmit: (data: any) => Promise<void>;
@@ -54,8 +55,8 @@ const UniversityVerificationForm = ({
     useHandleUniversityEmailVerificationGenerate();
 
   const setOtpValue = () => {
-    if (otpRef.current?.setValue) {
-      otpRef.current.setValue(otp);
+    if (otpRef?.current?.setValue) {
+      otpRef?.current?.setValue(otp);
     }
   };
 
@@ -110,8 +111,8 @@ const UniversityVerificationForm = ({
   }, [countdown, isCounting]);
 
   return (
-    <View className="w-full">
-      <View className="flex  items-center text-center p-4 ">
+    <View className="w-full flex-1 ">
+      <View className="flex-1  items-center text-center pt-4  ">
         <Title>University Verification</Title>
         <SupportingText>
           Do you have a email provided by your university?
@@ -119,8 +120,8 @@ const UniversityVerificationForm = ({
       </View>
       {FeatureList()}
       <View
-        style={{ marginLeft: 5, marginVertical: 20 }}
-        className="flex flex-row items-center gap-2  "
+        style={{ marginLeft: 5, marginVertical: 4, height: 300 }}
+        className="flex-1 flex-row items-center gap-2    "
       >
         {/* <Image style={{width:40,height:40,backgroundColor:"white"}} resizeMode="cover"   source={universityLogoPlaceHolder} /> */}
         <UniversityLogoPlaceHolder className="w-10 h-10 p-4 bg-white " />
@@ -199,6 +200,7 @@ const UniversityVerificationForm = ({
                 numberOfDigits={6}
                 onTextChange={(text) => onChange(text)}
                 focusColor="#6744FF"
+                autoFocus={false}
                 theme={{
                   containerStyle: { width: 300, gap: 10 },
                   pinCodeContainerStyle: { height: 50 },
@@ -217,26 +219,22 @@ const UniversityVerificationForm = ({
             </Text>
           )}
         </View>
-        <TouchableOpacity
-          style={{ backgroundColor: "#f3f2ff" }}
-          className={` border border-neutral-200  py-3 rounded-lg w-full mb-2`}
+
+        <ReusableButton
           onPress={() => handleNext()}
-        >
-          <Text className="text-center text-primary-500 font-bold">
-            Skip University Verification
-          </Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          className={`bg-primary-500 py-3 rounded-lg w-full mb-4`}
+          buttonText="Skip University Verification"
+          variant="shade"
+          activityIndicatorColor="#6744FF"
+          textStyle="text-primary-500"
+        />
+
+        <ReusableButton
           onPress={handleSubmit(onSubmit)}
+          buttonText="Confirm"
+          variant="primary"
           disabled={verificationIsPending}
-        >
-          {verificationIsPending ? (
-            <ActivityIndicator color="#fff" />
-          ) : (
-            <Text className="text-center text-white font-bold">Confirm</Text>
-          )}
-        </TouchableOpacity>
+          isLoading={verificationIsPending}
+        />
       </View>
     </View>
   );
@@ -246,7 +244,7 @@ export default UniversityVerificationForm;
 
 const FeatureList = () => {
   return (
-    <View className="flex gap-2 my-2">
+    <View className="flex gap-2 my-2 ">
       {/* First Feature */}
       <View className="flex-row gap-2 items-center">
         <CheckCircleSolid color={"#6744FF"} height={24} width={24} />

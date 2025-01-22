@@ -18,20 +18,26 @@ import CustomTextInput from "@/components/atoms/CustomTextInput";
 import LogoCircle from "@/assets/LogoCircle.svg";
 import { useHandleLogin } from "@/services/auth";
 import { LoginForm as LoginFormProp } from "@/models/auth";
+import { removeRegisterData } from "@/storage/register";
 
 type RegisterScreenNavigationProp = StackNavigationProp<
   RootStackParamList,
   "RegisterScreen"
 >;
-const LoginForm = ({ email }: { email: string }) => {
+const LoginForm = ({
+  email,
+  password,
+}: {
+  email: string;
+  password: string;
+}) => {
   const navigation = useNavigation<RegisterScreenNavigationProp>();
   const [showPassword, setShowPassword] = useState(false);
-  const {
-    mutate: mutateLogin,
-    error,
-    isPending,
-    isError,
-  } = useHandleLogin(true);
+  const [countdown, setCountdown] = useState(2);
+  const [isCounting, setIsCounting] = useState(true);
+  const [loginEmail, setLoginEmail] = useState(email);
+  const [loginPassword, setLoginPassword] = useState(password);
+  const { mutate: mutateLogin, error, isPending, isError } = useHandleLogin();
   const {
     register,
     formState: { errors },
@@ -42,25 +48,47 @@ const LoginForm = ({ email }: { email: string }) => {
   } = useForm<LoginFormProp>();
 
   useEffect(() => {
-    setValue("email", email);
-  }, []);
+    setLoginEmail(loginEmail);
+    setLoginPassword(loginPassword);
 
-  const onSubmit = async (data: LoginFormProp) => {
-    mutateLogin(data);
-  };
+    if (loginEmail && loginPassword) {
+      removeRegisterData();
+    }
+  }, [loginEmail, loginPassword]);
+
+  useEffect(() => {
+    let timer: NodeJS.Timeout;
+    if (isCounting && countdown > 0) {
+      timer = setTimeout(() => setCountdown(countdown - 1), 1000);
+    } else if (countdown === 0) {
+      setIsCounting(false);
+      const data = { email: loginEmail, password: loginPassword };
+      mutateLogin(data);
+    }
+    return () => clearTimeout(timer);
+  }, [countdown, isCounting]);
+
+  // const onSubmit = async (data: LoginFormProp) => {
+  //   console.log("Data",data);
+
+  //   // mutateLogin(data);
+  // };
   return (
     <View className="flex w-full justify-center items-center px-4 bg-white">
       <View className="my-4 w-full flex items-center gap-2">
         <LogoCircle className="w-14 h-14 " />
         <Title className="text-center">Congratulations</Title>
         <SupportingText className="text-center text-gray-600">
-          Enter your details to access your account
+          Your Account has been created we are redirecting you to Timeline.
         </SupportingText>
+        {/* <SupportingText className="text-center text-gray-600">
+          Enter your details to access your account
+        </SupportingText> */}
       </View>
 
       <View className="w-full my-4">
         {/* Email Input */}
-        <View className="mb-4">
+        {/* <View className="mb-4">
           <Text className="font-medium text-neutral-900 mb-2">
             Email Address
           </Text>
@@ -89,9 +117,9 @@ const LoginForm = ({ email }: { email: string }) => {
               {errors.email.message?.toString()}
             </Text>
           )}
-        </View>
+        </View> */}
         {/* Password Input */}
-        <View className="mb-4">
+        {/* <View className="mb-4">
           <Text className="font-medium text-neutral-900 mb-2">Password</Text>
           <View className="relative">
             <Controller
@@ -140,9 +168,9 @@ const LoginForm = ({ email }: { email: string }) => {
               {errors.password.message?.toString()}
             </Text>
           )}
-        </View>
+        </View> */}
       </View>
-      <TouchableOpacity
+      {/* <TouchableOpacity
         className={`bg-primary-500 py-3 rounded-lg w-full mb-4`}
         onPress={handleSubmit(onSubmit)}
         disabled={isPending}
@@ -157,7 +185,7 @@ const LoginForm = ({ email }: { email: string }) => {
         <Text className="text-red-500 text-sm mt-1">
           {error?.response?.data.message || "Something went wrong!"}
         </Text>
-      )}
+      )} */}
     </View>
   );
 };

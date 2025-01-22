@@ -12,6 +12,7 @@ import {
   occupationAndDepartment,
 } from "@/types/register";
 import SelectDropdown from "@/components/atoms/SelectDropdown";
+import ReusableButton from "@/components/atoms/ReusableButton";
 
 const ProfileFacultyForm = ({
   onSubmit,
@@ -139,12 +140,11 @@ const ProfileFacultyForm = ({
         </View>
       </View>
 
-      <TouchableOpacity
-        className={`bg-primary-500 py-3 rounded-lg w-full mb-4`}
+      <ReusableButton
         onPress={handleSubmit(onSubmit)}
-      >
-        <Text className="text-center text-white font-bold">Next Step</Text>
-      </TouchableOpacity>
+        buttonText="Next Step"
+        variant="primary"
+      />
 
       <Text className="text-[12px] text-neutral-600 text-center">
         You can add more profile information later in your profile settings!

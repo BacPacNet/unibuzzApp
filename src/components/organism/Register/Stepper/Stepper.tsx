@@ -10,7 +10,7 @@ const CompletedStep = ({
   handleBack: () => void;
 }) => {
   return (
-    <View className="flex  h-8 relative w-28">
+    <View className={`flex  h-8 relative ${idx == 3 ? "" : " w-28"}`}>
       <TouchableOpacity
         onPress={handleBack}
         className=" bg-white w-8 h-8   flex justify-center items-center mb-2 border border-gray-400 rounded-full"
@@ -30,7 +30,7 @@ const CompletedStep = ({
 
 const UnCompleteStep = ({ idx }: { idx: number }) => {
   return (
-    <View className="flex  h-8 relative w-28">
+    <View className={`flex  h-8 relative ${idx == 3 ? "" : " w-28"}`}>
       <View className=" bg-white w-8 h-8 bg-gray-200 rounded-full flex justify-center items-center mb-2 border border-neutral-200">
         <Text className="text-gray-500 ">{`0${idx + 1}`}</Text>
       </View>
@@ -53,7 +53,7 @@ const CurrentStep = ({
   handleBack: () => void;
 }) => {
   return (
-    <View className="flex   h-8 relative w-28 ">
+    <View className={`flex  h-8 relative ${idx == 3 ? "" : " w-28"}`}>
       <TouchableOpacity
         onPress={handleBack}
         style={{ borderColor: "#6744FF" }}
@@ -128,11 +128,13 @@ const RegisterStepper = ({
         />
       )}
       contentContainerStyle={{
+        display: "flex",
         flexDirection: "row",
         alignItems: "center",
         paddingVertical: 24,
-        justifyContent: "space-between",
-        paddingStart: 16,
+        justifyContent: "center",
+        paddingHorizontal: 6,
+        // paddingStart: 16,
       }}
       showsHorizontalScrollIndicator={false}
     />

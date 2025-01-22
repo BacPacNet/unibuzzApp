@@ -22,37 +22,15 @@ import {
   useHandleUniversityEmailVerification,
   useHandleUserEmailAndUserNameAvailability,
 } from "@/services/auth";
-// import AsyncStorage from '@react-native-async-storage/async-storage';
-// import AccountCreationForm from '../forms/AccountCreationForm';
-// import ProfileSetupForm from '../forms/ProfileSetupForm';
-// import VerificationForm from '../forms/VerificationForm';
-// import UniversityVerificationForm from '../forms/UniversityVerificationForm';
-// import ClaimBenefitForm from '../forms/ClaimBenefitForm';
-// import FinalLoginForm from '../forms/FinalLoginForm';
-// import ProfileStudentForm from '../forms/ProfileStudentForm';
-// import ProfileFacultyForm from '../forms/ProfileFacultyForm';
-// import {
-//   useHandleLoginEmailVerification,
-//   useHandleRegister_v2,
-//   useHandleUniversityEmailVerification,
-//   useHandleUserEmailAndUserNameAvailability,
-// } from '@/services/auth';
 
 interface Props {
   step: number;
   setStep: (value: number) => void;
   subStep: number;
   setSubStep: (value: number) => void;
-  setUserType: (value: string) => void;
 }
 
-const FormContainer = ({
-  step,
-  setStep,
-  setSubStep,
-  subStep,
-  setUserType,
-}: Props) => {
+const FormContainer = ({ step, setStep, setSubStep, subStep }: Props) => {
   const [registerData, setRegisterData] = useState<FormDataType | any>(null);
   const { mutateAsync: handleUserCheck, isPending: handleUserCheckIsPending } =
     useHandleUserEmailAndUserNameAvailability();
@@ -101,7 +79,6 @@ const FormContainer = ({
     const loadRegisterData = async () => {
       try {
         const storedData = await getRegisterData();
-        console.log("data", storedData);
 
         if (storedData) {
           setRegisterData(storedData);
@@ -263,7 +240,8 @@ const FormContainer = ({
 
       if (res?.isRegistered) {
         handleNext();
-        saveToLocalStorage();
+        // removeRegisterData()
+        // saveToLocalStorage();
       }
       return;
     }
@@ -334,18 +312,22 @@ const FormContainer = ({
         />
       );
     } else if (step === 3) {
-      return <ClaimBenefitForm onSubmit={onSubmit} />;
+      return (
+        <ClaimBenefitForm onSubmit={onSubmit} isPending={registerIsPending} />
+      );
     } else if (step === 4) {
-      return <LoginForm email={registerData.email} />;
+      return (
+        <LoginForm
+          email={registerData.email}
+          password={registerData.password}
+        />
+      );
     }
   };
 
   return (
     <FormProvider {...methods}>
-      <View className="flex w-full h-full items-center">
-        {renderStep()}
-        {/* <Button title="Next" onPress={methods.handleSubmit(onSubmit)} /> */}
-      </View>
+      <View className="flex-1 w-full h-full items-center">{renderStep()}</View>
     </FormProvider>
   );
 };

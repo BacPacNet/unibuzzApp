@@ -9,6 +9,7 @@ import SelectDropdown from "@/components/atoms/SelectDropdown";
 import CustomTextInput from "@/components/atoms/CustomTextInput";
 import DateSelect from "@/components/atoms/CustomDateSelect";
 import { Country } from "country-state-city";
+import ReusableButton from "@/components/atoms/ReusableButton";
 
 const ProfileSetupForm = ({
   onSubmit,
@@ -124,57 +125,6 @@ const ProfileSetupForm = ({
           )}
         </View>
 
-        {/* Gender */}
-        <View className="mb-4">
-          <Controller
-            name="gender"
-            control={control}
-            rules={{ required: "Gender is required!" }}
-            render={({ field }) => (
-              <SelectDropdown
-                options={GenderOptions}
-                value={field.value}
-                onChange={field.onChange}
-                placeholder="Select a Gender"
-                icon="single"
-                err={!!ProfileFormErrors.gender}
-              />
-            )}
-          />
-          {ProfileFormErrors.gender && (
-            <Text className="text-red-500 text-sm mt-1">
-              {ProfileFormErrors?.gender?.message?.toString()}
-            </Text>
-          )}
-        </View>
-
-        {/* country */}
-        <View className="mb-4">
-          <Controller
-            name="country"
-            control={control}
-            rules={{ required: "country is required!" }}
-            render={({ field }) => (
-              <SelectDropdown
-                options={Country.getAllCountries().map(
-                  (country) => country.name,
-                )}
-                value={field.value}
-                onChange={field.onChange}
-                placeholder="Select a country"
-                icon="dual"
-                search={true}
-                err={!!ProfileFormErrors.gender}
-              />
-            )}
-          />
-          {ProfileFormErrors.country && (
-            <Text className="text-red-500 text-sm mt-1">
-              {ProfileFormErrors?.country?.message?.toString()}
-            </Text>
-          )}
-        </View>
-
         {/* User Type */}
         <View className="mb-4">
           <Controller
@@ -200,12 +150,11 @@ const ProfileSetupForm = ({
         </View>
       </View>
 
-      <TouchableOpacity
-        className={`bg-primary-500 py-3 rounded-lg w-full mb-4`}
+      <ReusableButton
         onPress={handleSubmit(onSubmit)}
-      >
-        <Text className="text-center text-white font-bold">Next Step</Text>
-      </TouchableOpacity>
+        buttonText="Next Step"
+        variant="primary"
+      />
 
       {/* Footer */}
       <Text className="text-xs text-neutral-600 text-center">

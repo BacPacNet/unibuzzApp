@@ -1,19 +1,16 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useRef, useState } from "react";
 import {
   View,
   Text,
   TextInput,
   TouchableOpacity,
   FlatList,
+  Modal,
+  Keyboard,
+  TouchableWithoutFeedback,
 } from "react-native";
-// import { AnimatePresence, MotiView } from 'react-native-reanimated';
 
 import { NavArrowDown, NavArrowUp, Xmark } from "iconoir-react-native";
-// import { FiUserCheck, FiUser } from 'react-icons/fi';
-// import { RxCross2 } from 'react-icons/rx';
-// import { MdOutlinePublic } from 'react-icons/md';
-
-// const icons = [MdOutlinePublic, FiUserCheck, FiUser];
 
 interface SelectDropdownProps {
   options: string[];
@@ -41,6 +38,9 @@ const SelectDropdown = ({
   const [show, setShow] = useState(false);
   const [filteredOptions, setFilteredOptions] = useState(options);
   const searchRef = useRef<TextInput>(null);
+  const dropdownButtonRef = useRef<TouchableOpacity>(null);
+  const [modalPosition, setModalPosition] = useState(0);
+  const [modalWidth, setModalWidth] = useState(0);
 
   const handleSelect = (optionValue: string) => {
     onChange(optionValue);
@@ -57,22 +57,35 @@ const SelectDropdown = ({
     );
   };
 
-  const toggleDropdown = () => {
+  const toggleDropdown = (event: any) => {
     if (!show) {
       setFilteredOptions(options);
       if (searchRef.current) searchRef.current.clear();
     }
     setShow((prevShow) => !prevShow);
+
+    if (dropdownButtonRef.current) {
+      dropdownButtonRef.current.measure((fx, fy, width, height, px, py) => {
+        setModalPosition(py + height + 1);
+
+        setModalWidth(width);
+      });
+    }
+  };
+
+  const closeModal = () => {
+    setShow(false);
+    Keyboard.dismiss();
   };
 
   return (
     <View className="relative">
-      {/* Dropdown Trigger */}
       <TouchableOpacity
-        onPress={toggleDropdown}
+        onPress={(e) => toggleDropdown(e)}
         className={`flex flex-row justify-between items-center border rounded-lg p-2 h-14 ${
           err ? "border-red-400" : "border-neutral-300"
         } bg-white`}
+        ref={dropdownButtonRef}
       >
         <Text
           className={`text-xs ${value ? "text-neutral-900" : "text-neutral-400 "} `}
@@ -101,47 +114,58 @@ const SelectDropdown = ({
         </View>
       </TouchableOpacity>
 
-      {/* Dropdown Options */}
-      {/* <AnimatePresence> */}
-      {show && (
-        <View
-          style={{ top: 48 }}
-          className="absolute  bg-white shadow-lg border border-neutral-200 rounded-lg z-10 max-h-52 w-full overflow-hidden"
-        >
-          {search && (
-            <TextInput
-              ref={searchRef}
-              placeholder="Search..."
-              onChangeText={handleSearch}
-              className="p-3 border-b border-neutral-200 text-neutral-700"
-            />
-          )}
-          <FlatList
-            data={filteredOptions}
-            keyExtractor={(item, index) => index.toString()}
-            renderItem={({ item, index }) => {
-              // const IconComponent = icons[index % icons.length];
-              return (
-                <TouchableOpacity
-                  onPress={() => handleSelect(item)}
-                  className="bg-white flex flex-row gap-2 items-center p-3 border-b border-neutral-300 last:border-b-0 "
-                >
-                  {/* {showIcon && <IconComponent size={16} className="text-neutral-900" />} */}
-                  <Text className="text-neutral-900 text-2xs bg-white">
-                    {item}
-                  </Text>
-                </TouchableOpacity>
-              );
-            }}
-            ListEmptyComponent={
-              <Text className="text-neutral-500 p-2 text-center">
-                No results found
-              </Text>
-            }
-          />
-        </View>
-      )}
-      {/* </AnimatePresence> */}
+      <Modal
+        transparent={true}
+        visible={show}
+        animationType="fade"
+        onRequestClose={() => setShow(!show)}
+      >
+        <TouchableWithoutFeedback onPress={closeModal}>
+          <View className="flex-1 justify-center items-center  ">
+            <TouchableWithoutFeedback>
+              <View
+                className="bg-white shadow-lg border border-neutral-200 rounded-lg max-h-52"
+                style={{
+                  top: modalPosition,
+                  position: "absolute",
+                  width: modalWidth,
+                }}
+              >
+                {search && (
+                  <TextInput
+                    ref={searchRef}
+                    placeholder="Search..."
+                    onChangeText={handleSearch}
+                    className="p-3 border-b border-neutral-200 text-neutral-700"
+                  />
+                )}
+                <FlatList
+                  data={filteredOptions}
+                  nestedScrollEnabled={true}
+                  keyExtractor={(item, index) => index.toString()}
+                  renderItem={({ item, index }) => {
+                    return (
+                      <TouchableOpacity
+                        onPress={() => handleSelect(item)}
+                        className="bg-white flex flex-row gap-2 items-center p-3 border-b border-neutral-300 last:border-b-0 "
+                      >
+                        <Text className="text-neutral-900 text-2xs bg-white">
+                          {item}
+                        </Text>
+                      </TouchableOpacity>
+                    );
+                  }}
+                  ListEmptyComponent={
+                    <Text className="text-neutral-500 p-2 text-center">
+                      No results found
+                    </Text>
+                  }
+                />
+              </View>
+            </TouchableWithoutFeedback>
+          </View>
+        </TouchableWithoutFeedback>
+      </Modal>
     </View>
   );
 };
