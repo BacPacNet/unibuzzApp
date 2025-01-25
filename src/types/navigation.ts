@@ -5,6 +5,7 @@ export type RootStackParamList = {
   //Startup: undefined;
   Example: undefined;
   LoginScreen: undefined;
+  RegisterScreen: undefined;
   Timeline: undefined;
 };
 

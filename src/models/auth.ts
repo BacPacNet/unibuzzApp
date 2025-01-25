@@ -7,9 +7,9 @@ export interface RegisterForm {
   lastName: string;
   email: string;
   gender: string;
-  dob: any;
+  birthDate: any;
   country: string;
-  city: string;
+  // city: string;
   password: string;
   confirmPassword: string; // only for client side validation
   tnc: boolean; // only for client side validation
