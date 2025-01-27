@@ -7,6 +7,20 @@ export type RootStackParamList = {
   LoginScreen: undefined;
   RegisterScreen: undefined;
   Timeline: undefined;
+  Home: undefined;
+  Connections: undefined;
+  Messages: undefined;
+  Notifications: undefined;
+  AI_Assistant: undefined;
+  Discover: undefined;
+  University: {
+    data: any;
+  };
+  //   University: {
+
+  //       pathUrl: string;
+
+  //   };
 };
 
 export type RootScreenProps<

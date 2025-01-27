@@ -1,5 +1,9 @@
 import { createStackNavigator } from "@react-navigation/stack";
-import { NavigationContainer } from "@react-navigation/native";
+import {
+  DrawerActions,
+  NavigationContainer,
+  useNavigation,
+} from "@react-navigation/native";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 
 import { Example, LoginScreen, Timeline, RegisterScreen } from "@/screens";
@@ -11,12 +15,35 @@ import { useEffect, useState } from "react";
 import { storage } from "@/App";
 import AuthGuard from "@/components/template/AuthGuard/AuthGuard";
 import UnauthenticatedGuard from "@/components/template/UnauthenticatedGuard/UnauthenticatedGuard";
+import { useAuth } from "@/context/AuthProvider/AuthContext";
+import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import {
+  Eye,
+  EyeClosed,
+  HomeSimpleDoor,
+  Group,
+  Mail,
+  Bell,
+  Spark,
+} from "iconoir-react-native";
+import Notifications from "@/screens/NotificationsScreen";
+import Connections from "@/screens/ConnectionScreen";
+import Messages from "@/screens/MessagesScreen";
+import AI_Assistant from "@/screens/AIAssistantScreen";
+import { Button, Image, Pressable, Text, View } from "react-native";
+import { getUserStore } from "@/storage/user";
+// import { createDrawerNavigator } from "@react-navigation/drawer";
+import { Drawer } from "react-native-drawer-layout";
+import { createDrawerNavigator } from "@react-navigation/drawer";
+import AllUniversities from "@/screens/AllUniversity";
+import University from "@/screens/University";
 
 const Stack = createStackNavigator<RootStackParamList>();
+const Tab = createBottomTabNavigator<RootStackParamList>();
 
 function ApplicationNavigator() {
   const { variant, navigationTheme } = useTheme();
-
+  const { isAuthenticated, setAuthenticated, deauthenticate } = useAuth();
   const [isAppFirstLaunched, setIsAppFirstLaunched] = useState(false);
 
   useEffect(() => {
@@ -27,21 +54,235 @@ function ApplicationNavigator() {
     } else {
       setIsAppFirstLaunched(false);
     }
+    const user: any = getUserStore();
+
+    if (user?._j?.id) {
+      setAuthenticated();
+    }
 
     // AsyncStorage.removeItem('isAppFirstLaunched');
   }, []);
 
+  function StackGroup() {
+    return (
+      <Stack.Navigator
+        initialRouteName="Timeline"
+        key={variant}
+        screenOptions={{ headerShown: false }}
+      >
+        <Stack.Screen name="Example" component={Example} />
+        <Stack.Screen name="Timeline" component={Timeline} />
+        <Stack.Screen name="Discover" component={AllUniversities} />
+        <Stack.Screen name="University" component={University} />
+      </Stack.Navigator>
+    );
+  }
+
+  //tabs
+  function TabsGroup() {
+    return (
+      <Tab.Navigator
+        screenOptions={({ route, navigation }) => ({
+          // headerTitleAlign: "center",
+
+          tabBarIcon: ({ focused, color, size }) => {
+            let iconName;
+            if (route.name === "Home") {
+              return (iconName = focused ? (
+                <HomeSimpleDoor height={24} width={24} color={"#6744FF"} />
+              ) : (
+                <HomeSimpleDoor height={24} width={24} />
+              ));
+            } else if (route.name === "Example") {
+              return (iconName = focused ? (
+                <Eye height={24} width={24} color={"#6744FF"} />
+              ) : (
+                <EyeClosed height={24} width={24} />
+              ));
+            } else if (route.name === "Connections") {
+              return (iconName = focused ? (
+                <Group height={24} width={24} color={"#6744FF"} />
+              ) : (
+                <Group height={24} width={24} />
+              ));
+            } else if (route.name === "Messages") {
+              return (iconName = focused ? (
+                <Mail height={24} width={24} color={"#6744FF"} />
+              ) : (
+                <Mail height={24} width={24} />
+              ));
+            } else if (route.name === "Notifications") {
+              return (iconName = focused ? (
+                <Bell height={24} width={24} color={"#6744FF"} />
+              ) : (
+                <Bell height={24} width={24} />
+              ));
+            } else if (route.name === "AI_Assistant") {
+              return (iconName = focused ? (
+                <Spark height={24} width={24} color={"#6744FF"} />
+              ) : (
+                <Spark height={24} width={24} />
+              ));
+            }
+          },
+          tabBarActiveTintColor: "#6744FF",
+          tabBarInactiveTintColor: "black",
+          tabBarStyle: {
+            backgroundColor: "white",
+            // paddingBottom:1
+          },
+          tabBarLabelStyle: {
+            fontSize: 12,
+            fontStyle: "normal",
+            fontWeight: "500",
+          },
+          headerShown: false,
+        })}
+      >
+        <Tab.Screen name="Home" component={StackGroup} />
+        <Tab.Screen name="Connections" component={Connections} />
+        <Tab.Screen name="Messages" component={Messages} />
+        {/* <Tab.Screen name="Example" component={Example} /> */}
+        <Tab.Screen name="Notifications" component={Notifications} />
+        <Tab.Screen name="AI_Assistant" component={AI_Assistant} />
+      </Tab.Navigator>
+    );
+  }
+
+  function AppMenuDrawerContent(props: any) {
+    return (
+      <View style={{ padding: 20 }}>
+        <Text style={{ fontSize: 18, fontWeight: "bold", marginBottom: 20 }}>
+          App Menu
+        </Text>
+        <Pressable onPress={() => props.navigation.navigate("Timeline")}>
+          <Text style={{ fontSize: 16, marginBottom: 15 }}>Home</Text>
+        </Pressable>
+        <Pressable onPress={() => props.navigation.navigate("Discover")}>
+          <Text style={{ fontSize: 16, marginBottom: 15 }}>Discover</Text>
+        </Pressable>
+        <Pressable onPress={() => props.navigation.navigate("Settings")}>
+          <Text style={{ fontSize: 16, marginBottom: 15 }}>Settings</Text>
+        </Pressable>
+      </View>
+    );
+  }
+
+  function UserProfileDrawerContent({ navigation, setRightDrawerOpen }: any) {
+    const handleClick = (route: string) => {
+      navigation.navigate(route);
+      setRightDrawerOpen(false);
+    };
+    return (
+      <View style={{ padding: 20 }}>
+        <Text style={{ fontSize: 18, fontWeight: "bold", marginBottom: 20 }}>
+          User Profile
+        </Text>
+        <Pressable onPress={() => handleClick("Timeline")}>
+          <Text style={{ fontSize: 16, marginBottom: 15 }}>My Profile</Text>
+        </Pressable>
+        <Pressable onPress={() => navigation.navigate("Account")}>
+          <Text style={{ fontSize: 16, marginBottom: 15 }}>
+            Account Settings
+          </Text>
+        </Pressable>
+        <Pressable
+          onPress={() => {
+            deauthenticate();
+          }}
+        >
+          <Text style={{ fontSize: 16, marginBottom: 15, color: "red" }}>
+            Logout
+          </Text>
+        </Pressable>
+      </View>
+    );
+  }
+
+  const LeftDrawer = createDrawerNavigator();
+
+  const LeftDrawerScreen = ({ navigation, setRightDrawerOpen }: any) => {
+    return (
+      <LeftDrawer.Navigator
+        screenOptions={{
+          drawerPosition: "left",
+          headerShown: true,
+          headerStyle: {
+            backgroundColor: "#fff",
+          },
+          headerLeft: () => (
+            <Pressable
+              onPress={() => navigation.dispatch(DrawerActions.openDrawer())}
+            >
+              <Image
+                source={require("../assets/appDrawerIcon.png")}
+                style={{
+                  width: 40,
+                  height: 40,
+                  resizeMode: "contain",
+                  marginLeft: 4,
+                }}
+              />
+            </Pressable>
+          ),
+          headerRight: () => (
+            <Pressable onPress={() => setRightDrawerOpen(true)}>
+              <Image
+                source={require("../assets/avatar.png")}
+                style={{
+                  width: 40,
+                  height: 40,
+                  resizeMode: "contain",
+                  marginRight: 4,
+                }}
+              />
+            </Pressable>
+          ),
+          headerTitle: () => (
+            <Image
+              source={require("../assets/UnibuzzFullLogo.png")}
+              style={{ width: 100, height: 40, resizeMode: "contain" }}
+            />
+          ),
+        }}
+        drawerContent={(props) => <AppMenuDrawerContent {...props} />}
+      >
+        <LeftDrawer.Screen name="Home" component={TabsGroup} />
+      </LeftDrawer.Navigator>
+    );
+  };
+
+  function RightDrawerScreen() {
+    const [rightDrawerOpen, setRightDrawerOpen] = useState(false);
+
+    return (
+      <Drawer
+        open={rightDrawerOpen}
+        onOpen={() => setRightDrawerOpen(true)}
+        onClose={() => setRightDrawerOpen(false)}
+        drawerPosition="right"
+        renderDrawerContent={() => (
+          <UserProfileDrawerContent
+            navigation={useNavigation()}
+            setRightDrawerOpen={setRightDrawerOpen}
+          />
+        )}
+      >
+        <LeftDrawerScreen
+          navigation={useNavigation()}
+          setRightDrawerOpen={setRightDrawerOpen}
+        />
+      </Drawer>
+    );
+  }
+
   return (
     <NavigationContainer theme={navigationTheme}>
       <AuthGuard>
-        <Stack.Navigator
-          initialRouteName="Timeline"
-          key={variant}
-          screenOptions={{ headerShown: false }}
-        >
-          <Stack.Screen name="Example" component={Example} />
-          <Stack.Screen name="Timeline" component={Timeline} />
-        </Stack.Navigator>
+        {/* <StackGroup/> */}
+        {/* <TabsGroup/> */}
+        {/* <DrawerGroup/> */}
+        <RightDrawerScreen />
       </AuthGuard>
       <UnauthenticatedGuard>
         <Stack.Navigator key={variant} screenOptions={{ headerShown: false }}>

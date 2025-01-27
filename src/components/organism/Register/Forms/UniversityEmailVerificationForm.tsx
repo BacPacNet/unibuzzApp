@@ -14,7 +14,7 @@ import CustomTextInput from "@/components/atoms/CustomTextInput";
 
 import { OtpInput } from "react-native-otp-entry";
 import { CheckCircleSolid } from "iconoir-react-native";
-// import universityLogoPlaceHolder from "../../../../assets/unibuzz_rounded.svg"
+
 import UniversityLogoPlaceHolder from "@/assets/unibuzz_rounded.svg";
 import { useHandleUniversityEmailVerificationGenerate } from "@/services/auth";
 import { storeRegisterData } from "@/storage/register";
@@ -77,6 +77,7 @@ const UniversityVerificationForm = ({
     if (!emailRegex.test(email)) {
       setError("universityEmail", {
         type: "manual",
+
         message: "invalid email format",
       });
       return;

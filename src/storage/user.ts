@@ -14,10 +14,16 @@ export const storeUser = async (user: any): Promise<void> => {
   }
 };
 
-export const getUserStore = async (): Promise<string | null> => {
+export const getUserStore = async () => {
   try {
-    const jsonUser = storage.getString(StorageKeys.USER) as string;
+    const jsonUser = storage.getString(StorageKeys.USER);
+
+    if (!jsonUser) {
+      console.warn("No data found in storage for key:", StorageKeys.USER);
+      return null;
+    }
     const userObject = JSON.parse(jsonUser);
+
     return userObject;
   } catch (error) {
     // Handle error
