@@ -35,7 +35,7 @@ const ReusableButton: React.FC<ReusableButtonProps> = ({
     border_primary: "border border-primary text-primary",
     danger: "bg-red-500 text-white",
     shade:
-      "bg-secondary border border-shade-button-border text-primary-500 drop-shadow-sm",
+      "bg-secondary border border-[#E9E8FF] text-primary-500 drop-shadow-sm",
   };
 
   const variantClass = variantClasses[variant] || "";

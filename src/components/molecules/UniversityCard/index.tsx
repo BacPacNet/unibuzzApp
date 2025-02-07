@@ -16,7 +16,7 @@ type Props = {
 
 type NavigationProp = StackNavigationProp<
   RootStackParamList,
-  "AllUniversities"
+  "Discover"
 >;
 
 const DiscoverUniversityCard = ({ data }: Props) => {

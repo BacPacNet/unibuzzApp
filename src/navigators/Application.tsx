@@ -25,6 +25,7 @@ import {
   Mail,
   Bell,
   Spark,
+  Menu
 } from "iconoir-react-native";
 import Notifications from "@/screens/NotificationsScreen";
 import Connections from "@/screens/ConnectionScreen";
@@ -37,6 +38,7 @@ import { Drawer } from "react-native-drawer-layout";
 import { createDrawerNavigator } from "@react-navigation/drawer";
 import AllUniversities from "@/screens/AllUniversity";
 import University from "@/screens/University";
+import { SocketProvider } from "@/context/SocketProvider/SocketProvider";
 
 const Stack = createStackNavigator<RootStackParamList>();
 const Tab = createBottomTabNavigator<RootStackParamList>();
@@ -137,6 +139,7 @@ function ApplicationNavigator() {
             fontWeight: "500",
           },
           headerShown: false,
+          tabBarHideOnKeyboard:true
         })}
       >
         <Tab.Screen name="Home" component={StackGroup} />
@@ -209,20 +212,20 @@ function ApplicationNavigator() {
           headerShown: true,
           headerStyle: {
             backgroundColor: "#fff",
+            elevation: 4, 
+      shadowColor: "#000", 
+      shadowOffset: { width: 0, height: 2 }, 
+      shadowOpacity: 0.1, 
+      shadowRadius: 4,
+          
           },
+        
           headerLeft: () => (
             <Pressable
               onPress={() => navigation.dispatch(DrawerActions.openDrawer())}
             >
-              <Image
-                source={require("../assets/appDrawerIcon.png")}
-                style={{
-                  width: 40,
-                  height: 40,
-                  resizeMode: "contain",
-                  marginLeft: 4,
-                }}
-              />
+
+              <Menu  style={{marginLeft:16}} height={24} width={24} color={"#6744FF"} />
             </Pressable>
           ),
           headerRight: () => (
@@ -233,7 +236,7 @@ function ApplicationNavigator() {
                   width: 40,
                   height: 40,
                   resizeMode: "contain",
-                  marginRight: 4,
+                  marginRight: 16,
                 }}
               />
             </Pressable>
@@ -248,6 +251,7 @@ function ApplicationNavigator() {
         drawerContent={(props) => <AppMenuDrawerContent {...props} />}
       >
         <LeftDrawer.Screen name="Home" component={TabsGroup} />
+        
       </LeftDrawer.Navigator>
     );
   };
@@ -282,7 +286,11 @@ function ApplicationNavigator() {
         {/* <StackGroup/> */}
         {/* <TabsGroup/> */}
         {/* <DrawerGroup/> */}
+        <SocketProvider>
+
+     
         <RightDrawerScreen />
+        </SocketProvider>
       </AuthGuard>
       <UnauthenticatedGuard>
         <Stack.Navigator key={variant} screenOptions={{ headerShown: false }}>
