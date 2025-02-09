@@ -14,10 +14,7 @@ type Props = {
   };
 };
 
-type NavigationProp = StackNavigationProp<
-  RootStackParamList,
-  "Discover"
->;
+type NavigationProp = StackNavigationProp<RootStackParamList, "Discover">;
 
 const DiscoverUniversityCard = ({ data }: Props) => {
   const [imageSrc, setImageSrc] = useState(

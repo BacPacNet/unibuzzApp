@@ -1,11 +1,13 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { io, Socket } from "socket.io-client";
 import { Platform } from "react-native";
-import { useNavigationContainerRef, useNavigationState } from "@react-navigation/native";
+import {
+  useNavigationContainerRef,
+  useNavigationState,
+} from "@react-navigation/native";
 import { getUserStore } from "@/storage/user";
 // import { useGetUserData, useGetUserProfileData } from "@/services/user";
 // import { useGetNotification, useGetMessageNotification } from "@/services/notification";
-
 
 type SocketContextType = {
   socket: Socket | null;
@@ -13,7 +15,6 @@ type SocketContextType = {
   notificationType: string;
   setNotificationType: (type: string) => void;
 };
-
 
 const SocketContext = createContext<SocketContextType>({
   socket: null,
@@ -24,30 +25,35 @@ const SocketContext = createContext<SocketContextType>({
 
 export const useSocket = () => useContext(SocketContext);
 
-export const SocketProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+export const SocketProvider: React.FC<{ children: React.ReactNode }> = ({
+  children,
+}) => {
   const [socket, setSocket] = useState<Socket | null>(null);
   const [isConnected, setIsConnected] = useState(false);
   const [notificationType, setNotificationType] = useState("");
 
-
-   const userData: any = getUserStore();
-//   const { refetch: refetchNotification } = useGetNotification(3, true);
-//   const { refetch: refetchMessageNotification } = useGetMessageNotification(3, true);
-//   const { refetch: refetchUserData } = useGetUserData();
-//   const { refetch: refetchUserProfileData } = useGetUserProfileData();
-
+  const userData: any = getUserStore();
+  //   const { refetch: refetchNotification } = useGetNotification(3, true);
+  //   const { refetch: refetchMessageNotification } = useGetMessageNotification(3, true);
+  //   const { refetch: refetchUserData } = useGetUserData();
+  //   const { refetch: refetchUserProfileData } = useGetUserProfileData();
 
   const navigationRef = useNavigationContainerRef();
   const routeNames = useNavigationState((state) => state?.routeNames || []);
-  const currentRoute = useNavigationState((state) => state?.routeNames?.[state.index] || "");
+  const currentRoute = useNavigationState(
+    (state) => state?.routeNames?.[state.index] || "",
+  );
 
-
-  const isRouteMessage = currentRoute !== "Messages"; 
+  const isRouteMessage = currentRoute !== "Messages";
 
   useEffect(() => {
-    if (!userData?._j?.id) return; 
+    if (!userData?._j?.id) return;
 
-    const newSocket = io(Platform.OS === "android" ? "http://10.0.2.2:8000" : "http://localhost:8000");
+    const newSocket = io(
+      Platform.OS === "android"
+        ? "http://10.0.2.2:8000"
+        : "http://localhost:8000",
+    );
 
     newSocket.on("connect", () => {
       console.log("Connected to the server");
@@ -88,10 +94,12 @@ export const SocketProvider: React.FC<{ children: React.ReactNode }> = ({ childr
       setSocket(null);
       setIsConnected(false);
     };
-  }, [userData?.id, currentRoute]); 
+  }, [userData?.id, currentRoute]);
 
   return (
-    <SocketContext.Provider value={{ socket, isConnected, notificationType, setNotificationType }}>
+    <SocketContext.Provider
+      value={{ socket, isConnected, notificationType, setNotificationType }}
+    >
       {children}
     </SocketContext.Provider>
   );

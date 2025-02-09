@@ -25,7 +25,7 @@ import {
   Mail,
   Bell,
   Spark,
-  Menu
+  Menu,
 } from "iconoir-react-native";
 import Notifications from "@/screens/NotificationsScreen";
 import Connections from "@/screens/ConnectionScreen";
@@ -139,7 +139,7 @@ function ApplicationNavigator() {
             fontWeight: "500",
           },
           headerShown: false,
-          tabBarHideOnKeyboard:true
+          tabBarHideOnKeyboard: true,
         })}
       >
         <Tab.Screen name="Home" component={StackGroup} />
@@ -212,20 +212,23 @@ function ApplicationNavigator() {
           headerShown: true,
           headerStyle: {
             backgroundColor: "#fff",
-            elevation: 4, 
-      shadowColor: "#000", 
-      shadowOffset: { width: 0, height: 2 }, 
-      shadowOpacity: 0.1, 
-      shadowRadius: 4,
-          
+            elevation: 4,
+            shadowColor: "#000",
+            shadowOffset: { width: 0, height: 2 },
+            shadowOpacity: 0.1,
+            shadowRadius: 4,
           },
-        
+
           headerLeft: () => (
             <Pressable
               onPress={() => navigation.dispatch(DrawerActions.openDrawer())}
             >
-
-              <Menu  style={{marginLeft:16}} height={24} width={24} color={"#6744FF"} />
+              <Menu
+                style={{ marginLeft: 16 }}
+                height={24}
+                width={24}
+                color={"#6744FF"}
+              />
             </Pressable>
           ),
           headerRight: () => (
@@ -251,7 +254,6 @@ function ApplicationNavigator() {
         drawerContent={(props) => <AppMenuDrawerContent {...props} />}
       >
         <LeftDrawer.Screen name="Home" component={TabsGroup} />
-        
       </LeftDrawer.Navigator>
     );
   };
@@ -287,9 +289,7 @@ function ApplicationNavigator() {
         {/* <TabsGroup/> */}
         {/* <DrawerGroup/> */}
         <SocketProvider>
-
-     
-        <RightDrawerScreen />
+          <RightDrawerScreen />
         </SocketProvider>
       </AuthGuard>
       <UnauthenticatedGuard>

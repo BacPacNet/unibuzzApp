@@ -132,7 +132,7 @@ const UserMessages = ({
           const currentDate = dayjs(item.createdAt).format("MMMM D, YYYY");
           const shouldShowDateDivider = !dayjs(item.createdAt).isSame(
             previousDate,
-            "day"
+            "day",
           );
           previousDate = item.createdAt;
 

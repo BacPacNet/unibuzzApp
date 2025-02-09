@@ -37,7 +37,7 @@ const Messages = () => {
   const [onlineUsersSet, setOnlineUsersSet] = useState<Set<string>>(new Set());
   const userData: any = getUserStore();
   const userName = selectedChat?.users?.find(
-    (item: any) => item?.userId._id !== userData?._j?.id
+    (item: any) => item?.userId._id !== userData?._j?.id,
   );
 
   const navigation = useNavigation();
@@ -58,7 +58,7 @@ const Messages = () => {
         item.unreadMessagesCount > 0 &&
         item.users.some(
           (user) =>
-            user.userId._id == userData?._j?.id && user.isRequestAccepted
+            user.userId._id == userData?._j?.id && user.isRequestAccepted,
         )
       );
     } else {
@@ -78,7 +78,7 @@ const Messages = () => {
 
   const updateMessageSeen = () => {
     const isRead = selectedChat?.latestMessage?.readByUsers?.includes(
-      userData?._j?.id || ""
+      userData?._j?.id || "",
     );
 
     if (!isRead && isRead !== undefined && selectedChat) {
@@ -109,7 +109,7 @@ const Messages = () => {
               latestMessage: newMessage,
               unreadMessagesCount: (chat.unreadMessagesCount || 0) + 1,
             }
-          : chat
+          : chat,
       );
 
       updatedChats.sort((a, b) => {
@@ -125,7 +125,7 @@ const Messages = () => {
     } else if (isActiveChat) {
       queryClient.setQueryData(
         ["chatMessages", selectedChat?._id],
-        (oldMessages: Message[]) => [...(oldMessages || []), newMessage]
+        (oldMessages: Message[]) => [...(oldMessages || []), newMessage],
       );
 
       const updatedChats = chatData.map((chat) =>
@@ -134,7 +134,7 @@ const Messages = () => {
               ...chat,
               latestMessage: newMessage,
             }
-          : chat
+          : chat,
       );
       queryClient.setQueryData(["userChats"], updatedChats);
 
@@ -167,7 +167,7 @@ const Messages = () => {
     setChats(updatedChats);
     const updateCurrSelectedChat = () => {
       const toWrite = updatedChats.find(
-        (item) => item._id == selectedChat?._id
+        (item) => item._id == selectedChat?._id,
       );
       setSelectedChat(toWrite);
     };
@@ -183,9 +183,9 @@ const Messages = () => {
     return chatsData?.flatMap((chat) =>
       chat.users
         .map((user) =>
-          user.userId._id !== userData?._j?.id ? user.userId._id : null
+          user.userId._id !== userData?._j?.id ? user.userId._id : null,
         )
-        .filter((id) => id !== null)
+        .filter((id) => id !== null),
     );
   }, [chatsData, userData?._j?.id]);
 

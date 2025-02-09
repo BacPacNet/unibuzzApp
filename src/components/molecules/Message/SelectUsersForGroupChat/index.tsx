@@ -57,7 +57,7 @@ const SelectUsersForGroupChat = ({
         selectedUsers?.some((selectedUser: any) => selectedUser._id == item._id)
       ) {
         const filterd = selectedUsers.filter(
-          (selectedUser: any) => selectedUser._id !== item._id
+          (selectedUser: any) => selectedUser._id !== item._id,
         );
         setSelectedUsers(filterd);
       } else {
@@ -65,7 +65,7 @@ const SelectUsersForGroupChat = ({
       }
     };
     const isSelected = selectedUsers?.some(
-      (selectedUser: any) => selectedUser._id == item._id
+      (selectedUser: any) => selectedUser._id == item._id,
     );
 
     return (

@@ -26,7 +26,6 @@ function App() {
           <SafeScreen>
             <AuthProvider>
               <ToastProvider>
-                
                 <ApplicationNavigator />
                 {/* <DevToolsBubble /> */}
               </ToastProvider>

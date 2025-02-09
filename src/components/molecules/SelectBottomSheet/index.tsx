@@ -75,7 +75,7 @@ const SelectBottomSheet = ({
 
   useEffect(() => {
     const filtered = data.filter((item: any) =>
-      item.toLowerCase().includes(searchInput.toLowerCase())
+      item.toLowerCase().includes(searchInput.toLowerCase()),
     );
     setFilteredData(filtered);
   }, [searchInput, data]);

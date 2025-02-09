@@ -74,19 +74,19 @@ const CreateGroupChat = ({ setSelectedChat, setCurrTab }: Props) => {
   const [groupLogoImage, setGroupLogoImage] = useState<ImageAsset | null>(null);
   const [uploadingImage, setUploadingImage] = useState(false);
   const [selectedUsers, setSelectedUsers] = useState<User[]>([]);
-  const [selectedYears, setSelectedYears] = useState<any>([]);
-  const [selectedMajors, setSelectedMajors] = useState<any>([]);
-  const [selectedOccupation, setSelectedOccupation] = useState<any>([]);
-  const [selectedAffiliation, setSelectedAffiliation] = useState<any>([]);
+  //   const [selectedYears, setSelectedYears] = useState<any>([]);
+  //   const [selectedMajors, setSelectedMajors] = useState<any>([]);
+  //   const [selectedOccupation, setSelectedOccupation] = useState<any>([]);
+  //   const [selectedAffiliation, setSelectedAffiliation] = useState<any>([]);
   const [searchInput, setSearchInput] = useState<string>("");
   const { data, isFetching } = useGetUserFollowingAndFollowers(searchInput);
   const { mutate: createGroupChat, isPending } = useCreateGroupChat();
 
   const actionSheetRef = useRef<ActionSheetRef>(null);
-  const yearSheetRef = useRef<ActionSheetRef>(null);
-  const majorSheetRef = useRef<ActionSheetRef>(null);
-  const occupationSheetRef = useRef<ActionSheetRef>(null);
-  const affiliationSheetRef = useRef<ActionSheetRef>(null);
+  //   const yearSheetRef = useRef<ActionSheetRef>(null);
+  //   const majorSheetRef = useRef<ActionSheetRef>(null);
+  //   const occupationSheetRef = useRef<ActionSheetRef>(null);
+  //   const affiliationSheetRef = useRef<ActionSheetRef>(null);
 
   const handleClick = (userId: string) => {
     if (selectedUsers?.some((selectedUser) => selectedUser._id == userId)) {
@@ -96,34 +96,34 @@ const CreateGroupChat = ({ setSelectedChat, setCurrTab }: Props) => {
       setSelectedUsers(filterd);
     }
   };
-  const handleYearClick = (year: string) => {
-    if (selectedYears?.some((value: any) => value == year)) {
-      const filterd = selectedYears.filter((value: any) => value !== year);
-      setSelectedYears(filterd);
-    }
-  };
-  const handleMajorClick = (major: string) => {
-    if (selectedMajors?.some((value: any) => value == major)) {
-      const filterd = selectedMajors.filter((value: any) => value !== major);
-      setSelectedMajors(filterd);
-    }
-  };
-  const handleOccupationClick = (occupation: string) => {
-    if (selectedOccupation?.some((value: any) => value == occupation)) {
-      const filterd = selectedOccupation.filter(
-        (value: any) => value !== occupation
-      );
-      setSelectedOccupation(filterd);
-    }
-  };
-  const handleAffiliationClick = (affiliation: string) => {
-    if (selectedAffiliation?.some((value: any) => value == affiliation)) {
-      const filterd = selectedAffiliation.filter(
-        (value: any) => value !== affiliation
-      );
-      setSelectedAffiliation(filterd);
-    }
-  };
+  //   const handleYearClick = (year: string) => {
+  //     if (selectedYears?.some((value: any) => value == year)) {
+  //       const filterd = selectedYears.filter((value: any) => value !== year);
+  //       setSelectedYears(filterd);
+  //     }
+  //   };
+  //   const handleMajorClick = (major: string) => {
+  //     if (selectedMajors?.some((value: any) => value == major)) {
+  //       const filterd = selectedMajors.filter((value: any) => value !== major);
+  //       setSelectedMajors(filterd);
+  //     }
+  //   };
+  //   const handleOccupationClick = (occupation: string) => {
+  //     if (selectedOccupation?.some((value: any) => value == occupation)) {
+  //       const filterd = selectedOccupation.filter(
+  //         (value: any) => value !== occupation
+  //       );
+  //       setSelectedOccupation(filterd);
+  //     }
+  //   };
+  //   const handleAffiliationClick = (affiliation: string) => {
+  //     if (selectedAffiliation?.some((value: any) => value == affiliation)) {
+  //       const filterd = selectedAffiliation.filter(
+  //         (value: any) => value !== affiliation
+  //       );
+  //       setSelectedAffiliation(filterd);
+  //     }
+  //   };
 
   const handleImagePick = async () => {
     launchImageLibrary({ mediaType: "photo" }, (response: any) => {
@@ -279,7 +279,7 @@ const CreateGroupChat = ({ setSelectedChat, setCurrTab }: Props) => {
                 </View>
               </View>
 
-              {/* //year  */}
+              {/* //year 
               <View className="my-4 flex gap-2">
                 <Text className="font-medium text-xs text-neutral-900">
                   Year
@@ -332,9 +332,9 @@ const CreateGroupChat = ({ setSelectedChat, setCurrTab }: Props) => {
                     </View>
                   ))}
                 </View>
-              </View>
+              </View> */}
 
-              {/* //Major  */}
+              {/* //Major 
               <View className="my-4 flex gap-2">
                 <Text className="font-medium text-xs text-neutral-900">
                   Major
@@ -387,9 +387,9 @@ const CreateGroupChat = ({ setSelectedChat, setCurrTab }: Props) => {
                     </View>
                   ))}
                 </View>
-              </View>
+              </View> */}
 
-              {/* //faculty occupation  */}
+              {/* //faculty occupation 
               <View className="my-4 flex gap-2">
                 <Text className="font-medium text-xs text-neutral-900">
                   Occupation
@@ -444,8 +444,8 @@ const CreateGroupChat = ({ setSelectedChat, setCurrTab }: Props) => {
                     </View>
                   ))}
                 </View>
-              </View>
-              {/* //faculty affiliation  */}
+              </View> */}
+              {/* //faculty affiliation 
               <View className="my-4 flex gap-2">
                 <Text className="font-medium text-xs text-neutral-900">
                   Affiliation
@@ -500,7 +500,7 @@ const CreateGroupChat = ({ setSelectedChat, setCurrTab }: Props) => {
                     </View>
                   ))}
                 </View>
-              </View>
+              </View> */}
 
               <ReusableButton
                 onPress={handleSubmit(onGroupChatSubmit)}
@@ -526,7 +526,7 @@ const CreateGroupChat = ({ setSelectedChat, setCurrTab }: Props) => {
               selectedUsers={selectedUsers}
             />
           </ActionSheet>
-          <ActionSheet
+          {/* <ActionSheet
             ref={yearSheetRef}
             gestureEnabled={true}
             snapPoints={[70, 100]}
@@ -569,7 +569,7 @@ const CreateGroupChat = ({ setSelectedChat, setCurrTab }: Props) => {
               setSelectedField={setSelectedAffiliation}
               selectedField={selectedAffiliation}
             />
-          </ActionSheet>
+          </ActionSheet> */}
         </View>
       </GestureHandlerRootView>
     </ScrollView>

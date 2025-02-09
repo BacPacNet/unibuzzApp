@@ -33,7 +33,7 @@ export function useGetUserChats() {
 export async function userFollowingAndFollowers(name: string, token: any) {
   const response: any = await client(
     `/userprofile/following_and_followers?name=${name}`,
-    { headers: { Authorization: `Bearer ${token}` } }
+    { headers: { Authorization: `Bearer ${token}` } },
   );
   return response;
 }
@@ -161,7 +161,7 @@ export const useUpdateMessageIsSeen = () => {
                 latestMessage: response,
                 unreadMessagesCount: 0,
               }
-            : chat
+            : chat,
         );
         queryClient.setQueryData(["userChats"], updatedChatData);
       }
@@ -223,7 +223,7 @@ export const useAcceptGroupRequest = () => {
 export async function toggleMessageBlock(
   token: any,
   data: any,
-  userToBlockId: string
+  userToBlockId: string,
 ) {
   const response = await client(`/chat/block/${userToBlockId}`, {
     headers: { Authorization: `Bearer ${token}` },
