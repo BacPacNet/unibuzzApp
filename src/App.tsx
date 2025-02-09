@@ -27,7 +27,7 @@ function App() {
             <AuthProvider>
               <ToastProvider>
                 <ApplicationNavigator />
-                <DevToolsBubble />
+                {/* <DevToolsBubble /> */}
               </ToastProvider>
             </AuthProvider>
           </SafeScreen>

@@ -81,7 +81,7 @@ const University = ({ route }: any) => {
 
 const UniversityOverview = () => {
   return (
-    <View className="flex flex-col gap-4 p-4">
+    <View className="flex flex-col gap-4 ">
       <Text className="text-neutral-900 text-base font-extrabold">
         Overview
       </Text>

@@ -29,7 +29,7 @@ const AllUniversities = () => {
 
   return (
     <View className="flex-1  bg-white">
-      <View className="m-4 flex ">
+      <View className="p-4 flex ">
         <Title>Faculty Setup</Title>
         <View className="flex flex-row gap-2 items-center mt-4">
           {["Region", "Country", "City", "Type"].map((item) => (

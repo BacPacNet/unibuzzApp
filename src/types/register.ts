@@ -24,7 +24,7 @@ export interface FormDataType {
   referralCode: string;
 }
 
-const value = [
+export const value = [
   "Accounting",
   "Actuarial Science",
   "Advertising",
