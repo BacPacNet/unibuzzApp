@@ -7,12 +7,14 @@ export type RootStackParamList = {
   LoginScreen: undefined;
   RegisterScreen: undefined;
   Timeline: undefined;
+  New_Post: undefined;
   Home: undefined;
   Connections: undefined;
   Messages: undefined;
   Notifications: undefined;
   AI_Assistant: undefined;
   Discover: undefined;
+  DiscoverStack: undefined;
   University: {
     data: any;
   };

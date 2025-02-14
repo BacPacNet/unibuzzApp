@@ -46,7 +46,6 @@ const MessageUserStickyBar = ({
   profileCover,
   description,
 
-  setAcceptedId,
   setCurrTab,
 }: Props) => {
   const userName =
@@ -55,7 +54,7 @@ const MessageUserStickyBar = ({
   const { mutate: acceptRequest } = useAcceptRequest();
   const { mutate: acceptGroupRequest } = useAcceptGroupRequest();
   const { mutate: toggleBlockMessage } = useToggleBlockMessages(
-    userName[0]?.userId?._id,
+    userName[0]?.userId?._id
   );
 
   const handleMoveToInbox = () => {

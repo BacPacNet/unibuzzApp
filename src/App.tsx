@@ -23,14 +23,14 @@ function App() {
     <QueryClientProvider client={queryClient}>
       <ThemeProvider storage={storage}>
         <SafeAreaProvider>
-          <SafeScreen>
-            <AuthProvider>
-              <ToastProvider>
-                <ApplicationNavigator />
-                {/* <DevToolsBubble /> */}
-              </ToastProvider>
-            </AuthProvider>
-          </SafeScreen>
+          {/* <SafeScreen> */}
+          <AuthProvider>
+            <ToastProvider>
+              <ApplicationNavigator />
+              {/* <DevToolsBubble /> */}
+            </ToastProvider>
+          </AuthProvider>
+          {/* </SafeScreen> */}
         </SafeAreaProvider>
       </ThemeProvider>
       {/*<ReactQueryDevtools initialIsOpen={false} />*/}
