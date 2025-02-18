@@ -8,6 +8,7 @@ export type RootStackParamList = {
   RegisterScreen: undefined;
   Timeline: undefined;
   NewPost: undefined;
+  Profile: undefined;
   Home: undefined;
   Connections: undefined;
   Messages: undefined;

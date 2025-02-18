@@ -3,10 +3,7 @@ import {
   DrawerActions,
   NavigationContainer,
   useNavigation,
-  useNavigationState,
-  useRoute,
 } from "@react-navigation/native";
-import { SafeAreaProvider } from "react-native-safe-area-context";
 
 import { Example, LoginScreen, Timeline, RegisterScreen } from "@/screens";
 import { useTheme } from "@/theme";
@@ -24,8 +21,6 @@ import {
   EyeClosed,
   HomeSimpleDoor,
   Group,
-  Mail,
-  Bell,
   Spark,
   Menu,
   MailSolid,
@@ -37,15 +32,13 @@ import Messages from "@/screens/MessagesScreen";
 import AI_Assistant from "@/screens/AIAssistantScreen";
 import {
   Animated,
-  Button,
   Image,
   LayoutAnimation,
   Pressable,
   Text,
   View,
 } from "react-native";
-import { getUserStore } from "@/storage/user";
-// import { createDrawerNavigator } from "@react-navigation/drawer";
+import { getUserProfileStore, getUserStore } from "@/storage/user";
 import { Drawer } from "react-native-drawer-layout";
 import { createDrawerNavigator } from "@react-navigation/drawer";
 import AllUniversities from "@/screens/AllUniversity";
@@ -53,8 +46,10 @@ import University from "@/screens/University";
 import { SocketProvider } from "@/context/SocketProvider/SocketProvider";
 
 import NewPost from "@/screens/NewPost";
-import ReusableButton from "@/components/atoms/ReusableButton";
 import { HeaderProvider, useHeader } from "@/context/HeaderProvider/Header";
+import avatar from "@/assets/avatar.png";
+import RightSideSidebar from "@/components/organism/RightSideSidebar";
+import Profile from "@/screens/Profile";
 
 const Stack = createStackNavigator<RootStackParamList>();
 const Tab = createBottomTabNavigator<RootStackParamList>();
@@ -63,6 +58,7 @@ function ApplicationNavigator() {
   const { variant, navigationTheme } = useTheme();
   const { isAuthenticated, setAuthenticated, deauthenticate } = useAuth();
   const [isAppFirstLaunched, setIsAppFirstLaunched] = useState(false);
+  const userProfile: any = getUserProfileStore();
 
   useEffect(() => {
     const appData = storage.contains("isAppFirstLaunched");
@@ -112,6 +108,7 @@ function ApplicationNavigator() {
           }}
         />
         <Stack.Screen name="Example" component={Example} />
+        <Stack.Screen name="Profile" component={Profile} />
       </Stack.Navigator>
     );
   }
@@ -257,28 +254,29 @@ function ApplicationNavigator() {
       setRightDrawerOpen(false);
     };
     return (
-      <View style={{ padding: 20 }}>
-        <Text style={{ fontSize: 18, fontWeight: "bold", marginBottom: 20 }}>
-          User Profile
-        </Text>
-        <Pressable onPress={() => handleClick("Timeline")}>
-          <Text style={{ fontSize: 16, marginBottom: 15 }}>My Profile</Text>
-        </Pressable>
-        <Pressable onPress={() => navigation.navigate("Account")}>
-          <Text style={{ fontSize: 16, marginBottom: 15 }}>
-            Account Settings
-          </Text>
-        </Pressable>
-        <Pressable
-          onPress={() => {
-            deauthenticate();
-          }}
-        >
-          <Text style={{ fontSize: 16, marginBottom: 15, color: "red" }}>
-            Logout
-          </Text>
-        </Pressable>
-      </View>
+      //   <View style={{ padding: 20 }}>
+      //     <Text style={{ fontSize: 18, fontWeight: "bold", marginBottom: 20 }}>
+      //       User Profile
+      //     </Text>
+      //     <Pressable onPress={() => handleClick("Timeline")}>
+      //       <Text style={{ fontSize: 16, marginBottom: 15 }}>My Profile</Text>
+      //     </Pressable>
+      //     <Pressable onPress={() => navigation.navigate("Account")}>
+      //       <Text style={{ fontSize: 16, marginBottom: 15 }}>
+      //         Account Settings
+      //       </Text>
+      //     </Pressable>
+      //     <Pressable
+      //       onPress={() => {
+      //         deauthenticate();
+      //       }}
+      //     >
+      //       <Text style={{ fontSize: 16, marginBottom: 15, color: "red" }}>
+      //         Logout
+      //       </Text>
+      //     </Pressable>
+      //   </View>
+      <RightSideSidebar navigation={navigation} handleClick={handleClick} />
     );
   }
 
@@ -356,12 +354,18 @@ function ApplicationNavigator() {
               )}
               <Pressable onPress={() => setRightDrawerOpen(true)}>
                 <Image
-                  source={require("../assets/avatar.png")}
+                  source={
+                    userProfile?.profile_dp &&
+                    userProfile?.profile_dp?.imageUrl?.length > 0
+                      ? { uri: userProfile?.profile_dp?.imageUrl }
+                      : avatar
+                  }
                   style={{
                     width: 40,
                     height: 40,
-                    resizeMode: "contain",
+                    resizeMode: "cover",
                     marginRight: 16,
+                    borderRadius: 200,
                   }}
                 />
               </Pressable>

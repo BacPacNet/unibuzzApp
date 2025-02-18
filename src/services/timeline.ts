@@ -17,6 +17,7 @@ export async function getAllTimelinePosts(
     `/userpost/timeline?page=${page}&limit=${limit}`,
     { headers: { Authorization: `Bearer ${token}` } }
   );
+
   return response;
 }
 
