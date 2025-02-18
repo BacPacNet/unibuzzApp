@@ -17,8 +17,8 @@ function SafeScreen({ children }: PropsWithChildren) {
           // Paddings to handle safe area
           paddingTop: insets.top,
           paddingBottom: insets.bottom,
-          paddingLeft: insets.left,
-          paddingRight: insets.right,
+          paddingLeft: insets.left + 16,
+          paddingRight: insets.right + 16,
         },
       ]}
     >

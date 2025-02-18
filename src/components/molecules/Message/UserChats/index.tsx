@@ -5,7 +5,6 @@ import {
   ScrollView,
   TouchableOpacity,
   ActivityIndicator,
-  Pressable,
   TextInput,
   RefreshControl,
 } from "react-native";
@@ -13,12 +12,7 @@ import {
 import { Chat } from "@/types/ChatType";
 import { getUserStore } from "@/storage/user";
 import UserChatCard from "../UserChatCard";
-import {
-  MailOutSolid,
-  MailSolid,
-  NavArrowLeft,
-  Search,
-} from "iconoir-react-native";
+import { Search } from "iconoir-react-native";
 import ReusableButton from "@/components/atoms/ReusableButton";
 import { useQueryClient } from "@tanstack/react-query";
 
@@ -34,8 +28,6 @@ interface Props {
 
 const UserChats = ({
   setSelectedChat,
-  selectedChat,
-  setIsRequest,
   currTabb,
   chats,
   isChatLoading,
@@ -61,11 +53,11 @@ const UserChats = ({
           (item.users.find(
             (user) =>
               user?.userId._id.toString() === userData?._j?.id &&
-              user?.isRequestAccepted,
+              user?.isRequestAccepted
           ) ||
             item.isRequestAccepted ||
             item.groupAdmin.toString() === userData?._j?.id) &&
-          (!item.isGroupChat ? item.latestMessage : true),
+          (!item.isGroupChat ? item.latestMessage : true)
       );
 
       if (isChatLoading) {
@@ -90,7 +82,7 @@ const UserChats = ({
             handleClick(item);
           }}
           key={item?._id}
-          className="flex  flex-col gap-2 border-b border-neutral-200"
+          className="flex  flex-col  gap-2 border-b border-neutral-200"
         >
           <UserChatCard
             profilePic={
@@ -102,7 +94,7 @@ const UserChats = ({
             isGroupChat={item?.isGroupChat}
             users={[item?.users]}
             isSeen={item?.latestMessage?.readByUsers?.includes(
-              userData?._j?.id || " ",
+              userData?._j?.id || " "
             )}
             lastMessage={item?.latestMessage?.content}
             date={item?.latestMessage?.createdAt}
@@ -117,10 +109,10 @@ const UserChats = ({
           ? item.users.some(
               (user) =>
                 user.userId._id.toString() === userData?._j?.id &&
-                !user.isRequestAccepted,
+                !user.isRequestAccepted
             )
           : !item.isRequestAccepted &&
-            item.groupAdmin.toString() !== userData?._j?.id,
+            item.groupAdmin.toString() !== userData?._j?.id
       );
 
       if (filteredChats.length === 0) {
@@ -147,7 +139,7 @@ const UserChats = ({
             isGroupChat={item?.isGroupChat}
             users={[item?.users]}
             isSeen={item?.latestMessage?.readByUsers?.includes(
-              userData?._j?.id || " ",
+              userData?._j?.id || " "
             )}
             lastMessage={item?.latestMessage?.content}
             date={item?.latestMessage?.createdAt}

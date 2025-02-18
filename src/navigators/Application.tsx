@@ -3,6 +3,8 @@ import {
   DrawerActions,
   NavigationContainer,
   useNavigation,
+  useNavigationState,
+  useRoute,
 } from "@react-navigation/native";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 
@@ -11,7 +13,7 @@ import { useTheme } from "@/theme";
 
 import type { RootStackParamList } from "@/types/navigation";
 import OnboardingScreen from "@/screens/OnboardingScreen/OnboardingScreen";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { storage } from "@/App";
 import AuthGuard from "@/components/template/AuthGuard/AuthGuard";
 import UnauthenticatedGuard from "@/components/template/UnauthenticatedGuard/UnauthenticatedGuard";
@@ -26,12 +28,22 @@ import {
   Bell,
   Spark,
   Menu,
+  MailSolid,
+  BellNotificationSolid,
 } from "iconoir-react-native";
 import Notifications from "@/screens/NotificationsScreen";
 import Connections from "@/screens/ConnectionScreen";
 import Messages from "@/screens/MessagesScreen";
 import AI_Assistant from "@/screens/AIAssistantScreen";
-import { Button, Image, Pressable, Text, View } from "react-native";
+import {
+  Animated,
+  Button,
+  Image,
+  LayoutAnimation,
+  Pressable,
+  Text,
+  View,
+} from "react-native";
 import { getUserStore } from "@/storage/user";
 // import { createDrawerNavigator } from "@react-navigation/drawer";
 import { Drawer } from "react-native-drawer-layout";
@@ -39,6 +51,10 @@ import { createDrawerNavigator } from "@react-navigation/drawer";
 import AllUniversities from "@/screens/AllUniversity";
 import University from "@/screens/University";
 import { SocketProvider } from "@/context/SocketProvider/SocketProvider";
+
+import NewPost from "@/screens/NewPost";
+import ReusableButton from "@/components/atoms/ReusableButton";
+import { HeaderProvider, useHeader } from "@/context/HeaderProvider/Header";
 
 const Stack = createStackNavigator<RootStackParamList>();
 const Tab = createBottomTabNavigator<RootStackParamList>();
@@ -65,17 +81,37 @@ function ApplicationNavigator() {
     // AsyncStorage.removeItem('isAppFirstLaunched');
   }, []);
 
+  // Discover Stack
+  function DiscoverStack() {
+    return (
+      <Stack.Navigator screenOptions={{ headerShown: false }}>
+        <Stack.Screen name="Discover" component={AllUniversities} />
+        <Stack.Screen
+          name="University"
+          component={University}
+          options={{
+            gestureEnabled: true,
+            gestureDirection: "horizontal",
+          }}
+        />
+      </Stack.Navigator>
+    );
+  }
+
   function StackGroup() {
     return (
-      <Stack.Navigator
-        initialRouteName="Timeline"
-        key={variant}
-        screenOptions={{ headerShown: false }}
-      >
-        <Stack.Screen name="Example" component={Example} />
+      <Stack.Navigator screenOptions={{ headerShown: false }}>
         <Stack.Screen name="Timeline" component={Timeline} />
-        <Stack.Screen name="Discover" component={AllUniversities} />
-        <Stack.Screen name="University" component={University} />
+        {/* <Stack.Screen name="New_Post" component={NewPost} /> */}
+        <Stack.Screen
+          name="NewPost"
+          component={NewPost}
+          options={{
+            gestureEnabled: true,
+            gestureDirection: "horizontal",
+          }}
+        />
+        <Stack.Screen name="Example" component={Example} />
       </Stack.Navigator>
     );
   }
@@ -91,9 +127,19 @@ function ApplicationNavigator() {
             let iconName;
             if (route.name === "Home") {
               return (iconName = focused ? (
-                <HomeSimpleDoor height={24} width={24} color={"#6744FF"} />
+                <HomeSimpleDoor
+                  fill={"#6744FF"}
+                  height={24}
+                  width={24}
+                  color={"white"}
+                />
               ) : (
-                <HomeSimpleDoor height={24} width={24} />
+                <HomeSimpleDoor
+                  color={"white"}
+                  fill={"#6B7280"}
+                  height={24}
+                  width={24}
+                />
               ));
             } else if (route.name === "Example") {
               return (iconName = focused ? (
@@ -103,23 +149,41 @@ function ApplicationNavigator() {
               ));
             } else if (route.name === "Connections") {
               return (iconName = focused ? (
-                <Group height={24} width={24} color={"#6744FF"} />
+                <Group
+                  height={24}
+                  width={24}
+                  color={"white"}
+                  fill={"#6744FF"}
+                />
               ) : (
-                <Group height={24} width={24} />
+                <Group
+                  height={24}
+                  width={24}
+                  color={"white"}
+                  fill={"#6B7280"}
+                />
               ));
             } else if (route.name === "Messages") {
               return (iconName = focused ? (
-                <Mail height={24} width={24} color={"#6744FF"} />
+                <MailSolid height={24} width={24} color={"#6744FF"} />
               ) : (
-                <Mail height={24} width={24} />
+                <MailSolid height={24} width={24} color={"#6B7280"} />
               ));
             } else if (route.name === "Notifications") {
               return (iconName = focused ? (
-                <Bell height={24} width={24} color={"#6744FF"} />
+                <BellNotificationSolid
+                  height={24}
+                  width={24}
+                  color={"#6744FF"}
+                />
               ) : (
-                <Bell height={24} width={24} />
+                <BellNotificationSolid
+                  height={24}
+                  width={24}
+                  color={"#6B7280"}
+                />
               ));
-            } else if (route.name === "AI_Assistant") {
+            } else if (route.name === "AIAssistant") {
               return (iconName = focused ? (
                 <Spark height={24} width={24} color={"#6744FF"} />
               ) : (
@@ -131,7 +195,10 @@ function ApplicationNavigator() {
           tabBarInactiveTintColor: "black",
           tabBarStyle: {
             backgroundColor: "white",
-            // paddingBottom:1
+
+            height: 60,
+            paddingBottom: 10,
+            paddingTop: 10,
           },
           tabBarLabelStyle: {
             fontSize: 12,
@@ -147,7 +214,12 @@ function ApplicationNavigator() {
         <Tab.Screen name="Messages" component={Messages} />
         {/* <Tab.Screen name="Example" component={Example} /> */}
         <Tab.Screen name="Notifications" component={Notifications} />
-        <Tab.Screen name="AI_Assistant" component={AI_Assistant} />
+        <Tab.Screen name="AIAssistant" component={AI_Assistant} />
+        <Tab.Screen
+          name="DiscoverStack"
+          component={DiscoverStack}
+          options={{ tabBarButton: () => null }}
+        />
       </Tab.Navigator>
     );
   }
@@ -158,10 +230,18 @@ function ApplicationNavigator() {
         <Text style={{ fontSize: 18, fontWeight: "bold", marginBottom: 20 }}>
           App Menu
         </Text>
-        <Pressable onPress={() => props.navigation.navigate("Timeline")}>
+        <Pressable
+          onPress={() =>
+            props.navigation.navigate("tabsGroup", { screen: "Home" })
+          }
+        >
           <Text style={{ fontSize: 16, marginBottom: 15 }}>Home</Text>
         </Pressable>
-        <Pressable onPress={() => props.navigation.navigate("Discover")}>
+        <Pressable
+          onPress={() =>
+            props.navigation.navigate("tabsGroup", { screen: "DiscoverStack" })
+          }
+        >
           <Text style={{ fontSize: 16, marginBottom: 15 }}>Discover</Text>
         </Pressable>
         <Pressable onPress={() => props.navigation.navigate("Settings")}>
@@ -205,6 +285,31 @@ function ApplicationNavigator() {
   const LeftDrawer = createDrawerNavigator();
 
   const LeftDrawerScreen = ({ navigation, setRightDrawerOpen }: any) => {
+    const { showHeader, currScreen } = useHeader();
+    const [headerTranslateY] = useState(new Animated.Value(0));
+    const [headerHeight, setHeaderHeight] = useState(60);
+
+    const animateHeader = useCallback(() => {
+      LayoutAnimation.configureNext(
+        LayoutAnimation.create(
+          200,
+          LayoutAnimation.Types.linear,
+          LayoutAnimation.Properties.opacity
+        )
+      );
+
+      Animated.timing(headerTranslateY, {
+        toValue: showHeader ? 0 : -20,
+        duration: 200,
+        useNativeDriver: true,
+      }).start();
+
+      setHeaderHeight(showHeader ? 60 : 0);
+    }, [showHeader, headerTranslateY]);
+
+    useEffect(() => {
+      animateHeader();
+    }, [showHeader, animateHeader]);
     return (
       <LeftDrawer.Navigator
         screenOptions={{
@@ -213,10 +318,12 @@ function ApplicationNavigator() {
           headerStyle: {
             backgroundColor: "#fff",
             elevation: 4,
-            shadowColor: "#000",
+            // shadowColor: "#000",
             shadowOffset: { width: 0, height: 2 },
             shadowOpacity: 0.1,
             shadowRadius: 4,
+            transform: [{ translateY: headerTranslateY }],
+            height: headerHeight,
           },
 
           headerLeft: () => (
@@ -232,17 +339,33 @@ function ApplicationNavigator() {
             </Pressable>
           ),
           headerRight: () => (
-            <Pressable onPress={() => setRightDrawerOpen(true)}>
-              <Image
-                source={require("../assets/avatar.png")}
-                style={{
-                  width: 40,
-                  height: 40,
-                  resizeMode: "contain",
-                  marginRight: 16,
-                }}
-              />
-            </Pressable>
+            <View className="flex flex-row gap-4 items-center">
+              {currScreen === "timeline" && (
+                <Pressable
+                  onPress={() => navigation.navigate("NewPost")}
+                  style={{
+                    backgroundColor: "#F3F2FF",
+                    paddingHorizontal: 16,
+                    paddingVertical: 8,
+                    borderRadius: 8,
+                    marginRight: 16,
+                  }}
+                >
+                  <Text style={{ color: "#6744FF" }}>Create</Text>
+                </Pressable>
+              )}
+              <Pressable onPress={() => setRightDrawerOpen(true)}>
+                <Image
+                  source={require("../assets/avatar.png")}
+                  style={{
+                    width: 40,
+                    height: 40,
+                    resizeMode: "contain",
+                    marginRight: 16,
+                  }}
+                />
+              </Pressable>
+            </View>
           ),
           headerTitle: () => (
             <Image
@@ -253,7 +376,7 @@ function ApplicationNavigator() {
         }}
         drawerContent={(props) => <AppMenuDrawerContent {...props} />}
       >
-        <LeftDrawer.Screen name="Home" component={TabsGroup} />
+        <LeftDrawer.Screen name="tabsGroup" component={TabsGroup} />
       </LeftDrawer.Navigator>
     );
   };
@@ -289,7 +412,9 @@ function ApplicationNavigator() {
         {/* <TabsGroup/> */}
         {/* <DrawerGroup/> */}
         <SocketProvider>
-          <RightDrawerScreen />
+          <HeaderProvider>
+            <RightDrawerScreen />
+          </HeaderProvider>
         </SocketProvider>
       </AuthGuard>
       <UnauthenticatedGuard>

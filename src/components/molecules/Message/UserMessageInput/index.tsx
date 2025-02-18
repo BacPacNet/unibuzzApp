@@ -91,10 +91,7 @@ const UserMessageInput = ({
 
     queryClient.setQueryData(
       ["chatMessages", chatId],
-      (oldMessages: LatestMessage[] = []) => [
-        ...oldMessages,
-        optimisticMessage,
-      ],
+      (oldMessages: LatestMessage[] = []) => [...oldMessages, optimisticMessage]
     );
 
     let fileLinks: any = [];
@@ -117,8 +114,8 @@ const UserMessageInput = ({
           ["chatMessages", chatId],
           (oldMessages: LatestMessage[] = []) =>
             oldMessages.map((msg) =>
-              msg._id === optimisticId ? newMessage : msg,
-            ),
+              msg._id === optimisticId ? newMessage : msg
+            )
         );
 
         const chatData: ChatsArray | undefined = queryClient.getQueryData([
@@ -131,7 +128,7 @@ const UserMessageInput = ({
                   ...chat,
                   latestMessage: newMessage,
                 }
-              : chat,
+              : chat
           );
 
           updatedChatData.sort((a, b) => {
@@ -157,7 +154,7 @@ const UserMessageInput = ({
         queryClient.setQueryData(
           ["chatMessages", chatId],
           (oldMessages: LatestMessage[] = []) =>
-            oldMessages.filter((msg) => msg._id !== optimisticId),
+            oldMessages.filter((msg) => msg._id !== optimisticId)
         );
       },
     });
@@ -171,7 +168,7 @@ const UserMessageInput = ({
           setImages((prevImages) => [...prevImages, ...response.assets]);
           setChanged(response.assets.length);
         }
-      },
+      }
     );
   };
 

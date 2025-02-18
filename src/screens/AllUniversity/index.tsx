@@ -1,5 +1,5 @@
 import Title from "@/components/atoms/Title";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import {
   View,
   TextInput,
@@ -12,6 +12,7 @@ import {
 import { Search } from "iconoir-react-native";
 import DiscoverUniversityCard from "@/components/molecules/UniversityCard";
 import { useGetFilteredUniversity } from "@/services/universitySearch";
+
 const AllUniversities = () => {
   const [searchTerm, setSearchTerm] = useState("");
 
@@ -62,7 +63,7 @@ const AllUniversities = () => {
 
       <FlatList
         data={data?.pages?.flatMap((page) => page.Universities) || []}
-        keyExtractor={(item) => item.id}
+        keyExtractor={(item, index) => item._id + item?.Universities?.name}
         renderItem={renderItem}
         onEndReached={() => {
           if (hasNextPage && !isFetchingNextPage) {
