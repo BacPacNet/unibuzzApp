@@ -938,6 +938,27 @@ PODS:
   - React-Mapbuffer (0.74.5):
     - glog
     - React-debug
+  - react-native-image-picker (8.0.0):
+    - DoubleConversion
+    - glog
+    - hermes-engine
+    - RCT-Folly (= 2024.01.01.00)
+    - RCTRequired
+    - RCTTypeSafety
+    - React-Codegen
+    - React-Core
+    - React-debug
+    - React-Fabric
+    - React-featureflags
+    - React-graphics
+    - React-ImageManager
+    - React-NativeModulesApple
+    - React-RCTFabric
+    - React-rendererdebug
+    - React-utils
+    - ReactCommon/turbomodule/bridging
+    - ReactCommon/turbomodule/core
+    - Yoga
   - react-native-mmkv (2.12.2):
     - DoubleConversion
     - glog
@@ -1323,7 +1344,7 @@ PODS:
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
     - Yoga
-  - RNSVG (15.10.1):
+  - RNSVG (15.11.1):
     - React-Core
   - SocketRocket (0.7.0)
   - Yoga (0.0.0)
@@ -1361,6 +1382,7 @@ DEPENDENCIES:
   - React-jsitracing (from `../node_modules/react-native/ReactCommon/hermes/executor/`)
   - React-logger (from `../node_modules/react-native/ReactCommon/logger`)
   - React-Mapbuffer (from `../node_modules/react-native/ReactCommon`)
+  - react-native-image-picker (from `../node_modules/react-native-image-picker`)
   - react-native-mmkv (from `../node_modules/react-native-mmkv`)
   - react-native-safe-area-context (from `../node_modules/react-native-safe-area-context`)
   - React-nativeconfig (from `../node_modules/react-native/ReactCommon`)
@@ -1461,6 +1483,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native/ReactCommon/logger"
   React-Mapbuffer:
     :path: "../node_modules/react-native/ReactCommon"
+  react-native-image-picker:
+    :path: "../node_modules/react-native-image-picker"
   react-native-mmkv:
     :path: "../node_modules/react-native-mmkv"
   react-native-safe-area-context:
@@ -1557,6 +1581,7 @@ SPEC CHECKSUMS:
   React-jsitracing: 3b6060bbf5317663667e1dd93560c7943ab86ccc
   React-logger: 257858bd55f3a4e1bc0cf07ddc8fb9faba6f8c7c
   React-Mapbuffer: 6c1cacdbf40b531f549eba249e531a7d0bfd8e7f
+  react-native-image-picker: 540f2c576baa890b8e83f6bac0bd7a55bd108e73
   react-native-mmkv: 8c9a677e64a1ac89b0c6cf240feea528318b3074
   react-native-safe-area-context: 141eca0fd4e4191288dfc8b96a7c7e1c2983447a
   React-nativeconfig: ba9a2e54e2f0882cf7882698825052793ed4c851
@@ -1586,7 +1611,7 @@ SPEC CHECKSUMS:
   RNGestureHandler: efed690b8493a00b99654043daeb1335276ac4a2
   RNReanimated: 5a19d7bc2fd0f1929d81301359a627d83c3684be
   RNScreens: aa943ad421c3ced3ef5a47ede02b0cbfc43a012e
-  RNSVG: 7ff26379b2d1871b8571e6f9bc9630de6baf9bdf
+  RNSVG: 703242a230641638cf72d3891e57db0344d5208c
   SocketRocket: abac6f5de4d4d62d24e11868d7a2f427e0ef940d
   Yoga: 2246eea72aaf1b816a68a35e6e4b74563653ae09
 

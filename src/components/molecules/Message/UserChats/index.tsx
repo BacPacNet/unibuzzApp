@@ -33,7 +33,7 @@ const UserChats = ({
   isChatLoading,
   setCurrTab,
 }: Props) => {
-  const userData: any = getUserStore();
+  const userData = getUserStore();
   const handleClick = (item: Chat) => {
     setSelectedChat(item);
   };
@@ -52,11 +52,11 @@ const UserChats = ({
         (item: Chat) =>
           (item.users.find(
             (user) =>
-              user?.userId._id.toString() === userData?._j?.id &&
+              user?.userId._id.toString() === userData?.id &&
               user?.isRequestAccepted
           ) ||
             item.isRequestAccepted ||
-            item.groupAdmin.toString() === userData?._j?.id) &&
+            item.groupAdmin.toString() === userData?.id) &&
           (!item.isGroupChat ? item.latestMessage : true)
       );
 
@@ -94,11 +94,11 @@ const UserChats = ({
             isGroupChat={item?.isGroupChat}
             users={[item?.users]}
             isSeen={item?.latestMessage?.readByUsers?.includes(
-              userData?._j?.id || " "
+              userData?.id || " "
             )}
             lastMessage={item?.latestMessage?.content}
             date={item?.latestMessage?.createdAt}
-            YourID={userData?._j?.id}
+            YourID={userData?.id}
             unRead={item?.unreadMessagesCount}
           />
         </TouchableOpacity>
@@ -108,11 +108,11 @@ const UserChats = ({
         item.isGroupChat
           ? item.users.some(
               (user) =>
-                user.userId._id.toString() === userData?._j?.id &&
+                user.userId._id.toString() === userData?.id &&
                 !user.isRequestAccepted
             )
           : !item.isRequestAccepted &&
-            item.groupAdmin.toString() !== userData?._j?.id
+            item.groupAdmin.toString() !== userData?.id
       );
 
       if (filteredChats.length === 0) {
@@ -139,11 +139,11 @@ const UserChats = ({
             isGroupChat={item?.isGroupChat}
             users={[item?.users]}
             isSeen={item?.latestMessage?.readByUsers?.includes(
-              userData?._j?.id || " "
+              userData?.id || " "
             )}
             lastMessage={item?.latestMessage?.content}
             date={item?.latestMessage?.createdAt}
-            YourID={userData?._j?.id}
+            YourID={userData?.id}
             unRead={item?.unreadMessagesCount}
           />
         </TouchableOpacity>

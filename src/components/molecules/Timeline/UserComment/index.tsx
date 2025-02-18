@@ -24,7 +24,7 @@ const UserComment = ({
   setShowTotalReply,
   showTotalReply,
 }: CommentsProp) => {
-  const userData: any = getUserStore();
+  const userData = getUserStore();
 
   const handleReplyTo = (data: any) => {
     if (item?.level == 0) {
@@ -117,7 +117,7 @@ const UserComment = ({
               width={24}
               color={
                 item?.likeCount?.some(
-                  (like: any) => like.userId === userData?._j?.id
+                  (like: any) => like.userId === userData?.id
                 )
                   ? "#6647FF"
                   : "black"

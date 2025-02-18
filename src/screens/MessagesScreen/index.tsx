@@ -35,9 +35,9 @@ const Messages = () => {
   const [chats, setChats] = useState<ChatsArray>([]);
   const [isRequest, setIsRequest] = useState(true);
   const [onlineUsersSet, setOnlineUsersSet] = useState<Set<string>>(new Set());
-  const userData: any = getUserStore();
+  const userData = getUserStore();
   const userName = selectedChat?.users?.find(
-    (item: any) => item?.userId._id !== userData?._j?.id
+    (item: any) => item?.userId._id !== userData?.id
   );
 
   const navigation = useNavigation();
@@ -57,8 +57,7 @@ const Messages = () => {
       return (
         item.unreadMessagesCount > 0 &&
         item.users.some(
-          (user) =>
-            user.userId._id == userData?._j?.id && user.isRequestAccepted
+          (user) => user.userId._id == userData?.id && user.isRequestAccepted
         )
       );
     } else {
@@ -78,14 +77,14 @@ const Messages = () => {
 
   const updateMessageSeen = () => {
     const isRead = selectedChat?.latestMessage?.readByUsers?.includes(
-      userData?._j?.id || ""
+      userData?.id || ""
     );
 
     if (!isRead && isRead !== undefined && selectedChat) {
       updateIsSeen({
         chatId: selectedChat?._id,
         messageId: selectedChat?.latestMessage?._id,
-        data: { readByUserId: userData?._j?.id },
+        data: { readByUserId: userData?.id },
       });
     }
   };
@@ -138,13 +137,13 @@ const Messages = () => {
       );
       queryClient.setQueryData(["userChats"], updatedChats);
 
-      const isRead = newMessage?.readByUsers?.includes(userData?._j?.id || "");
+      const isRead = newMessage?.readByUsers?.includes(userData?.id || "");
 
       if (!isRead && selectedChat?._id) {
         updateIsSeen({
           chatId: selectedChat?._id,
           messageId: chatMessageId,
-          data: { readByUserId: userData?._j?.id },
+          data: { readByUserId: userData?.id },
         });
       }
     } else if (!chatData.some((chat) => chat._id == messageChatId)) {
@@ -183,11 +182,11 @@ const Messages = () => {
     return chatsData?.flatMap((chat) =>
       chat.users
         .map((user) =>
-          user.userId._id !== userData?._j?.id ? user.userId._id : null
+          user.userId._id !== userData?.id ? user.userId._id : null
         )
         .filter((id) => id !== null)
     );
-  }, [chatsData, userData?._j?.id]);
+  }, [chatsData, userData?.id]);
 
   const uniqUserChatID = useMemo(() => new Set(userChatsId), [userChatsId]);
 
@@ -312,7 +311,7 @@ const Messages = () => {
                 : (userName?.userId.firstName ?? "Unknown")
             }
             users={selectedChat?.users}
-            yourID={userData?._j?.id || ""}
+            yourID={userData?.id || ""}
             isGroupChat={selectedChat?.isGroupChat}
             isRequestNotAccepted={currTab == "Requests"}
             chatId={selectedChat?._id}
@@ -336,7 +335,7 @@ const Messages = () => {
             profileCover={selectedChat?.groupLogoImage ?? ""}
             isRequest={isRequest}
             isGroupChat={selectedChat?.isGroupChat}
-            yourID={userData?._j?.id || ""}
+            yourID={userData?.id || ""}
             isRequestNotAccepted={currTab == "Message Requests"}
             setCurrTab={setCurrTab}
           />

@@ -18,6 +18,7 @@ export type RootStackParamList = {
   University: {
     data: any;
   };
+  YourConnections: undefined;
   //   University: {
 
   //       pathUrl: string;

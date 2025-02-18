@@ -5,8 +5,8 @@ interface ReusableButtonProps {
   onPress?: () => void;
   isLoading?: boolean;
   disabled?: boolean;
-  buttonText?: string;
-  variant?:
+  buttonText: string;
+  variant:
     | "primary"
     | "secondary"
     | "border"
@@ -25,7 +25,7 @@ const ReusableButton: React.FC<ReusableButtonProps> = ({
   buttonText = "Button",
   variant = "primary",
   containerStyle = "",
-  textStyle = "text-white",
+  textStyle = "",
   activityIndicatorColor = "#fff",
 }) => {
   const variantClasses = {
@@ -38,7 +38,17 @@ const ReusableButton: React.FC<ReusableButtonProps> = ({
       "bg-secondary border border-[#E9E8FF] text-primary-500 drop-shadow-sm",
   };
 
+  const textColor = {
+    primary: "text-white",
+    secondary: "text-white",
+    border: "text-neutral-800 shadow-button",
+    border_primary: "text-primary",
+    danger: "text-white",
+    shade: "text-primary-500 ",
+  };
+
   const variantClass = variantClasses[variant] || "";
+  const textColorClass = textColor[variant] || "";
 
   return (
     <TouchableOpacity
@@ -49,7 +59,7 @@ const ReusableButton: React.FC<ReusableButtonProps> = ({
       {isLoading ? (
         <ActivityIndicator color={activityIndicatorColor} />
       ) : (
-        <Text className={`text-center font-bold ${textStyle}`}>
+        <Text className={`text-center font-bold ${textColorClass}`}>
           {buttonText}
         </Text>
       )}
