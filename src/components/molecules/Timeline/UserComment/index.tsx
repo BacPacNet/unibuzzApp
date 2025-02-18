@@ -12,40 +12,8 @@ import dayjs from "dayjs";
 import { getUserStore } from "@/storage/user";
 import RenderHTML from "react-native-render-html";
 import ImageGallery from "../../ImageGrid";
+import { CommentsProp } from "@/types/postType";
 
-type comments = {
-  item: {
-    _id: string;
-    replies: comments[];
-    likeCount: string[];
-    level: number;
-    commenterId: {
-      firstName: string;
-      lastName: string;
-    };
-    commenterProfileId: {
-      profile_dp: {
-        imageUrl: string;
-      };
-
-      university_name: string;
-      study_year: string;
-      degree: string;
-      major: string;
-    };
-    content: string;
-    createdAt: string;
-    totalCount: string;
-    imageUrl: any;
-  };
-  width: any;
-  setShowReply?: any;
-  showReply?: any;
-  setReplyingTo: (value: any) => void;
-  likePostCommentHandler: (value: string) => void;
-  setShowTotalReply: (value: number) => void;
-  showTotalReply: number;
-};
 const UserComment = ({
   item,
   width,
@@ -55,7 +23,7 @@ const UserComment = ({
   likePostCommentHandler,
   setShowTotalReply,
   showTotalReply,
-}: comments) => {
+}: CommentsProp) => {
   const userData: any = getUserStore();
 
   const handleReplyTo = (data: any) => {

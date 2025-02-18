@@ -104,7 +104,7 @@ function ApplicationNavigator() {
         <Stack.Screen name="Timeline" component={Timeline} />
         {/* <Stack.Screen name="New_Post" component={NewPost} /> */}
         <Stack.Screen
-          name="New_Post"
+          name="NewPost"
           component={NewPost}
           options={{
             gestureEnabled: true,
@@ -183,7 +183,7 @@ function ApplicationNavigator() {
                   color={"#6B7280"}
                 />
               ));
-            } else if (route.name === "AI_Assistant") {
+            } else if (route.name === "AIAssistant") {
               return (iconName = focused ? (
                 <Spark height={24} width={24} color={"#6744FF"} />
               ) : (
@@ -214,7 +214,7 @@ function ApplicationNavigator() {
         <Tab.Screen name="Messages" component={Messages} />
         {/* <Tab.Screen name="Example" component={Example} /> */}
         <Tab.Screen name="Notifications" component={Notifications} />
-        <Tab.Screen name="AI_Assistant" component={AI_Assistant} />
+        <Tab.Screen name="AIAssistant" component={AI_Assistant} />
         <Tab.Screen
           name="DiscoverStack"
           component={DiscoverStack}
@@ -342,7 +342,7 @@ function ApplicationNavigator() {
             <View className="flex flex-row gap-4 items-center">
               {currScreen === "timeline" && (
                 <Pressable
-                  onPress={() => navigation.navigate("New_Post")}
+                  onPress={() => navigation.navigate("NewPost")}
                   style={{
                     backgroundColor: "#F3F2FF",
                     paddingHorizontal: 16,

@@ -19,54 +19,15 @@ import ActionSheet, {
   FlatList,
 } from "react-native-actions-sheet";
 import CommentBottomSheet from "../CommentBottomSheet";
-import { PostType } from "@/types/postType";
+import { PostCardType, PostType } from "@/types/postType";
 import { useLikeUnlikeTimelinePost } from "@/services/timeline";
 import { useLikeUnilikeGroupPost } from "@/services/communityPost";
 import { getUserStore } from "@/storage/user";
+import { Toast } from "react-native-toast-notifications";
 
 type NavigationProp = StackNavigationProp<RootStackParamList, "Timeline">;
 
-type Props = {
-  data: {
-    user: {
-      firstName: string;
-      lastName: string;
-      _id: string;
-    };
-    _id: string;
-    university: string;
-    adminId: string;
-    year: string;
-    text: string;
-    link?: string;
-    date: string;
-    avatarLink: string;
-    communityGroupId?: string;
-    communityId?: string;
-    commentCount: number;
-    content?: string;
-    // likes: Like[]
-    // postID: string
-    // type: PostType.Community | PostType.Timeline
-    userProfile: {
-      study_year: string;
-      degree: string;
-      university_name: string;
-      profile_dp: {
-        imageUrl: string;
-      };
-      major: string;
-    };
-
-    imageUrl: {
-      imageUrl: string;
-    }[];
-    createdAt: string;
-    likeCount: string[];
-  };
-};
-
-const PostCard = memo(({ data }: Props) => {
+const PostCard = memo(({ data }: PostCardType) => {
   const { navigate } = useNavigation<NavigationProp>();
   const { width } = useWindowDimensions();
   const userData: any = getUserStore();
@@ -79,24 +40,14 @@ const PostCard = memo(({ data }: Props) => {
     );
   const { mutate: LikeUnlikeTimelinePost, isPending: isLikeUnlikePending } =
     useLikeUnlikeTimelinePost();
-  const sharePost = async () => {
-    try {
-      const result = await Share.share({
-        message:
-          "Hey, check out this amazing post! https://example.com/post/123",
-      });
 
-      if (result.action === Share.sharedAction) {
-        if (result.activityType) {
-          console.log("Shared with activity type:", result.activityType);
-        } else {
-          console.log("Shared successfully");
-        }
-      } else if (result.action === Share.dismissedAction) {
-        console.log("Share dismissed");
-      }
-    } catch (error) {
-      console.log("Error sharing:", error);
+  const sharePost = async (
+    message = "Hey, check out this amazing post! https://example.com/post/123"
+  ) => {
+    try {
+      await Share.share({ message });
+    } catch (error: any) {
+      Toast.show(error || "Something went wrong");
     }
   };
 
@@ -172,7 +123,7 @@ const PostCard = memo(({ data }: Props) => {
         </View>
 
         <TouchableOpacity
-          onPress={sharePost}
+          onPress={() => sharePost()}
           className="flex flex-row gap-2 items-center"
         >
           <ShareAndroid height={24} width={24} />
