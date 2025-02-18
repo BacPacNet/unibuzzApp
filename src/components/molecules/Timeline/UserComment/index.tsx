@@ -1,11 +1,5 @@
-import React, { useState } from "react";
-import {
-  Image,
-  Text,
-  TouchableOpacity,
-  useWindowDimensions,
-  View,
-} from "react-native";
+import React, { memo } from "react";
+import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import avatar from "../../../../assets/avatar.png";
 import {
   ChatBubbleEmpty,
@@ -16,11 +10,8 @@ import {
 } from "iconoir-react-native";
 import dayjs from "dayjs";
 import { getUserStore } from "@/storage/user";
-import RenderHTML, {
-  defaultHTMLElementModels,
-  HTMLContentModel,
-  HTMLElementModel,
-} from "react-native-render-html";
+import RenderHTML from "react-native-render-html";
+import ImageGallery from "../../ImageGrid";
 
 type comments = {
   item: {
@@ -40,10 +31,12 @@ type comments = {
       university_name: string;
       study_year: string;
       degree: string;
+      major: string;
     };
     content: string;
     createdAt: string;
     totalCount: string;
+    imageUrl: any;
   };
   width: any;
   setShowReply?: any;
@@ -64,7 +57,6 @@ const UserComment = ({
   showTotalReply,
 }: comments) => {
   const userData: any = getUserStore();
-  //   const { width } = useWindowDimensions();
 
   const handleReplyTo = (data: any) => {
     if (item?.level == 0) {
@@ -76,12 +68,7 @@ const UserComment = ({
     }
   };
   return (
-    <View
-      style={{
-        paddingHorizontal: 12,
-      }}
-      className="p-4 flex gap-2"
-    >
+    <View style={styles.container}>
       <View className="flex flex-row justify-between   ">
         <View className="flex-1 flex-row items-center gap-4 justify-center">
           <View className=" ">
@@ -91,7 +78,7 @@ const UserComment = ({
                   ? { uri: item?.commenterProfileId?.profile_dp?.imageUrl }
                   : avatar
               }
-              style={{ width: 52, height: 52 }}
+              style={styles.profileImage}
               className=" rounded-full"
               resizeMode="cover"
             />
@@ -106,21 +93,18 @@ const UserComment = ({
                 {item?.commenterId?.firstName} {item?.commenterId?.lastName}
               </Text>
               <View className="flex">
-                <Text style={{ fontSize: 12 }} className="text-neutral-500 ">
+                <Text style={styles.userDetails}>
                   {item?.commenterProfileId?.study_year}.
                   {item?.commenterProfileId?.degree}
                 </Text>
-                <Text style={{ fontSize: 12 }} className="text-neutral-500 ">
-                  Biological engineering
+                <Text style={styles.userDetails}>
+                  {item?.commenterProfileId?.major}
                 </Text>
               </View>
             </View>
 
             <View className="flex justify-center items-center ">
-              <TouchableOpacity
-                style={{ backgroundColor: "#f5f5f5" }}
-                className="bg-neutral-100 rounded-full p-2"
-              >
+              <TouchableOpacity style={styles.moreButton}>
                 <MoreHoriz height={24} width={24} />
               </TouchableOpacity>
             </View>
@@ -137,6 +121,10 @@ const UserComment = ({
           ignoredDomTags={["label", "input"]}
         />
       </View>
+      <ImageGallery
+        images={item?.imageUrl}
+        imageCount={item?.imageUrl?.length}
+      />
       <View>
         <Text>{dayjs(item?.createdAt).format("h:mm A · MMM D, YYYY")}</Text>
       </View>
@@ -183,7 +171,7 @@ const UserComment = ({
         </View>
       </View>
       {item?.replies?.length > 0 && showReply == item._id && (
-        <View style={{ marginLeft: 20 }}>
+        <View style={styles.repliesContainer}>
           {item.replies
             .slice(0, showTotalReply)
             .map((reply: any, index: number) => (
@@ -202,23 +190,89 @@ const UserComment = ({
             item?.replies?.length > showTotalReply && (
               <TouchableOpacity
                 onPress={() => setShowTotalReply(showTotalReply + 4)}
-                style={{ paddingVertical: 4 }}
+                style={styles.showMoreButton}
               >
-                <Text style={{ color: "#6647FF", fontSize: 14 }}>
-                  Show More
-                </Text>
+                <Text style={styles.showMoreText}>Show More</Text>
               </TouchableOpacity>
             )}
         </View>
       )}
-      {/* <TouchableOpacity
-        onPress={() => setShowTotalReply(showTotalReply + 2)}
-        style={{ paddingVertical: 4 }}
-      >
-        <Text style={{ color: "#6647FF", fontSize: 14 }}>{"Show More"}</Text>
-      </TouchableOpacity> */}
     </View>
   );
 };
 
 export default UserComment;
+
+const styles = StyleSheet.create({
+  container: {
+    paddingHorizontal: 12,
+    paddingVertical: 16,
+    display: "flex",
+    gap: 10,
+  },
+  header: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+  },
+  profileSection: {
+    flex: 1,
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 16,
+    justifyContent: "center",
+  },
+  profileImage: {
+    width: 52,
+    height: 52,
+    borderRadius: 26,
+  },
+  userInfo: {
+    flex: 1,
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  userTextContainer: {
+    flex: 1,
+  },
+  userName: {
+    color: "#4B5563",
+    fontSize: 14,
+    fontWeight: "600",
+  },
+  userDetails: {
+    fontSize: 12,
+    color: "#6B7280",
+  },
+  moreButtonContainer: {
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  moreButton: {
+    backgroundColor: "#f5f5f5",
+    borderRadius: 999,
+    padding: 8,
+  },
+  actionsContainer: {
+    flexDirection: "row",
+    justifyContent: "flex-end",
+  },
+  actions: {
+    flexDirection: "row",
+    gap: 16,
+  },
+  actionButton: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
+  },
+  repliesContainer: {
+    marginLeft: 20,
+  },
+  showMoreButton: {
+    paddingVertical: 4,
+  },
+  showMoreText: {
+    color: "#6647FF",
+    fontSize: 14,
+  },
+});

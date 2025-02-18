@@ -18,7 +18,8 @@ const Timeline = () => {
     isFetchingNextPage: timelinePostIsFetchingNextPage,
     hasNextPage: timelinePostHasNextPage,
     isFetching,
-  } = useGetTimelinePosts(2);
+  } = useGetTimelinePosts(10);
+
   const queryClient = useQueryClient();
   const { changeHeaderShownStatus, setCurrScreen } = useHeader();
   const [lastOffset, setLastOffset] = useState(0);
@@ -72,6 +73,15 @@ const Timeline = () => {
             timelinePostsNextpage();
           }
         }}
+        ListFooterComponent={
+          timelinePostIsFetchingNextPage && timelinePostHasNextPage ? (
+            <View>
+              <ActivityIndicator size="large" color="#7367f0" />
+            </View>
+          ) : (
+            <View />
+          )
+        }
         ListEmptyComponent={
           isFetching ? (
             <View className="flex-1 justify-center items-center">

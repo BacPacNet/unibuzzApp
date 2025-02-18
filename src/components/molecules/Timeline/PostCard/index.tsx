@@ -1,4 +1,4 @@
-import React, { useCallback, useRef } from "react";
+import React, { memo, useCallback, useRef } from "react";
 import {
   Share,
   Text,
@@ -55,6 +55,7 @@ type Props = {
       profile_dp: {
         imageUrl: string;
       };
+      major: string;
     };
 
     imageUrl: {
@@ -65,12 +66,11 @@ type Props = {
   };
 };
 
-const PostCard = ({ data }: Props) => {
+const PostCard = memo(({ data }: Props) => {
   const { navigate } = useNavigation<NavigationProp>();
   const { width } = useWindowDimensions();
   const userData: any = getUserStore();
   const commentBottomSheet = useRef<ActionSheetRef>(null);
-  //   console.log("psotC", data?.user?._id);
   const { mutate: LikeUnlikeGroupPost, isPending: isLikeUnlikeGroupPending } =
     useLikeUnilikeGroupPost(
       data.communityId,
@@ -114,7 +114,11 @@ const PostCard = ({ data }: Props) => {
         name={data?.user?.firstName + " " + data?.user?.lastName}
         year={data?.userProfile?.study_year}
         degree={data?.userProfile?.degree}
+        major={data?.userProfile?.major}
         dp={data?.userProfile?.profile_dp?.imageUrl || " "}
+        postId={data._id}
+        type={data?.communityId ? PostType.Community : PostType.Timeline}
+        isAdmin={data.user?._id == userData?._j?.id}
       />
 
       <ImageGridLayout imagesData={data?.imageUrl || []} />
@@ -172,7 +176,6 @@ const PostCard = ({ data }: Props) => {
           className="flex flex-row gap-2 items-center"
         >
           <ShareAndroid height={24} width={24} />
-          {/* <Text>4</Text> */}
         </TouchableOpacity>
       </View>
 
@@ -194,6 +197,6 @@ const PostCard = ({ data }: Props) => {
       </ActionSheet>
     </View>
   );
-};
+});
 
 export default PostCard;

@@ -7,6 +7,29 @@ import {
 import { client } from "./api-client";
 import { Toast } from "react-native-toast-notifications";
 
+export async function deleteCommunityPost(postId: string, token: string) {
+  const response = await client(`/communityPost/${postId}`, {
+    method: "DELETE",
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  return response;
+}
+
+export const useDeleteCommunityPost = () => {
+  const cookieValue = getToken() as string;
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (postId: string) => deleteCommunityPost(postId, cookieValue),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["communityGroupsPost"] });
+      queryClient.invalidateQueries({ queryKey: ["timelinePosts"] });
+    },
+    onError: (res: any) => {
+      Toast.show(res.response?.data.message || "Something went wrong");
+    },
+  });
+};
+
 export async function getCommunityPostComments(
   postId: string,
   token: any,

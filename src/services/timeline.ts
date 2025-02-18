@@ -9,7 +9,7 @@ import { Toast } from "react-native-toast-notifications";
 import { PostType } from "@/types/postType";
 
 export async function getAllTimelinePosts(
-  token: any,
+  token: string,
   page: number,
   limit: number
 ) {
@@ -21,7 +21,7 @@ export async function getAllTimelinePosts(
 }
 
 export function useGetTimelinePosts(limit: number) {
-  const cookieValue = getToken();
+  const cookieValue = getToken() as string;
 
   return useInfiniteQuery({
     queryKey: ["timelinePosts"],
@@ -38,7 +38,7 @@ export function useGetTimelinePosts(limit: number) {
   });
 }
 
-export async function CreateUserPost(data: any, token: any) {
+export async function CreateUserPost(data: any, token: string) {
   const response = await client(`/userpost/`, {
     method: "POST",
     headers: { Authorization: `Bearer ${token}` },
@@ -48,7 +48,7 @@ export async function CreateUserPost(data: any, token: any) {
 }
 
 export const useCreateUserPost = () => {
-  const cookieValue = getToken();
+  const cookieValue = getToken() as string;
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (data: any) => CreateUserPost(data, cookieValue),
@@ -65,11 +65,34 @@ export const useCreateUserPost = () => {
   });
 };
 
+export async function DeleteUserPost(postId: string, token: string) {
+  const response = await client(`/userpost/${postId}`, {
+    method: "DELETE",
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  return response;
+}
+
+export const useDeleteUserPost = () => {
+  const cookieValue = getToken() as string;
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (postId: string) => DeleteUserPost(postId, cookieValue),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["userPosts"] });
+      queryClient.invalidateQueries({ queryKey: ["timelinePosts"] });
+    },
+    onError: (error: any) => {
+      Toast.show(error.response?.data.message || "Something went wrong");
+    },
+  });
+};
+
 // comments
 
 export async function getUserPostComments(
   postId: string,
-  token: any,
+  token: string,
   page: number,
   limit: number
 ) {
@@ -86,7 +109,7 @@ export function useGetUserPostComments(
   limit: number
 ) {
   {
-    const cookieValue = getToken();
+    const cookieValue = getToken() as string;
 
     return useInfiniteQuery({
       queryKey: ["userPostComments"],
@@ -104,7 +127,7 @@ export function useGetUserPostComments(
   }
 }
 
-export async function LikeUnilikeUserPost(postId: string, token: any) {
+export async function LikeUnilikeUserPost(postId: string, token: string) {
   const response: any = await client(`/userpost/likeunlike/${postId}`, {
     method: "PUT",
     headers: { Authorization: `Bearer ${token}` },
@@ -113,7 +136,7 @@ export async function LikeUnilikeUserPost(postId: string, token: any) {
 }
 
 export const useLikeUnlikeTimelinePost = () => {
-  const cookieValue = getToken();
+  const cookieValue = getToken() as string;
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (postId: string) => LikeUnilikeUserPost(postId, cookieValue),
@@ -143,7 +166,7 @@ export const useLikeUnlikeTimelinePost = () => {
   });
 };
 
-export async function CreateUserPostComment(data: any, token: any) {
+export async function CreateUserPostComment(data: any, token: string) {
   const response = await client(`/userpostcomment/${data.postID}`, {
     method: "POST",
     headers: { Authorization: `Bearer ${token}` },
@@ -153,7 +176,7 @@ export async function CreateUserPostComment(data: any, token: any) {
 }
 
 export const useCreateUserPostComment = (isSinglePost: boolean) => {
-  const cookieValue = getToken();
+  const cookieValue = getToken() as string;
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (data: any) => CreateUserPostComment(data, cookieValue),
@@ -175,7 +198,7 @@ export const useCreateUserPostComment = (isSinglePost: boolean) => {
 
 export async function LikeUnlikeUserPostComment(
   UserPostCommentId: string,
-  token: any
+  token: string
 ) {
   const response = await client(
     `/userpostcomment/likeUnlike/${UserPostCommentId}`,
@@ -188,7 +211,7 @@ export async function LikeUnlikeUserPostComment(
 }
 
 export const useLikeUnlikeUserPostComment = () => {
-  const cookieValue = getToken();
+  const cookieValue = getToken() as string;
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (userPostCommentId: string) =>
@@ -203,7 +226,7 @@ export const useLikeUnlikeUserPostComment = () => {
   });
 };
 
-export async function CreateUserPostCommentReply(data: any, token: any) {
+export async function CreateUserPostCommentReply(data: any, token: string) {
   const response = await client(`/userpostcomment/${data.commentId}/replies`, {
     method: "POST",
     headers: { Authorization: `Bearer ${token}` },
@@ -216,7 +239,7 @@ export const useCreateUserPostCommentReply = (
   isNested: boolean,
   type: PostType.Community | PostType.Timeline
 ) => {
-  const cookieValue = getToken();
+  const cookieValue = getToken() as string;
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (data: any) => CreateUserPostCommentReply(data, cookieValue),

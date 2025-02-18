@@ -1,14 +1,14 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import {
   ActivityIndicator,
   Keyboard,
   KeyboardAvoidingView,
   Platform,
+  StyleSheet,
   Text,
   View,
 } from "react-native";
 import { FlatList } from "react-native-actions-sheet";
-import userComment from "../UserComment";
 import {
   useCreateUserPostComment,
   useCreateUserPostCommentReply,
@@ -25,24 +25,34 @@ import {
   Toolbar,
   useEditorBridge,
 } from "@10play/tentap-editor";
-import Placeholder from "@tiptap/extension-placeholder";
-import { SafeAreaView } from "react-native-safe-area-context";
 import { TouchableOpacity } from "react-native-gesture-handler";
-import { SendSolid, X, XmarkCircle } from "iconoir-react-native";
+import { MediaImage, SendSolid, X, XmarkCircle } from "iconoir-react-native";
 import { getUserProfileStore } from "@/storage/user";
 import UserComment from "../UserComment";
+
 import {
   useCreateGroupPostComment,
   useCreateGroupPostCommentReply,
   useGetCommunityPostComments,
   useLikeUnlikeGroupPostComment,
 } from "@/services/communityPost";
+import { launchImageLibrary } from "react-native-image-picker";
+import { replaceImage } from "@/services/uploadImage";
 
 type Props = {
   postId: string;
   type: PostType.Community | PostType.Timeline;
   width: any;
   adminID: string;
+};
+
+type ImageAsset = {
+  uri: string;
+  fileName?: string;
+  fileSize?: number;
+  height?: number;
+  width?: number;
+  type?: string;
 };
 
 const CommentBottomSheet = ({ postId, type, width, adminID }: Props) => {
@@ -52,6 +62,7 @@ const CommentBottomSheet = ({ postId, type, width, adminID }: Props) => {
   const [replyingTo, setReplyingTo] = useState<any>(null);
   const [showTotalReply, setShowTotalReply] = useState(4);
   const userProfileData: any = getUserProfileStore();
+  const [images, setImages] = useState<ImageAsset[]>([]);
   const editor = useEditorBridge({
     // autofocus: true,
     avoidIosKeyboard: true,
@@ -133,12 +144,41 @@ const CommentBottomSheet = ({ postId, type, width, adminID }: Props) => {
     };
   }, []);
 
+  const processImages = async (imagesData: any[]) => {
+    const promises = imagesData.map((image) => replaceImage(image, ""));
+    const results = await Promise.all(promises);
+    return results.map((result) => ({
+      imageUrl: result?.imageUrl,
+      publicId: result?.publicId,
+    }));
+  };
+
+  const handleImagePick = useCallback(() => {
+    launchImageLibrary(
+      { mediaType: "photo", selectionLimit: 0 },
+      (response: any) => {
+        if (response.assets && response.assets.length > 0) {
+          setImages((prevImages) => [...prevImages, ...response.assets]);
+        }
+      }
+    );
+  }, []);
+
+  const handleImageRemove = useCallback((index: number) => {
+    setImages((prev) => prev.filter((_, i) => i !== index));
+  }, []);
+
   const handleComment = async () => {
     const text = await editor.getHTML();
+    let fileLinks;
+    if (images && images.length > 0) {
+      fileLinks = await processImages(images);
+    }
     const data: any = {
       postID: postId,
       content: text,
       commenterProfileId: userProfileData._id,
+      imageUrl: fileLinks,
     };
 
     if (type == PostType.Timeline) {
@@ -163,6 +203,8 @@ const CommentBottomSheet = ({ postId, type, width, adminID }: Props) => {
         CreateGroupPostComment(data);
       }
     }
+
+    setImages([]);
   };
 
   const likePostCommentHandler = (commentId: string) => {
@@ -178,14 +220,7 @@ const CommentBottomSheet = ({ postId, type, width, adminID }: Props) => {
     (communityCommentsIsFetching && !communityPostCommentsData.length)
   ) {
     return (
-      <View
-        style={{
-          height: "100%",
-          display: "flex",
-          justifyContent: "space-between",
-        }}
-        className="relative"
-      >
+      <View style={styles.fullHeight} className="relative">
         <View className="flex-1 justify-center items-center">
           <ActivityIndicator size="large" color="#7367f0" />
         </View>
@@ -194,22 +229,15 @@ const CommentBottomSheet = ({ postId, type, width, adminID }: Props) => {
   }
 
   return (
-    <View
-      style={{
-        height: "100%",
-        display: "flex",
-        justifyContent: "space-between",
-      }}
-      className="relative"
-    >
-      <View style={{ marginBottom: keyboardOffset ? 150 : 100 }}>
+    <View style={styles.fullHeight}>
+      <View style={{ marginBottom: keyboardOffset ? 150 : 80 }}>
         <FlatList
           data={
             type == PostType.Community
               ? communityPostCommentsData
               : userCommentsData
           }
-          style={{ width: "100%" }}
+          style={styles.flatList}
           keyExtractor={(item, index) => item._id + index}
           renderItem={({ item }) =>
             UserComment({
@@ -245,16 +273,16 @@ const CommentBottomSheet = ({ postId, type, width, adminID }: Props) => {
                 <ActivityIndicator size="large" color="#7367f0" />
               </View>
             ) : (
-              <View></View>
+              <View />
             )
           }
           ListEmptyComponent={
             isFetching || communityCommentsIsFetching ? (
-              <View className="flex-1 justify-center items-center">
+              <View style={styles.loaderContainer}>
                 <ActivityIndicator size="large" color="#7367f0" />
               </View>
             ) : (
-              <View className="flex-1 justify-center items-center">
+              <View style={styles.emptyContainer}>
                 <Text>No Result Found</Text>
               </View>
             )
@@ -262,49 +290,52 @@ const CommentBottomSheet = ({ postId, type, width, adminID }: Props) => {
         />
       </View>
 
-      <View className="w-full flex justify-center items-center">
+      <View style={styles.centered}>
         <View
-          style={{
-            bottom: 0,
-            height: keyboardOffset > 0 ? 100 : 60,
-            marginBottom: 6,
-            width: "95%",
-          }}
-          className="absolute w-11/12   bg-white p-2 border rounded-lg border-neutral-300 "
+          style={[
+            styles.commentContainer,
+            {
+              height: keyboardOffset > 0 ? 100 : 50,
+            },
+          ]}
         >
-          {replyingTo?.name && (
-            <View
-              style={{ top: -12, left: 10 }}
-              className="absolute flex flex-row w-40 justify-between"
-            >
-              <Text className="  text-black bg-white">
-                Replying to {replyingTo?.name}
-              </Text>
+          {replyingTo?.name ? (
+            <View style={styles.replyingToContainer}>
+              <TouchableOpacity
+                onPress={handleImagePick}
+                style={styles.mediaIcon}
+              >
+                <MediaImage height={20} width={20} color={"#a3a3a3"} />
+              </TouchableOpacity>
+              <Text>Replying to {replyingTo?.name}</Text>
               <TouchableOpacity onPress={() => setReplyingTo(null)}>
                 <XmarkCircle
                   height={18}
                   width={18}
                   color={"black"}
-                  style={{ backgroundColor: "#f5f5f5", padding: 5 }}
+                  style={styles.closeIcon}
                 />
               </TouchableOpacity>
+            </View>
+          ) : (
+            <View style={styles.replyingToContainer}>
+              <TouchableOpacity
+                onPress={handleImagePick}
+                style={styles.mediaIcon}
+              >
+                <MediaImage height={20} width={20} color={"#a3a3a3"} />
+              </TouchableOpacity>
+              <Text>Commenting on Post</Text>
             </View>
           )}
 
           <TouchableOpacity
-            style={{
-              backgroundColor: "#6744FF",
-              position: "absolute",
-              bottom: keyboardOffset > 0 ? -40 : -50,
-              zIndex: 100,
-              right: 0,
-              height: 40,
-              width: 40,
-              //   borderRadius: 500,
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-            }}
+            style={[
+              styles.sendButton,
+              {
+                bottom: keyboardOffset > 0 ? -45 : -45,
+              },
+            ]}
             onPress={() => handleComment()}
           >
             {CreateGroupPostCommentLoading ||
@@ -316,15 +347,11 @@ const CommentBottomSheet = ({ postId, type, width, adminID }: Props) => {
               <SendSolid height={18} width={18} color={"white"} />
             )}
           </TouchableOpacity>
-          <RichText style={{ marginRight: 40 }} editor={editor} />
+          <RichText style={styles.richText} editor={editor} />
 
           <KeyboardAvoidingView
             behavior={Platform.OS === "ios" ? "padding" : "height"}
-            style={{
-              position: "absolute",
-              width: "100%",
-              bottom: 0,
-            }}
+            style={styles.keyboardAvoidingView}
           >
             <Toolbar editor={editor} />
           </KeyboardAvoidingView>
@@ -335,3 +362,80 @@ const CommentBottomSheet = ({ postId, type, width, adminID }: Props) => {
 };
 
 export default CommentBottomSheet;
+
+const styles = StyleSheet.create({
+  fullHeight: {
+    height: "100%",
+    display: "flex",
+    justifyContent: "space-between",
+  },
+  loaderContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  flatList: {
+    width: "100%",
+  },
+  emptyContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  centered: {
+    width: "100%",
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  commentContainer: {
+    bottom: 0,
+    marginBottom: 6,
+    width: "95%",
+    position: "absolute",
+    backgroundColor: "white",
+    borderWidth: 1,
+    borderRadius: 8,
+    borderColor: "#d4d4d4",
+    paddingLeft: 10,
+  },
+  replyingToContainer: {
+    position: "absolute",
+    top: -12,
+    left: 10,
+    flexDirection: "row",
+    justifyContent: "space-between",
+    width: 160,
+    zIndex: 20,
+  },
+  closeIcon: {
+    backgroundColor: "#f5f5f5",
+    padding: 5,
+  },
+  mediaIcon: {
+    marginStart: 16,
+    position: "absolute",
+    left: -24,
+  },
+  sendButton: {
+    backgroundColor: "#6744FF",
+    position: "absolute",
+    zIndex: 100,
+    right: 0,
+    height: 40,
+    width: 40,
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    borderRadius: 300,
+  },
+  richText: {
+    marginRight: 40,
+    paddingLeft: 20,
+  },
+  keyboardAvoidingView: {
+    position: "absolute",
+    width: "100%",
+    bottom: 0,
+  },
+});
