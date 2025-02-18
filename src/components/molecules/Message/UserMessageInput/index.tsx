@@ -56,7 +56,7 @@ const UserMessageInput = ({
   //   const { mutateAsync: acceptRequest, isError } = useAcceptRequest();
   const queryClient = useQueryClient();
   const { socket } = useSocket();
-  const userData: any = getUserStore();
+  const userData = getUserStore();
   const userProfileData: any = getUserProfileStore();
   const optimisticId = "abc123";
 
@@ -80,7 +80,7 @@ const UserMessageInput = ({
       _id: optimisticId,
       content: text,
       chatId,
-      sender: { firstName: userData?._j?.firstName },
+      sender: { firstName: userData?.firstName },
       createdAt: new Date().toISOString(),
       reactions: [],
       media: optimisticImage.length > 0 ? optimisticImage : undefined,

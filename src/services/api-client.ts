@@ -27,7 +27,7 @@ const client = async <T, U>(
     userCode,
     email,
     ...rest
-  }: RequestData<U> = {},
+  }: RequestData<U> = {}
 ): Promise<ServerResponse<T>> => {
   const config: AxiosRequestConfig = {
     url: customBaseUrl
@@ -52,7 +52,7 @@ const client = async <T, U>(
           return resp.items;
         }
         return resp;
-      },
+      }
     ),
     ...rest,
   };

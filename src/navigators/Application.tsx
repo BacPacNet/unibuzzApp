@@ -3,12 +3,9 @@ import {
   DrawerActions,
   NavigationContainer,
   useNavigation,
-  useNavigationState,
-  useRoute,
 } from "@react-navigation/native";
-import { SafeAreaProvider } from "react-native-safe-area-context";
 
-import { Example, LoginScreen, Timeline, RegisterScreen } from "@/screens";
+import { LoginScreen, RegisterScreen } from "@/screens";
 import { useTheme } from "@/theme";
 
 import type { RootStackParamList } from "@/types/navigation";
@@ -19,42 +16,22 @@ import AuthGuard from "@/components/template/AuthGuard/AuthGuard";
 import UnauthenticatedGuard from "@/components/template/UnauthenticatedGuard/UnauthenticatedGuard";
 import { useAuth } from "@/context/AuthProvider/AuthContext";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import {
-  Eye,
-  EyeClosed,
-  HomeSimpleDoor,
-  Group,
-  Mail,
-  Bell,
-  Spark,
-  Menu,
-  MailSolid,
-  BellNotificationSolid,
-} from "iconoir-react-native";
+import { Menu } from "iconoir-react-native";
 import Notifications from "@/screens/NotificationsScreen";
-import Connections from "@/screens/ConnectionScreen";
 import Messages from "@/screens/MessagesScreen";
 import AI_Assistant from "@/screens/AIAssistantScreen";
-import {
-  Animated,
-  Button,
-  Image,
-  LayoutAnimation,
-  Pressable,
-  Text,
-  View,
-} from "react-native";
-import { getUserStore } from "@/storage/user";
-// import { createDrawerNavigator } from "@react-navigation/drawer";
+import { Animated, Image, Pressable, Text, View } from "react-native";
+import { getUserStore, getUserProfileStore } from "@/storage/user";
 import { Drawer } from "react-native-drawer-layout";
 import { createDrawerNavigator } from "@react-navigation/drawer";
-import AllUniversities from "@/screens/AllUniversity";
-import University from "@/screens/University";
 import { SocketProvider } from "@/context/SocketProvider/SocketProvider";
+import ConnectionStack from "./ConnectionStack";
+import avatar from "@/assets/avatar.png";
 
-import NewPost from "@/screens/NewPost";
-import ReusableButton from "@/components/atoms/ReusableButton";
 import { HeaderProvider, useHeader } from "@/context/HeaderProvider/Header";
+import HomeStack from "./HomeStack";
+import DiscoverStack from "./DiscoverStack";
+import tabIcons from "@/constant/tabIcons";
 
 const Stack = createStackNavigator<RootStackParamList>();
 const Tab = createBottomTabNavigator<RootStackParamList>();
@@ -63,6 +40,7 @@ function ApplicationNavigator() {
   const { variant, navigationTheme } = useTheme();
   const { isAuthenticated, setAuthenticated, deauthenticate } = useAuth();
   const [isAppFirstLaunched, setIsAppFirstLaunched] = useState(false);
+  const userProfileStore = getUserProfileStore();
 
   useEffect(() => {
     const appData = storage.contains("isAppFirstLaunched");
@@ -72,147 +50,30 @@ function ApplicationNavigator() {
     } else {
       setIsAppFirstLaunched(false);
     }
-    const user: any = getUserStore();
+    const user = getUserStore();
 
-    if (user?._j?.id) {
+    if (user?.id) {
       setAuthenticated();
     }
-
-    // AsyncStorage.removeItem('isAppFirstLaunched');
   }, []);
-
-  // Discover Stack
-  function DiscoverStack() {
-    return (
-      <Stack.Navigator screenOptions={{ headerShown: false }}>
-        <Stack.Screen name="Discover" component={AllUniversities} />
-        <Stack.Screen
-          name="University"
-          component={University}
-          options={{
-            gestureEnabled: true,
-            gestureDirection: "horizontal",
-          }}
-        />
-      </Stack.Navigator>
-    );
-  }
-
-  function StackGroup() {
-    return (
-      <Stack.Navigator screenOptions={{ headerShown: false }}>
-        <Stack.Screen name="Timeline" component={Timeline} />
-        {/* <Stack.Screen name="New_Post" component={NewPost} /> */}
-        <Stack.Screen
-          name="NewPost"
-          component={NewPost}
-          options={{
-            gestureEnabled: true,
-            gestureDirection: "horizontal",
-          }}
-        />
-        <Stack.Screen name="Example" component={Example} />
-      </Stack.Navigator>
-    );
-  }
 
   //tabs
   function TabsGroup() {
     return (
       <Tab.Navigator
-        screenOptions={({ route, navigation }) => ({
-          // headerTitleAlign: "center",
-
-          tabBarIcon: ({ focused, color, size }) => {
-            let iconName;
-            if (route.name === "Home") {
-              return (iconName = focused ? (
-                <HomeSimpleDoor
-                  fill={"#6744FF"}
-                  height={24}
-                  width={24}
-                  color={"white"}
-                />
-              ) : (
-                <HomeSimpleDoor
-                  color={"white"}
-                  fill={"#6B7280"}
-                  height={24}
-                  width={24}
-                />
-              ));
-            } else if (route.name === "Example") {
-              return (iconName = focused ? (
-                <Eye height={24} width={24} color={"#6744FF"} />
-              ) : (
-                <EyeClosed height={24} width={24} />
-              ));
-            } else if (route.name === "Connections") {
-              return (iconName = focused ? (
-                <Group
-                  height={24}
-                  width={24}
-                  color={"white"}
-                  fill={"#6744FF"}
-                />
-              ) : (
-                <Group
-                  height={24}
-                  width={24}
-                  color={"white"}
-                  fill={"#6B7280"}
-                />
-              ));
-            } else if (route.name === "Messages") {
-              return (iconName = focused ? (
-                <MailSolid height={24} width={24} color={"#6744FF"} />
-              ) : (
-                <MailSolid height={24} width={24} color={"#6B7280"} />
-              ));
-            } else if (route.name === "Notifications") {
-              return (iconName = focused ? (
-                <BellNotificationSolid
-                  height={24}
-                  width={24}
-                  color={"#6744FF"}
-                />
-              ) : (
-                <BellNotificationSolid
-                  height={24}
-                  width={24}
-                  color={"#6B7280"}
-                />
-              ));
-            } else if (route.name === "AIAssistant") {
-              return (iconName = focused ? (
-                <Spark height={24} width={24} color={"#6744FF"} />
-              ) : (
-                <Spark height={24} width={24} />
-              ));
-            }
-          },
+        screenOptions={({ route }) => ({
+          tabBarIcon: ({ focused }) => tabIcons[route.name]?.(focused) || <></>,
           tabBarActiveTintColor: "#6744FF",
           tabBarInactiveTintColor: "black",
-          tabBarStyle: {
-            backgroundColor: "white",
-
-            height: 60,
-            paddingBottom: 10,
-            paddingTop: 10,
-          },
-          tabBarLabelStyle: {
-            fontSize: 12,
-            fontStyle: "normal",
-            fontWeight: "500",
-          },
+          tabBarStyle: { backgroundColor: "white" },
+          tabBarLabelStyle: { fontSize: 12, fontWeight: "500" },
           headerShown: false,
           tabBarHideOnKeyboard: true,
         })}
       >
-        <Tab.Screen name="Home" component={StackGroup} />
-        <Tab.Screen name="Connections" component={Connections} />
+        <Tab.Screen name="Home" component={HomeStack} />
+        <Tab.Screen name="Connections" component={ConnectionStack} />
         <Tab.Screen name="Messages" component={Messages} />
-        {/* <Tab.Screen name="Example" component={Example} /> */}
         <Tab.Screen name="Notifications" component={Notifications} />
         <Tab.Screen name="AIAssistant" component={AI_Assistant} />
         <Tab.Screen
@@ -287,60 +148,68 @@ function ApplicationNavigator() {
   const LeftDrawerScreen = ({ navigation, setRightDrawerOpen }: any) => {
     const { showHeader, currScreen } = useHeader();
     const [headerTranslateY] = useState(new Animated.Value(0));
-    const [headerHeight, setHeaderHeight] = useState(60);
+    const [headerHeight, setHeaderHeight] = useState(100);
 
-    const animateHeader = useCallback(() => {
-      LayoutAnimation.configureNext(
-        LayoutAnimation.create(
-          200,
-          LayoutAnimation.Types.linear,
-          LayoutAnimation.Properties.opacity
-        )
-      );
+    //const animateHeader = useCallback(() => {
+    //  LayoutAnimation.configureNext(
+    //    LayoutAnimation.create(
+    //      200,
+    //      LayoutAnimation.Types.linear,
+    //      LayoutAnimation.Properties.opacity
+    //    )
+    //  );
 
-      Animated.timing(headerTranslateY, {
-        toValue: showHeader ? 0 : -20,
-        duration: 200,
-        useNativeDriver: true,
-      }).start();
+    //  Animated.timing(headerTranslateY, {
+    //    toValue: showHeader ? 0 : -20,
+    //    duration: 200,
+    //    useNativeDriver: true,
+    //  }).start();
 
-      setHeaderHeight(showHeader ? 60 : 0);
-    }, [showHeader, headerTranslateY]);
+    //  setHeaderHeight(showHeader ? 60 : 0);
+    //}, [showHeader, headerTranslateY]);
 
-    useEffect(() => {
-      animateHeader();
-    }, [showHeader, animateHeader]);
+    //useEffect(() => {
+    //  animateHeader();
+    //}, [showHeader, animateHeader]);
     return (
       <LeftDrawer.Navigator
         screenOptions={{
           drawerPosition: "left",
           headerShown: true,
+          headerLeftContainerStyle: {
+            paddingHorizontal: 16,
+          },
+          headerRightContainerStyle: {
+            paddingHorizontal: 16,
+          },
           headerStyle: {
-            backgroundColor: "#fff",
-            elevation: 4,
-            // shadowColor: "#000",
-            shadowOffset: { width: 0, height: 2 },
-            shadowOpacity: 0.1,
-            shadowRadius: 4,
-            transform: [{ translateY: headerTranslateY }],
-            height: headerHeight,
+            backgroundColor: "white",
+            //elevation: 4,
+            //shadowOffset: { width: 0, height: 2 },
+            //shadowOpacity: 0.1,
+            //shadowRadius: 4,
+            //transform: [{ translateY: headerTranslateY }],
+            borderBottomWidth: 1,
+            borderBottomColor: "#E5E7EB",
+            //height: headerHeight,
           },
 
           headerLeft: () => (
-            <Pressable
-              onPress={() => navigation.dispatch(DrawerActions.openDrawer())}
-            >
-              <Menu
-                style={{ marginLeft: 16 }}
-                height={24}
-                width={24}
-                color={"#6744FF"}
+            <View className="flex flex-row gap-4 items-center">
+              <Pressable
+                onPress={() => navigation.dispatch(DrawerActions.openDrawer())}
+              >
+                <Menu height={24} width={24} color={"#6744FF"} />
+              </Pressable>
+              <Image
+                source={require("../assets/UnibuzzFullLogo.png")}
+                style={{ width: 80, height: 32, resizeMode: "contain" }}
               />
-            </Pressable>
+            </View>
           ),
           headerRight: () => (
             <View className="flex flex-row gap-4 items-center">
-              {currScreen === "timeline" && (
+              {/*{currScreen === "timeline" && (
                 <Pressable
                   onPress={() => navigation.navigate("NewPost")}
                   style={{
@@ -353,26 +222,24 @@ function ApplicationNavigator() {
                 >
                   <Text style={{ color: "#6744FF" }}>Create</Text>
                 </Pressable>
-              )}
+              )}*/}
               <Pressable onPress={() => setRightDrawerOpen(true)}>
                 <Image
-                  source={require("../assets/avatar.png")}
-                  style={{
-                    width: 40,
-                    height: 40,
-                    resizeMode: "contain",
-                    marginRight: 16,
-                  }}
+                  className="w-8 h-8 rounded-full object-cover"
+                  source={
+                    userProfileStore?.profile_dp?.imageUrl
+                      ? { uri: userProfileStore?.profile_dp?.imageUrl }
+                      : avatar
+                  }
                 />
               </Pressable>
             </View>
           ),
-          headerTitle: () => (
-            <Image
-              source={require("../assets/UnibuzzFullLogo.png")}
-              style={{ width: 100, height: 40, resizeMode: "contain" }}
-            />
-          ),
+          headerTitle: () => <></>,
+          //  <Image
+          //      source={require("../assets/UnibuzzFullLogo.png")}
+          //      style={{ width: 100, height: 40, resizeMode: "contain" }}
+          //    />
         }}
         drawerContent={(props) => <AppMenuDrawerContent {...props} />}
       >
