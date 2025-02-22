@@ -25,7 +25,7 @@ export function useUsersProfileForConnections(
   const debouncedSearchTerm = useDebounce(name, 1000);
 
   return useInfiniteQuery({
-    queryKey: ["usersProfileForConnections", debouncedSearchTerm],
+    queryKey: ["usersProfileForConnections"],
     queryFn: ({ pageParam = 1 }) =>
       getAllUsersForConnections(
         cookieValue,

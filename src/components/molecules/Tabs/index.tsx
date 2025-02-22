@@ -1,71 +1,56 @@
-import React, { useState } from "react";
-import { View, Text, TouchableOpacity } from "react-native";
+import { View, Text, Pressable } from "react-native";
+import { useState } from "react";
+import { Bell } from "iconoir-react-native";
 
-interface TabItem {
+type TabItem = {
   label: string;
+  icon?: React.ReactNode;
+  badgeCount?: string;
   content: React.ReactNode;
-}
+};
 
-interface TabsProps {
+type TabsProps = {
   tabs: TabItem[];
-  className?: string;
-  tabAlign?: "left" | "center" | "right";
-  labelSize?: "small" | "medium" | "large";
-  onTabChange?: (index: number) => void; // Callback function prop
-}
+  activeIndex?: number;
+  onChange: (index: number) => void;
+};
 
-const Tabs: React.FC<TabsProps> = ({
-  tabs,
-  className = "",
-  tabAlign = "left",
-  labelSize = "medium",
-  onTabChange, // Accepting callback function
-}) => {
-  const [activeTab, setActiveTab] = useState(0);
-
-  const fontSize = {
-    small: "text-xs",
-    medium: "text-md",
-    large: "text-lg",
-  };
-
-  const handleTabClick = (index: number) => {
-    setActiveTab(index);
-    if (onTabChange) {
-      onTabChange(index); // Notify parent about tab change
-    }
-  };
+export default function Tabs({ tabs, activeIndex = 0, onChange }: TabsProps) {
+  const [selectedTab, setSelectedTab] = useState(activeIndex);
 
   return (
-    <View className={`w-full flex-1 ${className}`}>
-      <View
-        className={`flex-row gap-4 py-4 px-2 border-b border-neutral-200 justify-${tabAlign}`}
-      >
+    <>
+      <View className="flex-row border-b border-neutral-300">
         {tabs.map((tab, index) => (
-          <TouchableOpacity
+          <Pressable
             key={index}
-            onPress={() => handleTabClick(index)}
-            className={`rounded-full ${
-              activeTab === index ? "bg-primary-500" : "bg-secondary"
+            onPress={() => {
+              setSelectedTab(index);
+              onChange(index);
+            }}
+            className={`flex-1 flex-row items-center justify-center py-4 gap-1 relative ${
+              selectedTab === index ? "border-b-2 border-primary-500" : ""
             }`}
           >
+            {tab.icon}
+            <Bell fill={"#6B7280"} fontSize={18} />
             <Text
-              className={`${fontSize[labelSize]} py-2 px-4 font-semibold ${
-                activeTab === index ? "text-white" : "text-primary-500"
-              }`}
+              className={` text-neutral-500 text-md font-bold ${selectedTab === index ? "text-primary-500 " : ""}`}
             >
               {tab.label}
             </Text>
-          </TouchableOpacity>
+
+            {tab.badgeCount && Number(tab.badgeCount) > 0 && (
+              <View className=" bg-red-500 rounded-full p-2 py-1">
+                <Text className="text-white text-sm font-bold">
+                  {tab.badgeCount}
+                </Text>
+              </View>
+            )}
+          </Pressable>
         ))}
       </View>
-
-      {/* Tabs Content */}
-      <View className="mt-2 bg-white rounded-md flex-1">
-        {tabs[activeTab].content}
-      </View>
-    </View>
+      {tabs[selectedTab].content}
+    </>
   );
-};
-
-export default Tabs;
+}

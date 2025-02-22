@@ -27,6 +27,7 @@ import { createDrawerNavigator } from "@react-navigation/drawer";
 import { SocketProvider } from "@/context/SocketProvider/SocketProvider";
 import ConnectionStack from "./ConnectionStack";
 import avatar from "@/assets/avatar.png";
+import Logo from "@/assets/unibuzz_logo.svg";
 
 import { HeaderProvider, useHeader } from "@/context/HeaderProvider/Header";
 import HomeStack from "./HomeStack";
@@ -201,10 +202,12 @@ function ApplicationNavigator() {
               >
                 <Menu height={24} width={24} color={"#6744FF"} />
               </Pressable>
-              <Image
+
+              <Logo style={{ width: 80, height: 32, resizeMode: "contain" }} />
+              {/*<Image
                 source={require("../assets/UnibuzzFullLogo.png")}
                 style={{ width: 80, height: 32, resizeMode: "contain" }}
-              />
+              />*/}
             </View>
           ),
           headerRight: () => (
