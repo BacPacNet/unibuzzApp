@@ -35,7 +35,9 @@ export const removeUserStore = () => {
   storage.delete(StorageKeys.USER);
 };
 
-export const storeUserProfile = async (userProfile: any): Promise<void> => {
+export const storeUserProfile = async (
+  userProfile: userProfileType
+): Promise<void> => {
   try {
     storage.set(StorageKeys.USER_PROFILE, JSON.stringify(userProfile));
   } catch (error) {
@@ -48,6 +50,9 @@ export const storeUserProfile = async (userProfile: any): Promise<void> => {
 export const getUserProfileStore = (): Partial<userProfileType> | null => {
   try {
     const jsonUser = storage.getString(StorageKeys.USER_PROFILE) as string;
+    if (!jsonUser) {
+      return null;
+    }
     const userObject = JSON.parse(jsonUser);
     return userObject;
   } catch (error) {

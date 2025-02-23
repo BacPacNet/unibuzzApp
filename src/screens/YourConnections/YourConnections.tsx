@@ -1,28 +1,30 @@
-import { View, Text, TouchableOpacity } from "react-native";
+import { TextInput, TouchableOpacity, View } from "react-native";
 import React, { useState } from "react";
 import ConnectionUserTabList from "@/components/organism/ConnectionUserTabList/ConnectionUserTabList";
-import Tabs from "@/components/molecules/Tabs";
-import { UserType } from "@/types/connections";
 import { useUsersProfileForConnections } from "@/services/users";
 import {
   useGetUserFollowers,
   useGetUserFollowing,
+  useGetUserMutuals,
 } from "@/services/connection";
-import { getUserStore } from "@/storage/user";
+import TabsPill from "@/components/molecules/TabsPill";
+import { Filter, Search } from "iconoir-react-native";
+import { getUserProfileStore } from "@/storage/user";
 
 const YourConnections = () => {
   const [activeTab, setActiveTab] = useState(0);
   const [searchQuery, setSearchQuery] = useState("");
+  const userProfileData = getUserProfileStore();
 
   const {
-    data: userProfilesData,
-    refetch: fetchUserProfiles,
-    fetchNextPage,
-    isFetchingNextPage,
-    hasNextPage,
-    isLoading: isUserProfilesLoading,
-    isFetching: isUserProfilesFetching,
-  } = useUsersProfileForConnections(searchQuery, 10, activeTab === 0);
+    data: userMutualProfilesData,
+    refetch: fetchUserMutualProfiles,
+    fetchNextPage: fetchUserMutualNextPage,
+    isFetchingNextPage: isUserMutualNextPage,
+    hasNextPage: hasUserMutualNextPage,
+    isLoading: isUserProfilesMutualLoading,
+    isFetching: isUserProfilesMutualFetching,
+  } = useGetUserMutuals(searchQuery, userProfileData?.users_id || "", 10, true);
 
   const {
     data: userFollowingProfilesData,
@@ -49,13 +51,13 @@ const YourConnections = () => {
       label: "Mutuals",
       content: (
         <ConnectionUserTabList
-          userProfilesData={userFollowingProfilesData}
-          fetchUserProfiles={fetchUserFollowingProfiles}
-          fetchNextPage={fetchUserFollowingNextPage}
-          isFetchingNextPage={isUserFollowingNextPage}
-          hasNextPage={hasUserFollowingNextPage}
-          isUserProfilesLoading={isUserProfilesFollowingLoading}
-          isFetching={isUserProfilesFetching}
+          userProfilesData={userMutualProfilesData}
+          fetchUserProfiles={fetchUserMutualProfiles}
+          fetchNextPage={fetchUserMutualNextPage}
+          isFetchingNextPage={isUserMutualNextPage}
+          hasNextPage={hasUserMutualNextPage}
+          isUserProfilesLoading={isUserProfilesMutualLoading}
+          isFetching={isUserProfilesMutualFetching}
         />
       ),
     },
@@ -63,12 +65,12 @@ const YourConnections = () => {
       label: "Following",
       content: (
         <ConnectionUserTabList
-          userProfilesData={userProfilesData}
-          fetchUserProfiles={fetchUserProfiles}
-          fetchNextPage={fetchNextPage}
-          isFetchingNextPage={isFetchingNextPage}
-          hasNextPage={hasNextPage}
-          isUserProfilesLoading={isUserProfilesLoading}
+          userProfilesData={userFollowingProfilesData}
+          fetchUserProfiles={fetchUserFollowingProfiles}
+          fetchNextPage={fetchUserFollowingNextPage}
+          isFetchingNextPage={isUserFollowingNextPage}
+          hasNextPage={hasUserFollowingNextPage}
+          isUserProfilesLoading={isUserProfilesFollowingLoading}
           isFetching={isUserProfilesFollowingFetching}
         />
       ),
@@ -95,7 +97,32 @@ const YourConnections = () => {
 
   return (
     <View className="flex-1 bg-white ">
-      <Tabs onTabChange={handleTabChange} tabs={tabs} />
+      <View className="p-4 flex-row items-center gap-2">
+        <View className="flex-1 relative">
+          <TextInput
+            value={searchQuery}
+            onChangeText={setSearchQuery}
+            placeholder="Search Messages"
+            className="border border-neutral-200 p-2  rounded-lg"
+            style={{ paddingEnd: 40 }}
+          />
+          <Search
+            style={{
+              position: "absolute",
+              top: "50%",
+              right: 10,
+              transform: [{ translateY: -10 }],
+            }}
+            strokeWidth={2}
+            height={20}
+            width={20}
+          />
+        </View>
+        <TouchableOpacity className="w-10 h-10 bg-secondary rounded-lg flex justify-center items-center">
+          <Filter width={28} height={28} color={"#6744FF"} strokeWidth={2} />
+        </TouchableOpacity>
+      </View>
+      <TabsPill onTabChange={handleTabChange} tabs={tabs} />
     </View>
   );
 };
