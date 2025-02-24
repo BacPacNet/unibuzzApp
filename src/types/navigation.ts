@@ -8,9 +8,14 @@ export type RootStackParamList = {
   RegisterScreen: undefined;
   Timeline: undefined;
   NewPost: undefined;
-  Profile: undefined;
+  ProfileStack: any;
+  Profile: {
+    userId: string;
+  };
+  ProfileEdit: undefined;
   Home: undefined;
   Connections: undefined;
+  Connection: undefined;
   Messages: undefined;
   Notifications: undefined;
   AIAssistant: undefined;
@@ -19,6 +24,7 @@ export type RootStackParamList = {
   University: {
     data: any;
   };
+  YourConnections: undefined;
   //   University: {
 
   //       pathUrl: string;

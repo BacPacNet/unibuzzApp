@@ -6,12 +6,15 @@ import ProfileCard from "@/components/molecules/RightSIdeBar/ProfileCard";
 import React from "react";
 import { Pressable, ScrollView, Text, View } from "react-native";
 
-type Props = {};
+type Props = {
+  navigation: any;
+  handleClick: (route: string) => void;
+};
 
-const RightSideSidebar = ({ navigation, handleClick }: any) => {
+const RightSideSidebar = ({ navigation, handleClick }: Props) => {
   return (
     <ScrollView>
-      <ProfileCard />
+      <ProfileCard toShow={true} />
       <SidebarMenuSectionOne
         navigation={navigation}
         handleClick={handleClick}

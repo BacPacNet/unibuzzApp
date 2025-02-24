@@ -95,8 +95,8 @@ const UserMessages = ({
 
   const queryClient = useQueryClient();
   let previousDate = "";
-  const userData: any = getUserStore();
-  const userProfileData: any = getUserProfileStore();
+  const userData = getUserStore();
+  const userProfileData = getUserProfileStore();
   const navigation = useNavigation();
 
   const scrollViewRef = useRef<ScrollView>(null);
@@ -132,7 +132,7 @@ const UserMessages = ({
           const currentDate = dayjs(item.createdAt).format("MMMM D, YYYY");
           const shouldShowDateDivider = !dayjs(item.createdAt).isSame(
             previousDate,
-            "day",
+            "day"
           );
           previousDate = item.createdAt;
 
@@ -150,7 +150,7 @@ const UserMessages = ({
                 name={item.sender?.firstName}
                 content={item.content}
                 date={item.createdAt}
-                myMessage={item.sender.id === userData?._j?.id}
+                myMessage={item.sender.id === userData?.id}
                 id={item._id}
                 reactions={item.reactions}
                 chatId={chatId}

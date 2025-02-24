@@ -1,4 +1,6 @@
 import { storage } from "@/App";
+import { User } from "@/models/auth";
+import { userProfileType } from "@/types/users";
 
 enum StorageKeys {
   USER = "user",
@@ -14,20 +16,17 @@ export const storeUser = async (user: any): Promise<void> => {
   }
 };
 
-export const getUserStore = async () => {
+export const getUserStore = (): User | null => {
   try {
     const jsonUser = storage.getString(StorageKeys.USER);
 
     if (!jsonUser) {
-      console.warn("No data found in storage for key:", StorageKeys.USER);
       return null;
     }
-    const userObject = JSON.parse(jsonUser);
 
-    return userObject;
+    return JSON.parse(jsonUser);
   } catch (error) {
-    // Handle error
-    console.error("Failed to retrieve token", error);
+    console.error("Failed to retrieve user data", error);
     return null;
   }
 };
@@ -46,7 +45,7 @@ export const storeUserProfile = async (userProfile: any): Promise<void> => {
 };
 
 // Function to retrieve a JWT token
-export const getUserProfileStore = (): string | null => {
+export const getUserProfileStore = (): Partial<userProfileType> | null => {
   try {
     const jsonUser = storage.getString(StorageKeys.USER_PROFILE) as string;
     const userObject = JSON.parse(jsonUser);

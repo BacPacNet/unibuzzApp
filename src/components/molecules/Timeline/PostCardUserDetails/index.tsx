@@ -5,6 +5,9 @@ import { MoreHoriz } from "iconoir-react-native";
 import PostCardOption from "../PostCardOption";
 import { useDeleteUserPost } from "@/services/timeline";
 import { useDeleteCommunityPost } from "@/services/communityPost";
+import { useNavigation } from "@react-navigation/native";
+import { RootStackParamList } from "@/types/navigation";
+import { StackNavigationProp } from "@react-navigation/stack";
 type Props = {
   name: string;
   year: string;
@@ -14,7 +17,10 @@ type Props = {
   postId: string;
   type: "Community" | "Timeline";
   isAdmin: boolean;
+  postAdminId: string;
 };
+
+type NavigationProp = StackNavigationProp<RootStackParamList, "Timeline">;
 
 const PostCardUserDetails = ({
   name,
@@ -25,9 +31,10 @@ const PostCardUserDetails = ({
   postId,
   type,
   major,
+  postAdminId,
 }: Props) => {
   const [visible, setVisible] = useState(false);
-
+  const navigate = useNavigation<NavigationProp>();
   const { mutate: mutateDeletePost } = useDeleteUserPost();
   const { mutate: mutateDeleteCommunityPost } = useDeleteCommunityPost();
 
@@ -39,6 +46,14 @@ const PostCardUserDetails = ({
       mutateDeletePost(postId);
     }
     setVisible(false);
+  };
+
+  const handleNavigate = () => {
+    // navigate.navigate("Profile", { userId: postAdminId });
+    navigate.navigate("ProfileStack", {
+      screen: "Profile",
+      params: { userId: postAdminId },
+    });
   };
   return (
     <View className=" flex flex-row justify-between items-center    py-2 px-4">
@@ -53,7 +68,7 @@ const PostCardUserDetails = ({
           resizeMode="cover"
         />
 
-        <View className="">
+        <TouchableOpacity onPress={() => handleNavigate()} className="">
           <Text className="font-semibold text-neutral-900 ">{name}</Text>
           <View>
             <Text style={styles.fontSize} className="text-neutral-500 ">
@@ -63,7 +78,7 @@ const PostCardUserDetails = ({
               {major}
             </Text>
           </View>
-        </View>
+        </TouchableOpacity>
       </View>
 
       <TouchableOpacity

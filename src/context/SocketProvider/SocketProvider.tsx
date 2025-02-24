@@ -32,7 +32,7 @@ export const SocketProvider: React.FC<{ children: React.ReactNode }> = ({
   const [isConnected, setIsConnected] = useState(false);
   const [notificationType, setNotificationType] = useState("");
 
-  const userData: any = getUserStore();
+  const userData = getUserStore();
   //   const { refetch: refetchNotification } = useGetNotification(3, true);
   //   const { refetch: refetchMessageNotification } = useGetMessageNotification(3, true);
   //   const { refetch: refetchUserData } = useGetUserData();
@@ -41,23 +41,23 @@ export const SocketProvider: React.FC<{ children: React.ReactNode }> = ({
   const navigationRef = useNavigationContainerRef();
   const routeNames = useNavigationState((state) => state?.routeNames || []);
   const currentRoute = useNavigationState(
-    (state) => state?.routeNames?.[state.index] || "",
+    (state) => state?.routeNames?.[state.index] || ""
   );
 
   const isRouteMessage = currentRoute !== "Messages";
 
   useEffect(() => {
-    if (!userData?._j?.id) return;
+    if (!userData?.id) return;
 
     const newSocket = io(
       Platform.OS === "android"
         ? "http://10.0.2.2:8000"
-        : "http://localhost:8000",
+        : "http://localhost:8000"
     );
 
     newSocket.on("connect", () => {
       console.log("Connected to the server");
-      newSocket.emit("setup", userData?._j?.id);
+      newSocket.emit("setup", userData?.id);
       setSocket(newSocket);
       setIsConnected(true);
     });

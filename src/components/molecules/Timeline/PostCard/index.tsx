@@ -30,7 +30,7 @@ type NavigationProp = StackNavigationProp<RootStackParamList, "Timeline">;
 const PostCard = memo(({ data }: PostCardType) => {
   const { navigate } = useNavigation<NavigationProp>();
   const { width } = useWindowDimensions();
-  const userData: any = getUserStore();
+  const userData = getUserStore();
   const commentBottomSheet = useRef<ActionSheetRef>(null);
   const { mutate: LikeUnlikeGroupPost, isPending: isLikeUnlikeGroupPending } =
     useLikeUnilikeGroupPost(
@@ -69,7 +69,8 @@ const PostCard = memo(({ data }: PostCardType) => {
         dp={data?.userProfile?.profile_dp?.imageUrl || " "}
         postId={data._id}
         type={data?.communityId ? PostType.Community : PostType.Timeline}
-        isAdmin={data.user?._id == userData?._j?.id}
+        isAdmin={data.user?._id == userData?.id}
+        postAdminId={data.user?._id}
       />
 
       <ImageGridLayout imagesData={data?.imageUrl || []} />
@@ -103,7 +104,7 @@ const PostCard = memo(({ data }: PostCardType) => {
             <ThumbsUp
               color={
                 data?.likeCount?.some(
-                  (like: any) => like.userId == userData?._j?.id
+                  (like: any) => like.userId == userData?.id
                 )
                   ? "#6647FF"
                   : "black"

@@ -92,7 +92,6 @@ export async function uploadNewImage(img: {
     if (res?.data?.secure_url) {
       const imageUrl = res.data.secure_url;
       const publicId = res.data.public_id;
-      console.log("ima", imageUrl, "pu", publicId);
 
       return { imageUrl: imageUrl, publicId: publicId };
     }
