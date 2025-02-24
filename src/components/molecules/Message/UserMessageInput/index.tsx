@@ -53,11 +53,10 @@ const UserMessageInput = ({
   const [text, setText] = useState("");
   const [images, setImages] = useState<ImageAsset[]>([]);
   const { mutate: createNewMessage, isPending } = useCreateChatMessage();
-  //   const { mutateAsync: acceptRequest, isError } = useAcceptRequest();
   const queryClient = useQueryClient();
   const { socket } = useSocket();
   const userData = getUserStore();
-  const userProfileData: any = getUserProfileStore();
+  const userProfileData = getUserProfileStore();
   const optimisticId = "abc123";
 
   const handleTextChange = (text: string) => {

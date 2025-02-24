@@ -1,6 +1,5 @@
-import { useUsersProfileForConnections } from "@/services/users";
 import { getUserProfileStore } from "@/storage/user";
-import { ProfileConnection, Users, UserType } from "@/types/connections";
+import { ProfileConnection, Users } from "@/types/connections";
 import React, { useCallback, useMemo } from "react";
 import {
   View,
@@ -13,6 +12,7 @@ import {
 } from "react-native";
 import avatar from "@/assets/avatar.png";
 import { InfiniteData } from "@tanstack/react-query";
+import { useToggleFollow } from "@/services/connection";
 
 const ConnectionUserTabList: React.FC<{
   userProfilesData: InfiniteData<ProfileConnection, unknown> | undefined;
@@ -32,6 +32,7 @@ const ConnectionUserTabList: React.FC<{
   isFetching,
 }) => {
   const userProfileData = useMemo(() => getUserProfileStore(), []);
+  const { mutate: toggleFollow, isPending } = useToggleFollow();
 
   const userProfiles = useMemo(
     () =>
@@ -39,11 +40,6 @@ const ConnectionUserTabList: React.FC<{
         ?.flatMap(({ users }) => users)
         .filter(({ _id }) => _id !== userProfileData?.users_id) ?? [],
     [userProfilesData, userProfileData?.users_id]
-  );
-
-  const userFollowingIDs = useMemo(
-    () => userProfileData?.following?.map(({ userId }) => userId) ?? [],
-    [userProfileData?.following]
   );
 
   const handleRefresh = useCallback(() => {
@@ -56,26 +52,35 @@ const ConnectionUserTabList: React.FC<{
     }
   }, [hasNextPage, isFetchingNextPage, fetchNextPage]);
 
+  const handleFollowClick = (id: string) => {
+    toggleFollow(id);
+  };
+
   // Move RenderCTA inside useCallback to prevent re-creation
   const RenderCTA = useCallback(
-    ({ id }: { id: string }) => {
+    ({ id, isFollowing }: { id: string; isFollowing: boolean }) => {
       if (userProfileData?.users_id === id) {
         return null;
       }
-
-      const isFollowing = userFollowingIDs.includes(id);
 
       return isFollowing ? (
         <TouchableOpacity className="px-4 py-2 bg-white border border-neutral-300 rounded-md">
           <Text className="text-neutral-700">View Profile</Text>
         </TouchableOpacity>
       ) : (
-        <TouchableOpacity className="px-4 py-2 bg-primary-500 rounded-md">
-          <Text className="text-white">Follow</Text>
+        <TouchableOpacity
+          className="px-4 py-2 bg-primary-500 rounded-md"
+          onPress={() => handleFollowClick(id)}
+        >
+          {isPending ? (
+            <ActivityIndicator size="small" color="#ffffff" />
+          ) : (
+            <Text className="text-white">Follow</Text>
+          )}
         </TouchableOpacity>
       );
     },
-    [userProfileData?.users_id, userFollowingIDs]
+    [userProfileData?.users_id]
   );
 
   //  Ensure renderItem only includes necessary dependencies
@@ -113,18 +118,26 @@ const ConnectionUserTabList: React.FC<{
             </Text>
           )}
         </View>
-        <RenderCTA id={item._id} />
+        <RenderCTA isFollowing={item.isFollowing} id={item._id} />
       </View>
     ),
     [RenderCTA]
   );
 
-  //  if (isFetching)
-  //    return (
-  //      <View className="py-4">
-  //        <ActivityIndicator size="small" color="#0000ff" />
-  //      </View>
-  //    );
+  if (isFetching && !isFetchingNextPage)
+    return (
+      <View className="py-4">
+        <ActivityIndicator size="small" color="#0000ff" />
+      </View>
+    );
+
+  if (userProfiles?.length === 0) {
+    return (
+      <View className="py-4 ">
+        <Text className="text-center">No Result Found</Text>
+      </View>
+    );
+  }
 
   return (
     <FlatList

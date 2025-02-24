@@ -61,7 +61,7 @@ const CommentBottomSheet = ({ postId, type, width, adminID }: Props) => {
   const [showReply, setShowReply] = useState(false);
   const [replyingTo, setReplyingTo] = useState<any>(null);
   const [showTotalReply, setShowTotalReply] = useState(4);
-  const userProfileData: any = getUserProfileStore();
+  const userProfileData = getUserProfileStore();
   const [images, setImages] = useState<ImageAsset[]>([]);
   const editor = useEditorBridge({
     // autofocus: true,
@@ -177,7 +177,7 @@ const CommentBottomSheet = ({ postId, type, width, adminID }: Props) => {
     const data: any = {
       postID: postId,
       content: text,
-      commenterProfileId: userProfileData._id,
+      commenterProfileId: userProfileData?._id,
       imageUrl: fileLinks,
     };
 
