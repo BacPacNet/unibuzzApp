@@ -30,11 +30,11 @@ export async function getUserFollowing(
   token: string,
   page: number,
   limit: number,
-  name: string
+  name: string,
+  userId: string
 ) {
-  const userData = getUserStore();
   const response: ProfileConnection = await client(
-    `/userprofile/following?page=${page}&limit=${limit}&name=${name}&userId=${userData?.id}`,
+    `/userprofile/following?page=${page}&limit=${limit}&name=${name}&userId=${userId}`,
     {
       headers: { Authorization: `Bearer ${token}` },
     }
@@ -45,11 +45,11 @@ export async function getUserFollowers(
   token: string,
   page: number,
   limit: number,
-  name: string
+  name: string,
+  userId: string
 ) {
-  const userData = getUserStore();
   const response: ProfileConnection = await client(
-    `/userprofile/followers?page=${page}&limit=${limit}&name=${name}&userId=${userData?.id}`,
+    `/userprofile/followers?page=${page}&limit=${limit}&name=${name}&userId=${userId}`,
     {
       headers: { Authorization: `Bearer ${token}` },
     }
@@ -144,15 +144,22 @@ export function useGetUserMutuals(
 export function useGetUserFollowing(
   name: string,
   limit: number,
-  enabled: boolean
+  enabled: boolean,
+  userId: string
 ) {
   const cookieValue = getToken() as string;
   const debouncedSearchTerm = useDebounce(name, 1000);
 
   return useInfiniteQuery({
-    queryKey: ["getUserFollowing", debouncedSearchTerm],
+    queryKey: ["getUserFollowing", debouncedSearchTerm, userId],
     queryFn: ({ pageParam = 1 }) =>
-      getUserFollowing(cookieValue, pageParam, limit, debouncedSearchTerm),
+      getUserFollowing(
+        cookieValue,
+        pageParam,
+        limit,
+        debouncedSearchTerm,
+        userId
+      ),
     getNextPageParam: (lastPage) => {
       if (lastPage.currentPage < lastPage.totalPages) {
         return lastPage.currentPage + 1;
@@ -167,15 +174,22 @@ export function useGetUserFollowing(
 export function useGetUserFollowers(
   name: string,
   limit: number,
-  enabled: boolean
+  enabled: boolean,
+  userId: string
 ) {
   const cookieValue = getToken() as string;
   const debouncedSearchTerm = useDebounce(name, 1000);
 
   return useInfiniteQuery({
-    queryKey: ["getUserFollowers", debouncedSearchTerm],
+    queryKey: ["getUserFollowers", debouncedSearchTerm, userId],
     queryFn: ({ pageParam = 1 }) =>
-      getUserFollowers(cookieValue, pageParam, limit, debouncedSearchTerm),
+      getUserFollowers(
+        cookieValue,
+        pageParam,
+        limit,
+        debouncedSearchTerm,
+        userId
+      ),
     getNextPageParam: (lastPage) => {
       if (lastPage.currentPage < lastPage.totalPages) {
         return lastPage.currentPage + 1;

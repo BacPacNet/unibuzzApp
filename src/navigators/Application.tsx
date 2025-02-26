@@ -34,10 +34,11 @@ import HomeStack from "./HomeStack";
 import DiscoverStack from "./DiscoverStack";
 import tabIcons from "@/constant/tabIcons";
 import RightSideSidebar from "@/components/organism/RightSideSidebar";
+import ProfileStack from "./ProfileStack";
 
 const Stack = createStackNavigator<RootStackParamList>();
 const Tab = createBottomTabNavigator<RootStackParamList>();
-
+const noHeaderScreens = [];
 function ApplicationNavigator() {
   const { variant, navigationTheme } = useTheme();
   const { isAuthenticated, setAuthenticated, deauthenticate } = useAuth();
@@ -73,7 +74,18 @@ function ApplicationNavigator() {
         })}
       >
         <Tab.Screen name="Home" component={HomeStack} />
-        <Tab.Screen name="Connection" component={ConnectionStack} />
+        <Tab.Screen
+          name="Connection"
+          component={ConnectionStack}
+          listeners={({ navigation }) => ({
+            tabPress: (e) => {
+              e.preventDefault();
+              navigation.navigate("Connection", {
+                screen: "Connections",
+              });
+            },
+          })}
+        />
         <Tab.Screen name="Messages" component={Messages} />
         <Tab.Screen name="Notifications" component={Notifications} />
         <Tab.Screen name="AIAssistant" component={AI_Assistant} />
@@ -81,6 +93,14 @@ function ApplicationNavigator() {
           name="DiscoverStack"
           component={DiscoverStack}
           options={{ tabBarButton: () => null }}
+        />
+        <Tab.Screen
+          name="ProfileStack"
+          component={ProfileStack}
+          options={{
+            tabBarButton: () => null,
+            // unmountOnBlur: true,
+          }}
         />
       </Tab.Navigator>
     );
@@ -116,7 +136,13 @@ function ApplicationNavigator() {
   function UserProfileDrawerContent({ navigation, setRightDrawerOpen }: any) {
     const handleClick = (route: string) => {
       if (route == "Profile") {
-        navigation.navigate(route, { userId: user?.id });
+        // navigation.navigate(route, { userId: user?.id });
+
+        navigation.navigate("ProfileStack", {
+          screen: "Profile",
+          params: { userId: user?.id },
+        });
+
         setRightDrawerOpen(false);
       } else {
         navigation.navigate(route);
@@ -160,7 +186,7 @@ function ApplicationNavigator() {
       <LeftDrawer.Navigator
         screenOptions={{
           drawerPosition: "left",
-          headerShown: true,
+          headerShown: showHeader,
           headerLeftContainerStyle: {
             paddingHorizontal: 16,
           },

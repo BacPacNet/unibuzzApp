@@ -49,12 +49,12 @@ const PostCardUserDetails = ({
   };
 
   const handleNavigate = () => {
-    // navigate.navigate("Profile", { userId: postAdminId });
     navigate.navigate("ProfileStack", {
       screen: "Profile",
       params: { userId: postAdminId },
     });
   };
+
   return (
     <View className=" flex flex-row justify-between items-center    py-2 px-4">
       {visible && (

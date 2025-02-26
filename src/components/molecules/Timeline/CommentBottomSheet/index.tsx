@@ -38,12 +38,14 @@ import {
 } from "@/services/communityPost";
 import { launchImageLibrary } from "react-native-image-picker";
 import { replaceImage } from "@/services/uploadImage";
+import { useNavigation } from "@react-navigation/native";
 
 type Props = {
   postId: string;
   type: PostType.Community | PostType.Timeline;
   width: any;
   adminID: string;
+  hideBottomBar: () => void;
 };
 
 type ImageAsset = {
@@ -55,7 +57,13 @@ type ImageAsset = {
   type?: string;
 };
 
-const CommentBottomSheet = ({ postId, type, width, adminID }: Props) => {
+const CommentBottomSheet = ({
+  postId,
+  type,
+  width,
+  adminID,
+  hideBottomBar,
+}: Props) => {
   const [keyboardOffset, setKeyboardOffset] = useState(0);
 
   const [showReply, setShowReply] = useState(false);
@@ -63,6 +71,7 @@ const CommentBottomSheet = ({ postId, type, width, adminID }: Props) => {
   const [showTotalReply, setShowTotalReply] = useState(4);
   const userProfileData = getUserProfileStore();
   const [images, setImages] = useState<ImageAsset[]>([]);
+  const navigate = useNavigation<any>();
   const editor = useEditorBridge({
     // autofocus: true,
     avoidIosKeyboard: true,
@@ -168,6 +177,16 @@ const CommentBottomSheet = ({ postId, type, width, adminID }: Props) => {
     setImages((prev) => prev.filter((_, i) => i !== index));
   }, []);
 
+  const handleNavigate = (userID: string) => {
+    console.log("test");
+
+    navigate.navigate("ProfileStack", {
+      screen: "Profile",
+      params: { userId: userID },
+    });
+    hideBottomBar();
+  };
+
   const handleComment = async () => {
     const text = await editor.getHTML();
     let fileLinks;
@@ -249,6 +268,7 @@ const CommentBottomSheet = ({ postId, type, width, adminID }: Props) => {
               likePostCommentHandler,
               setShowTotalReply,
               showTotalReply,
+              handleNavigate,
             })
           }
           onEndReached={() => {

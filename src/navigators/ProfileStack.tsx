@@ -1,7 +1,6 @@
 import Profile from "@/screens/Profile";
 import ProfileEdit from "@/screens/ProfileEdit";
 import { createStackNavigator } from "@react-navigation/stack";
-import ConnectionStack from "./ConnectionStack";
 
 const ProfileStack = () => {
   const Stack = createStackNavigator();

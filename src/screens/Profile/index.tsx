@@ -8,25 +8,19 @@ import {
   FlatList,
   RefreshControl,
 } from "react-native";
-import React from "react";
+import React, { useState } from "react";
 import ProfileCard from "@/components/molecules/RightSIdeBar/ProfileCard";
-import {
-  Calendar,
-  EditPencil,
-  GraduationCap,
-  Mail,
-  Phone,
-  Pin,
-} from "iconoir-react-native";
-import { getUserProfileStore, getUserStore } from "@/storage/user";
+
+import { getUserStore } from "@/storage/user";
 import universityPlaceHolder from "@/assets/unibuzz-orange.png";
-import { getUserData, useGetUserData, useGetUserPosts } from "@/services/user";
+import { useGetUserData, useGetUserPosts } from "@/services/user";
 import ProfileInfo from "@/components/molecules/Profile/UserInformation";
 import PostCard from "@/components/molecules/Timeline/PostCard";
 import { RootStackParamList } from "@/types/navigation";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { useNavigation } from "@react-navigation/native";
-import FlatListProfileHeaderPart from "@/components/organism/Profile/ProfileFlatListHeaderSec";
+import { useQueryClient } from "@tanstack/react-query";
+
 type NavigationProp = StackNavigationProp<RootStackParamList, "Timeline">;
 
 const Profile = ({ route }: any) => {
@@ -35,16 +29,29 @@ const Profile = ({ route }: any) => {
   const userData = getUserStore();
   const { data: userProfileData, isLoading: isUserProfileDataLoading } =
     useGetUserData(userId);
+
   const {
-    data: userSelfPosts,
     isLoading,
+    data: userSelfPosts,
     error,
+    fetchNextPage: userSelfPostsFetchNextpage,
+    isFetchingNextPage: userSelfIsFetchingNextPage,
+    hasNextPage: userSelfHasNextPage,
     isFetching,
-  } = useGetUserPosts(userId);
-  //   console.log("user", route);
+  } = useGetUserPosts(userId, 5);
+  const userSelfPostData =
+    userSelfPosts?.pages.flatMap((page) => page?.data) || [];
+
+  const [refreshing, setRefreshing] = React.useState(false);
+
+  const [lastOffset, setLastOffset] = useState(0);
+
+  const queryClient = useQueryClient();
+
   const { navigate } = useNavigation<NavigationProp>();
   const { profile, firstName, lastName, email, university_id, university } =
     userProfileData || {};
+
   const {
     bio,
     university_name,
@@ -62,8 +69,24 @@ const Profile = ({ route }: any) => {
   } = profile || {};
   const { logos } = university || {};
 
-  const handleNavigate = () => {
-    navigate("Connection");
+  const handleNavigate = (index: number) => {
+    navigate("Connection", {
+      screen: "YourConnections",
+      params: { index: index, userId },
+    });
+  };
+
+  const onRefresh = React.useCallback(() => {
+    setRefreshing(true);
+
+    queryClient.invalidateQueries({ queryKey: ["userPosts", userId] });
+    setRefreshing(false);
+  }, []);
+
+  const handleScroll = (event: any) => {
+    const contentOffsetY = event.nativeEvent.contentOffset.y;
+
+    setLastOffset(contentOffsetY);
   };
 
   const FlatListProfileHeaderPart = () => {
@@ -81,10 +104,7 @@ const Profile = ({ route }: any) => {
           />
         </View>
         <View className="p-4 text-neutral-700 flex gap-4">
-          <Text className="text-neutral-700">
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-            eiusmod tempor incididunt ut labore et dolore magna aliqua.
-          </Text>
+          <Text className="text-neutral-700">{bio}</Text>
           <View className="flex flex-row items-center gap-2">
             <Image
               source={logos?.[0] ? { uri: logos?.[0] } : universityPlaceHolder}
@@ -93,15 +113,22 @@ const Profile = ({ route }: any) => {
             <Text className="text-neutral-700">{university_name}</Text>
           </View>
           <View className="flex flex-row gap-4">
-            <TouchableOpacity>
-              <Text className="text-primary-500 font-bold">4 Mutuals</Text>
-            </TouchableOpacity>
-            <TouchableOpacity onPress={() => handleNavigate()}>
+            {userData?.id == userId && (
+              <TouchableOpacity onPress={() => handleNavigate(0)}>
+                <Text className="text-primary-500 font-bold">4 Mutuals</Text>
+              </TouchableOpacity>
+            )}
+
+            <TouchableOpacity
+              onPress={() => handleNavigate(userData?.id == userId ? 1 : 0)}
+            >
               <Text className="text-primary-500 font-bold">
                 {following?.length || 0} Following
               </Text>
             </TouchableOpacity>
-            <TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => handleNavigate(userData?.id == userId ? 2 : 1)}
+            >
               <Text className="text-primary-500 font-bold">
                 {followers?.length || 0} Followers
               </Text>
@@ -136,32 +163,31 @@ const Profile = ({ route }: any) => {
   return (
     <View className="bg-white flex-1 ">
       <FlatList
-        data={userSelfPosts}
+        data={userSelfPostData}
         style={{
           width: "100%",
           height: "100%",
         }}
-        //   onScroll={handleScroll}
-        keyExtractor={(item, index) => item._id + index}
+        onScroll={handleScroll}
+        keyExtractor={(item, index) => item?._id + index}
         renderItem={({ item }) => <PostCard data={item} />}
-        //   refreshControl={
-        //     <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-        //   }
-        //   onEndReached={() => {
-        //     if (timelinePostHasNextPage && !timelinePostIsFetchingNextPage) {
-        //       timelinePostsNextpage();
-        //     }
-        //   }}
-        //   ListFooterComponent={
-        //     timelinePostIsFetchingNextPage && timelinePostHasNextPage ? (
-        //       <View>
-        //         <ActivityIndicator size="large" color="#7367f0" />
-        //       </View>
-        //     ) : (
-        //       <View />
-        //     )
-        //   }
-
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }
+        onEndReached={() => {
+          if (userSelfHasNextPage && !userSelfIsFetchingNextPage) {
+            userSelfPostsFetchNextpage();
+          }
+        }}
+        ListFooterComponent={
+          userSelfIsFetchingNextPage && userSelfHasNextPage ? (
+            <View>
+              <ActivityIndicator size="large" color="#7367f0" />
+            </View>
+          ) : (
+            <View />
+          )
+        }
         ListHeaderComponent={<FlatListProfileHeaderPart />}
         ListEmptyComponent={
           isFetching ? (

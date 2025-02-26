@@ -35,14 +35,7 @@ const ProfileCard = ({
     <View style={styles.card}>
       <View style={styles.profilePicWrapper}>
         <Image
-          source={
-            avatarUrl
-              ? { uri: avatarUrl }
-              : userProfile?.profile_dp &&
-                  userProfile?.profile_dp?.imageUrl?.length > 0
-                ? { uri: userProfile?.profile_dp?.imageUrl }
-                : avatar
-          }
+          source={avatarUrl ? { uri: avatarUrl } : avatar}
           style={styles.profilePic}
         />
       </View>

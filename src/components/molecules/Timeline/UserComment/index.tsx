@@ -23,6 +23,7 @@ const UserComment = ({
   likePostCommentHandler,
   setShowTotalReply,
   showTotalReply,
+  handleNavigate,
 }: CommentsProp) => {
   const userData = getUserStore();
 
@@ -53,9 +54,12 @@ const UserComment = ({
           </View>
 
           <View className=" flex-1 flex-row items-center ">
-            <View className=" flex-1 ">
+            <TouchableOpacity
+              onPress={() => handleNavigate(item?.commenterId?._id)}
+              className=" flex-1 "
+            >
               <Text
-                className="text-neutral-600 text-sm 
+                className="text-neutral-600 text-lg
                  font-semibold"
               >
                 {item?.commenterId?.firstName} {item?.commenterId?.lastName}
@@ -69,7 +73,7 @@ const UserComment = ({
                   {item?.commenterProfileId?.major}
                 </Text>
               </View>
-            </View>
+            </TouchableOpacity>
 
             <View className="flex justify-center items-center ">
               <TouchableOpacity style={styles.moreButton}>

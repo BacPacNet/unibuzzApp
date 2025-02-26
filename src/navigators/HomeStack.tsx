@@ -4,9 +4,6 @@ import { createStackNavigator } from "@react-navigation/stack";
 import { useTheme } from "@/theme";
 import { Example, Timeline } from "@/screens";
 import NewPost from "@/screens/NewPost";
-import Profile from "@/screens/Profile";
-import ProfileEdit from "@/screens/ProfileEdit";
-import ProfileStack from "./ProfileStack";
 
 const HomeStack = () => {
   const Stack = createStackNavigator();
@@ -23,9 +20,6 @@ const HomeStack = () => {
         }}
       />
       <Stack.Screen name="Example" component={Example} />
-      {/* <Stack.Screen name="Profile" component={Profile} />
-      <Stack.Screen name="ProfileEdit" component={ProfileEdit} /> */}
-      <Stack.Screen name="ProfileStack" component={ProfileStack} />
     </Stack.Navigator>
   );
 };

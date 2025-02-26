@@ -85,12 +85,13 @@ const ProfileInfo: React.FC<ProfileInfoProps> = ({
           text={phone}
         />
       )}
-      {location && (
-        <InfoItem
-          icon={<MapPin height={24} width={24} color={"grey"} />}
-          text={location + ", " + country}
-        />
-      )}
+      {location ||
+        (country && (
+          <InfoItem
+            icon={<MapPin height={24} width={24} color={"grey"} />}
+            text={`${location ? location + ", " : ""}${country}`}
+          />
+        ))}
       {birthday && (
         <InfoItem
           icon={<BirthdayCake height={24} width={24} color={"grey"} />}

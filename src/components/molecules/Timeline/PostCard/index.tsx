@@ -1,4 +1,4 @@
-import React, { memo, useCallback, useRef } from "react";
+import React, { memo, useRef } from "react";
 import {
   Share,
   Text,
@@ -10,14 +10,9 @@ import PostCardUserDetails from "../PostCardUserDetails";
 import ImageGridLayout from "../../ImageGridLayout";
 import { ChatBubbleEmpty, ShareAndroid, ThumbsUp } from "iconoir-react-native";
 import dayjs from "dayjs";
-import { useNavigation } from "@react-navigation/native";
-import { StackNavigationProp } from "@react-navigation/stack";
-import { RootStackParamList } from "@/types/navigation";
+
 import RenderHtml from "react-native-render-html";
-import ActionSheet, {
-  ActionSheetRef,
-  FlatList,
-} from "react-native-actions-sheet";
+import ActionSheet, { ActionSheetRef } from "react-native-actions-sheet";
 import CommentBottomSheet from "../CommentBottomSheet";
 import { PostCardType, PostType } from "@/types/postType";
 import { useLikeUnlikeTimelinePost } from "@/services/timeline";
@@ -25,17 +20,14 @@ import { useLikeUnilikeGroupPost } from "@/services/communityPost";
 import { getUserStore } from "@/storage/user";
 import { Toast } from "react-native-toast-notifications";
 
-type NavigationProp = StackNavigationProp<RootStackParamList, "Timeline">;
-
 const PostCard = memo(({ data }: PostCardType) => {
-  const { navigate } = useNavigation<NavigationProp>();
   const { width } = useWindowDimensions();
   const userData = getUserStore();
   const commentBottomSheet = useRef<ActionSheetRef>(null);
   const { mutate: LikeUnlikeGroupPost, isPending: isLikeUnlikeGroupPending } =
     useLikeUnilikeGroupPost(
-      data.communityId,
-      data.communityGroupId,
+      data?.communityId,
+      data?.communityGroupId,
       !!data?.communityId
     );
   const { mutate: LikeUnlikeTimelinePost, isPending: isLikeUnlikePending } =
@@ -59,6 +51,10 @@ const PostCard = memo(({ data }: PostCardType) => {
     }
   };
 
+  const hideBottomBar = () => {
+    commentBottomSheet.current?.hide();
+  };
+
   return (
     <View className=" bg-white  flex gap-4 mt-10">
       <PostCardUserDetails
@@ -67,10 +63,10 @@ const PostCard = memo(({ data }: PostCardType) => {
         degree={data?.userProfile?.degree}
         major={data?.userProfile?.major}
         dp={data?.userProfile?.profile_dp?.imageUrl || " "}
-        postId={data._id}
+        postId={data?._id}
         type={data?.communityId ? PostType.Community : PostType.Timeline}
-        isAdmin={data.user?._id == userData?.id}
-        postAdminId={data.user?._id}
+        isAdmin={data?.user?._id == userData?.id}
+        postAdminId={data?.user?._id}
       />
 
       <ImageGridLayout imagesData={data?.imageUrl || []} />
@@ -134,8 +130,7 @@ const PostCard = memo(({ data }: PostCardType) => {
       <ActionSheet
         ref={commentBottomSheet}
         gestureEnabled={true}
-        // snapPoints={[40, 100]}
-        drawUnderStatusBar
+        // snapPoints={[70, 100]}
         containerStyle={{
           height: "100%",
         }}
@@ -145,6 +140,7 @@ const PostCard = memo(({ data }: PostCardType) => {
           type={data?.communityId ? PostType.Community : PostType.Timeline}
           width={width}
           adminID={data?.user?._id}
+          hideBottomBar={hideBottomBar}
         />
       </ActionSheet>
     </View>

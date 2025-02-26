@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import {
   View,
   Text,
@@ -13,7 +13,7 @@ import {
 import { NavArrowLeft, User } from "iconoir-react-native";
 import { FormInput } from "@/components/atoms/FormInput";
 
-import { useNavigation } from "@react-navigation/native";
+import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import { useForm } from "react-hook-form";
 import { editProfileInputs, GenderOptions } from "@/types/Profile";
 import { SelectInputWithSearch } from "@/components/atoms/SelectInputWithSearch";
@@ -27,6 +27,8 @@ import { getUserProfileStore } from "@/storage/user";
 import { useEditProfile } from "@/services/edit-Profile";
 import { replaceImage } from "@/services/uploadImage";
 import ReusableButton from "@/components/atoms/ReusableButton";
+import { DateSelect } from "@/components/atoms/DateSelect";
+import { useHeader } from "@/context/HeaderProvider/Header";
 
 type ImageAsset = {
   uri: string;
@@ -42,12 +44,14 @@ export default function ProfileEdit() {
     handleSubmit,
     reset,
     control,
-
+    setValue,
+    watch,
     formState: { errors, isDirty },
   } = useForm<editProfileInputs>();
 
   const navigate = useNavigation();
   const userProfileData = getUserProfileStore();
+  const { changeHeaderShownStatus } = useHeader();
   const [cityOptions, setCityOptions] = useState<string[]>([]);
   const [userType, setUserType] = useState("student");
   const [previewProfileImage, setPreviewProfileImage] = useState<string | null>(
@@ -55,11 +59,13 @@ export default function ProfileEdit() {
   );
   const [isProfileLoading, setIsProfileLoading] = useState(false);
   const [imageToUpload, setImageToUpload] = useState<ImageAsset | null>(null);
-  const [user, setUser] = useState<any>(null);
+
   const { data: userProfile } = useGetUserData(
     userProfileData?.users_id as string
   );
   const { mutate: mutateEditProfile, isPending } = useEditProfile();
+  const currCountryWatch = watch("country");
+  const currCityWatch = watch("city");
 
   useEffect(() => {
     if (userProfile) {
@@ -82,7 +88,7 @@ export default function ProfileEdit() {
         profilePicture: null,
       };
       reset(userDefault);
-      setUser({ ...userDefault, profile_dp: profile?.profile_dp });
+
       setPreviewProfileImage(profile?.profile_dp?.imageUrl);
     }
   }, [userProfile, reset]);
@@ -95,6 +101,7 @@ export default function ProfileEdit() {
       setCityOptions(
         City.getCitiesOfCountry(getCountyCode)!.map((state) => state.name)
       );
+      setValue("city", "");
     }
   };
 
@@ -106,6 +113,19 @@ export default function ProfileEdit() {
       }
     });
   };
+
+  useEffect(() => {
+    if (currCountryWatch && !currCityWatch) {
+      const getCountyCode = Country.getAllCountries().find(
+        (country) => country.name === currCountryWatch
+      )?.isoCode;
+      if (getCountyCode) {
+        setCityOptions(
+          City.getCitiesOfCountry(getCountyCode)!.map((state) => state.name)
+        );
+      }
+    }
+  }, [currCountryWatch && !currCityWatch]);
 
   const onSubmit = async (data: any) => {
     setIsProfileLoading(true);
@@ -123,6 +143,16 @@ export default function ProfileEdit() {
     mutateEditProfile({ ...data, profile_dp: logoImageData });
     setIsProfileLoading(false);
   };
+
+  useFocusEffect(
+    useCallback(() => {
+      changeHeaderShownStatus(false);
+
+      return () => {
+        changeHeaderShownStatus(true);
+      };
+    }, [])
+  );
 
   return (
     <SafeAreaView style={styles.container}>
@@ -193,14 +223,13 @@ export default function ProfileEdit() {
                 errorMessage={errors.lastName?.message}
               />
 
-              <FormInput
+              <DateSelect
                 label="Date of Birth"
                 placeholder="DD/MM/YYYY"
-                required
                 name="dob"
+                required
                 control={control}
-                isError={!!errors.dob}
-                errorMessage={errors.dob ? "dob  is required" : ""}
+                rules={{ required: "Dob is required!" }}
               />
 
               <SelectInputWithSearch
