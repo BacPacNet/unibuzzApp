@@ -57,6 +57,7 @@ export type CommentsProp = {
     commenterId: {
       firstName: string;
       lastName: string;
+      _id: string;
     };
     commenterProfileId: {
       profile_dp: {
@@ -80,4 +81,5 @@ export type CommentsProp = {
   likePostCommentHandler: (value: string) => void;
   setShowTotalReply: (value: number) => void;
   showTotalReply: number;
+  handleNavigate?: any;
 };

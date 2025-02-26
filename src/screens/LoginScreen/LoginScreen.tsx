@@ -10,7 +10,7 @@ import {
   Image,
 } from "react-native";
 import Card from "@/components/atoms/Card";
-import LogoCircle from "@/assets/UnibuzzFullLogo.png";
+import UnibuzzLogo from "@/assets/unibuzz_logo.svg";
 import { Controller, useForm } from "react-hook-form";
 import { useState } from "react";
 import { LoginForm } from "@/models/auth";
@@ -64,21 +64,16 @@ function LoginScreen() {
       className="flex-1"
     >
       <View className="flex-1 p-4 bg-white justify-center">
-        {/* <Card className="flex flex-col gap-2"> */}
         <View style={{ marginBottom: 50 }} className="flex items-center ">
-          {/* <LogoCircle className="w-14 h-14" /> */}
-          <Image source={LogoCircle} />
+          <UnibuzzLogo width={121} height={28} />
         </View>
-        <Text className="text-md font-bold text-neutral-900 pt-2">
+        <Text className="text-xl font-bold text-neutral-900 pt-2">
           Login to your account
         </Text>
-        {/* <Text className="font-normal text-neutral-500">
-            Enter your details to access your account
-          </Text> */}
 
         <View>
           <View className="my-4">
-            <Text className="font-medium text-neutral-900 mb-2">
+            <Text className="font-medium text-neutral-900 mb-2 text-md">
               Email Address
             </Text>
             <Controller
@@ -124,7 +119,9 @@ function LoginScreen() {
         </View>
 
         <View className="mb-4">
-          <Text className="font-medium text-neutral-900 mb-2">Password</Text>
+          <Text className="font-medium text-neutral-900 mb-2 text-md">
+            Password
+          </Text>
           <View className="relative">
             <Controller
               control={control}
@@ -160,8 +157,8 @@ function LoginScreen() {
               {loginErrors.password.message}
             </Text>
           )}
-          <TouchableOpacity className="mt-1 mb-4">
-            <Text className="text-xs ">Forgot Password?</Text>
+          <TouchableOpacity className="mt-1 mb-4 text-md">
+            <Text className="text-md ">Forgot Password?</Text>
           </TouchableOpacity>
 
           <ReusableButton
@@ -179,13 +176,9 @@ function LoginScreen() {
           disabled={isPending}
           className={`border border-neutral-300 py-3  rounded-lg ${isPending ? "opacity-50" : ""}`}
         >
-          {isPending ? (
-            <ActivityIndicator color="#fff" />
-          ) : (
-            <Text className="text-center text-neutral-900 font-bold">
-              Sign Up
-            </Text>
-          )}
+          <Text className="text-center text-neutral-900 font-bold">
+            Sign Up
+          </Text>
         </TouchableOpacity>
         {isError && (
           <Text className="text-red-500 text-sm mt-4 text-center">

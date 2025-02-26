@@ -33,16 +33,18 @@ import { HeaderProvider, useHeader } from "@/context/HeaderProvider/Header";
 import HomeStack from "./HomeStack";
 import DiscoverStack from "./DiscoverStack";
 import tabIcons from "@/constant/tabIcons";
+import RightSideSidebar from "@/components/organism/RightSideSidebar";
+import ProfileStack from "./ProfileStack";
 
 const Stack = createStackNavigator<RootStackParamList>();
 const Tab = createBottomTabNavigator<RootStackParamList>();
-
+const noHeaderScreens = [];
 function ApplicationNavigator() {
   const { variant, navigationTheme } = useTheme();
   const { isAuthenticated, setAuthenticated, deauthenticate } = useAuth();
   const [isAppFirstLaunched, setIsAppFirstLaunched] = useState(false);
   const userProfileStore = getUserProfileStore();
-
+  const user = getUserStore();
   useEffect(() => {
     const appData = storage.contains("isAppFirstLaunched");
     if (!appData) {
@@ -51,7 +53,6 @@ function ApplicationNavigator() {
     } else {
       setIsAppFirstLaunched(false);
     }
-    const user = getUserStore();
 
     if (user?.id) {
       setAuthenticated();
@@ -73,7 +74,18 @@ function ApplicationNavigator() {
         })}
       >
         <Tab.Screen name="Home" component={HomeStack} />
-        <Tab.Screen name="Connections" component={ConnectionStack} />
+        <Tab.Screen
+          name="Connection"
+          component={ConnectionStack}
+          listeners={({ navigation }) => ({
+            tabPress: (e) => {
+              e.preventDefault();
+              navigation.navigate("Connection", {
+                screen: "Connections",
+              });
+            },
+          })}
+        />
         <Tab.Screen name="Messages" component={Messages} />
         <Tab.Screen name="Notifications" component={Notifications} />
         <Tab.Screen name="AIAssistant" component={AI_Assistant} />
@@ -81,6 +93,14 @@ function ApplicationNavigator() {
           name="DiscoverStack"
           component={DiscoverStack}
           options={{ tabBarButton: () => null }}
+        />
+        <Tab.Screen
+          name="ProfileStack"
+          component={ProfileStack}
+          options={{
+            tabBarButton: () => null,
+            // unmountOnBlur: true,
+          }}
         />
       </Tab.Navigator>
     );
@@ -115,32 +135,22 @@ function ApplicationNavigator() {
 
   function UserProfileDrawerContent({ navigation, setRightDrawerOpen }: any) {
     const handleClick = (route: string) => {
-      navigation.navigate(route);
-      setRightDrawerOpen(false);
+      if (route == "Profile") {
+        // navigation.navigate(route, { userId: user?.id });
+
+        navigation.navigate("ProfileStack", {
+          screen: "Profile",
+          params: { userId: user?.id },
+        });
+
+        setRightDrawerOpen(false);
+      } else {
+        navigation.navigate(route);
+        setRightDrawerOpen(false);
+      }
     };
     return (
-      <View style={{ padding: 20 }}>
-        <Text style={{ fontSize: 18, fontWeight: "bold", marginBottom: 20 }}>
-          User Profile
-        </Text>
-        <Pressable onPress={() => handleClick("Timeline")}>
-          <Text style={{ fontSize: 16, marginBottom: 15 }}>My Profile</Text>
-        </Pressable>
-        <Pressable onPress={() => navigation.navigate("Account")}>
-          <Text style={{ fontSize: 16, marginBottom: 15 }}>
-            Account Settings
-          </Text>
-        </Pressable>
-        <Pressable
-          onPress={() => {
-            deauthenticate();
-          }}
-        >
-          <Text style={{ fontSize: 16, marginBottom: 15, color: "red" }}>
-            Logout
-          </Text>
-        </Pressable>
-      </View>
+      <RightSideSidebar navigation={navigation} handleClick={handleClick} />
     );
   }
 
@@ -176,7 +186,7 @@ function ApplicationNavigator() {
       <LeftDrawer.Navigator
         screenOptions={{
           drawerPosition: "left",
-          headerShown: true,
+          headerShown: showHeader,
           headerLeftContainerStyle: {
             paddingHorizontal: 16,
           },

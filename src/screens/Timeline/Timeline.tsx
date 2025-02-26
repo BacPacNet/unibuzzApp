@@ -33,26 +33,26 @@ const Timeline = () => {
     setRefreshing(false);
   }, []);
 
-  useFocusEffect(
-    useCallback(() => {
-      setCurrScreen("timeline");
+  //   useFocusEffect(
+  //     useCallback(() => {
+  //       setCurrScreen("timeline");
 
-      return () => {
-        setCurrScreen("");
-      };
-    }, [])
-  );
+  //       return () => {
+  //         setCurrScreen("");
+  //       };
+  //     }, [])
+  //   );
 
-  const handleScroll = (event: any) => {
-    const contentOffsetY = event.nativeEvent.contentOffset.y;
-    if (contentOffsetY > lastOffset) {
-      changeHeaderShownStatus(false);
-    } else if (contentOffsetY < lastOffset && contentOffsetY > 0) {
-      changeHeaderShownStatus(true);
-    }
+  //   const handleScroll = (event: any) => {
+  //     const contentOffsetY = event.nativeEvent.contentOffset.y;
+  //     if (contentOffsetY > lastOffset) {
+  //       changeHeaderShownStatus(false);
+  //     } else if (contentOffsetY < lastOffset && contentOffsetY > 0) {
+  //       changeHeaderShownStatus(true);
+  //     }
 
-    setLastOffset(contentOffsetY);
-  };
+  //     setLastOffset(contentOffsetY);
+  //   };
 
   return (
     <View className="bg-white flex-1 ">
@@ -62,7 +62,7 @@ const Timeline = () => {
           width: "100%",
           height: "100%",
         }}
-        onScroll={handleScroll}
+        // onScroll={handleScroll}
         keyExtractor={(item, index) => item._id + index}
         renderItem={({ item }) => <PostCard data={item} />}
         refreshControl={

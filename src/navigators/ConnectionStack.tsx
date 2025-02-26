@@ -9,7 +9,7 @@ const ConnectionStack = () => {
   const { variant } = useTheme();
   return (
     <Stack.Navigator
-      initialRouteName="Connection"
+      initialRouteName="Connections"
       key={variant}
       screenOptions={{ headerShown: false }}
     >

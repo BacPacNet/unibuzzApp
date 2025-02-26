@@ -43,6 +43,7 @@
     "react-native": "0.74.5",
     "react-native-actions-sheet": "^0.9.7",
     "react-native-bouncy-checkbox": "^4.1.2",
+    "react-native-date-picker": "^5.0.10",
     "react-native-dotenv": "^3.4.11",
     "react-native-drawer-layout": "^4.1.1",
     "react-native-gesture-handler": "^2.18.1",

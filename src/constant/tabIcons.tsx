@@ -23,7 +23,7 @@ const tabIcons: Record<string, (focused: boolean) => JSX.Element> = {
     ) : (
       <EyeClosed height={24} width={24} />
     ),
-  Connections: (focused) => (
+  Connection: (focused) => (
     <Group
       height={24}
       width={24}

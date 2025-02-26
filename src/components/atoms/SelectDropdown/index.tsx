@@ -52,8 +52,8 @@ const SelectDropdown = ({
       searchValue === ""
         ? options
         : options.filter((option: string) =>
-            option.toLowerCase().includes(searchValue.toLowerCase()),
-          ),
+            option.toLowerCase().includes(searchValue.toLowerCase())
+          )
     );
   };
 

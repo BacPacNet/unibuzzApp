@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { View, Text, TouchableOpacity } from "react-native";
 
 interface TabItem {
@@ -12,6 +12,7 @@ interface TabsProps {
   tabAlign?: "left" | "center" | "right";
   labelSize?: "small" | "medium" | "large";
   onTabChange?: (index: number) => void; // Callback function prop
+  index?: number;
 }
 
 const TabsPill: React.FC<TabsProps> = ({
@@ -20,8 +21,9 @@ const TabsPill: React.FC<TabsProps> = ({
   tabAlign = "left",
   labelSize = "medium",
   onTabChange, // Accepting callback function
+  index = 0,
 }) => {
-  const [activeTab, setActiveTab] = useState(0);
+  const [activeTab, setActiveTab] = useState(index || 0);
 
   const fontSize = {
     small: "text-xs",
@@ -35,6 +37,12 @@ const TabsPill: React.FC<TabsProps> = ({
       onTabChange(index); // Notify parent about tab change
     }
   };
+
+  useEffect(() => {
+    if (index && index !== activeTab) {
+      setActiveTab(index);
+    }
+  }, [index]);
 
   return (
     <View className={`w-full flex-1 ${className}`}>
@@ -62,7 +70,7 @@ const TabsPill: React.FC<TabsProps> = ({
 
       {/* Tabs Content */}
       <View className="mt-2 bg-white rounded-md flex-1">
-        {tabs[activeTab].content}
+        {tabs[activeTab]?.content}
       </View>
     </View>
   );
