@@ -9,7 +9,7 @@ type Props = {
 
 const PostCardOption = ({ handleDeletePost, isAdmin }: Props) => {
   return (
-    <View className="flex gap-2 absolute bg-white shadow-md w-48 top-16 right-0 z-40 ">
+    <View className="flex gap-2 absolute bg-white shadow-md w-48 top-12 right-4 z-10 rounded-md">
       <TouchableOpacity className={`flex flex-row items-center gap-2 p-2`}>
         <OpenInBrowser width={20} height={20} color="#6647FF" />
         <Text className={` `}>Open Post</Text>

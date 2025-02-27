@@ -1,4 +1,4 @@
-import React, { memo, useRef } from "react";
+import React, { memo, useMemo, useRef, useState } from "react";
 import {
   Share,
   Text,
@@ -15,15 +15,32 @@ import RenderHtml from "react-native-render-html";
 import ActionSheet, { ActionSheetRef } from "react-native-actions-sheet";
 import CommentBottomSheet from "../CommentBottomSheet";
 import { PostCardType, PostType } from "@/types/postType";
-import { useLikeUnlikeTimelinePost } from "@/services/timeline";
-import { useLikeUnilikeGroupPost } from "@/services/communityPost";
+import {
+  useDeleteUserPost,
+  useLikeUnlikeTimelinePost,
+} from "@/services/timeline";
+import {
+  useDeleteCommunityPost,
+  useLikeUnilikeGroupPost,
+} from "@/services/communityPost";
 import { getUserStore } from "@/storage/user";
 import { Toast } from "react-native-toast-notifications";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+import PostCardOption from "../PostCardOption";
 
 const PostCard = memo(({ data }: PostCardType) => {
+  const [visible, setVisible] = useState(false);
   const { width } = useWindowDimensions();
   const userData = getUserStore();
   const commentBottomSheet = useRef<ActionSheetRef>(null);
+  const insets = useSafeAreaInsets();
+  const { mutate: mutateDeletePost } = useDeleteUserPost();
+  const { mutate: mutateDeleteCommunityPost } = useDeleteCommunityPost();
+
+  const isSelfLike = useMemo(() => {
+    return data?.likeCount?.some((like: any) => like.userId == userData?.id);
+  }, [data]);
+
   const { mutate: LikeUnlikeGroupPost, isPending: isLikeUnlikeGroupPending } =
     useLikeUnilikeGroupPost(
       data?.communityId,
@@ -51,17 +68,34 @@ const PostCard = memo(({ data }: PostCardType) => {
     }
   };
 
+  const handleDeletePost = () => {
+    if (data?.communityId) {
+      mutateDeleteCommunityPost(data?._id);
+    } else {
+      mutateDeletePost(data?._id);
+    }
+    setVisible(false);
+  };
+
   const hideBottomBar = () => {
     commentBottomSheet.current?.hide();
   };
 
   return (
-    <View className=" bg-white  flex gap-4 mt-10">
+    <View className="relative bg-white flex gap-4 my-4 z-1">
+      {visible && (
+        <PostCardOption
+          handleDeletePost={handleDeletePost}
+          isAdmin={data?.user?._id === userData?.id}
+        />
+      )}
       <PostCardUserDetails
+        visible={visible}
+        setVisible={setVisible}
         name={data?.user?.firstName + " " + data?.user?.lastName}
         year={data?.userProfile?.study_year}
         degree={data?.userProfile?.degree}
-        major={data?.userProfile?.major}
+        university={data?.userProfile?.university_name}
         dp={data?.userProfile?.profile_dp?.imageUrl || " "}
         postId={data?._id}
         type={data?.communityId ? PostType.Community : PostType.Timeline}
@@ -72,7 +106,7 @@ const PostCard = memo(({ data }: PostCardType) => {
       <ImageGridLayout imagesData={data?.imageUrl || []} />
 
       {data?.content && (
-        <View className=" py-2 px-4">
+        <View className="px-4">
           <RenderHtml
             contentWidth={width}
             source={{ html: data?.content }}
@@ -82,8 +116,8 @@ const PostCard = memo(({ data }: PostCardType) => {
         </View>
       )}
 
-      <View className="py-2 px-4">
-        <Text>
+      <View className="px-4">
+        <Text className="text-neutral-400">
           {dayjs(data?.createdAt).format("h:mm A · MMM D, YYYY")}
           {data?.communityId
             ? `· Post from   ${data?.userProfile?.university_name} `
@@ -97,25 +131,29 @@ const PostCard = memo(({ data }: PostCardType) => {
             onPress={() => LikeUnlikeHandler(data?._id)}
             className="flex flex-row gap-2 items-center"
           >
+            <Text className="text-lg font-bold text-neutral-500">
+              {data?.likeCount?.length}
+            </Text>
             <ThumbsUp
-              color={
-                data?.likeCount?.some(
-                  (like: any) => like.userId == userData?.id
-                )
-                  ? "#6647FF"
-                  : "black"
-              }
-              height={24}
-              width={24}
+              strokeWidth={2}
+              color={isSelfLike ? "#6647FF" : "#6B7280"}
+              height={20}
+              width={20}
             />
-            <Text>{data?.likeCount?.length}</Text>
           </TouchableOpacity>
           <TouchableOpacity
             onPress={() => commentBottomSheet.current?.show()}
             className="flex flex-row gap-2 items-center"
           >
-            <ChatBubbleEmpty height={24} width={24} />
-            <Text>{data?.commentCount}</Text>
+            <Text className="text-lg font-bold text-neutral-500">
+              {data?.commentCount}
+            </Text>
+            <ChatBubbleEmpty
+              strokeWidth={2}
+              color="#6B7280"
+              height={20}
+              width={20}
+            />
           </TouchableOpacity>
         </View>
 
@@ -123,16 +161,26 @@ const PostCard = memo(({ data }: PostCardType) => {
           onPress={() => sharePost()}
           className="flex flex-row gap-2 items-center"
         >
-          <ShareAndroid height={24} width={24} />
+          <ShareAndroid
+            strokeWidth={2}
+            color="#6B7280"
+            height={20}
+            width={20}
+          />
         </TouchableOpacity>
       </View>
-
       <ActionSheet
+        useBottomSafeAreaPadding
         ref={commentBottomSheet}
         gestureEnabled={true}
+        safeAreaInsets={insets}
         // snapPoints={[70, 100]}
         containerStyle={{
-          height: "100%",
+          //  height: "100%",
+          //  marginBottom: insets.bottom, // Keeps it above the home indicator
+          paddingTop: 10,
+          //  borderTopLeftRadius: 20,
+          //  borderTopRightRadius: 20,
         }}
       >
         <CommentBottomSheet

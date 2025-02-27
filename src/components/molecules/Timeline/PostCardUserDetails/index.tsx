@@ -8,16 +8,19 @@ import { useDeleteCommunityPost } from "@/services/communityPost";
 import { useNavigation } from "@react-navigation/native";
 import { RootStackParamList } from "@/types/navigation";
 import { StackNavigationProp } from "@react-navigation/stack";
+import PostOption from "@/assets/icons/postOption";
 type Props = {
   name: string;
   year: string;
   degree: string;
-  major: string;
+  university: string;
   dp: string;
   postId: string;
   type: "Community" | "Timeline";
   isAdmin: boolean;
   postAdminId: string;
+  setVisible: (visible: boolean) => void;
+  visible: boolean;
 };
 
 type NavigationProp = StackNavigationProp<RootStackParamList, "Timeline">;
@@ -30,10 +33,11 @@ const PostCardUserDetails = ({
   isAdmin,
   postId,
   type,
-  major,
+  university,
   postAdminId,
+  visible,
+  setVisible,
 }: Props) => {
-  const [visible, setVisible] = useState(false);
   const navigate = useNavigation<NavigationProp>();
   const { mutate: mutateDeletePost } = useDeleteUserPost();
   const { mutate: mutateDeleteCommunityPost } = useDeleteCommunityPost();
@@ -56,37 +60,44 @@ const PostCardUserDetails = ({
   };
 
   return (
-    <View className=" flex flex-row justify-between items-center    py-2 px-4">
-      {visible && (
+    <View className="relative flex flex-row justify-between items-center py-2 px-4">
+      {/*{visible && (
         <PostCardOption handleDeletePost={handleDeletePost} isAdmin={isAdmin} />
-      )}
-      <View className="flex flex-row gap-2 ">
+      )}*/}
+      <TouchableOpacity
+        activeOpacity={0.7}
+        className="flex flex-row gap-2"
+        onPress={() => handleNavigate()}
+      >
         <Image
           source={dp && dp?.trim().length > 0 ? { uri: dp } : avatar}
           style={styles.ImageSize}
-          className="w-12 h-12 rounded-full"
+          className="w-12 h-12 rounded-full border border-neutral-300"
           resizeMode="cover"
         />
 
-        <TouchableOpacity onPress={() => handleNavigate()} className="">
-          <Text className="font-semibold text-neutral-900 ">{name}</Text>
+        <View>
+          <View>
+            <Text className="font-semibold text-neutral-900 text-lg">
+              {name}
+            </Text>
+          </View>
           <View>
             <Text style={styles.fontSize} className="text-neutral-500 ">
               {year} {degree}
             </Text>
             <Text style={styles.fontSize} className="text-neutral-500 ">
-              {major}
+              {university}
             </Text>
           </View>
-        </TouchableOpacity>
-      </View>
+        </View>
+      </TouchableOpacity>
 
       <TouchableOpacity
+        className="absolute right-4 top-1"
         onPress={() => setVisible(!visible)}
-        style={styles.dotBg}
-        className="bg-neutral-100 rounded-full p-2"
       >
-        <MoreHoriz height={24} width={24} />
+        <PostOption />
       </TouchableOpacity>
     </View>
   );
