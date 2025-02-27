@@ -4,7 +4,8 @@ import SidebarMenuSectionThree from "@/components/molecules/RightSIdeBar/MenuSec
 import SidebarMenuSectionTwo from "@/components/molecules/RightSIdeBar/MenuSecTwo";
 import ProfileCard from "@/components/molecules/RightSIdeBar/ProfileCard";
 import React from "react";
-import { Pressable, ScrollView, Text, View } from "react-native";
+import { ScrollView, Text, View } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 type Props = {
   navigation: any;
@@ -13,22 +14,24 @@ type Props = {
 
 const RightSideSidebar = ({ navigation, handleClick }: Props) => {
   return (
-    <ScrollView>
-      <ProfileCard toShow={true} />
-      <SidebarMenuSectionOne
-        navigation={navigation}
-        handleClick={handleClick}
-      />
+    <SafeAreaView>
+      <ScrollView>
+        <ProfileCard toShow={true} />
+        <SidebarMenuSectionOne
+          navigation={navigation}
+          handleClick={handleClick}
+        />
 
-      <SidebarMenuSectionTwo />
+        <SidebarMenuSectionTwo />
 
-      <SidebarMenuSectionThree />
+        <SidebarMenuSectionThree />
 
-      <SidebarMenuSectionFour />
-      <View className="flex items-center justify-center">
-        <Text className="">Unibuzz Networks © 2024 </Text>
-      </View>
-    </ScrollView>
+        <SidebarMenuSectionFour />
+        <View className="flex items-center justify-center">
+          <Text className="">Unibuzz Networks © 2024 </Text>
+        </View>
+      </ScrollView>
+    </SafeAreaView>
   );
 };
 

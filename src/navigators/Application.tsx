@@ -35,6 +35,7 @@ import DiscoverStack from "./DiscoverStack";
 import tabIcons from "@/constant/tabIcons";
 import RightSideSidebar from "@/components/organism/RightSideSidebar";
 import ProfileStack from "./ProfileStack";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 const Stack = createStackNavigator<RootStackParamList>();
 const Tab = createBottomTabNavigator<RootStackParamList>();
@@ -108,7 +109,7 @@ function ApplicationNavigator() {
 
   function AppMenuDrawerContent(props: any) {
     return (
-      <View style={{ padding: 20 }}>
+      <SafeAreaView style={{ padding: 20 }}>
         <Text style={{ fontSize: 18, fontWeight: "bold", marginBottom: 20 }}>
           App Menu
         </Text>
@@ -129,7 +130,7 @@ function ApplicationNavigator() {
         <Pressable onPress={() => props.navigation.navigate("Settings")}>
           <Text style={{ fontSize: 16, marginBottom: 15 }}>Settings</Text>
         </Pressable>
-      </View>
+      </SafeAreaView>
     );
   }
 
@@ -158,8 +159,6 @@ function ApplicationNavigator() {
 
   const LeftDrawerScreen = ({ navigation, setRightDrawerOpen }: any) => {
     const { showHeader, currScreen } = useHeader();
-    const [headerTranslateY] = useState(new Animated.Value(0));
-    const [headerHeight, setHeaderHeight] = useState(100);
 
     //const animateHeader = useCallback(() => {
     //  LayoutAnimation.configureNext(

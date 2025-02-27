@@ -39,6 +39,7 @@ import {
 import { launchImageLibrary } from "react-native-image-picker";
 import { replaceImage } from "@/services/uploadImage";
 import { useNavigation } from "@react-navigation/native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 type Props = {
   postId: string;
@@ -248,136 +249,138 @@ const CommentBottomSheet = ({
   }
 
   return (
-    <View style={styles.fullHeight}>
-      <View style={{ marginBottom: keyboardOffset ? 150 : 80 }}>
-        <FlatList
-          data={
-            type == PostType.Community
-              ? communityPostCommentsData
-              : userCommentsData
-          }
-          style={styles.flatList}
-          keyExtractor={(item, index) => item._id + index}
-          renderItem={({ item }) =>
-            UserComment({
-              item,
-              width: width,
-              setShowReply,
-              showReply,
-              setReplyingTo,
-              likePostCommentHandler,
-              setShowTotalReply,
-              showTotalReply,
-              handleNavigate,
-            })
-          }
-          onEndReached={() => {
-            if (
-              hasNextPage &&
-              !isFetchingNextPage &&
-              type == PostType.Timeline
-            ) {
-              fetchNextPage();
-            }
-            if (
-              communityCommentsHasNextPage &&
-              !communityCommentsIsFetchingNextPage &&
+    <SafeAreaView>
+      <View style={styles.fullHeight}>
+        <View style={{ marginBottom: keyboardOffset ? 150 : 80 }}>
+          <FlatList
+            data={
               type == PostType.Community
-            ) {
-              communityCommentsNextpage();
+                ? communityPostCommentsData
+                : userCommentsData
             }
-          }}
-          ListFooterComponent={
-            communityCommentsIsFetchingNextPage || isFetchingNextPage ? (
-              <View>
-                <ActivityIndicator size="large" color="#7367f0" />
-              </View>
-            ) : (
-              <View />
-            )
-          }
-          ListEmptyComponent={
-            isFetching || communityCommentsIsFetching ? (
-              <View style={styles.loaderContainer}>
-                <ActivityIndicator size="large" color="#7367f0" />
-              </View>
-            ) : (
-              <View style={styles.emptyContainer}>
-                <Text>No Result Found</Text>
-              </View>
-            )
-          }
-        />
-      </View>
+            style={styles.flatList}
+            keyExtractor={(item, index) => item._id + index}
+            renderItem={({ item }) =>
+              UserComment({
+                item,
+                width: width,
+                setShowReply,
+                showReply,
+                setReplyingTo,
+                likePostCommentHandler,
+                setShowTotalReply,
+                showTotalReply,
+                handleNavigate,
+              })
+            }
+            onEndReached={() => {
+              if (
+                hasNextPage &&
+                !isFetchingNextPage &&
+                type == PostType.Timeline
+              ) {
+                fetchNextPage();
+              }
+              if (
+                communityCommentsHasNextPage &&
+                !communityCommentsIsFetchingNextPage &&
+                type == PostType.Community
+              ) {
+                communityCommentsNextpage();
+              }
+            }}
+            ListFooterComponent={
+              communityCommentsIsFetchingNextPage || isFetchingNextPage ? (
+                <View>
+                  <ActivityIndicator size="large" color="#7367f0" />
+                </View>
+              ) : (
+                <View />
+              )
+            }
+            ListEmptyComponent={
+              isFetching || communityCommentsIsFetching ? (
+                <View style={styles.loaderContainer}>
+                  <ActivityIndicator size="large" color="#7367f0" />
+                </View>
+              ) : (
+                <View style={styles.emptyContainer}>
+                  <Text>No Result Found</Text>
+                </View>
+              )
+            }
+          />
+        </View>
 
-      <View style={styles.centered}>
-        <View
-          style={[
-            styles.commentContainer,
-            {
-              height: keyboardOffset > 0 ? 100 : 50,
-            },
-          ]}
-        >
-          {replyingTo?.name ? (
-            <View style={styles.replyingToContainer}>
-              <TouchableOpacity
-                onPress={handleImagePick}
-                style={styles.mediaIcon}
-              >
-                <MediaImage height={20} width={20} color={"#a3a3a3"} />
-              </TouchableOpacity>
-              <Text>Replying to {replyingTo?.name}</Text>
-              <TouchableOpacity onPress={() => setReplyingTo(null)}>
-                <XmarkCircle
-                  height={18}
-                  width={18}
-                  color={"black"}
-                  style={styles.closeIcon}
-                />
-              </TouchableOpacity>
-            </View>
-          ) : (
-            <View style={styles.replyingToContainer}>
-              <TouchableOpacity
-                onPress={handleImagePick}
-                style={styles.mediaIcon}
-              >
-                <MediaImage height={20} width={20} color={"#a3a3a3"} />
-              </TouchableOpacity>
-              <Text>Commenting on Post</Text>
-            </View>
-          )}
-
-          <TouchableOpacity
+        <View style={styles.centered}>
+          <View
             style={[
-              styles.sendButton,
+              styles.commentContainer,
               {
-                bottom: keyboardOffset > 0 ? -45 : -45,
+                height: keyboardOffset > 0 ? 100 : 50,
               },
             ]}
-            onPress={() => handleComment()}
           >
-            {CreateGroupPostCommentLoading ||
-            CreateUserPostCommentReplyLoading ||
-            CreateUserPostCommentLoading ||
-            useCreateGroupPostCommentReplyLoading ? (
-              <ActivityIndicator color={"white"} />
+            {replyingTo?.name ? (
+              <View style={styles.replyingToContainer}>
+                <TouchableOpacity
+                  onPress={handleImagePick}
+                  style={styles.mediaIcon}
+                >
+                  <MediaImage height={20} width={20} color={"#a3a3a3"} />
+                </TouchableOpacity>
+                <Text>Replying to {replyingTo?.name}</Text>
+                <TouchableOpacity onPress={() => setReplyingTo(null)}>
+                  <XmarkCircle
+                    height={18}
+                    width={18}
+                    color={"black"}
+                    style={styles.closeIcon}
+                  />
+                </TouchableOpacity>
+              </View>
             ) : (
-              <SendSolid height={18} width={18} color={"white"} />
+              <View style={styles.replyingToContainer}>
+                <TouchableOpacity
+                  onPress={handleImagePick}
+                  style={styles.mediaIcon}
+                >
+                  <MediaImage height={20} width={20} color={"#a3a3a3"} />
+                </TouchableOpacity>
+                <Text>Commenting on Post</Text>
+              </View>
             )}
-          </TouchableOpacity>
-          <RichText style={styles.richText} editor={editor} />
 
-          <KeyboardAvoidingView
-            behavior={Platform.OS === "ios" ? "padding" : "height"}
-            style={styles.keyboardAvoidingView}
-          >
-            <Toolbar editor={editor} />
-          </KeyboardAvoidingView>
+            <TouchableOpacity
+              style={[
+                styles.sendButton,
+                {
+                  bottom: keyboardOffset > 0 ? -45 : -45,
+                },
+              ]}
+              onPress={() => handleComment()}
+            >
+              {CreateGroupPostCommentLoading ||
+              CreateUserPostCommentReplyLoading ||
+              CreateUserPostCommentLoading ||
+              useCreateGroupPostCommentReplyLoading ? (
+                <ActivityIndicator color={"white"} />
+              ) : (
+                <SendSolid height={18} width={18} color={"white"} />
+              )}
+            </TouchableOpacity>
+            <RichText style={styles.richText} editor={editor} />
+
+            <KeyboardAvoidingView
+              behavior={Platform.OS === "ios" ? "padding" : "height"}
+              style={styles.keyboardAvoidingView}
+            >
+              <Toolbar editor={editor} />
+            </KeyboardAvoidingView>
+          </View>
         </View>
       </View>
-    </View>
+    </SafeAreaView>
   );
 };
 
@@ -385,7 +388,6 @@ export default CommentBottomSheet;
 
 const styles = StyleSheet.create({
   fullHeight: {
-    height: "100%",
     display: "flex",
     justifyContent: "space-between",
   },

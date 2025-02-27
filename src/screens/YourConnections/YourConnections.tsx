@@ -17,6 +17,7 @@ import {
 import { useHeader } from "@/context/HeaderProvider/Header";
 import { RootStackParamList } from "@/types/navigation";
 import { StackNavigationProp } from "@react-navigation/stack";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 interface RouteParams {
   index?: number;
@@ -186,8 +187,8 @@ const YourConnections = () => {
         : othersTabs;
 
   return (
-    <View className="flex-1 bg-white ">
-      <View className="  flex flex-row gap-4 items-center justify-between border-b border-neutral-300 p-3">
+    <SafeAreaView className="flex-1 bg-white ">
+      <View className="  flex flex-row gap-4 items-center justify-between border-b border-neutral-300 px-3 pb-3">
         <View className=" flex flex-row gap-4 items-center">
           <TouchableOpacity
             className="flex flex-row gap-2 items-center"
@@ -230,7 +231,7 @@ const YourConnections = () => {
         tabs={tabToRender}
         index={index || 0}
       />
-    </View>
+    </SafeAreaView>
   );
 };
 
