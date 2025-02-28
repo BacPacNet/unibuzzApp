@@ -47,7 +47,6 @@ const ProfileStudentForm = ({
   }, [currDegree, setValue]);
 
   return (
-    // <KeyboardAvoidingView behavior="padding" style={{ flex: 1 }}>
     <ScrollView
       contentContainerStyle={{
         flexGrow: 1,
@@ -70,31 +69,7 @@ const ProfileStudentForm = ({
           >
             <Text className={`text-md text-neutral-900 `}>{userType}</Text>
           </View>
-          {/* <View className="w-full flex flex-col relative mb-4">
-            <Controller
-              name="universityName"
-              control={control}
-              // rules={{ required: 'University name is required!' }}
-              render={({ field }) => (
-                <SelectUniversityDropdown
-                  value={field.value}
-                  onChange={(selectedUniversity: any) => {
-                    field.onChange(selectedUniversity.name);
-                    setValue("universityId", selectedUniversity._id);
-                  }}
-                  placeholder="Select University Name"
-                  icon="single"
-                  search={true}
-                  err={!!ProfileFormErrors.universityName}
-                />
-              )}
-            />
-            {ProfileFormErrors.universityName && (
-              <Text className="text-red-500 text-sm mt-1">
-                {ProfileFormErrors?.universityName?.message?.toString()}
-              </Text>
-            )}
-          </View> */}
+
           <SelectUniversityDropdownBottomSheet
             placeholder="Select University Name"
             icon="single"
@@ -104,28 +79,6 @@ const ProfileStudentForm = ({
             rules={{ required: "University is required!" }}
             setValue={setValue}
           />
-
-          {/* <View className="w-full flex flex-col relative mb-4">
-            <Controller
-              name="year"
-              control={control}
-              rules={{ required: "Year is required!" }}
-              render={({ field }) => (
-                <SelectDropdown
-                  options={currYear}
-                  value={field.value}
-                  onChange={field.onChange}
-                  placeholder="Year"
-                  icon="single"
-                  err={!!ProfileFormErrors.year}
-                />
-              )}
-            />
-            {ProfileFormErrors.year && (
-              <Text className="text-red-500 text-sm mt-1">
-                {ProfileFormErrors?.year?.message?.toString()}
-              </Text>
-            )} */}
 
           <SelectInputWithSearch
             isLabelShown={false}
@@ -137,31 +90,6 @@ const ProfileStudentForm = ({
             required
             rules={{ required: "Year is required!" }}
           />
-          {/* </View> */}
-
-          {/* <View className="w-full flex flex-col relative mb-4">
-            <Controller
-              name="degree"
-              control={control}
-              rules={{ required: "Degree is required!" }}
-              render={({ field }) => (
-                <SelectDropdown
-                  options={Object.keys(degreeAndMajors)}
-                  value={field.value}
-                  onChange={field.onChange}
-                  placeholder="Select a degree"
-                  icon="single"
-                  // search={true}
-                  err={!!ProfileFormErrors.degree}
-                />
-              )}
-            />
-            {ProfileFormErrors.degree && (
-              <Text className="text-red-500 text-sm mt-1">
-                {ProfileFormErrors?.degree?.message?.toString()}
-              </Text>
-            )}
-          </View> */}
 
           <SelectInputWithSearch
             isLabelShown={false}
@@ -175,25 +103,6 @@ const ProfileStudentForm = ({
           />
 
           <View className="w-full flex flex-col relative mb-4">
-            {/* <Controller
-              name="major"
-              control={control}
-              rules={{ required: "Major is required!" }}
-              disabled={!currDegree}
-              render={({ field }) => (
-                <SelectDropdown
-                  key={currMajor}
-                  options={currMajor}
-                  value={field.value}
-                  onChange={field.onChange}
-                  search={true}
-                  placeholder="Select a major"
-                  icon="single"
-                  err={!!ProfileFormErrors.major}
-                />
-              )}
-            /> */}
-
             <SelectInputWithSearch
               isLabelShown={false}
               placeholder="Select a major"
