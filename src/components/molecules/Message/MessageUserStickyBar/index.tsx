@@ -93,9 +93,9 @@ const MessageUserStickyBar = ({
           />
         </View>
         <View>
-          <Text className="text-sm font-semibold text-neutral-700">{name}</Text>
+          <Text className="text-lg font-semibold text-neutral-700">{name}</Text>
           {isGroupChat ? (
-            <Text className="text-2xs font-normal text-neutral-500">
+            <Text className="text-sm font-normal text-neutral-500">
               {description}
             </Text>
           ) : (

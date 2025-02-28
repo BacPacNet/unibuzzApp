@@ -5,11 +5,12 @@ import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import DatePicker from "react-native-date-picker";
 
 interface SelectInputProps {
-  label: string;
+  label?: string;
   placeholder: string;
   name: string;
   control: any;
   required?: boolean;
+  isLabelShown?: boolean;
   rules?: object;
 
   onChange?: (value: string) => void;
@@ -18,7 +19,7 @@ interface SelectInputProps {
 export function DateSelect({
   label,
   placeholder,
-
+  isLabelShown = true,
   name,
   control,
   required = false,
@@ -37,10 +38,12 @@ export function DateSelect({
 
   return (
     <View style={styles.container}>
-      <View style={styles.labelContainer}>
-        <Text style={styles.label}>{label}</Text>
-        {required && <Text style={styles.required}>*</Text>}
-      </View>
+      {isLabelShown && (
+        <View style={styles.labelContainer}>
+          <Text style={styles.label}>{label}</Text>
+          {required && <Text style={styles.required}>*</Text>}
+        </View>
+      )}
 
       <Controller
         control={control}

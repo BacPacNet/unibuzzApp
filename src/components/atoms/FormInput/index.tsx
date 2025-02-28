@@ -2,42 +2,50 @@ import { Controller } from "react-hook-form";
 import { Text, TextInput, View, StyleSheet } from "react-native";
 
 interface FormInputProps {
-  label: string;
+  label?: string;
   placeholder: string;
   required?: boolean;
-
+  isLabelShown?: boolean;
+  rules?: object;
   control: any;
   name: string;
   isError?: boolean;
   errorMessage?: string;
   secureTextEntry?: boolean;
   keyboardType?: "default" | "email-address" | "numeric" | "phone-pad";
+  disabled?: boolean;
 }
 
 export function FormInput({
   label,
   placeholder,
   required = false,
-
+  rules,
+  isLabelShown = true,
   name,
   control,
   isError,
   errorMessage,
   secureTextEntry,
   keyboardType = "default",
+  disabled = false,
 }: FormInputProps) {
   return (
     <View style={styles.container}>
-      <View style={styles.labelContainer}>
-        <Text style={styles.label}>{label}</Text>
-        {required && <Text style={styles.required}>*</Text>}
-      </View>
+      {isLabelShown && (
+        <View style={styles.labelContainer}>
+          <Text style={styles.label}>{label}</Text>
+          {required && <Text style={styles.required}>*</Text>}
+        </View>
+      )}
+
       <Controller
         control={control}
         name={name}
-        rules={{ required }}
+        rules={rules}
         render={({ field: { onChange, value } }) => (
           <TextInput
+            editable={!disabled}
             style={[styles.input, isError && styles.inputError]}
             placeholder={placeholder}
             value={value}

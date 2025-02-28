@@ -285,7 +285,18 @@ export default function ProfileEdit() {
                 control={control}
                 keyboardType="email-address"
                 isError={!!errors.email}
-                errorMessage={errors.bio ? "email  is required" : ""}
+                errorMessage={
+                  errors.email
+                    ? errors.email.message?.toString()
+                    : "email  is required"
+                }
+                rules={{
+                  required: "Please enter your email!",
+                  pattern: {
+                    value: /^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/,
+                    message: "Invalid email format",
+                  },
+                }}
               />
 
               <FormInput

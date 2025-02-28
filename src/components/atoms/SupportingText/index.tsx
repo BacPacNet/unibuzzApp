@@ -10,6 +10,6 @@ export default function SupportingText({
   className = "",
 }: TitleProps) {
   return (
-    <Text className={`text-xs  text-neutral-500 ${className}`}>{children}</Text>
+    <Text className={`text-lg  text-neutral-500 ${className}`}>{children}</Text>
   );
 }

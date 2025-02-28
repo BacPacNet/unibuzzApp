@@ -7,6 +7,7 @@ import SupportingText from "@/components/atoms/SupportingText";
 import CustomTextInput from "@/components/atoms/CustomTextInput";
 
 import ReusableButton from "@/components/atoms/ReusableButton";
+import { FormInput } from "@/components/atoms/FormInput";
 
 const ClaimBenefitForm = ({
   onSubmit,
@@ -32,30 +33,15 @@ const ClaimBenefitForm = ({
       </View>
       {BadgeList()}
       <View className="w-full flex  mb-4">
-        <View>
-          <View className="my-4">
-            <Text className="font-medium text-neutral-900 mb-2">
-              Referral Code
-            </Text>
-            <Controller
-              control={control}
-              render={({ field: { onChange, onBlur, value } }) => (
-                <CustomTextInput
-                  placeholder="code"
-                  onBlur={onBlur}
-                  onChangeText={(value) => onChange(value)}
-                  value={value}
-                  error={!!ClaimBenefit.referralCode}
-                />
-              )}
-              name="referralCode"
-            />
-            {ClaimBenefit.referralCode && (
-              <Text className="text-red-500 text-sm mt-1">
-                {ClaimBenefit.referralCode.message?.toString()}
-              </Text>
-            )}
-          </View>
+        <View className="mt-4">
+          <FormInput
+            label="referralCode"
+            placeholder="code"
+            isLabelShown={false}
+            required
+            name="referralCode"
+            control={control}
+          />
 
           <ReusableButton
             buttonText="Confirm Code"
@@ -63,7 +49,7 @@ const ClaimBenefitForm = ({
             activityIndicatorColor="#6744FF"
             textStyle="text-primary-500"
           />
-          <Text className="text-xs text-neutral-500 text-center mb-4">
+          <Text className="text-md text-neutral-500 text-center mb-4">
             Plan will immediately apply to account after confirmation.
           </Text>
         </View>
@@ -95,7 +81,7 @@ const BadgeList = () => {
       {badgeData?.map((item) => (
         <Text
           key={item.name}
-          className="rounded-full p-3  text-xs w-auto"
+          className="rounded-full p-3  text-md w-auto"
           style={{ backgroundColor: item.bg, color: item.color }}
         >
           {item.name}

@@ -1,4 +1,10 @@
-import React, { Fragment, useEffect, useRef, useState } from "react";
+import React, {
+  Fragment,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import { View, Text, Image, ScrollView, ActivityIndicator } from "react-native";
 import { useQueryClient } from "@tanstack/react-query";
 import dayjs from "dayjs";
@@ -7,8 +13,9 @@ import { useGetUserMessages } from "@/services/Messages";
 import avatar from "../../../assets/avatar.png";
 import { getUserProfileStore, getUserStore } from "@/storage/user";
 import UserMessageInput from "../Message/UserMessageInput";
-import { useNavigation } from "@react-navigation/native";
+import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import ImageGallery from "../ImageGrid";
+import { useHeader } from "@/context/HeaderProvider/Header";
 dayjs.extend(relativeTime);
 
 type User = {
@@ -73,10 +80,12 @@ const UserCard = ({
       </View>
       <View className="flex-1 pl-2 flex items-start justify-start">
         <View className="flex-row  gap-4 items-center">
-          <Text className="text-sm font-semibold text-neutral-900">{name}</Text>
-          <Text className="text-xs text-gray-500">{dayjs(date).fromNow()}</Text>
+          <Text className="text-[18px] font-semibold text-neutral-900">
+            {name}
+          </Text>
+          <Text className="text-md text-gray-500">{dayjs(date).fromNow()}</Text>
         </View>
-        <Text className="text-xs text-gray-800">{content}</Text>
+        <Text className="text-lg text-gray-800">{content}</Text>
 
         <ImageGallery images={media} imageCount={media?.length} />
       </View>
@@ -98,7 +107,7 @@ const UserMessages = ({
   const userData = getUserStore();
   const userProfileData = getUserProfileStore();
   const navigation = useNavigation();
-
+  const { changeHeaderShownStatus } = useHeader();
   const scrollViewRef = useRef<ScrollView>(null);
   const [changed, setChanged] = useState("");
 
@@ -111,6 +120,16 @@ const UserMessages = ({
   useEffect(() => {
     navigation.setOptions({ tabBarStyle: { display: "none" } });
   }, [navigation]);
+
+  useFocusEffect(
+    useCallback(() => {
+      changeHeaderShownStatus(false);
+
+      return () => {
+        changeHeaderShownStatus(true);
+      };
+    }, [])
+  );
 
   if (isFetching)
     return (

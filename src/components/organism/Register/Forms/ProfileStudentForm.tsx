@@ -15,6 +15,8 @@ import SelectUniversityDropdown from "@/components/atoms/SelectUniversityDropdow
 import { currYear, degreeAndMajors } from "@/types/register";
 import SelectDropdown from "@/components/atoms/SelectDropdown";
 import ReusableButton from "@/components/atoms/ReusableButton";
+import SelectUniversityDropdownBottomSheet from "@/components/atoms/SelectUniversityDropDownBottomSheet";
+import { SelectInputWithSearch } from "@/components/atoms/SelectInputWithSearch";
 
 const ProfileStudentForm = ({
   onSubmit,
@@ -63,11 +65,12 @@ const ProfileStudentForm = ({
 
         <View className="w-full flex flex-col gap-0 mb-4">
           <View
-            className={`flex flex-row justify-between items-center border border-neutral-300 rounded-lg p-2 h-14  bg-white mb-4`}
+            style={{ height: 40 }}
+            className={`flex flex-row justify-between items-center border border-neutral-300 rounded-lg p-2   bg-white mb-4`}
           >
-            <Text className={`text-xs text-neutral-900 `}>{userType}</Text>
+            <Text className={`text-md text-neutral-900 `}>{userType}</Text>
           </View>
-          <View className="w-full flex flex-col relative mb-4">
+          {/* <View className="w-full flex flex-col relative mb-4">
             <Controller
               name="universityName"
               control={control}
@@ -91,9 +94,18 @@ const ProfileStudentForm = ({
                 {ProfileFormErrors?.universityName?.message?.toString()}
               </Text>
             )}
-          </View>
+          </View> */}
+          <SelectUniversityDropdownBottomSheet
+            placeholder="Select University Name"
+            icon="single"
+            search={true}
+            control={control}
+            name="universityName"
+            rules={{ required: "University is required!" }}
+            setValue={setValue}
+          />
 
-          <View className="w-full flex flex-col relative mb-4">
+          {/* <View className="w-full flex flex-col relative mb-4">
             <Controller
               name="year"
               control={control}
@@ -113,10 +125,21 @@ const ProfileStudentForm = ({
               <Text className="text-red-500 text-sm mt-1">
                 {ProfileFormErrors?.year?.message?.toString()}
               </Text>
-            )}
-          </View>
+            )} */}
 
-          <View className="w-full flex flex-col relative mb-4">
+          <SelectInputWithSearch
+            isLabelShown={false}
+            placeholder="Year"
+            name="year"
+            options={currYear}
+            control={control}
+            search={true}
+            required
+            rules={{ required: "Year is required!" }}
+          />
+          {/* </View> */}
+
+          {/* <View className="w-full flex flex-col relative mb-4">
             <Controller
               name="degree"
               control={control}
@@ -138,10 +161,21 @@ const ProfileStudentForm = ({
                 {ProfileFormErrors?.degree?.message?.toString()}
               </Text>
             )}
-          </View>
+          </View> */}
+
+          <SelectInputWithSearch
+            isLabelShown={false}
+            placeholder="Select a degree"
+            name="degree"
+            options={Object.keys(degreeAndMajors)}
+            control={control}
+            search={true}
+            required
+            rules={{ required: "degree is required!" }}
+          />
 
           <View className="w-full flex flex-col relative mb-4">
-            <Controller
+            {/* <Controller
               name="major"
               control={control}
               rules={{ required: "Major is required!" }}
@@ -158,16 +192,22 @@ const ProfileStudentForm = ({
                   err={!!ProfileFormErrors.major}
                 />
               )}
+            /> */}
+
+            <SelectInputWithSearch
+              isLabelShown={false}
+              placeholder="Select a major"
+              name="major"
+              options={currMajor}
+              control={control}
+              search={true}
+              required
+              rules={{ required: "major is required!" }}
             />
-            <Text className={`text-2xs text-neutral-400 text-center`}>
+            <Text className={`text-md text-neutral-400 text-center`}>
               If your major is not listed, choose the one that is closest to
               your current major.
             </Text>
-            {ProfileFormErrors.major && (
-              <Text className="text-red-500 text-sm mt-1">
-                {ProfileFormErrors?.major?.message?.toString()}
-              </Text>
-            )}
           </View>
         </View>
 

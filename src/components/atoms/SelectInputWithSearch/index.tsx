@@ -18,12 +18,13 @@ import {
 } from "react-native";
 
 interface SelectInputProps {
-  label: string;
+  label?: string;
   placeholder: string;
   options: string[];
   name: string;
   control: any;
   required?: boolean;
+  isLabelShown?: boolean;
   rules?: object;
   search?: boolean;
 
@@ -34,6 +35,7 @@ const icons = [UserCircle, UserBadgeCheck];
 
 export function SelectInputWithSearch({
   label,
+  isLabelShown = true,
   placeholder,
   options,
   name,
@@ -64,10 +66,12 @@ export function SelectInputWithSearch({
 
   return (
     <View style={styles.container}>
-      <View style={styles.labelContainer}>
-        <Text style={styles.label}>{label}</Text>
-        {required && <Text style={styles.required}>*</Text>}
-      </View>
+      {isLabelShown && (
+        <View style={styles.labelContainer}>
+          <Text style={styles.label}>{label}</Text>
+          {required && <Text style={styles.required}>*</Text>}
+        </View>
+      )}
 
       <Controller
         control={control}
