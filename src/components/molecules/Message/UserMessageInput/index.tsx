@@ -8,6 +8,7 @@ import {
   KeyboardAvoidingView,
   Platform,
   Text,
+  StyleSheet,
 } from "react-native";
 
 // import { useCreateChatMessage, useAcceptRequest } from '@/services/Messages';
@@ -185,9 +186,9 @@ const UserMessageInput = ({
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "padding" : "height"}
-      className=" bg-white rounded-2xl w-full"
+      className=" bg-white rounded-2xl w-full "
     >
-      <View className="border border-neutral-300 rounded-lg  relative">
+      <View className="border border-neutral-300 rounded-lg  relative ">
         <TextInput
           ref={inputRef}
           value={text}

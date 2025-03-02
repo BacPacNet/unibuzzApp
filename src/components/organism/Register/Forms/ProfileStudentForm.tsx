@@ -15,6 +15,8 @@ import SelectUniversityDropdown from "@/components/atoms/SelectUniversityDropdow
 import { currYear, degreeAndMajors } from "@/types/register";
 import SelectDropdown from "@/components/atoms/SelectDropdown";
 import ReusableButton from "@/components/atoms/ReusableButton";
+import SelectUniversityDropdownBottomSheet from "@/components/atoms/SelectUniversityDropDownBottomSheet";
+import { SelectInputWithSearch } from "@/components/atoms/SelectInputWithSearch";
 
 const ProfileStudentForm = ({
   onSubmit,
@@ -45,7 +47,6 @@ const ProfileStudentForm = ({
   }, [currDegree, setValue]);
 
   return (
-    // <KeyboardAvoidingView behavior="padding" style={{ flex: 1 }}>
     <ScrollView
       contentContainerStyle={{
         flexGrow: 1,
@@ -63,111 +64,59 @@ const ProfileStudentForm = ({
 
         <View className="w-full flex flex-col gap-0 mb-4">
           <View
-            className={`flex flex-row justify-between items-center border border-neutral-300 rounded-lg p-2 h-14  bg-white mb-4`}
+            style={{ height: 40 }}
+            className={`flex flex-row justify-between items-center border border-neutral-300 rounded-lg p-2   bg-white mb-4`}
           >
-            <Text className={`text-xs text-neutral-900 `}>{userType}</Text>
-          </View>
-          <View className="w-full flex flex-col relative mb-4">
-            <Controller
-              name="universityName"
-              control={control}
-              // rules={{ required: 'University name is required!' }}
-              render={({ field }) => (
-                <SelectUniversityDropdown
-                  value={field.value}
-                  onChange={(selectedUniversity: any) => {
-                    field.onChange(selectedUniversity.name);
-                    setValue("universityId", selectedUniversity._id);
-                  }}
-                  placeholder="Select University Name"
-                  icon="single"
-                  search={true}
-                  err={!!ProfileFormErrors.universityName}
-                />
-              )}
-            />
-            {ProfileFormErrors.universityName && (
-              <Text className="text-red-500 text-sm mt-1">
-                {ProfileFormErrors?.universityName?.message?.toString()}
-              </Text>
-            )}
+            <Text className={`text-md text-neutral-900 `}>{userType}</Text>
           </View>
 
-          <View className="w-full flex flex-col relative mb-4">
-            <Controller
-              name="year"
-              control={control}
-              rules={{ required: "Year is required!" }}
-              render={({ field }) => (
-                <SelectDropdown
-                  options={currYear}
-                  value={field.value}
-                  onChange={field.onChange}
-                  placeholder="Year"
-                  icon="single"
-                  err={!!ProfileFormErrors.year}
-                />
-              )}
-            />
-            {ProfileFormErrors.year && (
-              <Text className="text-red-500 text-sm mt-1">
-                {ProfileFormErrors?.year?.message?.toString()}
-              </Text>
-            )}
-          </View>
+          <SelectUniversityDropdownBottomSheet
+            placeholder="Select University Name"
+            icon="single"
+            search={true}
+            control={control}
+            name="universityName"
+            rules={{ required: "University is required!" }}
+            setValue={setValue}
+          />
+
+          <SelectInputWithSearch
+            isLabelShown={false}
+            placeholder="Year"
+            name="year"
+            options={currYear}
+            control={control}
+            search={true}
+            required
+            rules={{ required: "Year is required!" }}
+          />
+
+          <SelectInputWithSearch
+            isLabelShown={false}
+            placeholder="Select a degree"
+            name="degree"
+            options={Object.keys(degreeAndMajors)}
+            control={control}
+            search={true}
+            required
+            rules={{ required: "degree is required!" }}
+          />
 
           <View className="w-full flex flex-col relative mb-4">
-            <Controller
-              name="degree"
-              control={control}
-              rules={{ required: "Degree is required!" }}
-              render={({ field }) => (
-                <SelectDropdown
-                  options={Object.keys(degreeAndMajors)}
-                  value={field.value}
-                  onChange={field.onChange}
-                  placeholder="Select a degree"
-                  icon="single"
-                  // search={true}
-                  err={!!ProfileFormErrors.degree}
-                />
-              )}
-            />
-            {ProfileFormErrors.degree && (
-              <Text className="text-red-500 text-sm mt-1">
-                {ProfileFormErrors?.degree?.message?.toString()}
-              </Text>
-            )}
-          </View>
-
-          <View className="w-full flex flex-col relative mb-4">
-            <Controller
+            <SelectInputWithSearch
+              isLabelShown={false}
+              placeholder="Select a major"
               name="major"
+              options={currMajor}
               control={control}
-              rules={{ required: "Major is required!" }}
-              disabled={!currDegree}
-              render={({ field }) => (
-                <SelectDropdown
-                  key={currMajor}
-                  options={currMajor}
-                  value={field.value}
-                  onChange={field.onChange}
-                  search={true}
-                  placeholder="Select a major"
-                  icon="single"
-                  err={!!ProfileFormErrors.major}
-                />
-              )}
+              search={true}
+              required
+              rules={{ required: "major is required!" }}
             />
-            <Text className={`text-2xs text-neutral-400 text-center`}>
+            <Text className={`text-md text-neutral-400 text-center`}>
               If your major is not listed, choose the one that is closest to
               your current major.
             </Text>
-            {ProfileFormErrors.major && (
-              <Text className="text-red-500 text-sm mt-1">
-                {ProfileFormErrors?.major?.message?.toString()}
-              </Text>
-            )}
           </View>
         </View>
 

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { View, Text, Button, StyleSheet } from "react-native";
+import { View } from "react-native";
 import { useForm, FormProvider } from "react-hook-form";
 import AccountCreationForm from "../Forms/AccountCreationFrom";
 import {
@@ -90,6 +90,7 @@ const FormContainer = ({ step, setStep, setSubStep, subStep }: Props) => {
       }
     };
     loadRegisterData();
+    // removeRegisterData();
   }, []);
 
   useEffect(() => {
@@ -318,8 +319,8 @@ const FormContainer = ({ step, setStep, setSubStep, subStep }: Props) => {
     } else if (step === 4) {
       return (
         <LoginForm
-          email={registerData.email}
-          password={registerData.password}
+          email={methods.getValues("email")}
+          password={methods.getValues("password")}
         />
       );
     }

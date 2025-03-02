@@ -1,21 +1,16 @@
 import React, { useState, useCallback, useEffect } from "react";
-import {
-  View,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  ActivityIndicator,
-} from "react-native";
+import { View, Text, TextInput, TouchableOpacity } from "react-native";
 import { Controller, useFormContext } from "react-hook-form";
 import { useNavigation } from "@react-navigation/native";
-// import { AiOutlineEye, AiOutlineEyeInvisible } from 'react-icons/ai';
+
 import { Eye, EyeClosed } from "iconoir-react-native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { RootStackParamList } from "@/types/navigation";
 import Title from "@/components/atoms/Title";
 import SupportingText from "@/components/atoms/SupportingText";
-import CustomTextInput from "@/components/atoms/CustomTextInput";
+
 import ReusableButton from "@/components/atoms/ReusableButton";
+import { FormInput } from "@/components/atoms/FormInput";
 type Props = {
   isPending: boolean;
   onSubmit: (data: any) => Promise<void>;
@@ -31,7 +26,6 @@ const AccountCreationForm = ({ isPending, onSubmit }: Props) => {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const {
-    register,
     formState: { errors },
     watch,
     handleSubmit,
@@ -68,58 +62,44 @@ const AccountCreationForm = ({ isPending, onSubmit }: Props) => {
 
       <View className="w-full">
         {/* Email Input */}
-        <View className="mb-4">
-          <Controller
-            control={control}
-            render={({ field: { onChange, onBlur, value } }) => (
-              <CustomTextInput
-                placeholder="john.dowry@example.com"
-                onBlur={onBlur}
-                onChangeText={(value) => onChange(value)}
-                value={value}
-                error={!!errors.email}
-              />
-            )}
-            name="email"
-            rules={{
-              required: "Please enter your email!",
-              pattern: {
-                value: /^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/,
-                message: "Invalid email format",
-              },
-            }}
-          />
-          {errors.email && (
-            <Text className="text-red-500 text-sm mt-1">
-              {errors.email.message?.toString()}
-            </Text>
-          )}
-        </View>
+
+        <FormInput
+          isLabelShown={false}
+          placeholder="john.dowry@example.com"
+          name="email"
+          control={control}
+          keyboardType="email-address"
+          rules={{
+            required: "Please enter your email!",
+            pattern: {
+              value: /^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/,
+              message: "Invalid email format",
+            },
+          }}
+          isError={!!errors.email}
+          errorMessage={
+            errors.email
+              ? errors.email.message?.toString()
+              : "email  is required"
+          }
+        />
 
         {/* Username Input */}
-        <View className="mb-4">
-          <Controller
-            control={control}
-            render={({ field: { onChange, onBlur, value } }) => (
-              <CustomTextInput
-                placeholder="Username"
-                onBlur={onBlur}
-                onChangeText={(value) => onChange(value)}
-                value={value}
-                error={!!errors.userName}
-              />
-            )}
-            name="userName"
-            rules={{
-              required: "Please enter your username!",
-            }}
-          />
-          {errors.userName && (
-            <Text className="text-red-500 text-sm mt-1">
-              {errors.userName.message?.toString()}
-            </Text>
-          )}
-        </View>
+
+        <FormInput
+          label="Username"
+          placeholder="Enter First Name"
+          isLabelShown={false}
+          required
+          name="userName"
+          control={control}
+          isError={!!errors.userName}
+          errorMessage={
+            errors.userName
+              ? errors.userName.message?.toString()
+              : "Please enter your username!"
+          }
+        />
 
         {/* Password Input */}
         <View className="mb-4">
@@ -130,10 +110,11 @@ const AccountCreationForm = ({ isPending, onSubmit }: Props) => {
                 <TextInput
                   placeholder="*********"
                   secureTextEntry={!showPassword}
-                  className={`border rounded-lg p-3 ${errors.password ? "border-red-500" : "border-neutral-300"}`}
+                  className={`border    rounded-lg  ${errors.password ? "border-red-500" : "border-neutral-300"}`}
                   onBlur={onBlur}
                   onChangeText={(value) => onChange(value)}
                   value={value}
+                  style={{ padding: 12, fontSize: 14, height: 40 }}
                 />
               )}
               name="password"
@@ -153,7 +134,7 @@ const AccountCreationForm = ({ isPending, onSubmit }: Props) => {
             />
 
             <TouchableOpacity
-              className="absolute right-2 top-3"
+              className="absolute right-2 top-1"
               onPress={() => setShowPassword((prev) => !prev)}
             >
               {showPassword ? (
@@ -176,7 +157,7 @@ const AccountCreationForm = ({ isPending, onSubmit }: Props) => {
             </View>
           ) : null}
           {errors.password && (
-            <Text className="text-red-500 text-sm mt-1">
+            <Text className="text-red-500 text-[12px] mt-1">
               {errors.password.message?.toString()}
             </Text>
           )}
@@ -191,10 +172,11 @@ const AccountCreationForm = ({ isPending, onSubmit }: Props) => {
                 <TextInput
                   placeholder="*********"
                   secureTextEntry={!showConfirmPassword}
-                  className={`border rounded-lg p-3 ${errors.password ? "border-red-500" : "border-neutral-300"}`}
+                  className={`border rounded-lg  ${errors.password ? "border-red-500" : "border-neutral-300"}`}
                   onBlur={onBlur}
                   onChangeText={(value) => onChange(value)}
                   value={value}
+                  style={{ padding: 12, fontSize: 14, height: 40 }}
                 />
               )}
               name="confirmpassword"
@@ -206,7 +188,7 @@ const AccountCreationForm = ({ isPending, onSubmit }: Props) => {
             />
 
             <TouchableOpacity
-              className="absolute right-2 top-3"
+              className="absolute right-2 top-1"
               onPress={() => setShowConfirmPassword((prev) => !prev)}
             >
               {showConfirmPassword ? (
@@ -217,25 +199,12 @@ const AccountCreationForm = ({ isPending, onSubmit }: Props) => {
             </TouchableOpacity>
           </View>
           {errors.confirmpassword && (
-            <Text className="text-red-500 text-sm mt-1">
+            <Text className="text-red-500 text-[12px] mt-1">
               {errors.confirmpassword.message?.toString()}
             </Text>
           )}
         </View>
 
-        {/* <TouchableOpacity
-          disabled={isPending}
-          className={`bg-primary-500 py-3 rounded-lg ${isPending ? "opacity-50" : ""}`}
-          onPress={handleSubmit(onSubmit)}
-        >
-          {isPending ? (
-            <ActivityIndicator color="#fff" />
-          ) : (
-            <Text className="text-center text-white font-bold">
-              Create an account
-            </Text>
-          )}
-        </TouchableOpacity> */}
         <ReusableButton
           onPress={handleSubmit(onSubmit)}
           disabled={isPending}

@@ -52,7 +52,7 @@ const ReusableButton: React.FC<ReusableButtonProps> = ({
 
   return (
     <TouchableOpacity
-      className={`py-3 rounded-lg w-full mb-4 ${variantClass} ${containerStyle} ${isLoading ? "opacity-50" : ""}`}
+      className={`py-3  rounded-lg w-full mb-4 ${variantClass} ${containerStyle} ${isLoading ? "opacity-50" : ""}`}
       onPress={onPress}
       disabled={disabled || isLoading}
     >

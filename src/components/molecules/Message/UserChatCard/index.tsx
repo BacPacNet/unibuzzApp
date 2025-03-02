@@ -80,7 +80,7 @@ const UserChatCard = ({
           {/* Name and Last Message */}
           <View className=" flex-1 ">
             <Text
-              className={`text-neutral-600 text-sm ${
+              className={`text-neutral-600 text-lg ${
                 unRead > 0 ? "font-semibold" : "font-medium"
               }`}
             >
@@ -88,7 +88,7 @@ const UserChatCard = ({
             </Text>
             <View className="">
               <Text
-                className={`text-neutral-500 text-[12px]  ${
+                className={`text-neutral-500 text-md  ${
                   unRead > 0 ? "font-semibold" : "font-medium"
                 }`}
                 numberOfLines={2} // Adjust to limit the number of lines for lastMessage
@@ -102,7 +102,7 @@ const UserChatCard = ({
           {/* Timestamp */}
 
           <View className="flex justify-center items-center">
-            <Text className="text-neutral-400 text-xs flex-1 text-center">
+            <Text className="text-neutral-400 text-md flex-1 text-center">
               {date && dayjs(date).fromNow()}
             </Text>
             {unRead > 0 ? (

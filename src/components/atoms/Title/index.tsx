@@ -7,7 +7,7 @@ interface TitleProps extends HTMLAttributes<HTMLHeadingElement> {
 
 export default function Title({ children, className = "" }: TitleProps) {
   return (
-    <Text className={`text-md font-bold text-neutral-900 ${className}`}>
+    <Text className={`text-2xl font-bold text-neutral-900 ${className}`}>
       {children}
     </Text>
   );

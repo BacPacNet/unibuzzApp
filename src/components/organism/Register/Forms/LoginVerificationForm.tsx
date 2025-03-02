@@ -1,21 +1,14 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useFormContext, Controller } from "react-hook-form";
-import {
-  View,
-  Text,
-  TouchableOpacity,
-  ActivityIndicator,
-  KeyboardAvoidingView,
-  Platform,
-} from "react-native";
+import { View, Text, KeyboardAvoidingView, Platform } from "react-native";
 
 import Title from "@/components/atoms/Title";
 import SupportingText from "@/components/atoms/SupportingText";
-import CustomTextInput from "@/components/atoms/CustomTextInput";
 
 import { OtpInput } from "react-native-otp-entry";
 import { useHandleLoginEmailVerificationGenerate } from "@/services/auth";
 import ReusableButton from "@/components/atoms/ReusableButton";
+import { FormInput } from "@/components/atoms/FormInput";
 
 interface Props {
   isVerificationSuccess: boolean;
@@ -30,7 +23,6 @@ const LoginVerificationForm = ({
   const [countdown, setCountdown] = useState(30);
   const [isCounting, setIsCounting] = useState(false);
   const {
-    register,
     formState: { errors: VerificationFormErrors },
     control,
     getValues,
@@ -41,18 +33,11 @@ const LoginVerificationForm = ({
   const otp = getValues("verificationOtp");
   const otpRef = useRef<any>(null);
   const email = getValues("email");
-  const { mutate: generateLoginEmailOTP, isPending } =
-    useHandleLoginEmailVerificationGenerate();
-
-  const setOtpValue = () => {
-    if (otpRef?.current?.setValue) {
-      otpRef?.current?.setValue(otp);
-    }
-  };
-
-  useEffect(() => {
-    setOtpValue();
-  }, []);
+  const {
+    mutate: generateLoginEmailOTP,
+    isPending,
+    isError,
+  } = useHandleLoginEmailVerificationGenerate();
 
   const handleLoginEmailSendCode = () => {
     if (!email) {
@@ -100,37 +85,27 @@ const LoginVerificationForm = ({
 
       <View className="w-full flex  mb-4">
         <View>
-          <View className="my-4">
-            <Text className="font-medium text-neutral-900 mb-2">
-              Email Address
-            </Text>
-            <Controller
-              control={control}
-              render={({ field: { onChange, onBlur, value } }) => (
-                <CustomTextInput
-                  placeholder="john.dowry@example.com"
-                  onBlur={onBlur}
-                  onChangeText={(value) => onChange(value)}
-                  value={value}
-                  error={!!VerificationFormErrors?.email}
-                  disable={true}
-                />
-              )}
-              name="email"
-              rules={{
-                required: "Please enter your email!",
-                pattern: {
-                  value: /^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/,
-                  message: "Invalid email format",
-                },
-              }}
-            />
-            {VerificationFormErrors?.email && (
-              <Text className="text-red-500 text-sm mt-1">
-                {VerificationFormErrors?.email?.message?.toString()}
-              </Text>
-            )}
-          </View>
+          <FormInput
+            label=" Email Address"
+            disabled={true}
+            placeholder="Enter an email you would like to show others"
+            name="email"
+            control={control}
+            keyboardType="email-address"
+            isError={!!VerificationFormErrors.email}
+            errorMessage={
+              VerificationFormErrors.email
+                ? VerificationFormErrors.email.message?.toString()
+                : "email  is required"
+            }
+            rules={{
+              required: "Please enter your email!",
+              pattern: {
+                value: /^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/,
+                message: "Invalid email format",
+              },
+            }}
+          />
 
           <ReusableButton
             onPress={() => handleLoginEmailSendCode()}
@@ -138,11 +113,11 @@ const LoginVerificationForm = ({
             variant="border_primary"
             activityIndicatorColor="#6744FF"
             disabled={isCounting}
-            isLoading={isPending}
+            isLoading={isPending && !isError}
             textStyle="text-primary-500"
           />
           {isCounting && (
-            <Text className="text-xs text-neutral-500 text-center">
+            <Text className="text-md text-neutral-500 text-center">
               Resend Available after {countdown}s
             </Text>
           )}
@@ -161,13 +136,15 @@ const LoginVerificationForm = ({
 
             <Controller
               control={control}
-              render={({ field: { onChange, onBlur, value } }) => {
+              render={({ field: { onChange } }) => {
                 return (
                   <OtpInput
                     ref={otpRef}
                     type="numeric"
                     numberOfDigits={6}
-                    onTextChange={(text) => onChange(text)}
+                    // onTextChange={(text) => onChange(text)}
+                    placeholder="000000"
+                    onTextChange={(text) => onChange(text || "")}
                     focusColor="#6744FF"
                     autoFocus={false}
                     theme={{
@@ -184,7 +161,7 @@ const LoginVerificationForm = ({
               }}
             />
             {VerificationFormErrors?.verificationOtp && (
-              <Text className="text-red-500 text-sm mt-1">
+              <Text className="text-red-500 text-md mt-1">
                 {VerificationFormErrors?.verificationOtp?.message?.toString()}
               </Text>
             )}

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useRef } from "react";
 import {
   View,
   Text,
@@ -6,8 +6,6 @@ import {
   TouchableOpacity,
   FlatList,
   Image,
-  Animated,
-  KeyboardAvoidingView,
   Keyboard,
   ActivityIndicator,
   Modal,
@@ -40,7 +38,7 @@ const SelectUniversityDropdown: React.FC<SelectDropdownProps> = ({
   const [modalPosition, setModalPosition] = useState(0);
   const [modalWidth, setModalWidth] = useState(0);
   const { data: universities, isFetching } = useUniversitySearch(
-    searchTerm || " ",
+    searchTerm || " "
   );
 
   const toggleDropdown = () => {

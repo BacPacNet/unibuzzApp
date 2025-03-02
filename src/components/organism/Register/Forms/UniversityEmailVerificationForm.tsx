@@ -19,6 +19,8 @@ import UniversityLogoPlaceHolder from "@/assets/unibuzz_rounded.svg";
 import { useHandleUniversityEmailVerificationGenerate } from "@/services/auth";
 import { storeRegisterData } from "@/storage/register";
 import ReusableButton from "@/components/atoms/ReusableButton";
+import { FormInput } from "@/components/atoms/FormInput";
+import { ScrollView } from "react-native";
 
 type Props = {
   onSubmit: (data: any) => Promise<void>;
@@ -53,16 +55,6 @@ const UniversityVerificationForm = ({
   const otpRef = useRef<any>(null);
   const { mutate: generateUniversityEmailOTP, isPending } =
     useHandleUniversityEmailVerificationGenerate();
-
-  const setOtpValue = () => {
-    if (otpRef?.current?.setValue) {
-      otpRef?.current?.setValue(otp);
-    }
-  };
-
-  useEffect(() => {
-    setOtpValue();
-  }, []);
 
   const handleUniversityEmailSendCode = () => {
     const email = getValues("universityEmail");
@@ -112,8 +104,14 @@ const UniversityVerificationForm = ({
   }, [countdown, isCounting]);
 
   return (
-    <View className="w-full flex-1 ">
-      <View className="flex-1  items-center text-center pt-4  ">
+    <ScrollView
+      contentContainerStyle={{
+        flexGrow: 1,
+      }}
+      keyboardShouldPersistTaps="handled"
+      showsVerticalScrollIndicator={false}
+    >
+      <View className="flex-1  items-center text-center  py-4 ">
         <Title>University Verification</Title>
         <SupportingText>
           Do you have a email provided by your university?
@@ -121,50 +119,41 @@ const UniversityVerificationForm = ({
       </View>
       {FeatureList()}
       <View
-        style={{ marginLeft: 5, marginVertical: 4, height: 300 }}
-        className="flex-1 flex-row items-center gap-2    "
+        style={{ marginLeft: 5 }}
+        className="flex-1 flex-row items-center gap-2    py-4"
       >
         {/* <Image style={{width:40,height:40,backgroundColor:"white"}} resizeMode="cover"   source={universityLogoPlaceHolder} /> */}
         <UniversityLogoPlaceHolder className="w-10 h-10 p-4 bg-white " />
         <Text
           style={{ marginLeft: 2 }}
-          className="text-sm text-neutral-900 font-semibold "
+          className="text-md text-neutral-900 font-semibold "
         >
           {univeristyName}
         </Text>
       </View>
-      <View className="w-full flex  mb-4">
+      <View className="w-full flex  my-4">
         <View>
-          <View className="my-4">
-            <Text className="font-medium text-neutral-900 mb-2">
-              Email Address
-            </Text>
-            <Controller
-              control={control}
-              render={({ field: { onChange, onBlur, value } }) => (
-                <CustomTextInput
-                  placeholder="university email"
-                  onBlur={onBlur}
-                  onChangeText={(value) => onChange(value)}
-                  value={value}
-                  error={!!UniversityVerificationFormErrors.email}
-                />
-              )}
-              name="universityEmail"
-              rules={{
-                required: "Please enter your university email!",
-                pattern: {
-                  value: /^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/,
-                  message: "Invalid email format",
-                },
-              }}
-            />
-            {UniversityVerificationFormErrors.universityEmail && (
-              <Text className="text-red-500 text-sm mt-1">
-                {UniversityVerificationFormErrors.universityEmail.message?.toString()}
-              </Text>
-            )}
-          </View>
+          <FormInput
+            label=" Email Address"
+            disabled={true}
+            placeholder="Email Address"
+            name="universityEmail"
+            control={control}
+            keyboardType="email-address"
+            isError={!!UniversityVerificationFormErrors.email}
+            errorMessage={
+              UniversityVerificationFormErrors.email
+                ? UniversityVerificationFormErrors.email.message?.toString()
+                : "email  is required"
+            }
+            rules={{
+              required: "Please enter your email!",
+              pattern: {
+                value: /^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/,
+                message: "Invalid email format",
+              },
+            }}
+          />
           <TouchableOpacity
             disabled={isCounting}
             className={`border border-primary-500  py-3 rounded-lg w-full mb-2`}
@@ -215,7 +204,7 @@ const UniversityVerificationForm = ({
             }}
           />
           {UniversityVerificationFormErrors.UniversityOtp && (
-            <Text className="text-red-500 text-sm mt-1">
+            <Text className="text-red-500 text-md mt-1">
               {UniversityVerificationFormErrors.UniversityOtp.message?.toString()}
             </Text>
           )}
@@ -237,7 +226,7 @@ const UniversityVerificationForm = ({
           isLoading={verificationIsPending}
         />
       </View>
-    </View>
+    </ScrollView>
   );
 };
 
@@ -245,11 +234,11 @@ export default UniversityVerificationForm;
 
 const FeatureList = () => {
   return (
-    <View className="flex gap-2 my-2 ">
+    <View className="flex gap-2 my-2 flex-1">
       {/* First Feature */}
       <View className="flex-row gap-2 items-center">
         <CheckCircleSolid color={"#6744FF"} height={24} width={24} />
-        <Text className="text-xs text-neutral-600 text-center">
+        <Text className="text-md text-neutral-600 text-center">
           Can join private groups in university community
         </Text>
       </View>
@@ -257,7 +246,7 @@ const FeatureList = () => {
       {/* Second Feature */}
       <View className="flex-row gap-2 items-center">
         <CheckCircleSolid color={"#6744FF"} height={24} width={24} />
-        <Text className="text-xs text-neutral-600 text-center">
+        <Text className="text-md text-neutral-600 text-center">
           Can join more than 1 university community
         </Text>
       </View>
@@ -265,7 +254,7 @@ const FeatureList = () => {
       {/* Third Feature */}
       <View className="flex-row gap-2 items-center">
         <CheckCircleSolid color={"#6744FF"} height={24} width={24} />
-        <Text className="text-xs text-neutral-600 text-center">
+        <Text className="text-md text-neutral-600 text-center">
           Can create groups in university community
         </Text>
       </View>
