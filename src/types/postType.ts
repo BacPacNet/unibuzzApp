@@ -46,6 +46,8 @@ export type PostCardType = {
     createdAt: string;
     likeCount: string[];
   };
+  isTimeline: boolean;
+  communityGroupId?: string;
 };
 
 export type CommentsProp = {
