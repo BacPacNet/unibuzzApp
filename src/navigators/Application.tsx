@@ -36,6 +36,7 @@ import tabIcons from "@/constant/tabIcons";
 import RightSideSidebar from "@/components/organism/RightSideSidebar";
 import ProfileStack from "./ProfileStack";
 import { SafeAreaView } from "react-native-safe-area-context";
+import SettingsStack from "./SettingsStack";
 
 const Stack = createStackNavigator<RootStackParamList>();
 const Tab = createBottomTabNavigator<RootStackParamList>();
@@ -103,6 +104,14 @@ function ApplicationNavigator() {
             // unmountOnBlur: true,
           }}
         />
+        <Tab.Screen
+          name="SettingsStack"
+          component={SettingsStack}
+          options={{
+            tabBarButton: () => null,
+            // unmountOnBlur: true,
+          }}
+        />
       </Tab.Navigator>
     );
   }
@@ -137,11 +146,15 @@ function ApplicationNavigator() {
   function UserProfileDrawerContent({ navigation, setRightDrawerOpen }: any) {
     const handleClick = (route: string) => {
       if (route == "Profile") {
-        // navigation.navigate(route, { userId: user?.id });
-
         navigation.navigate("ProfileStack", {
           screen: "Profile",
           params: { userId: user?.id },
+        });
+
+        setRightDrawerOpen(false);
+      } else if (route == "Settings") {
+        navigation.navigate("SettingsStack", {
+          screen: "Settings",
         });
 
         setRightDrawerOpen(false);

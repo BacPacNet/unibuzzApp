@@ -24,16 +24,14 @@ export type RootStackParamList = {
   University: {
     data: any;
   };
-  //   YourConnections: undefined;
   YourConnections: {
     index: any;
     userId: any;
   };
-  //   University: {
 
-  //       pathUrl: string;
-
-  //   };
+  SettingsStack: undefined;
+  Settings: undefined;
+  UniversityVerification: undefined;
 };
 
 export type RootScreenProps<
