@@ -27,6 +27,8 @@ import { ScrollView } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import { useHeader } from "@/context/HeaderProvider/Header";
+import { useAddUniversityEmail } from "@/services/edit-Profile";
+import SelectUniversityDropdownBottomSheet from "@/components/atoms/SelectUniversityDropDownBottomSheet";
 
 const UniversityVerificationScreen = () => {
   const [countdown, setCountdown] = useState(30);
@@ -39,14 +41,20 @@ const UniversityVerificationScreen = () => {
     setError,
     clearErrors,
     handleSubmit,
+    setValue,
   } = useForm();
+
   const { changeHeaderShownStatus } = useHeader();
-  const otp = getValues("UniversityOtp");
-  const univeristyName = getValues("universityName");
-  const all = getValues();
   const otpRef = useRef<any>(null);
   const { mutate: generateUniversityEmailOTP, isPending } =
     useHandleUniversityEmailVerificationGenerate();
+  const {
+    mutate,
+    data: addUniversityEmailData,
+    error,
+    isPending: isPendingChangeApi,
+    isSuccess,
+  } = useAddUniversityEmail(true);
 
   const handleUniversityEmailSendCode = () => {
     const email = getValues("universityEmail");
@@ -69,11 +77,11 @@ const UniversityVerificationScreen = () => {
 
     clearErrors("universityEmail");
     const data = { email };
-    handleLoginEmailSendCodeCount();
+    handleUniveristyEmailSendCodeCount();
     generateUniversityEmailOTP(data);
   };
 
-  const handleLoginEmailSendCodeCount = () => {
+  const handleUniveristyEmailSendCodeCount = () => {
     setIsCounting(true);
     setCountdown(30);
   };
@@ -100,6 +108,7 @@ const UniversityVerificationScreen = () => {
 
   const onSubmit = (data: any) => {
     console.log("data", data);
+    // mutate(data)
   };
 
   return (
@@ -109,7 +118,7 @@ const UniversityVerificationScreen = () => {
         <TouchableOpacity onPress={() => goBack()} style={styles.backButton}>
           <NavArrowLeft width={24} height={24} color="#000" />
         </TouchableOpacity>
-        <Text style={styles.headerTitle}>Profile</Text>
+        <Text style={styles.headerTitle}>Account</Text>
       </View>
 
       <KeyboardAvoidingView
@@ -132,6 +141,21 @@ const UniversityVerificationScreen = () => {
           {FeatureList()}
 
           <View style={styles.paddingContainer} className="w-full flex  ">
+            <View className="mb-4">
+              <Text className="font-medium text-neutral-900 mb-2">
+                University Email
+              </Text>
+              <SelectUniversityDropdownBottomSheet
+                placeholder="Select University Name"
+                icon="single"
+                search={true}
+                control={control}
+                name="universityName"
+                rules={{ required: "University is required!" }}
+                setValue={setValue}
+              />
+            </View>
+
             <View>
               <FormInput
                 label=" Email Address"
@@ -139,10 +163,10 @@ const UniversityVerificationScreen = () => {
                 name="universityEmail"
                 control={control}
                 keyboardType="email-address"
-                isError={!!UniversityVerificationFormErrors.email}
+                isError={!!UniversityVerificationFormErrors.universityEmail}
                 errorMessage={
-                  UniversityVerificationFormErrors.email
-                    ? UniversityVerificationFormErrors.email.message?.toString()
+                  UniversityVerificationFormErrors.universityEmail
+                    ? UniversityVerificationFormErrors.universityEmail.message?.toString()
                     : "email  is required"
                 }
                 rules={{
@@ -268,7 +292,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     height: 56,
-    paddingHorizontal: 16,
+    paddingHorizontal: 0,
     borderBottomWidth: 1,
     borderBottomColor: "#E5E7EB",
   },

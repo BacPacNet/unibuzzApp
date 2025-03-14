@@ -1,5 +1,9 @@
+import UserAccountDeactivationScreen from "@/screens/SettingsScreens/AccountDeactivationScreen";
+import UserEmailChangeScreen from "@/screens/SettingsScreens/ChangeEmailScreen";
+import UserPasswordChangeScreen from "@/screens/SettingsScreens/ChangePasswordScreen";
 import SettingsScreen from "@/screens/SettingsScreens/SettingScreen";
 import UniversityVerificationScreen from "@/screens/SettingsScreens/UniversityVerificationScreen";
+import UserNameChangeScreen from "@/screens/SettingsScreens/UserNameChangeScreen";
 import { createStackNavigator } from "@react-navigation/stack";
 
 const SettingsStack = () => {
@@ -10,6 +14,16 @@ const SettingsStack = () => {
       <Stack.Screen
         name="UniversityVerification"
         component={UniversityVerificationScreen}
+      />
+      <Stack.Screen name="UserNameChange" component={UserNameChangeScreen} />
+      <Stack.Screen
+        name="UserPasswordChange"
+        component={UserPasswordChangeScreen}
+      />
+      <Stack.Screen name="UserEmailChange" component={UserEmailChangeScreen} />
+      <Stack.Screen
+        name="UserAccountDeactivation"
+        component={UserAccountDeactivationScreen}
       />
     </Stack.Navigator>
   );

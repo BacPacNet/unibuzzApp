@@ -140,10 +140,10 @@ const UniversityVerificationForm = ({
             name="universityEmail"
             control={control}
             keyboardType="email-address"
-            isError={!!UniversityVerificationFormErrors.email}
+            isError={!!UniversityVerificationFormErrors.universityEmail}
             errorMessage={
-              UniversityVerificationFormErrors.email
-                ? UniversityVerificationFormErrors.email.message?.toString()
+              UniversityVerificationFormErrors.universityEmail
+                ? UniversityVerificationFormErrors.universityEmail.message?.toString()
                 : "email  is required"
             }
             rules={{

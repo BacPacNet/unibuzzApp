@@ -1,4 +1,10 @@
-import { ActivityIndicator, FlatList, Text, View } from "react-native";
+import {
+  ActivityIndicator,
+  FlatList,
+  StyleSheet,
+  Text,
+  View,
+} from "react-native";
 import React, { useCallback, useState } from "react";
 
 import PostCard from "@/components/molecules/Timeline/PostCard";
@@ -6,10 +12,15 @@ import { useGetTimelinePosts } from "@/services/timeline";
 import { RefreshControl } from "react-native-gesture-handler";
 import { useQueryClient } from "@tanstack/react-query";
 import { useHeader } from "@/context/HeaderProvider/Header";
-import { useFocusEffect } from "@react-navigation/native";
+import { useFocusEffect, useNavigation } from "@react-navigation/native";
+import { TouchableOpacity } from "@gorhom/bottom-sheet";
+import { StackNavigationProp } from "@react-navigation/stack";
+import { RootStackParamList } from "@/types/navigation";
 
+type NavigationProp = StackNavigationProp<RootStackParamList, "Timeline">;
 const Timeline = () => {
   const [refreshing, setRefreshing] = React.useState(false);
+  const navigation = useNavigation<NavigationProp>();
   const {
     isLoading,
     data: TimelinePosts,
@@ -55,7 +66,15 @@ const Timeline = () => {
   //   };
 
   return (
-    <View className="bg-white flex-1 ">
+    <View style={{ position: "relative" }} className="bg-white flex-1 relative">
+      <View style={styles.plusButtonContainer}>
+        <TouchableOpacity
+          onPress={() => navigation.navigate("NewPost")}
+          style={styles.createButton}
+        >
+          <Text style={{ color: "white", fontSize: 24 }}>+</Text>
+        </TouchableOpacity>
+      </View>
       <FlatList
         data={timlineDatas}
         style={{
@@ -64,7 +83,7 @@ const Timeline = () => {
         }}
         // onScroll={handleScroll}
         keyExtractor={(item, index) => item._id + index}
-        renderItem={({ item }) => <PostCard data={item} />}
+        renderItem={({ item }) => <PostCard data={item} isTimeline={true} />}
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
         }
@@ -99,3 +118,26 @@ const Timeline = () => {
 };
 
 export default Timeline;
+
+const styles = StyleSheet.create({
+  plusButtonContainer: {
+    position: "absolute",
+    right: 20,
+    top: "80%",
+    zIndex: 200,
+  },
+  createButton: {
+    backgroundColor: "#6744FF",
+    padding: 15,
+    height: 60,
+    width: 60,
+    borderRadius: 30,
+    justifyContent: "center",
+    alignItems: "center",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 4,
+    elevation: 5,
+  },
+});

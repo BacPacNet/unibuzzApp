@@ -28,10 +28,31 @@ export type RootStackParamList = {
     index: any;
     userId: any;
   };
+  Community: {
+    communityId: any;
+  };
+  CommunityGroup: {
+    communityId: any;
+    communityGroupId: any;
+  };
+
+  manageGroupStack: any;
+  SearchCommunityGroupScreen: {
+    communityId: any;
+  };
+  SearchCommunityGroupFilterScreen: any;
+  NewCommunityGroupScreen: any;
+  NewCommunityGroupFilterScreen: any;
+  NewGroupPost: any;
+  //   University: {
 
   SettingsStack: undefined;
   Settings: undefined;
   UniversityVerification: undefined;
+  UserNameChange: undefined;
+  UserPasswordChange: undefined;
+  UserEmailChange: undefined;
+  UserAccountDeactivation: undefined;
 };
 
 export type RootScreenProps<

@@ -86,9 +86,26 @@ const sections = [
 type NavigationProp = StackNavigationProp<RootStackParamList, "Settings">;
 const SettingsScreen = () => {
   const navigation = useNavigation<NavigationProp>();
+
+  const routeChange = (route: string) => {
+    switch (route) {
+      case "UniversityVerification":
+        return navigation.navigate("UniversityVerification");
+      case "username":
+        return navigation.navigate("UserNameChange");
+      case "password":
+        return navigation.navigate("UserPasswordChange");
+      case "email":
+        return navigation.navigate("UserEmailChange");
+      case "deactivation":
+        return navigation.navigate("UserAccountDeactivation");
+    }
+  };
+
   const handleMenuItemPress = (sectionId: string, itemId: string) => {
     console.log(`Pressed ${itemId} in ${sectionId} section`);
-    navigation.navigate("UniversityVerification");
+    routeChange(itemId);
+    // navigation.navigate("UniversityVerification");
 
     // navigation.navigate("SettingsStack", {
     //     screen: itemId,

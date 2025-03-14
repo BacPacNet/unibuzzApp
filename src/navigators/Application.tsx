@@ -36,6 +36,14 @@ import tabIcons from "@/constant/tabIcons";
 import RightSideSidebar from "@/components/organism/RightSideSidebar";
 import ProfileStack from "./ProfileStack";
 import { SafeAreaView } from "react-native-safe-area-context";
+import LeftSideSideBar from "@/components/organism/LeftSideSideBar";
+import CommunityScreen from "@/screens/CommunityScreen";
+import { CommunityProvider } from "@/context/CommunityProvider/CommunityProvider";
+import CommunityGroupScreen from "@/screens/CommunityGroupScreen";
+import SearchCommunityGroupScreen from "@/screens/SearchCommunityGroupsScreen";
+import ManageGroups from "./ManageGroups";
+import { CommunityFilterProvider } from "@/context/CommunityFilterProvider/CommunityFilterProvider";
+import NewGroupPost from "@/screens/NewGroupPost";
 import SettingsStack from "./SettingsStack";
 
 const Stack = createStackNavigator<RootStackParamList>();
@@ -105,6 +113,41 @@ function ApplicationNavigator() {
           }}
         />
         <Tab.Screen
+          name="Community"
+          component={CommunityScreen}
+          options={{
+            tabBarButton: () => null,
+          }}
+        />
+        <Tab.Screen
+          name="CommunityGroup"
+          component={CommunityGroupScreen}
+          options={{
+            tabBarButton: () => null,
+          }}
+        />
+        <Tab.Screen
+          name="NewGroupPost"
+          component={NewGroupPost}
+          options={{
+            tabBarButton: () => null,
+          }}
+        />
+
+        <Tab.Screen
+          name="manageGroupStack"
+          component={ManageGroups}
+          options={{ tabBarButton: () => null }}
+        />
+        {/* <Tab.Screen
+          name="SearchCommunityGroupScreen"
+          component={SearchCommunityGroupScreen}
+          options={{
+            tabBarButton: () => null,
+          }}
+        /> */}
+
+        <Tab.Screen
           name="SettingsStack"
           component={SettingsStack}
           options={{
@@ -117,30 +160,7 @@ function ApplicationNavigator() {
   }
 
   function AppMenuDrawerContent(props: any) {
-    return (
-      <SafeAreaView style={{ padding: 20 }}>
-        <Text style={{ fontSize: 18, fontWeight: "bold", marginBottom: 20 }}>
-          App Menu
-        </Text>
-        <Pressable
-          onPress={() =>
-            props.navigation.navigate("tabsGroup", { screen: "Home" })
-          }
-        >
-          <Text style={{ fontSize: 16, marginBottom: 15 }}>Home</Text>
-        </Pressable>
-        <Pressable
-          onPress={() =>
-            props.navigation.navigate("tabsGroup", { screen: "DiscoverStack" })
-          }
-        >
-          <Text style={{ fontSize: 16, marginBottom: 15 }}>Discover</Text>
-        </Pressable>
-        <Pressable onPress={() => props.navigation.navigate("Settings")}>
-          <Text style={{ fontSize: 16, marginBottom: 15 }}>Settings</Text>
-        </Pressable>
-      </SafeAreaView>
-    );
+    return <SafeAreaView style={{ padding: 20 }}></SafeAreaView>;
   }
 
   function UserProfileDrawerContent({ navigation, setRightDrawerOpen }: any) {
@@ -216,6 +236,9 @@ function ApplicationNavigator() {
             borderBottomColor: "#E5E7EB",
             //height: headerHeight,
           },
+          drawerStyle: {
+            width: "80%",
+          },
 
           headerLeft: () => (
             <View className="flex flex-row gap-4 items-center">
@@ -266,7 +289,7 @@ function ApplicationNavigator() {
           //      style={{ width: 100, height: 40, resizeMode: "contain" }}
           //    />
         }}
-        drawerContent={(props) => <AppMenuDrawerContent {...props} />}
+        drawerContent={(props) => <LeftSideSideBar />}
       >
         <LeftDrawer.Screen name="tabsGroup" component={TabsGroup} />
       </LeftDrawer.Navigator>
@@ -305,7 +328,11 @@ function ApplicationNavigator() {
         {/* <DrawerGroup/> */}
         <SocketProvider>
           <HeaderProvider>
-            <RightDrawerScreen />
+            <CommunityProvider>
+              <CommunityFilterProvider>
+                <RightDrawerScreen />
+              </CommunityFilterProvider>
+            </CommunityProvider>
           </HeaderProvider>
         </SocketProvider>
       </AuthGuard>
