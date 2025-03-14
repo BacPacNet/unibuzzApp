@@ -24,7 +24,6 @@ export type RootStackParamList = {
   University: {
     data: any;
   };
-  //   YourConnections: undefined;
   YourConnections: {
     index: any;
     userId: any;
@@ -47,9 +46,13 @@ export type RootStackParamList = {
   NewGroupPost: any;
   //   University: {
 
-  //       pathUrl: string;
-
-  //   };
+  SettingsStack: undefined;
+  Settings: undefined;
+  UniversityVerification: undefined;
+  UserNameChange: undefined;
+  UserPasswordChange: undefined;
+  UserEmailChange: undefined;
+  UserAccountDeactivation: undefined;
 };
 
 export type RootScreenProps<

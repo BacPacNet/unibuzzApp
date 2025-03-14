@@ -1,6 +1,8 @@
-import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
+import { useInfiniteQuery, useMutation, useQuery } from "@tanstack/react-query";
 import { client } from "./api-client";
 import { getToken } from "@/storage/token";
+import { Toast } from "react-native-toast-notifications";
+import { storeUser } from "@/storage/user";
 
 export async function getUserData(token: any, id: string) {
   const response: any = await client(`/users/${id}`, {
@@ -49,3 +51,63 @@ export function useGetUserPosts(userId: string, limit: number) {
     enabled: !!cookieValue,
   });
 }
+
+const changeUserPassword = async (data: any, token: string) => {
+  const res = await client(`/users/changeUserPassword`, {
+    method: "PUT",
+    headers: { Authorization: `Bearer ${token}` },
+    data,
+  });
+  return res;
+};
+export const useChangeUserPassword = () => {
+  const cookieValue = getToken() as string;
+  return useMutation({
+    mutationFn: (data: any) => changeUserPassword(data, cookieValue),
+    onError: (res: any) => {
+      Toast.show(res.response?.data.message || "Something went wrong");
+    },
+  });
+};
+
+const changeUserEmail = async (data: any, token: string) => {
+  const res = await client(`/users/changeUserEmail`, {
+    method: "PUT",
+    headers: { Authorization: `Bearer ${token}` },
+    data,
+  });
+  return res;
+};
+
+export const useChangeUserEmail = () => {
+  const cookieValue = getToken() as string;
+  return useMutation({
+    mutationFn: (data: any) => changeUserEmail(data, cookieValue),
+    onSuccess: (response: any) => {
+      // setUserData(response)
+      storeUser(response);
+    },
+    onError: (res: any) => {
+      console.log(res.response.data.message, "res");
+    },
+  });
+};
+
+const deActivateUserAccount = async (data: any, token: string) => {
+  const res = await client(`/users/deActivateUserAccount`, {
+    method: "PUT",
+    headers: { Authorization: `Bearer ${token}` },
+    data,
+  });
+  return res;
+};
+export const useDeActivateUserAccount = () => {
+  const cookieValue = getToken() as string;
+  return useMutation({
+    mutationFn: (data: any) => deActivateUserAccount(data, cookieValue),
+
+    onError: (res: any) => {
+      console.log(res.response.data.message, "res");
+    },
+  });
+};
