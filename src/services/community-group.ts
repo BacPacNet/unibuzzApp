@@ -12,20 +12,20 @@ import { Toast } from "react-native-toast-notifications";
 export async function getAllCommunityGroups(
   communityId: string,
   communityGroupId: string,
-  token: any
+  token: any,
 ) {
   const response: any = await client(
     `/communitygroup/${communityId}?${communityGroupId ? `communityGroupId=${communityGroupId}` : ""}`,
     {
       headers: { Authorization: `Bearer ${token}` },
-    }
+    },
   );
   return response;
 }
 
 export function useGetCommunityGroup(
   communityId: string,
-  communityGroupId: string = ""
+  communityGroupId: string = "",
 ) {
   const cookieValue = getToken() as string;
 
@@ -40,7 +40,7 @@ export function useGetCommunityGroup(
 export async function CreateCommunityGroup(
   communityId: string,
   token: any,
-  data: any
+  data: any,
 ) {
   const response = await client(`/communitygroup/${communityId}`, {
     method: "POST",
@@ -114,10 +114,11 @@ export const useJoinCommunityGroup = () => {
     onSuccess: () => {
       // Invalidate relevant query caches
 
-      queryClient.invalidateQueries({
-        queryKey: ["useGetSubscribedCommunties"],
-      });
-      queryClient.invalidateQueries({ queryKey: ["communityGroupsPost"] });
+      //   queryClient.invalidateQueries({
+      //     queryKey: ["useGetSubscribedCommunties"],
+      //   });
+      //   queryClient.invalidateQueries({ queryKey: ["communityGroupsPost"] });
+      queryClient.invalidateQueries({ queryKey: ["communityGroup"] });
 
       Toast.show("Joined Community Group");
     },
@@ -145,15 +146,53 @@ export const useLeaveCommunityGroup = () => {
 
     onSuccess: () => {
       // Invalidate relevant query caches
-      queryClient.invalidateQueries({
-        queryKey: ["useGetSubscribedCommunties"],
-      });
-      queryClient.invalidateQueries({ queryKey: ["communityGroupsPost"] });
+      //   queryClient.invalidateQueries({
+      //     queryKey: ["useGetSubscribedCommunties"],
+      //   });
+      //   queryClient.invalidateQueries({ queryKey: ["communityGroupsPost"] });
+      queryClient.invalidateQueries({ queryKey: ["communityGroup"] });
       Toast.show("Left Community Group!");
     },
 
     onError: (error: any) => {
       Toast.show(error.response?.data.message || "Something went wrong");
+    },
+  });
+};
+
+async function removeUserFromCommunityGroupAPI(
+  communityGroupId: string,
+  userId: string,
+  token: string,
+) {
+  return await client(`/communitygroup/${communityGroupId}/user/${userId}`, {
+    method: "DELETE",
+    headers: { Authorization: `Bearer ${token}` },
+  });
+}
+export const useRemoveUserFromCommunityGroup = () => {
+  const cookieValue = getToken() as string;
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({
+      communityGroupId,
+      userId,
+    }: {
+      communityGroupId: string;
+      userId: string;
+    }) =>
+      removeUserFromCommunityGroupAPI(communityGroupId, userId, cookieValue),
+
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["communityGroup"] });
+      Toast.show("User removed successfully");
+    },
+
+    onError: (error: any) => {
+      const errorMessage =
+        error?.response?.data?.message || "Something went wrong";
+      Toast.show(errorMessage);
     },
   });
 };

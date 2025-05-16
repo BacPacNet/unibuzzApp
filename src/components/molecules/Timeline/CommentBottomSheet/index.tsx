@@ -141,11 +141,11 @@ const CommentBottomSheet = ({
 
     const showSubscription = Keyboard.addListener(
       "keyboardDidShow",
-      keyboardDidShow
+      keyboardDidShow,
     );
     const hideSubscription = Keyboard.addListener(
       "keyboardDidHide",
-      keyboardDidHide
+      keyboardDidHide,
     );
 
     return () => {
@@ -170,7 +170,7 @@ const CommentBottomSheet = ({
         if (response.assets && response.assets.length > 0) {
           setImages((prevImages) => [...prevImages, ...response.assets]);
         }
-      }
+      },
     );
   }, []);
 

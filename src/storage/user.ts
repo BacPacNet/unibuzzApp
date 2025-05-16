@@ -36,7 +36,7 @@ export const removeUserStore = () => {
 };
 
 export const storeUserProfile = async (
-  userProfile: userProfileType
+  userProfile: userProfileType,
 ): Promise<void> => {
   try {
     storage.set(StorageKeys.USER_PROFILE, JSON.stringify(userProfile));

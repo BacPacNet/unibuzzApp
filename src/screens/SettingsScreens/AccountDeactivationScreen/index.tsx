@@ -65,7 +65,7 @@ const UserAccountDeactivationScreen = () => {
       return () => {
         changeHeaderShownStatus(true);
       };
-    }, [])
+    }, []),
   );
 
   const onSubmit = (data: any) => {

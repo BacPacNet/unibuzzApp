@@ -42,7 +42,7 @@ export function useGetSubscribedCommunities() {
 export async function getUserFilteredSubscribedCommunities(
   communityId: string,
   token: string,
-  data: any
+  data: any,
 ) {
   const response: any = await client(`/community/filtered/${communityId}`, {
     method: "POST",
@@ -141,13 +141,13 @@ export async function getAllCommunityGroupPost(
   communityGroupID: string,
   token: any,
   page: number,
-  limit: number
+  limit: number,
 ) {
   const response: any = await client(
     `/communitypost/${communityId}/${communityGroupID ? communityGroupID : ""}?page=${page}&limit=${limit}`,
     {
       headers: { Authorization: `Bearer ${token}` },
-    }
+    },
   );
   return response;
 }
@@ -156,7 +156,7 @@ export function useGetCommunityGroupPost(
   communityId: string,
   communityGroupID: string,
   isCommunity: boolean,
-  limit: number
+  limit: number,
 ) {
   const cookieValue = getToken() as string;
   return useInfiniteQuery({
@@ -167,7 +167,7 @@ export function useGetCommunityGroupPost(
         communityGroupID,
         cookieValue,
         pageParam,
-        limit
+        limit,
       ),
     getNextPageParam: (lastPage) => {
       if (lastPage.currentPage < lastPage.totalPages) {
@@ -177,5 +177,41 @@ export function useGetCommunityGroupPost(
     },
     initialPageParam: 1,
     enabled: isCommunity && !!cookieValue,
+  });
+}
+
+export async function getAllCommunityPost(
+  communityId: string,
+  token: any,
+  page: number,
+  limit: number,
+) {
+  const response: any = await client(
+    `/communitypost/timelinePost?communityId=${communityId}&page=${page}&limit=${limit}`,
+    {
+      headers: { Authorization: `Bearer ${token}` },
+    },
+  );
+  return response;
+}
+export function useGetCommunityPost(
+  communityId: string,
+  isCommunity: boolean,
+  limit: number,
+) {
+  const cookieValue = getToken() as string;
+  return useInfiniteQuery({
+    queryKey: ["communityGroupsPost", communityId],
+    queryFn: ({ pageParam = 1 }) =>
+      getAllCommunityPost(communityId, cookieValue, pageParam, limit),
+    getNextPageParam: (lastPage) => {
+      if (lastPage.page < lastPage.totalPages) {
+        return lastPage.page + 1;
+      }
+      return undefined;
+    },
+    initialPageParam: 1,
+    enabled: isCommunity && !!cookieValue,
+    retry: false,
   });
 }

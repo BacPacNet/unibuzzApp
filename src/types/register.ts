@@ -393,9 +393,9 @@ export const currYear = [
   "9th",
 ];
 export enum userTypeEnum {
-  Student = "Student",
-  Faculty = "Faculty",
-  Applicant = "Applicant",
+  Student = "student",
+  Faculty = "faculty",
+  Applicant = "applicant",
 }
 
 export enum userCheckError {

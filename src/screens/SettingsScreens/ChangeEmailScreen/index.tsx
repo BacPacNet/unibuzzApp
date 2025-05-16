@@ -91,7 +91,7 @@ const UserEmailChangeScreen = () => {
       return () => {
         changeHeaderShownStatus(true);
       };
-    }, [])
+    }, []),
   );
 
   const handleEmailSendCode = () => {

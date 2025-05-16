@@ -8,18 +8,18 @@ export async function getAllUsersForConnections(
   token: string,
   page: number,
   limit: number,
-  name: string
+  name: string,
 ): Promise<ProfileConnection> {
   return await client(
     `/users/connections?page=${page}&limit=${limit}&name=${name}`,
-    { headers: { Authorization: `Bearer ${token}` } }
+    { headers: { Authorization: `Bearer ${token}` } },
   );
 }
 
 export function useUsersProfileForConnections(
   name: string,
   limit: number,
-  enabled: boolean
+  enabled: boolean,
 ) {
   const cookieValue = getToken() as string;
   const debouncedSearchTerm = useDebounce(name, 1000);
@@ -31,7 +31,7 @@ export function useUsersProfileForConnections(
         cookieValue,
         pageParam,
         limit,
-        debouncedSearchTerm
+        debouncedSearchTerm,
       ),
     getNextPageParam: (lastPage) => {
       if (lastPage.currentPage < lastPage.totalPages) {

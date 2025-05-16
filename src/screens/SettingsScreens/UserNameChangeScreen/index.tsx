@@ -36,7 +36,7 @@ const UserNameChangeScreen = (props: Props) => {
       return () => {
         changeHeaderShownStatus(true);
       };
-    }, [])
+    }, []),
   );
 
   const onSubmit = (data: any) => {

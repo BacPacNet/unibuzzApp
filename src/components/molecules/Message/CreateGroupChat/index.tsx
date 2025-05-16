@@ -91,7 +91,7 @@ const CreateGroupChat = ({ setSelectedChat, setCurrTab }: Props) => {
   const handleClick = (userId: string) => {
     if (selectedUsers?.some((selectedUser) => selectedUser._id == userId)) {
       const filterd = selectedUsers.filter(
-        (selectedUser) => selectedUser._id !== userId
+        (selectedUser) => selectedUser._id !== userId,
       );
       setSelectedUsers(filterd);
     }

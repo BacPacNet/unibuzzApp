@@ -72,7 +72,7 @@ const YourConnections = () => {
     effectiveUserId !== userProfileData?.users_id
       ? activeTab === 1
       : activeTab === 2,
-    effectiveUserId
+    effectiveUserId,
   );
 
   useEffect(() => {
@@ -86,7 +86,7 @@ const YourConnections = () => {
       return () => {
         changeHeaderShownStatus(true);
       };
-    }, [])
+    }, []),
   );
 
   const tabs = [

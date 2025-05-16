@@ -25,15 +25,17 @@ function CommunityGroupAll({
 
   return (
     <>
-      {communityGroups?.map((item: any) => (
-        <GroupSelectors
-          key={item._id}
-          currSelectedGroup={currSelectedGroup}
-          setCurrSelectedGroup={setCurrSelectedGroup}
-          data={item}
-          userId={userData?.id}
-        />
-      ))}
+      {communityGroups
+        ?.slice(0, showGroupTill)
+        .map((item: any) => (
+          <GroupSelectors
+            key={item._id}
+            currSelectedGroup={currSelectedGroup}
+            setCurrSelectedGroup={setCurrSelectedGroup}
+            data={item}
+            userId={userData?.id}
+          />
+        ))}
       {communityGroups?.length > showGroupTill && (
         <TouchableOpacity
           onPress={() => setShowGroupTill(showGroupTill + 5)}

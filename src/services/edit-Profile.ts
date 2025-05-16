@@ -53,7 +53,7 @@ export const useAddUniversityEmail = (redirect: boolean = false) => {
       if (redirect) {
         const community = response.userProfile.email.find(
           (community: any) =>
-            community.UniversityName == variables.universityName
+            community.UniversityName == variables.universityName,
         );
         if (community) {
           queryClient.invalidateQueries({

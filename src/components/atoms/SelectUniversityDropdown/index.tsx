@@ -38,7 +38,7 @@ const SelectUniversityDropdown: React.FC<SelectDropdownProps> = ({
   const [modalPosition, setModalPosition] = useState(0);
   const [modalWidth, setModalWidth] = useState(0);
   const { data: universities, isFetching } = useUniversitySearch(
-    searchTerm || " "
+    searchTerm || " ",
   );
 
   const toggleDropdown = () => {

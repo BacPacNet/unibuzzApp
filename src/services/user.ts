@@ -24,11 +24,11 @@ export async function getAllUserPosts(
   token: string,
   userId: string,
   page: number,
-  limit: number
+  limit: number,
 ) {
   const response: any = await client(
     `/userpost?userId=${userId}&page=${page}&limit=${limit}`,
-    { headers: { Authorization: `Bearer ${token}` } }
+    { headers: { Authorization: `Bearer ${token}` } },
   );
 
   return response;

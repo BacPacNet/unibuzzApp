@@ -55,13 +55,13 @@ export default function ProfileEdit() {
   const [cityOptions, setCityOptions] = useState<string[]>([]);
   const [userType, setUserType] = useState("student");
   const [previewProfileImage, setPreviewProfileImage] = useState<string | null>(
-    null
+    null,
   );
   const [isProfileLoading, setIsProfileLoading] = useState(false);
   const [imageToUpload, setImageToUpload] = useState<ImageAsset | null>(null);
 
   const { data: userProfile } = useGetUserData(
-    userProfileData?.users_id as string
+    userProfileData?.users_id as string,
   );
   const { mutate: mutateEditProfile, isPending } = useEditProfile();
   const currCountryWatch = watch("country");
@@ -95,11 +95,11 @@ export default function ProfileEdit() {
 
   const handleCountryChange = (selectedCountry: string) => {
     const getCountyCode = Country.getAllCountries().find(
-      (country) => country.name === selectedCountry
+      (country) => country.name === selectedCountry,
     )?.isoCode;
     if (getCountyCode) {
       setCityOptions(
-        City.getCitiesOfCountry(getCountyCode)!.map((state) => state.name)
+        City.getCitiesOfCountry(getCountyCode)!.map((state) => state.name),
       );
       setValue("city", "");
     }
@@ -117,11 +117,11 @@ export default function ProfileEdit() {
   useEffect(() => {
     if (currCountryWatch && !currCityWatch) {
       const getCountyCode = Country.getAllCountries().find(
-        (country) => country.name === currCountryWatch
+        (country) => country.name === currCountryWatch,
       )?.isoCode;
       if (getCountyCode) {
         setCityOptions(
-          City.getCitiesOfCountry(getCountyCode)!.map((state) => state.name)
+          City.getCitiesOfCountry(getCountyCode)!.map((state) => state.name),
         );
       }
     }
@@ -151,7 +151,7 @@ export default function ProfileEdit() {
       return () => {
         changeHeaderShownStatus(true);
       };
-    }, [])
+    }, []),
   );
 
   return (
@@ -255,7 +255,7 @@ export default function ProfileEdit() {
                 placeholder="Your country of birth"
                 name="country"
                 options={Country.getAllCountries().map(
-                  (country) => country.name
+                  (country) => country.name,
                 )}
                 control={control}
                 onChange={(selectedCountry: string) =>

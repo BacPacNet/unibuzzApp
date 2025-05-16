@@ -46,13 +46,13 @@ const PostCard = memo(
       useLikeUnilikeGroupPost(
         data?.communityId,
         communityGroupId,
-        !!data?.communityId && isTimeline
+        !!data?.communityId && isTimeline,
       );
     const { mutate: LikeUnlikeTimelinePost, isPending: isLikeUnlikePending } =
       useLikeUnlikeTimelinePost();
 
     const sharePost = async (
-      message = "Hey, check out this amazing post! https://example.com/post/123"
+      message = "Hey, check out this amazing post! https://example.com/post/123",
     ) => {
       try {
         await Share.share({ message });
@@ -194,7 +194,7 @@ const PostCard = memo(
         </ActionSheet>
       </View>
     );
-  }
+  },
 );
 
 export default PostCard;

@@ -4,21 +4,25 @@ import {
   useNavigation,
   useRoute,
 } from "@react-navigation/native";
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import {
   ActivityIndicator,
   FlatList,
   Image,
+  Platform,
   RefreshControl,
   StyleSheet,
   Text,
   TouchableOpacity,
   View,
 } from "react-native";
+import ActionSheet, { ActionSheetRef } from "react-native-actions-sheet";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import UniversityLogoPlaceHolder from "@/assets/unibuzz_rounded.svg";
 import {
   useGetCommunity,
   useGetCommunityGroupPost,
+  useGetCommunityPost,
   useJoinCommunity,
   useLeaveCommunity,
 } from "@/services/university-community";
@@ -42,6 +46,16 @@ const CommunityScreen = ({ route }: any) => {
     useJoinCommunity();
   const { mutate: leaveCommunity, isPending: isLeaveLoading } =
     useLeaveCommunity();
+  //   const {
+  //     data: communityGroupPost,
+  //     fetchNextPage: communityPostNextpage,
+  //     isFetchingNextPage: communityPostIsFetchingNextPage,
+  //     hasNextPage: communityPostHasNextPage,
+  //     error: communityPostError,
+  //     dataUpdatedAt,
+  //     isFetching,
+  //   } = useGetCommunityGroupPost(communityId, "", true, 10);
+
   const {
     data: communityGroupPost,
     fetchNextPage: communityPostNextpage,
@@ -49,8 +63,8 @@ const CommunityScreen = ({ route }: any) => {
     hasNextPage: communityPostHasNextPage,
     error: communityPostError,
     dataUpdatedAt,
-    isFetching,
-  } = useGetCommunityGroupPost(communityId, "", true, 10);
+    isLoading,
+  } = useGetCommunityPost(communityId, true, 10);
   const [communityDatas, setCommunityDatas] = useState<any>([]);
   const [hasInitialized, setHasInitialized] = useState(false);
 
@@ -58,11 +72,11 @@ const CommunityScreen = ({ route }: any) => {
     boolean | null
   >(null);
   const [imageSrc, setImageSrc] = useState(
-    communityData?.communityCoverUrl?.imageUrl
+    communityData?.communityCoverUrl?.imageUrl,
   );
   const [ImageSrcErr, setImageSrcErr] = useState(false);
   const [logoSrc, setLogoSrc] = useState(
-    communityData?.communityLogoUrl?.imageUrl
+    communityData?.communityLogoUrl?.imageUrl,
   );
   const [logoSrcErr, setLogoSrcErr] = useState(false);
   const [refreshing, setRefreshing] = React.useState(false);
@@ -76,7 +90,7 @@ const CommunityScreen = ({ route }: any) => {
       return () => {
         setCurrentCommunityId("");
       };
-    }, [communityId])
+    }, [communityId]),
   );
 
   useEffect(() => {
@@ -92,8 +106,8 @@ const CommunityScreen = ({ route }: any) => {
     if (!hasInitialized && communityData && userData) {
       setIsUserJoinedCommunity(
         communityData.users.some(
-          (user) => user?.id?.toString() === userData?.id
-        )
+          (user) => user?.id?.toString() === userData?.id,
+        ),
       );
       setHasInitialized(true);
     }
@@ -101,7 +115,7 @@ const CommunityScreen = ({ route }: any) => {
 
   useEffect(() => {
     const communityDatas: any = communityGroupPost?.pages.flatMap(
-      (page) => page?.finalPost
+      (page) => page?.finalPost,
     );
     setCommunityDatas(communityDatas);
   }, [communityGroupPost, dataUpdatedAt]);
@@ -152,22 +166,29 @@ const CommunityScreen = ({ route }: any) => {
 
         <View style={styles.content}>
           <View style={styles.titleContainer}>
-            {logoSrc?.length && !logoSrcErr ? (
-              <Image
-                source={{ uri: communityData?.communityLogoUrl?.imageUrl }}
-                style={styles.communityImage}
-                onError={() => setLogoSrcErr(true)}
-              />
-            ) : (
-              <View style={styles.communityImagePlaceHolder}>
-                <UniversityLogoPlaceHolder width={40} height={40} />
-              </View>
-            )}
+            <View style={styles.imageWrapper}>
+              {logoSrc?.length && !logoSrcErr ? (
+                <Image
+                  source={{ uri: communityData?.communityLogoUrl?.imageUrl }}
+                  style={styles.communityImage}
+                  onError={() => setLogoSrc("")}
+                />
+              ) : (
+                <View style={styles.universityPlaceHolder}>
+                  <UniversityLogoPlaceHolder
+                    width={20}
+                    height={20}
+                    style={styles.communityImage}
+                  />
+                </View>
+              )}
+            </View>
 
             <Text style={styles.title}>{communityData?.name}</Text>
-            <Text style={styles.aiPowered}>AI POWERED</Text>
+            {/* <Text style={styles.aiPowered}>AI POWERED</Text> */}
           </View>
           <Text style={styles.description}>{communityData?.about}</Text>
+
           <Text style={styles.members}>
             {communityData?.users.length} members
           </Text>
@@ -191,13 +212,13 @@ const CommunityScreen = ({ route }: any) => {
     );
   };
 
-  if (isFetching) {
-    return (
-      <View className="flex-1 bg-white flex justify-center items-center">
-        <ActivityIndicator />
-      </View>
-    );
-  }
+  //   if (isFetching) {
+  //     return (
+  //       <View className="flex-1 bg-white flex justify-center items-center">
+  //         <ActivityIndicator />
+  //       </View>
+  //     );
+  //   }
 
   return (
     <SafeAreaView className="bg-white flex-1">
@@ -260,7 +281,7 @@ const CommunityScreen = ({ route }: any) => {
           </>
         }
         ListEmptyComponent={
-          isFetching ? (
+          isLoading ? (
             <View className="flex-1 justify-center items-center">
               <ActivityIndicator size="large" color="#7367f0" />
             </View>
@@ -356,18 +377,48 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
 
-  communityImage: {
-    width: 46,
-    height: 46,
-    borderRadius: 200,
-    elevation: 4,
-    overflow: "hidden",
-  },
+  //   communityImage: {
+  //     width: 46,
+  //     height: 46,
+  //     borderRadius: 200,
+  //     elevation: 4,
+  //     overflow: "hidden",
+  //   },
   communityImagePlaceHolder: {
     width: 46,
     height: 46,
     borderRadius: 200,
 
     overflow: "hidden",
+  },
+
+  imageWrapper: {
+    padding: 4,
+    backgroundColor: "#fff",
+    borderRadius: 24,
+    ...Platform.select({
+      ios: {
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: 0 },
+        shadowOpacity: 0.25,
+        shadowRadius: 6,
+      },
+      android: {
+        elevation: 6,
+      },
+    }),
+  },
+  communityImage: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    resizeMode: "contain",
+  },
+  universityPlaceHolder: {
+    width: 40,
+    height: 40,
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
   },
 });

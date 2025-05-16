@@ -34,11 +34,11 @@ export async function getCommunityPostComments(
   postId: string,
   token: any,
   page: number,
-  limit: number
+  limit: number,
 ) {
   const response: any = await client(
     `/communitypostcomment/${postId}?page=${page}&limit=${limit}`,
-    { headers: { Authorization: `Bearer ${token}` } }
+    { headers: { Authorization: `Bearer ${token}` } },
   );
   return response;
 }
@@ -46,7 +46,7 @@ export async function getCommunityPostComments(
 export function useGetCommunityPostComments(
   postId: string,
   isCommunity: boolean,
-  limit: number
+  limit: number,
 ) {
   {
     const cookieValue = getToken();
@@ -69,11 +69,11 @@ export function useGetCommunityPostComments(
 
 export async function LikeUnilikeGroupPost(
   communityGroupPostId: string,
-  token: any
+  token: any,
 ) {
   const response = await client(
     `/communitypost/likeunlike/${communityGroupPostId}`,
-    { method: "PUT", headers: { Authorization: `Bearer ${token}` } }
+    { method: "PUT", headers: { Authorization: `Bearer ${token}` } },
   );
   return response;
 }
@@ -81,7 +81,7 @@ export async function LikeUnilikeGroupPost(
 export const useLikeUnilikeGroupPost = (
   communityId: string = "",
   communityGroupId: string = "",
-  isTimeline: boolean
+  isTimeline: boolean,
 ) => {
   const cookieValue = getToken();
 
@@ -106,7 +106,7 @@ export const useLikeUnilikeGroupPost = (
                       ...post,
                       likeCount: res.likeCount,
                     }
-                  : post
+                  : post,
               ),
             })),
           };
@@ -126,11 +126,11 @@ export const useLikeUnilikeGroupPost = (
                         ...post,
                         likeCount: res.likeCount,
                       }
-                    : post
+                    : post,
                 ),
               })),
             };
-          }
+          },
         );
       }
     },
@@ -167,14 +167,14 @@ export const useCreateGroupPostComment = () => {
 
 export async function LikeUnilikeGroupPostCommnet(
   communityGroupPostCommentId: string,
-  token: any
+  token: any,
 ) {
   const response = await client(
     `/communitypostcomment/likeUnlike/${communityGroupPostCommentId}`,
     {
       method: "PUT",
       headers: { Authorization: `Bearer ${token}` },
-    }
+    },
   );
   return response;
 }
@@ -202,7 +202,7 @@ export async function CreateGroupPostCommentReply(data: any, token: any) {
       method: "POST",
       headers: { Authorization: `Bearer ${token}` },
       data,
-    }
+    },
   );
   return response;
 }
