@@ -23,10 +23,6 @@ const LeftSideBarPagesSection = () => {
           <Text style={styles.menuText}>{item.title}</Text>
         </TouchableOpacity>
       ))}
-      {/* <TouchableOpacity style={styles.menuItem}>
-        <Text style={styles.UpgradeText}>Upgrade</Text>
-        <CubeScanSolid width={22} height={22} color="#6744FF" />
-      </TouchableOpacity> */}
     </View>
   );
 };

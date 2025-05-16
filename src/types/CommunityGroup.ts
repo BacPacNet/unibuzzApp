@@ -49,29 +49,6 @@ export interface CreateCommunityGroupType {
   selectedUsers: users[];
 }
 
-// export interface CommunityGroupType {
-//   _id: string;
-//   adminUserId: AdminUserId | string;
-//   communityId: string;
-//   title: string;
-//   description: string;
-//   memberCount: number;
-//   communityGroupType: string;
-//   communityGroupAccess: string;
-//   communityGroupCategory: any;
-//   __v: number;
-//   adminUserProfile: AdminUserProfile;
-//   communityGroupLogoCoverUrl?: {
-//     imageUrl: string;
-//     publicId: string;
-//   };
-//   communityGroupLogoUrl?: {
-//     imageUrl: string;
-//     publicId: string;
-//   };
-//   users: users[];
-// }
-
 export interface CommunityGroupType {
   _id: string;
   adminUserId: AdminUserId | string;

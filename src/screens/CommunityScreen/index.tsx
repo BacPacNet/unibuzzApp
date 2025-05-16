@@ -46,15 +46,6 @@ const CommunityScreen = ({ route }: any) => {
     useJoinCommunity();
   const { mutate: leaveCommunity, isPending: isLeaveLoading } =
     useLeaveCommunity();
-  //   const {
-  //     data: communityGroupPost,
-  //     fetchNextPage: communityPostNextpage,
-  //     isFetchingNextPage: communityPostIsFetchingNextPage,
-  //     hasNextPage: communityPostHasNextPage,
-  //     error: communityPostError,
-  //     dataUpdatedAt,
-  //     isFetching,
-  //   } = useGetCommunityGroupPost(communityId, "", true, 10);
 
   const {
     data: communityGroupPost,
@@ -72,11 +63,11 @@ const CommunityScreen = ({ route }: any) => {
     boolean | null
   >(null);
   const [imageSrc, setImageSrc] = useState(
-    communityData?.communityCoverUrl?.imageUrl,
+    communityData?.communityCoverUrl?.imageUrl
   );
   const [ImageSrcErr, setImageSrcErr] = useState(false);
   const [logoSrc, setLogoSrc] = useState(
-    communityData?.communityLogoUrl?.imageUrl,
+    communityData?.communityLogoUrl?.imageUrl
   );
   const [logoSrcErr, setLogoSrcErr] = useState(false);
   const [refreshing, setRefreshing] = React.useState(false);
@@ -90,7 +81,7 @@ const CommunityScreen = ({ route }: any) => {
       return () => {
         setCurrentCommunityId("");
       };
-    }, [communityId]),
+    }, [communityId])
   );
 
   useEffect(() => {
@@ -106,8 +97,8 @@ const CommunityScreen = ({ route }: any) => {
     if (!hasInitialized && communityData && userData) {
       setIsUserJoinedCommunity(
         communityData.users.some(
-          (user) => user?.id?.toString() === userData?.id,
-        ),
+          (user) => user?.id?.toString() === userData?.id
+        )
       );
       setHasInitialized(true);
     }
@@ -115,7 +106,7 @@ const CommunityScreen = ({ route }: any) => {
 
   useEffect(() => {
     const communityDatas: any = communityGroupPost?.pages.flatMap(
-      (page) => page?.finalPost,
+      (page) => page?.finalPost
     );
     setCommunityDatas(communityDatas);
   }, [communityGroupPost, dataUpdatedAt]);
@@ -377,13 +368,6 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
 
-  //   communityImage: {
-  //     width: 46,
-  //     height: 46,
-  //     borderRadius: 200,
-  //     elevation: 4,
-  //     overflow: "hidden",
-  //   },
   communityImagePlaceHolder: {
     width: 46,
     height: 46,
