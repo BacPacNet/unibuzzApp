@@ -6,13 +6,13 @@ import { getToken } from "@/storage/token";
 export async function getUserMainNotification(
   token: string,
   page: number,
-  limit: number
+  limit: number,
 ) {
   const response: UserMainNotificationsProps = await client(
     `/notification/user?page=${page}&limit=${limit}`,
     {
       headers: { Authorization: `Bearer ${token}` },
-    }
+    },
   );
   return response;
 }

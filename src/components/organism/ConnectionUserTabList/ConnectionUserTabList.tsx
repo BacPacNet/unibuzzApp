@@ -39,7 +39,7 @@ const ConnectionUserTabList: React.FC<{
       userProfilesData?.pages
         ?.flatMap(({ users }) => users)
         .filter(({ _id }) => _id !== userProfileData?.users_id) ?? [],
-    [userProfilesData, userProfileData?.users_id]
+    [userProfilesData, userProfileData?.users_id],
   );
 
   const handleRefresh = useCallback(() => {
@@ -80,7 +80,7 @@ const ConnectionUserTabList: React.FC<{
         </TouchableOpacity>
       );
     },
-    [userProfileData?.users_id]
+    [userProfileData?.users_id],
   );
 
   //  Ensure renderItem only includes necessary dependencies
@@ -121,7 +121,7 @@ const ConnectionUserTabList: React.FC<{
         <RenderCTA isFollowing={item.isFollowing} id={item._id} />
       </View>
     ),
-    [RenderCTA]
+    [RenderCTA],
   );
 
   if (isFetching && !isFetchingNextPage)

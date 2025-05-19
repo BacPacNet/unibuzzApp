@@ -103,7 +103,7 @@ const UniversityVerificationScreen = () => {
       return () => {
         changeHeaderShownStatus(true);
       };
-    }, [])
+    }, []),
   );
 
   const onSubmit = (data: any) => {

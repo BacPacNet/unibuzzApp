@@ -56,7 +56,7 @@ async function deletePreviousImage(publicId: any) {
         api_key: APIKEY,
         timestamp: timestamp,
         signature: signature,
-      }
+      },
     );
   } catch (err) {
     console.log("Error deleting previous image", err);
@@ -87,7 +87,7 @@ export async function uploadNewImage(img: {
         headers: {
           "Content-Type": "multipart/form-data",
         },
-      }
+      },
     );
     if (res?.data?.secure_url) {
       const imageUrl = res.data.secure_url;

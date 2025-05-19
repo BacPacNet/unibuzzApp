@@ -17,16 +17,12 @@ const menuItems = [
 const LeftSideBarPagesSection = () => {
   return (
     <View style={styles.container}>
-      <Text style={styles.headerText}>Pages</Text>
+      <Text style={styles.headerText}>PAGES</Text>
       {menuItems.map((item, index) => (
         <TouchableOpacity key={index} style={styles.menuItem}>
           <Text style={styles.menuText}>{item.title}</Text>
         </TouchableOpacity>
       ))}
-      <TouchableOpacity style={styles.menuItem}>
-        <Text style={styles.UpgradeText}>Upgrade</Text>
-        <CubeScanSolid width={22} height={22} color="#6744FF" />
-      </TouchableOpacity>
     </View>
   );
 };
@@ -34,29 +30,34 @@ const LeftSideBarPagesSection = () => {
 const styles = StyleSheet.create({
   container: {
     borderBottomColor: "#E5E7EB",
-    borderBottomWidth: 2,
+    borderBottomWidth: 1,
     // margin: 20,
     marginBottom: 20,
-    paddingBottom: 20,
-    padding: 16,
+    paddingBottom: 9,
+    marginTop: 40,
+    marginHorizontal: 16,
   },
   menuItem: {
     flexDirection: "row",
     alignItems: "center",
-    paddingVertical: 10,
-    gap: 4,
   },
   headerText: {
     fontSize: 12,
     color: "#6B7280",
+    fontWeight: 700,
+    fontFamily: "inter",
   },
   menuText: {
     fontSize: 14,
     color: "#404040",
+    paddingVertical: 12,
+    height: 40,
   },
   UpgradeText: {
     fontSize: 14,
     color: "#6744FF",
+    paddingVertical: 12,
+    height: 44,
   },
 });
 

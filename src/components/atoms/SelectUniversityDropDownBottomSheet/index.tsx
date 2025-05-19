@@ -40,7 +40,7 @@ const SelectUniversityDropdownBottomSheet: React.FC<SelectDropdownProps> = ({
   const searchRef = useRef<TextInput>(null);
 
   const { data: universities, isFetching } = useUniversitySearch(
-    searchTerm || " "
+    searchTerm || " ",
   );
 
   return (

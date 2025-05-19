@@ -37,13 +37,13 @@ const SearchCommunityGroupFilterScreen = () => {
     setSelectedType((prev: string[]) =>
       prev.includes(type)
         ? prev.filter((item) => item !== type)
-        : [...prev, type]
+        : [...prev, type],
     );
   };
 
   const handleSelectAllTypes = (allTypes: string[]) => {
     setSelectedType((prev: string[]) =>
-      prev.length === allTypes.length ? [] : allTypes
+      prev.length === allTypes.length ? [] : allTypes,
     );
   };
 
@@ -52,7 +52,7 @@ const SearchCommunityGroupFilterScreen = () => {
       const categoryFilters = prev[category] || [];
       if (categoryFilters.includes(option)) {
         const updatedFilters = categoryFilters.filter(
-          (item: any) => item !== option
+          (item: any) => item !== option,
         );
         if (updatedFilters.length === 0) {
           const { [category]: _, ...rest } = prev;
@@ -94,7 +94,7 @@ const SearchCommunityGroupFilterScreen = () => {
       return () => {
         changeHeaderShownStatus(true);
       };
-    }, [])
+    }, []),
   );
 
   useEffect(() => {
@@ -148,7 +148,7 @@ const SearchCommunityGroupFilterScreen = () => {
           handleSelectAll={() =>
             handleSelectAll(
               "Recreation and Hobbies",
-              subCategories["Recreation and Hobbies"]
+              subCategories["Recreation and Hobbies"],
             )
           }
         />
@@ -162,7 +162,7 @@ const SearchCommunityGroupFilterScreen = () => {
           handleSelectAll={() =>
             handleSelectAll(
               "Advocacy and Awareness",
-              subCategories["Advocacy and Awareness"]
+              subCategories["Advocacy and Awareness"],
             )
           }
         />
@@ -185,7 +185,7 @@ const SearchCommunityGroupFilterScreen = () => {
           handleSelectAll={() =>
             handleSelectAll(
               "Professional Development",
-              subCategories["Professional Development"]
+              subCategories["Professional Development"],
             )
           }
         />
@@ -217,7 +217,7 @@ const SearchCommunityGroupFilterScreen = () => {
                       <Text style={styles.filterChipText}>{filter}</Text>
                       <Xmark width={24} height={24} color="#000" />
                     </TouchableOpacity>
-                  ))
+                  )),
                 )}
               </View>
             </View>

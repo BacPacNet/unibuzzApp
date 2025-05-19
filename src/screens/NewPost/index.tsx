@@ -42,7 +42,7 @@ const NewPost = ({ navigation }: any) => {
   });
   const { mutate: CreateTimelinePost, isPending } = useCreateUserPost();
   const [postAccessType, setPostAccessType] = useState<UserPostType>(
-    UserPostType.PUBLIC
+    UserPostType.PUBLIC,
   );
   const [showPostType, setShowPostType] = useState(false);
 
@@ -63,7 +63,7 @@ const NewPost = ({ navigation }: any) => {
           },
         });
       };
-    }, [navigation])
+    }, [navigation]),
   );
 
   const handlePostVisibilityTypeChange = useCallback(
@@ -71,7 +71,7 @@ const NewPost = ({ navigation }: any) => {
       setPostAccessType(type);
       setShowPostType(false);
     },
-    [setPostAccessType, setShowPostType]
+    [setPostAccessType, setShowPostType],
   );
 
   const processImages = async (imagesData: any[]) => {
@@ -90,7 +90,7 @@ const NewPost = ({ navigation }: any) => {
         if (response.assets && response.assets.length > 0) {
           setImages((prevImages) => [...prevImages, ...response.assets]);
         }
-      }
+      },
     );
   }, []);
 

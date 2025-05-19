@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from "react";
-import { Image, StyleSheet, Text, View } from "react-native";
+import { Image, Platform, StyleSheet, Text, View } from "react-native";
 import NavbarSubscribedUniversity from "../SubscribedUniversity";
 import { getUserStore } from "@/storage/user";
 import { useGetSubscribedCommunities } from "@/services/university-community";
@@ -9,9 +9,10 @@ import { useNavigation } from "@react-navigation/native";
 import { RootStackParamList } from "@/types/navigation";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { useCommunityContext } from "@/context/CommunityProvider/CommunityProvider";
-import UniversityLogoPlaceHolder from "@/assets/unibuzz_rounded.svg";
+import UniversityLogoPlaceHolder from "@/assets/uniorangeIcon.svg";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { FilterList } from "iconoir-react-native";
+import CommunityGroupTabs from "@/components/organism/CommunityGroupTabs";
 
 type NavigationProp = StackNavigationProp<RootStackParamList, "Timeline">;
 const UniversitySec = () => {
@@ -27,7 +28,7 @@ const UniversitySec = () => {
   const [currSelectedGroup, setCurrSelectedGroup] = useState<Community>();
   const [community, setCommunity] = useState<Community>();
   const [logoSrc, setLogoSrc] = useState(community?.communityLogoUrl.imageUrl);
-
+  const [currTab, setCurrTab] = useState("All");
   const handleCommunityClick = (id: string) => {
     navigation.navigate("Community", { communityId: id });
     setCurrSelectedGroup(community);
@@ -45,25 +46,45 @@ const UniversitySec = () => {
     const selectedCommunityGroup = subscribedCommunities?.find(
       (community) =>
         community?._id ===
-        (currentCommunityId || subscribedCommunities?.[0]._id)
+        (currentCommunityId || subscribedCommunities?.[0]._id),
     )?.communityGroups;
     return selectedCommunityGroup
       ?.filter((userCommunityGroup) =>
         userCommunityGroup?.users?.some(
           (selectCommunityGroup) =>
             selectCommunityGroup?.userId?.toString() ===
-            userData?.id?.toString()
-        )
+            userData?.id?.toString(),
+        ),
       )
       ?.filter((group) => group.title.toLowerCase());
+  }, [subscribedCommunities, currentCommunityId, userData]);
+
+  const subscribedCommunitiesAllGroups = useMemo(() => {
+    const groups = subscribedCommunities?.find(
+      (community) =>
+        community._id ===
+        (currentCommunityId || subscribedCommunities?.[0]?._id),
+    )?.communityGroups;
+
+    return groups || [];
+  }, [subscribedCommunities, currentCommunityId]);
+
+  const subscribedCommunitiesMyGroup = useMemo(() => {
+    const groups = subscribedCommunities?.find(
+      (community) =>
+        community._id ===
+        (currentCommunityId || subscribedCommunities?.[0]?._id),
+    )?.communityGroups;
+
+    return groups?.filter((group) => group?.adminUserId === userData?.id) || [];
   }, [subscribedCommunities, currentCommunityId, userData]);
 
   useEffect(() => {
     if (currentCommunityId && subscribedCommunities) {
       setCommunity(
         subscribedCommunities.find(
-          (community) => community._id === currentCommunityId
-        )
+          (community) => community._id === currentCommunityId,
+        ),
       );
     } else if (subscribedCommunities) {
       setCommunity(subscribedCommunities?.[0] as Community);
@@ -76,7 +97,7 @@ const UniversitySec = () => {
 
   return (
     <View>
-      <Text style={styles.headerText}>Universities</Text>
+      <Text style={styles.headerText}>UNIVERSITIES</Text>
       <NavbarSubscribedUniversity
         userData={userData || {}}
         communityId={currentCommunityId || ""}
@@ -88,19 +109,23 @@ const UniversitySec = () => {
       <View className="mt-4">
         <Text style={styles.headerText}>University Groups</Text>
         <View style={styles.communityImageContainer}>
-          {logoSrc ? (
-            <Image
-              source={{ uri: community?.communityLogoUrl?.imageUrl }}
-              style={styles.communityImage}
-              onError={() => setLogoSrc("")}
-            />
-          ) : (
-            <UniversityLogoPlaceHolder
-              width={40}
-              height={40}
-              style={styles.communityImage}
-            />
-          )}
+          <View style={styles.imageWrapper}>
+            {logoSrc ? (
+              <Image
+                source={{ uri: community?.communityLogoUrl?.imageUrl }}
+                style={styles.communityImage}
+                onError={() => setLogoSrc("")}
+              />
+            ) : (
+              <View style={styles.universityPlaceHolder}>
+                <UniversityLogoPlaceHolder
+                  width={20}
+                  height={20}
+                  style={styles.communityImage}
+                />
+              </View>
+            )}
+          </View>
 
           <TouchableOpacity
             onPress={() => handleManageGroupNavigate()}
@@ -110,10 +135,22 @@ const UniversitySec = () => {
             <Text className="text-neutral-800">Manage Groups</Text>
           </TouchableOpacity>
         </View>
-        <CommunityGroupAll
+
+        {/* <CommunityGroupAll
           key={joinedSubscribedCommunitiesGroup}
           communityGroups={joinedSubscribedCommunitiesGroup}
           currSelectedGroup={currSelectedGroup as Community}
+          setCurrSelectedGroup={setCurrSelectedGroup}
+          userData={userData}
+        />  */}
+
+        <CommunityGroupTabs
+          currTab={currTab}
+          setCurrTab={setCurrTab}
+          allGroups={subscribedCommunitiesAllGroups}
+          joinedGroups={joinedSubscribedCommunitiesGroup}
+          myGroups={subscribedCommunitiesMyGroup}
+          currSelectedGroup={currSelectedGroup}
           setCurrSelectedGroup={setCurrSelectedGroup}
           userData={userData}
         />
@@ -137,16 +174,42 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: "#6B7280",
     padding: 16,
+    paddingTop: 9,
+    fontWeight: 700,
   },
 
   UpgradeText: {
     fontSize: 14,
     color: "#6744FF",
   },
+  imageWrapper: {
+    padding: 4,
+    backgroundColor: "#fff",
+    borderRadius: 24,
+    ...Platform.select({
+      ios: {
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: 0 },
+        shadowOpacity: 0.25,
+        shadowRadius: 6,
+      },
+      android: {
+        elevation: 6,
+      },
+    }),
+  },
   communityImage: {
     width: 40,
     height: 40,
-    borderRadius: 200,
+    borderRadius: 20,
+    resizeMode: "contain",
+  },
+  universityPlaceHolder: {
+    width: 40,
+    height: 40,
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
   },
   communityImageContainer: {
     display: "flex",

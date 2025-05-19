@@ -37,7 +37,7 @@ const NewGroupPost = ({ navigation }: any) => {
   });
   const { mutate: CreateGroupPost, isPending } = useCreateGroupPost();
   const [postAccessType, setPostAccessType] = useState<CommunityPostType>(
-    CommunityPostType.PUBLIC
+    CommunityPostType.PUBLIC,
   );
   const [showPostType, setShowPostType] = useState(false);
 
@@ -58,7 +58,7 @@ const NewGroupPost = ({ navigation }: any) => {
           },
         });
       };
-    }, [navigation])
+    }, [navigation]),
   );
 
   const handlePostVisibilityTypeChange = useCallback(
@@ -66,7 +66,7 @@ const NewGroupPost = ({ navigation }: any) => {
       setPostAccessType(type);
       setShowPostType(false);
     },
-    [setPostAccessType, setShowPostType]
+    [setPostAccessType, setShowPostType],
   );
 
   const processImages = async (imagesData: any[]) => {
@@ -85,7 +85,7 @@ const NewGroupPost = ({ navigation }: any) => {
         if (response.assets && response.assets.length > 0) {
           setImages((prevImages) => [...prevImages, ...response.assets]);
         }
-      }
+      },
     );
   }, []);
 

@@ -1,3 +1,5 @@
+import { userTypeEnum } from "./register";
+
 interface users {
   userId: string;
   isRequestAccepted: boolean;
@@ -8,6 +10,27 @@ interface users {
   major: string;
 }
 
+export interface CommunityGroupUsers {
+  userId: string;
+  isRequestAccepted: boolean;
+  firstName: string;
+  lastName: string;
+  year: string;
+  degree: string;
+  major: string;
+  status: status;
+  occupation: string;
+  affiliation: string;
+  role: userTypeEnum;
+  profileImageUrl: string;
+}
+
+export enum status {
+  pending = "pending",
+  rejected = "rejected",
+  accepted = "accepted",
+  default = "default",
+}
 export interface CreateCommunityGroupType {
   title: string;
   description: string;
@@ -29,9 +52,18 @@ export interface CreateCommunityGroupType {
 export interface CommunityGroupType {
   _id: string;
   adminUserId: AdminUserId | string;
-  communityId: string;
+  status: status;
+  communityId: {
+    _id: string;
+    communityLogoUrl: {
+      imageUrl: string;
+      publicId: string;
+    };
+  };
   title: string;
   description: string;
+  communityName?: string;
+  communityGroupName?: string;
   memberCount: number;
   communityGroupType: string;
   communityGroupAccess: string;
@@ -46,7 +78,7 @@ export interface CommunityGroupType {
     imageUrl: string;
     publicId: string;
   };
-  users: users[];
+  users: CommunityGroupUsers[];
 }
 export interface AdminUserId {
   _id: string;
@@ -71,6 +103,16 @@ export interface AdminUserProfile {
   followers?: null[] | null;
   __v: number;
 }
+
+export enum CommunityGroupTypeEnum {
+  CASUAL = "casual",
+  OFFICIAL = "official",
+}
+export enum CommunityGroupVisibility {
+  PUBLIC = "Public",
+  PRIVATE = "Private",
+}
+
 export interface EmailEntity {
   UniversityName: string;
   UniversityEmail: string;

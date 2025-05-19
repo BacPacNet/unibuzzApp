@@ -4,7 +4,15 @@ import { StackNavigationProp } from "@react-navigation/stack";
 import { User } from "iconoir-react-native";
 import UniversityLogoPlaceHolder from "@/assets/unibuzz_rounded.svg";
 import React from "react";
-import { View, Text, Image, TouchableOpacity, StyleSheet } from "react-native";
+import {
+  View,
+  Text,
+  Image,
+  TouchableOpacity,
+  StyleSheet,
+  Platform,
+} from "react-native";
+import { CommunityGroupTypeEnum } from "@/types/CommunityGroup";
 
 type NavigationProp = StackNavigationProp<RootStackParamList, "Timeline">;
 const GroupSelectors = ({
@@ -24,6 +32,10 @@ const GroupSelectors = ({
   };
 
   const isSelected = currSelectedGroup?._id === data?._id;
+  const isGroupOfficial =
+    data?.communityGroupType === CommunityGroupTypeEnum.OFFICIAL;
+
+  //   console.log("data", currSelectedGroup?.communityLogoUrl);
 
   return (
     <TouchableOpacity
@@ -31,19 +43,46 @@ const GroupSelectors = ({
       style={[styles.container, isSelected && styles.selected]}
     >
       <View style={styles.innerContainer}>
-        {data?.communityGroupLogoUrl?.imageUrl ? (
-          <Image
-            source={{ uri: data.communityGroupLogoUrl.imageUrl }}
-            style={styles.image}
-          />
-        ) : (
-          //   <User style={styles.icon} />
-          <UniversityLogoPlaceHolder
-            width={40}
-            height={40}
-            style={styles.placeHolderLogo}
-          />
-        )}
+        <View style={styles.imageContainer}>
+          {data?.communityGroupLogoUrl?.imageUrl ? (
+            <View
+              style={[
+                styles.imageWrapper,
+                isGroupOfficial && styles.officialBorder,
+              ]}
+            >
+              <Image
+                source={{ uri: data.communityGroupLogoUrl.imageUrl }}
+                style={styles.image}
+              />
+            </View>
+          ) : (
+            <View
+              style={[
+                styles.imageWrapper,
+                isGroupOfficial && styles.officialBorder,
+              ]}
+            >
+              <View style={styles.universityPlaceHolder}>
+                <UniversityLogoPlaceHolder
+                  width={20}
+                  height={20}
+                  style={styles.communityImage}
+                />
+              </View>
+            </View>
+          )}
+          {isGroupOfficial && (
+            <View style={styles.badgeWrapper}>
+              <UniversityLogoPlaceHolder
+                width={12}
+                height={12}
+                style={styles.badgeImage}
+              />
+            </View>
+          )}
+        </View>
+
         <Text
           style={[
             styles.label,
@@ -78,6 +117,67 @@ const styles = StyleSheet.create({
     height: 40,
     borderRadius: 200,
   },
+  imageWrapper: {
+    padding: 4,
+    backgroundColor: "#fff",
+    borderRadius: 24,
+    ...Platform.select({
+      ios: {
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: 0 },
+        shadowOpacity: 0.25,
+        shadowRadius: 6,
+      },
+      android: {
+        elevation: 6,
+      },
+    }),
+  },
+  officialBorder: {
+    borderWidth: 2,
+    borderColor: "#6647ff",
+  },
+  communityImage: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    resizeMode: "contain",
+  },
+  universityPlaceHolder: {
+    width: 40,
+    height: 40,
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  imageContainer: {
+    position: "relative",
+    width: 48,
+    height: 48,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+
+  badgeWrapper: {
+    position: "absolute",
+    bottom: -10,
+    right: 12,
+    width: 20,
+    height: 20,
+    borderRadius: 10,
+    backgroundColor: "#fff",
+    borderWidth: 2,
+    borderColor: "#6647ff",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+
+  badgeImage: {
+    width: 12,
+    height: 12,
+    borderRadius: 6,
+  },
+
   icon: {
     fontSize: 40,
     padding: 8,

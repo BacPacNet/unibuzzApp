@@ -11,11 +11,11 @@ import { PostType } from "@/types/postType";
 export async function getAllTimelinePosts(
   token: string,
   page: number,
-  limit: number
+  limit: number,
 ) {
   const response: any = await client(
     `/userpost/timeline?page=${page}&limit=${limit}`,
-    { headers: { Authorization: `Bearer ${token}` } }
+    { headers: { Authorization: `Bearer ${token}` } },
   );
 
   return response;
@@ -95,11 +95,11 @@ export async function getUserPostComments(
   postId: string,
   token: string,
   page: number,
-  limit: number
+  limit: number,
 ) {
   const response: any = await client(
     `/userpostcomment/${postId}?page=${page}&limit=${limit}`,
-    { headers: { Authorization: `Bearer ${token}` } }
+    { headers: { Authorization: `Bearer ${token}` } },
   );
   return response;
 }
@@ -107,7 +107,7 @@ export async function getUserPostComments(
 export function useGetUserPostComments(
   postId: string,
   isTimeline: boolean,
-  limit: number
+  limit: number,
 ) {
   {
     const cookieValue = getToken() as string;
@@ -155,7 +155,7 @@ export const useLikeUnlikeTimelinePost = () => {
                     ...post,
                     likeCount: res.likeCount,
                   }
-                : post
+                : post,
             ),
           })),
         };
@@ -199,14 +199,14 @@ export const useCreateUserPostComment = (isSinglePost: boolean) => {
 
 export async function LikeUnlikeUserPostComment(
   UserPostCommentId: string,
-  token: string
+  token: string,
 ) {
   const response = await client(
     `/userpostcomment/likeUnlike/${UserPostCommentId}`,
     {
       method: "PUT",
       headers: { Authorization: `Bearer ${token}` },
-    }
+    },
   );
   return response;
 }
@@ -238,7 +238,7 @@ export async function CreateUserPostCommentReply(data: any, token: string) {
 
 export const useCreateUserPostCommentReply = (
   isNested: boolean,
-  type: PostType.Community | PostType.Timeline
+  type: PostType.Community | PostType.Timeline,
 ) => {
   const cookieValue = getToken() as string;
   const queryClient = useQueryClient();

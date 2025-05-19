@@ -34,7 +34,7 @@ const NewCommunityGroupFilterScreen = (props: Props) => {
       const categoryFilters = prev[category] || [];
       if (categoryFilters.includes(option)) {
         const updatedFilters = categoryFilters.filter(
-          (item: any) => item !== option
+          (item: any) => item !== option,
         );
         if (updatedFilters.length === 0) {
           const { [category]: _, ...rest } = prev;
@@ -76,7 +76,7 @@ const NewCommunityGroupFilterScreen = (props: Props) => {
       return () => {
         changeHeaderShownStatus(true);
       };
-    }, [])
+    }, []),
   );
 
   useEffect(() => {
@@ -122,7 +122,7 @@ const NewCommunityGroupFilterScreen = (props: Props) => {
           handleSelectAll={() =>
             handleSelectAll(
               "Recreation and Hobbies",
-              subCategories["Recreation and Hobbies"]
+              subCategories["Recreation and Hobbies"],
             )
           }
         />
@@ -136,7 +136,7 @@ const NewCommunityGroupFilterScreen = (props: Props) => {
           handleSelectAll={() =>
             handleSelectAll(
               "Advocacy and Awareness",
-              subCategories["Advocacy and Awareness"]
+              subCategories["Advocacy and Awareness"],
             )
           }
         />
@@ -159,7 +159,7 @@ const NewCommunityGroupFilterScreen = (props: Props) => {
           handleSelectAll={() =>
             handleSelectAll(
               "Professional Development",
-              subCategories["Professional Development"]
+              subCategories["Professional Development"],
             )
           }
         />
@@ -179,7 +179,7 @@ const NewCommunityGroupFilterScreen = (props: Props) => {
                       <Text style={styles.filterChipText}>{filter}</Text>
                       <Xmark width={24} height={24} color="#000" />
                     </TouchableOpacity>
-                  ))
+                  )),
                 )}
               </View>
             </View>

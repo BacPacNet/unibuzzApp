@@ -53,11 +53,11 @@ const UserChats = ({
           (item.users.find(
             (user) =>
               user?.userId._id.toString() === userData?.id &&
-              user?.isRequestAccepted
+              user?.isRequestAccepted,
           ) ||
             item.isRequestAccepted ||
             item.groupAdmin.toString() === userData?.id) &&
-          (!item.isGroupChat ? item.latestMessage : true)
+          (!item.isGroupChat ? item.latestMessage : true),
       );
 
       if (isChatLoading) {
@@ -94,7 +94,7 @@ const UserChats = ({
             isGroupChat={item?.isGroupChat}
             users={[item?.users]}
             isSeen={item?.latestMessage?.readByUsers?.includes(
-              userData?.id || " "
+              userData?.id || " ",
             )}
             lastMessage={item?.latestMessage?.content}
             date={item?.latestMessage?.createdAt}
@@ -109,10 +109,10 @@ const UserChats = ({
           ? item.users.some(
               (user) =>
                 user.userId._id.toString() === userData?.id &&
-                !user.isRequestAccepted
+                !user.isRequestAccepted,
             )
           : !item.isRequestAccepted &&
-            item.groupAdmin.toString() !== userData?.id
+            item.groupAdmin.toString() !== userData?.id,
       );
 
       if (filteredChats.length === 0) {
@@ -139,7 +139,7 @@ const UserChats = ({
             isGroupChat={item?.isGroupChat}
             users={[item?.users]}
             isSeen={item?.latestMessage?.readByUsers?.includes(
-              userData?.id || " "
+              userData?.id || " ",
             )}
             lastMessage={item?.latestMessage?.content}
             date={item?.latestMessage?.createdAt}

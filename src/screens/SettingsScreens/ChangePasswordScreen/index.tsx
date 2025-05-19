@@ -60,7 +60,7 @@ const UserPasswordChangeScreen = () => {
       return () => {
         changeHeaderShownStatus(true);
       };
-    }, [])
+    }, []),
   );
 
   const onSubmit = (data: any) => {

@@ -16,6 +16,7 @@ interface ReusableButtonProps {
   containerStyle?: string;
   textStyle?: string;
   activityIndicatorColor?: string;
+  size?: "w-full " | "w-1/2";
 }
 
 const ReusableButton: React.FC<ReusableButtonProps> = ({
@@ -27,6 +28,7 @@ const ReusableButton: React.FC<ReusableButtonProps> = ({
   containerStyle = "",
   textStyle = "",
   activityIndicatorColor = "#fff",
+  size = "w-full",
 }) => {
   const variantClasses = {
     primary: "bg-primary-500 text-white",
@@ -52,7 +54,7 @@ const ReusableButton: React.FC<ReusableButtonProps> = ({
 
   return (
     <TouchableOpacity
-      className={`py-3  rounded-lg w-full mb-4 ${variantClass} ${containerStyle} ${isLoading ? "opacity-50" : ""}`}
+      className={`py-3  rounded-lg ${size} mb-4 ${variantClass} ${containerStyle} ${isLoading ? "opacity-50" : ""}`}
       onPress={onPress}
       disabled={disabled || isLoading}
     >

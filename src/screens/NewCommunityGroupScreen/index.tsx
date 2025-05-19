@@ -66,10 +66,10 @@ const NewCommunityGroupScreen = () => {
   } = useForm<CreateCommunityGroupType>();
 
   const [previewProfileImage, setPreviewProfileImage] = useState<string | null>(
-    null
+    null,
   );
   const [previewBannerImage, setPreviewBannerImage] = useState<string | null>(
-    null
+    null,
   );
   const [isProfileLoading, setIsProfileLoading] = useState(false);
   const [imageToUpload, setImageToUpload] = useState<ImageAsset | null>(null);
@@ -84,7 +84,7 @@ const NewCommunityGroupScreen = () => {
       return () => {
         changeHeaderShownStatus(true);
       };
-    }, [])
+    }, []),
   );
 
   const handleNavigateToFilterScreen = () => {
@@ -360,7 +360,7 @@ const NewCommunityGroupScreen = () => {
       >
         <SelectCommunityUsersBottomSheet
           data={communityData?.users?.filter(
-            (user) => user?.id !== userData?.id
+            (user) => user?.id !== userData?.id,
           )}
           isFetching={isFetching}
           setSearchInput={setSearchInput}

@@ -59,8 +59,8 @@ export function SelectInputWithSearch({
       text === ""
         ? options
         : options.filter((option) =>
-            option.toLowerCase().includes(text.toLowerCase())
-          )
+            option.toLowerCase().includes(text.toLowerCase()),
+          ),
     );
   };
 

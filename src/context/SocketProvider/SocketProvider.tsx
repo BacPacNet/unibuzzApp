@@ -41,7 +41,7 @@ export const SocketProvider: React.FC<{ children: React.ReactNode }> = ({
   const navigationRef = useNavigationContainerRef();
   const routeNames = useNavigationState((state) => state?.routeNames || []);
   const currentRoute = useNavigationState(
-    (state) => state?.routeNames?.[state.index] || ""
+    (state) => state?.routeNames?.[state.index] || "",
   );
 
   const isRouteMessage = currentRoute !== "Messages";
@@ -52,7 +52,7 @@ export const SocketProvider: React.FC<{ children: React.ReactNode }> = ({
     const newSocket = io(
       Platform.OS === "android"
         ? "http://10.0.2.2:8000"
-        : "http://localhost:8000"
+        : "http://localhost:8000",
     );
 
     newSocket.on("connect", () => {

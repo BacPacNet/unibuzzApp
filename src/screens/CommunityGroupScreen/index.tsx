@@ -4,11 +4,18 @@ import {
   useNavigation,
   useRoute,
 } from "@react-navigation/native";
-import React, { useCallback, useEffect, useState } from "react";
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import {
   ActivityIndicator,
   FlatList,
   Image,
+  Platform,
   RefreshControl,
   StyleSheet,
   Text,
@@ -22,7 +29,10 @@ import {
   useJoinCommunity,
   useLeaveCommunity,
 } from "@/services/university-community";
-import { getUserStore } from "@/storage/user";
+import ActionSheet, { ActionSheetRef } from "react-native-actions-sheet";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+
+import { getUserProfileStore, getUserStore } from "@/storage/user";
 import { SafeAreaView } from "react-native-safe-area-context";
 import PostCard from "@/components/molecules/Timeline/PostCard";
 import { useQueryClient } from "@tanstack/react-query";
@@ -34,6 +44,15 @@ import {
 import { Toast } from "react-native-toast-notifications";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { RootStackParamList } from "@/types/navigation";
+import { CommunityGroupMembersModal } from "@/components/molecules/CommunityMembersModal";
+import JoinGroupButton from "@/components/atoms/JoinGroupButton";
+import {
+  CommunityGroupTypeEnum,
+  CommunityGroupVisibility,
+  status,
+} from "@/types/CommunityGroup";
+import ReusableButton from "@/components/atoms/ReusableButton";
+import CommunityGroupActionModal from "@/components/molecules/CommunityGroupActionModal";
 
 type NavigationProp = StackNavigationProp<RootStackParamList, "CommunityGroup">;
 const CommunityGroupScreen = ({ route }: any) => {
@@ -41,10 +60,13 @@ const CommunityGroupScreen = ({ route }: any) => {
   const { communityId, communityGroupId } = route.params;
   const { setCurrentCommunityId } = useCommunityContext();
   const userData = getUserStore();
+  const userProfileData = getUserProfileStore();
+  const membersBottomSheet = useRef<ActionSheetRef>(null);
+  const insets = useSafeAreaInsets();
 
   const { data: communityGroups } = useGetCommunityGroup(
     communityId,
-    communityGroupId
+    communityGroupId,
   );
 
   const { mutate: joinCommunityGroup, isPending: isJoinCommunityPending } =
@@ -66,23 +88,39 @@ const CommunityGroupScreen = ({ route }: any) => {
     dataUpdatedAt,
   } = useGetCommunityGroupPost(communityId, communityGroupId, true, 10);
   const [communityGroupPostDatas, setCommunityGroupPostDatas] = useState<any>(
-    []
+    [],
   );
 
   const [isGroupAdmin, setIsGroupAdmin] = useState(false);
   const [imageSrc, setImageSrc] = useState(
-    // communityGroups?.communityGroupLogoCoverUrl?.imageUrl
-    communityGroups?.communityGroupLogoUrl?.imageUrl
+    communityGroups?.communityGroupLogoUrl?.imageUrl,
   );
+  const [modalVisible, setModalVisible] = useState(false);
   const [ImageSrcErr, setImageSrcErr] = useState(false);
   const [logoSrc, setLogoSrc] = useState(
-    // communityGroups?.communityGroupLogoUrl?.imageUrl
-    communityGroups?.communityGroupLogoCoverUrl?.imageUrl
+    communityGroups?.communityGroupLogoCoverUrl?.imageUrl,
   );
   const [logoSrcErr, setLogoSrcErr] = useState(false);
   const [refreshing, setRefreshing] = React.useState(false);
 
   const queryClient = useQueryClient();
+
+  const isGroupOfficial =
+    communityGroups?.communityGroupType === CommunityGroupTypeEnum.OFFICIAL;
+  const isGroupPrivate =
+    communityGroups?.communityGroupAccess === CommunityGroupVisibility.PRIVATE;
+  const isUserVerifiedForCommunity = useMemo(() => {
+    return (
+      userProfileData?.email?.some(
+        (email) => email.communityId === communityGroups?.communityId?._id,
+      ) || false
+    );
+  }, [userProfileData, communityGroups]);
+  const userStatus = useMemo(() => {
+    return communityGroups?.users?.find(
+      (user) => user.userId === userProfileData?.users_id,
+    )?.status as status;
+  }, [communityGroups, userProfileData]);
 
   useFocusEffect(
     useCallback(() => {
@@ -91,14 +129,14 @@ const CommunityGroupScreen = ({ route }: any) => {
       return () => {
         setCurrentCommunityId("");
       };
-    }, [communityId])
+    }, [communityId]),
   );
 
   useEffect(() => {
     if (communityGroups && userData) {
       const { id } = userData;
       setIsGroupAdmin(
-        communityGroups.adminUserId.toString() === id?.toString()
+        communityGroups.adminUserId.toString() === id?.toString(),
       );
     }
   }, [communityGroups, userData]);
@@ -106,12 +144,13 @@ const CommunityGroupScreen = ({ route }: any) => {
   useEffect(() => {
     if (communityGroups && userData) {
       setIsUserJoinedCommunityGroup(
-        communityGroups?.users?.some(
-          (user) => user.userId.toString() === userData?.id
-        )
+        communityGroups.users.some(
+          (item) =>
+            item.userId.toString() === userData.id && item.isRequestAccepted,
+        ),
       );
     }
-  }, [communityGroups]);
+  }, [communityGroups, userData, setIsGroupAdmin]);
 
   useEffect(() => {
     setLogoSrcErr(false);
@@ -119,7 +158,7 @@ const CommunityGroupScreen = ({ route }: any) => {
     if (communityGroups) {
       setLogoSrc(communityGroups?.communityGroupLogoUrl?.imageUrl);
       setImageSrc(
-        "https://cdn.pixabay.com/photo/2017/08/20/12/13/architecture-2661547_1280.jpg"
+        "https://cdn.pixabay.com/photo/2017/08/20/12/13/architecture-2661547_1280.jpg",
       );
     }
   }, [communityGroups]);
@@ -132,7 +171,7 @@ const CommunityGroupScreen = ({ route }: any) => {
 
   useEffect(() => {
     const communityDatas: any = communityGroupPost?.pages.flatMap(
-      (page) => page?.finalPost
+      (page) => page?.finalPost,
     );
     setCommunityGroupPostDatas(communityDatas);
   }, [communityGroupPost, dataUpdatedAt]);
@@ -161,9 +200,14 @@ const CommunityGroupScreen = ({ route }: any) => {
       leaveCommunityGroup(communityGroupId, {
         onSuccess: () => {
           setIsUserJoinedCommunityGroup(false);
+          hideBottomBar();
         },
       });
     }
+  };
+
+  const hideBottomBar = () => {
+    membersBottomSheet.current?.hide();
   };
 
   const FlatListCommunityHeaderSec = () => {
@@ -187,48 +231,76 @@ const CommunityGroupScreen = ({ route }: any) => {
 
         <View style={styles.content}>
           <View style={styles.titleContainer}>
-            {logoSrc?.length && !logoSrcErr ? (
-              <Image
-                source={{ uri: logoSrc }}
-                style={styles.communityImage}
-                onError={() => setLogoSrcErr(true)}
-              />
-            ) : (
-              <View style={styles.communityImagePlaceHolder}>
-                <UniversityLogoPlaceHolder width={40} height={40} />
+            <View style={styles.innerContainer}>
+              <View style={styles.imageContainer}>
+                {logoSrc?.length && !logoSrcErr ? (
+                  <View
+                    style={[
+                      styles.imageWrapper,
+                      isGroupOfficial && styles.officialBorder,
+                    ]}
+                  >
+                    <Image
+                      source={{ uri: logoSrc }}
+                      style={styles.communityImage}
+                    />
+                  </View>
+                ) : (
+                  <View
+                    style={[
+                      styles.imageWrapper,
+                      isGroupOfficial && styles.officialBorder,
+                    ]}
+                  >
+                    <View style={styles.universityPlaceHolder}>
+                      <UniversityLogoPlaceHolder
+                        width={20}
+                        height={20}
+                        style={styles.communityImage}
+                      />
+                    </View>
+                  </View>
+                )}
+                {isGroupOfficial && (
+                  <View style={styles.badgeWrapper}>
+                    <UniversityLogoPlaceHolder
+                      width={12}
+                      height={12}
+                      style={styles.badgeImage}
+                    />
+                  </View>
+                )}
               </View>
-            )}
-
+            </View>
             <Text style={styles.title}>{communityGroups?.title}</Text>
           </View>
-          <Text style={styles.description}>{communityGroups?.description}</Text>
-          <Text style={styles.members}>
-            {communityGroups?.users.length} members
-          </Text>
 
-          <TouchableOpacity
-            disabled={isJoinCommunityPending || isLeaveCommunityPending}
-            onPress={() => handleToggleJoinCommunityGroup()}
-            style={[
-              styles.button,
-              !isUserJoinedCommunityGroup && styles.active,
-            ]}
-          >
-            <Text
-              style={[
-                styles.buttonText,
-                !isUserJoinedCommunityGroup && styles.buttonTextActive,
-              ]}
-            >
-              {isJoinCommunityPending || isLeaveCommunityPending ? (
-                <ActivityIndicator />
-              ) : !isUserJoinedCommunityGroup ? (
-                "Join Group"
-              ) : (
-                "Leave Group"
-              )}
+          <Text style={styles.description}>{communityGroups?.description}</Text>
+
+          <TouchableOpacity onPress={() => membersBottomSheet.current?.show()}>
+            <Text style={styles.members}>
+              {communityGroups?.users.length} members
             </Text>
           </TouchableOpacity>
+
+          {isUserJoinedCommunityGroup || isGroupAdmin ? (
+            <ReusableButton
+              buttonText="Settings"
+              variant="shade"
+              size="w-1/2"
+              containerStyle="mt-2"
+              onPress={() => setModalVisible(true)}
+            />
+          ) : (
+            <JoinGroupButton
+              isPrivate={isGroupPrivate}
+              isVerified={isUserVerifiedForCommunity}
+              //   isPending={isJoinCommunityPending}
+              isPending={isJoinCommunityPending}
+              userStatus={userStatus}
+              onClick={() => handleToggleJoinCommunityGroup()}
+            />
+          )}
         </View>
       </View>
     );
@@ -303,6 +375,32 @@ const CommunityGroupScreen = ({ route }: any) => {
           }
         />
       )}
+
+      <ActionSheet
+        useBottomSafeAreaPadding
+        ref={membersBottomSheet}
+        gestureEnabled={true}
+        safeAreaInsets={insets}
+        // snapPoints={[70, 100]}
+        containerStyle={{
+          paddingTop: 10,
+        }}
+      >
+        <CommunityGroupMembersModal
+          users={communityGroups?.users || []}
+          communityGroupId={communityGroupId}
+          isGroupAdmin={
+            communityGroups?.adminUserId.toString() === userData?.id?.toString()
+          }
+          hideBottomBar={hideBottomBar}
+        />
+      </ActionSheet>
+      <CommunityGroupActionModal
+        modalVisible={modalVisible}
+        setModalVisible={setModalVisible}
+        isAdmin={isGroupAdmin}
+        onLeave={() => handleToggleJoinCommunityGroup()}
+      />
     </SafeAreaView>
   );
 };
@@ -348,6 +446,11 @@ const styles = StyleSheet.create({
   },
   titleContainer: {
     display: "flex",
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
+  },
+  innerContainer: {
     flexDirection: "row",
     alignItems: "center",
     gap: 8,
@@ -402,18 +505,81 @@ const styles = StyleSheet.create({
     color: "white",
   },
 
-  communityImage: {
-    width: 46,
-    height: 46,
-    borderRadius: 200,
-    elevation: 4,
-    overflow: "hidden",
-  },
+  //   communityImage: {
+  //     width: 46,
+  //     height: 46,
+  //     borderRadius: 200,
+  //     elevation: 4,
+  //     overflow: "hidden",
+  //   },
   communityImagePlaceHolder: {
     width: 46,
     height: 46,
     borderRadius: 200,
 
     overflow: "hidden",
+  },
+
+  officialBorder: {
+    borderWidth: 2,
+    borderColor: "#6647ff",
+  },
+  imageWrapper: {
+    padding: 4,
+    backgroundColor: "#fff",
+    borderRadius: 24,
+    ...Platform.select({
+      ios: {
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: 0 },
+        shadowOpacity: 0.25,
+        shadowRadius: 6,
+      },
+      android: {
+        elevation: 6,
+      },
+    }),
+  },
+  communityImage: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    resizeMode: "cover",
+  },
+
+  imageContainer: {
+    position: "relative",
+    width: 48,
+    height: 48,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+
+  badgeWrapper: {
+    position: "absolute",
+    bottom: -10,
+    right: 12,
+    width: 20,
+    height: 20,
+    borderRadius: 10,
+    backgroundColor: "#fff",
+    borderWidth: 2,
+    borderColor: "#6647ff",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+
+  badgeImage: {
+    width: 12,
+    height: 12,
+    borderRadius: 6,
+  },
+
+  universityPlaceHolder: {
+    width: 40,
+    height: 40,
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
   },
 });

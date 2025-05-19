@@ -6,9 +6,11 @@ import {
   TouchableOpacity,
   StyleSheet,
   FlatList,
+  Platform,
 } from "react-native";
-
+import Badge from "@/assets/badge.svg";
 import UniversityLogoPlaceHolder from "@/assets/unibuzz_rounded.svg";
+
 import { Community } from "@/types/Community";
 import { User } from "@/models/auth";
 import ReusableButton from "@/components/atoms/ReusableButton";
@@ -35,7 +37,7 @@ const NavbarSubscribedUniversity = ({
     );
   }
 
-  return subscribedCommunities?.map((item) => (
+  return subscribedCommunities?.map((item: any) => (
     <CommunityHolder
       community={item}
       key={item?._id}
@@ -51,6 +53,7 @@ interface CommunityHolderProps {
     _id: string;
     name: string;
     communityLogoUrl: { imageUrl: string };
+    isVerified: boolean;
   };
 
   handleCommunityClick: (index: string) => void;
@@ -60,7 +63,6 @@ interface CommunityHolderProps {
 
 const CommunityHolder = ({
   community,
-
   handleCommunityClick,
   communityId,
   isGroup,
@@ -72,16 +74,26 @@ const CommunityHolder = ({
       onPress={() => handleCommunityClick(community._id)}
       style={[
         styles.communityContainer,
-        communityId === community._id && !isGroup ? styles.activeCommunity : {},
+        communityId === community._id && !isGroup && styles.activeCommunity,
       ]}
     >
       <View style={styles.innerContainer}>
         {!logoSrc ? (
-          <Image
-            source={{ uri: community?.communityLogoUrl?.imageUrl }}
-            style={styles.communityImage}
-            onError={() => setLogoSrc(true)}
-          />
+          <View style={styles.imageWrapper}>
+            {!logoSrc ? (
+              <Image
+                source={{ uri: community?.communityLogoUrl?.imageUrl }}
+                style={styles.communityImage}
+                onError={() => setLogoSrc(true)}
+              />
+            ) : (
+              <UniversityLogoPlaceHolder
+                width={40}
+                height={40}
+                style={styles.communityImage}
+              />
+            )}
+          </View>
         ) : (
           <UniversityLogoPlaceHolder
             width={40}
@@ -91,7 +103,20 @@ const CommunityHolder = ({
         )}
 
         <View style={styles.textContainer}>
-          <Text style={styles.communityName}>{community.name}</Text>
+          <Text
+            style={[
+              styles.communityName,
+              communityId === community._id && !isGroup && styles.activeText,
+            ]}
+            numberOfLines={1}
+            ellipsizeMode="tail"
+          >
+            {community.name}
+          </Text>
+
+          {community?.isVerified && (
+            <Badge width={16} height={16} style={styles.badge} />
+          )}
         </View>
       </View>
     </TouchableOpacity>
@@ -101,23 +126,41 @@ const CommunityHolder = ({
 const styles = StyleSheet.create({
   communityContainer: {
     flexDirection: "row",
-    justifyContent: "space-between",
     alignItems: "center",
-    padding: 16,
-    height: 80,
+    paddingHorizontal: 12,
+    paddingVertical: 10,
+    // borderRadius: 10,
+    marginVertical: 4,
   },
   activeCommunity: {
-    backgroundColor: "#f0f0f0",
+    backgroundColor: "#E5E7FF",
   },
   innerContainer: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 8,
+    gap: 10,
+  },
+  imageWrapper: {
+    padding: 4,
+    backgroundColor: "#fff",
+    borderRadius: 24,
+    ...Platform.select({
+      ios: {
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: 0 },
+        shadowOpacity: 0.25,
+        shadowRadius: 6,
+      },
+      android: {
+        elevation: 6,
+      },
+    }),
   },
   communityImage: {
     width: 40,
     height: 40,
-    borderRadius: 200,
+    borderRadius: 20,
+    resizeMode: "contain",
   },
   textContainer: {
     flexDirection: "row",
@@ -126,7 +169,17 @@ const styles = StyleSheet.create({
     width: "80%",
   },
   communityName: {
-    fontSize: 12,
+    fontSize: 13,
+    color: "#4B5563",
+    fontWeight: "500",
+  },
+  activeText: {
+    fontWeight: "bold",
+    color: "#111827",
+  },
+  badge: {
+    width: 16,
+    height: 16,
   },
 });
 
