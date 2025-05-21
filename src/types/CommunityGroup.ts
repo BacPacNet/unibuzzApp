@@ -38,15 +38,15 @@ export interface CreateCommunityGroupType {
   communityGroupAccess: string;
   selectedGroupCategory: string | null;
   groupSubCategory: Array<string>;
-  communityGroupLogoUrl: {
-    imageUrl: string;
-    publicId: string;
-  } | null;
-  communityGroupLogoCoverUrl: {
-    imageUrl: string;
-    publicId: string;
-  } | null;
-  selectedUsers: users[];
+  communityGroupLogoUrl: any;
+  communityGroupLogoCoverUrl: any;
+  selectedUsers: CommunityGroupUsers[];
+  studentYear: [];
+  //   studentYear:""
+  major: [];
+  occupation: [];
+  affiliation: [];
+  repostOption: string;
 }
 
 export interface CommunityGroupType {

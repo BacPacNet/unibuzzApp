@@ -63,11 +63,11 @@ const CommunityScreen = ({ route }: any) => {
     boolean | null
   >(null);
   const [imageSrc, setImageSrc] = useState(
-    communityData?.communityCoverUrl?.imageUrl
+    communityData?.communityCoverUrl?.imageUrl,
   );
   const [ImageSrcErr, setImageSrcErr] = useState(false);
   const [logoSrc, setLogoSrc] = useState(
-    communityData?.communityLogoUrl?.imageUrl
+    communityData?.communityLogoUrl?.imageUrl,
   );
   const [logoSrcErr, setLogoSrcErr] = useState(false);
   const [refreshing, setRefreshing] = React.useState(false);
@@ -81,7 +81,7 @@ const CommunityScreen = ({ route }: any) => {
       return () => {
         setCurrentCommunityId("");
       };
-    }, [communityId])
+    }, [communityId]),
   );
 
   useEffect(() => {
@@ -97,8 +97,8 @@ const CommunityScreen = ({ route }: any) => {
     if (!hasInitialized && communityData && userData) {
       setIsUserJoinedCommunity(
         communityData.users.some(
-          (user) => user?.id?.toString() === userData?.id
-        )
+          (user) => user?.id?.toString() === userData?.id,
+        ),
       );
       setHasInitialized(true);
     }
@@ -106,7 +106,7 @@ const CommunityScreen = ({ route }: any) => {
 
   useEffect(() => {
     const communityDatas: any = communityGroupPost?.pages.flatMap(
-      (page) => page?.finalPost
+      (page) => page?.finalPost,
     );
     setCommunityDatas(communityDatas);
   }, [communityGroupPost, dataUpdatedAt]);
@@ -180,9 +180,9 @@ const CommunityScreen = ({ route }: any) => {
           </View>
           <Text style={styles.description}>{communityData?.about}</Text>
 
-          <Text style={styles.members}>
+          {/* <Text style={styles.members}>
             {communityData?.users.length} members
-          </Text>
+          </Text> */}
           <TouchableOpacity
             disabled={isJoinLoading || isLeaveLoading}
             onPress={() => handleToggleJoinCommunity()}

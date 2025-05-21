@@ -13,6 +13,7 @@ export interface RequestData<T> {
   size?: number;
   userCode?: string;
   email?: string;
+  skipContentType?: boolean;
 }
 
 export interface ServerData<T> {

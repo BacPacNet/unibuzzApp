@@ -136,15 +136,31 @@ export const useLeaveCommunity = () => {
   });
 };
 
+// export async function getAllCommunityGroupPost(
+//   communityId: string,
+//   communityGroupID: string,
+//   token: any,
+//   page: number,
+//   limit: number,
+// ) {
+//   const response: any = await client(
+//     `/communitypost/${communityId}/${communityGroupID ? communityGroupID : ""}?page=${page}&limit=${limit}`,
+//     {
+//       headers: { Authorization: `Bearer ${token}` },
+//     },
+//   );
+//   return response;
+// }
+
 export async function getAllCommunityGroupPost(
   communityId: string,
-  communityGroupID: string,
+  communityGroupId: string,
   token: any,
   page: number,
   limit: number,
 ) {
   const response: any = await client(
-    `/communitypost/${communityId}/${communityGroupID ? communityGroupID : ""}?page=${page}&limit=${limit}`,
+    `/communitypost/group?communityId=${communityId}&communityGroupId=${communityGroupId}&page=${page}&limit=${limit}`,
     {
       headers: { Authorization: `Bearer ${token}` },
     },

@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { View, Text, StyleSheet } from "react-native";
 import { CommunityGroupUsers } from "@/types/CommunityGroup";
 import { getUserProfileStore } from "@/storage/user";
-import UserListItem from "../UserListItem";
+import UserListItem from "../../UserListItem";
 import { ScrollView } from "react-native-actions-sheet";
 import { useRemoveUserFromCommunityGroup } from "@/services/community-group";
 

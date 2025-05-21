@@ -280,9 +280,22 @@ export const value = [
 ];
 
 export const degreeAndMajors = {
-  Bachelors: value,
-  Masters: value,
-  PhD: value,
+  "1st Year Bachelors": value,
+  "2nd Year Bachelors": value,
+  "3rd Year Bachelors": value,
+  "4th Year Bachelors": value,
+  "5th Year Bachelors": value,
+  "6th Year Bachelors": value,
+  "1st Year Masters": value,
+  "2nd Year + Masters": value,
+  "3rd Year + Masters": value,
+  "1st Year PhD": value,
+  "2nd Year PhD": value,
+  "3rd Year PhD": value,
+  "4th Year PhD": value,
+  "5th Year PhD": value,
+  "6th Year PhD": value,
+  "6th Year + PhD": value,
 };
 
 export const occupationAndDepartment = {

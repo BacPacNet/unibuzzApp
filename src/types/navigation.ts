@@ -20,7 +20,7 @@ export type RootStackParamList = {
   Notifications: undefined;
   AIAssistant: undefined;
   Discover: undefined;
-  DiscoverStack: undefined;
+  DiscoverStack: any;
   University: {
     data: any;
   };

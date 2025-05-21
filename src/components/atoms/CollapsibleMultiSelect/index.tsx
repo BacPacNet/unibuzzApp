@@ -38,26 +38,6 @@ const CollapsibleMultiSelect = ({
     <View>
       <TouchableOpacity style={styles.sectionHeader} onPress={toggleSection}>
         <View style={styles.checkboxContainer}>
-          <TouchableOpacity
-            onPress={() => handleSelectAllOptions()}
-            style={styles.optionRow}
-          >
-            <View
-              style={[
-                styles.checkbox,
-                selectedOptions?.length > 0 && styles.checkboxSelected,
-              ]}
-            >
-              {selectedOptions?.length > 0 && (
-                <CheckSquare
-                  width={20}
-                  height={20}
-                  color="white"
-                  fill="#6C5CE7"
-                />
-              )}
-            </View>
-          </TouchableOpacity>
           <Text style={styles.sectionTitle}>{title}</Text>
         </View>
         {expanded ? (

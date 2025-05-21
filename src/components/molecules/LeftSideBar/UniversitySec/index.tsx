@@ -25,7 +25,8 @@ const UniversitySec = () => {
     isLoading,
   } = useGetSubscribedCommunities();
   const navigation = useNavigation<NavigationProp>();
-  const [currSelectedGroup, setCurrSelectedGroup] = useState<Community>();
+  const [currSelectedGroup, setCurrSelectedGroup] =
+    useState<Community | null>();
   const [community, setCommunity] = useState<Community>();
   const [logoSrc, setLogoSrc] = useState(community?.communityLogoUrl.imageUrl);
   const [currTab, setCurrTab] = useState("All");
@@ -148,11 +149,16 @@ const UniversitySec = () => {
           currTab={currTab}
           setCurrTab={setCurrTab}
           allGroups={subscribedCommunitiesAllGroups}
-          joinedGroups={joinedSubscribedCommunitiesGroup}
+          joinedGroups={joinedSubscribedCommunitiesGroup || []}
           myGroups={subscribedCommunitiesMyGroup}
-          currSelectedGroup={currSelectedGroup}
+          currSelectedGroup={currSelectedGroup || null}
           setCurrSelectedGroup={setCurrSelectedGroup}
-          userData={userData}
+          userData={userData || {}}
+          communityLogo={
+            currSelectedGroup?.communityLogoUrl?.imageUrl ||
+            subscribedCommunities?.[0]?.communityLogoUrl?.imageUrl ||
+            ""
+          }
         />
       </View>
     </View>

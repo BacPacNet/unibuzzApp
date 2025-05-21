@@ -20,7 +20,7 @@ type NavigationProp = StackNavigationProp<
 >;
 const SearchCommunityGroupScreen = () => {
   const route = useRoute();
-  const { communityId } = route.params as any;
+  const { communityId, change } = route.params as any;
   const [searchQuery, setSearchQuery] = useState("");
 
   const navigation = useNavigation<NavigationProp>();
@@ -70,7 +70,7 @@ const SearchCommunityGroupScreen = () => {
     };
 
     mutate(data);
-  }, [sort, communityId, selectedTypeMain, selectedFiltersMain]);
+  }, [sort, communityId, selectedTypeMain, selectedFiltersMain, change]);
 
   return (
     <View className="flex-1 bg-white pb-20">

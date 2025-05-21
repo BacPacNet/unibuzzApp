@@ -1,6 +1,17 @@
 import React, { useState } from "react";
 import { ActivityIndicator, Text, TouchableOpacity } from "react-native";
 import GroupSelectors from "../CommunityGroup";
+import { Community, CommunityGroup } from "@/types/Community";
+import { User } from "@/models/auth";
+
+type Props = {
+  communityGroups: CommunityGroup[];
+  currSelectedGroup: Community | null;
+  setCurrSelectedGroup: (group: Community | null) => void;
+  userData: Partial<User>;
+  isCommunityGroupsLoading?: boolean;
+  communityLogo: string;
+};
 
 function CommunityGroupAll({
   communityGroups,
@@ -11,10 +22,11 @@ function CommunityGroupAll({
   setCurrSelectedGroup,
 
   isCommunityGroupsLoading,
-}: any) {
+  communityLogo,
+}: Props) {
   const [showGroupTill, setShowGroupTill] = useState(5);
 
-  if (isCommunityGroupsLoading || communityGroups === "undefined")
+  if (isCommunityGroupsLoading || communityGroups == undefined)
     return <ActivityIndicator />;
   if (communityGroups?.length === 0)
     return (
@@ -25,17 +37,16 @@ function CommunityGroupAll({
 
   return (
     <>
-      {communityGroups
-        ?.slice(0, showGroupTill)
-        .map((item: any) => (
-          <GroupSelectors
-            key={item._id}
-            currSelectedGroup={currSelectedGroup}
-            setCurrSelectedGroup={setCurrSelectedGroup}
-            data={item}
-            userId={userData?.id}
-          />
-        ))}
+      {communityGroups?.slice(0, showGroupTill).map((item: any) => (
+        <GroupSelectors
+          key={item._id}
+          currSelectedGroup={currSelectedGroup}
+          setCurrSelectedGroup={setCurrSelectedGroup}
+          data={item}
+          // userId={userData?.id}
+          communityLogo={communityLogo}
+        />
+      ))}
       {communityGroups?.length > showGroupTill && (
         <TouchableOpacity
           onPress={() => setShowGroupTill(showGroupTill + 5)}
