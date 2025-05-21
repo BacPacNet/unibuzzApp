@@ -31,7 +31,6 @@ type Props = {
   ImageSrcErr: boolean;
   setImageSrcErr: (err: boolean) => void;
   communityGroups: CommunityGroup | any;
-  //   userStatus: string;
   userStatus: any;
   handleToggleJoinCommunityGroup: () => void;
   setModalVisible: (visible: boolean) => void;
@@ -61,12 +60,12 @@ const FlatListCommunityHeader: React.FC<Props> = ({
 }) => {
   const onSettingsPress = useCallback(
     () => setModalVisible(true),
-    [setModalVisible],
+    [setModalVisible]
   );
 
   const onJoinPress = useCallback(
     () => handleToggleJoinCommunityGroup(),
-    [handleToggleJoinCommunityGroup],
+    [handleToggleJoinCommunityGroup]
   );
 
   return (
@@ -233,13 +232,6 @@ const styles = StyleSheet.create({
     color: "white",
   },
 
-  //   communityImage: {
-  //     width: 46,
-  //     height: 46,
-  //     borderRadius: 200,
-  //     elevation: 4,
-  //     overflow: "hidden",
-  //   },
   communityImagePlaceHolder: {
     width: 46,
     height: 46,

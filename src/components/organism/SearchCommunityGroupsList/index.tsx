@@ -70,7 +70,6 @@ const SearchCommunityGroupList: React.FC<{
       data={data}
       keyExtractor={(item, index) => item?._id + index}
       initialNumToRender={10}
-      //   renderItem={CommunityHolder}
       renderItem={({ item }) => <CommunityHolder item={item} />}
       getItemLayout={(_, index) => ({ length: 80, offset: 80 * index, index })}
       removeClippedSubviews

@@ -204,15 +204,6 @@ const NewCommunityGroupScreen = () => {
       universityAdminId: communityData?.adminId,
     };
 
-    // const payload = {
-    //   ...data,
-    //   ...communityGroupCategory,
-    //   communityGroupLogoUrl: logoImageData,
-    //   communityGroupLogoCoverUrl: CoverImageData,
-    // };
-
-    // return console.log("payy", payload);
-
     createGroup(
       { communityId: communityId, data: payload },
       {
@@ -220,7 +211,6 @@ const NewCommunityGroupScreen = () => {
           setCreateSelectedFilters([]);
           setIsProfileLoading(false);
 
-          //   navigate.goBack();
           navigate.navigate("manageGroupStack", {
             screen: "SearchCommunityGroupScreen",
 

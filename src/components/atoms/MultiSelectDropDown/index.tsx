@@ -47,7 +47,7 @@ const MultiSelectDropdown = ({
       setFilteredOptions(options);
     } else {
       const filtered = options.filter((option) =>
-        option.toLowerCase().includes(searchInput.toLowerCase()),
+        option.toLowerCase().includes(searchInput.toLowerCase())
       );
       setFilteredOptions(filtered);
     }
@@ -75,11 +75,6 @@ const MultiSelectDropdown = ({
         style={[styles.optionItem, isSelected && styles.optionSelected]}
         onPress={() => handleSelect(item)}
       >
-        {/* {multiSelect && (
-          <View style={styles.checkbox}>
-            {isSelected && <View style={styles.checkedBox} />}
-          </View>
-        )} */}
         <Text>{item}</Text>
         {multiSelect && (
           <View className="flex justify-center items-center">
@@ -108,30 +103,6 @@ const MultiSelectDropdown = ({
     <View style={styles.container}>
       {label && <Text style={styles.label}>{label}</Text>}
 
-      {/* {parentCategory && parentCategory.length > 0 && (
-        <View style={styles.parentCategory}>
-          <Text style={styles.parentText}>{parentCategory.join(", ")}</Text>
-        </View>
-      )} */}
-
-      {/* <View style={[styles.dropdownBox, err && styles.errorBorder]}>
-        <Text style={styles.placeholder}>{placeholder}</Text>
-        <NavArrowDown width={18} height={18} color="#888" />
-      </View> */}
-
-      {/* {value.length > 0 && (
-        <View style={styles.selectedContainer}>
-          {value.map((item, index) => (
-            <View key={index} style={styles.selectedItem}>
-              <Text style={styles.selectedText}>{item}</Text>
-              <TouchableOpacity onPress={() => handleSelect(item)}>
-                <Xmark width={14} height={14} color="#fff" />
-              </TouchableOpacity>
-            </View>
-          ))}
-        </View>
-      )} */}
-
       {search && (
         <TextInput
           placeholder="Search..."
@@ -146,7 +117,6 @@ const MultiSelectDropdown = ({
         keyExtractor={(item) => item}
         renderItem={renderOption}
         style={styles.optionsList}
-        // keyboardShouldPersistTaps="handled"
         maxToRenderPerBatch={20}
       />
     </View>
