@@ -119,6 +119,7 @@ export const useJoinCommunityGroup = () => {
       //   });
       //   queryClient.invalidateQueries({ queryKey: ["communityGroupsPost"] });
       queryClient.invalidateQueries({ queryKey: ["communityGroup"] });
+      queryClient.invalidateQueries({ queryKey: ["communityGroupsPost"] });
 
       Toast.show("Joined Community Group");
     },
@@ -151,6 +152,7 @@ export const useLeaveCommunityGroup = () => {
       //   });
       //   queryClient.invalidateQueries({ queryKey: ["communityGroupsPost"] });
       queryClient.invalidateQueries({ queryKey: ["communityGroup"] });
+      queryClient.invalidateQueries({ queryKey: ["communityGroupsPost"] });
       Toast.show("Left Community Group!");
     },
 

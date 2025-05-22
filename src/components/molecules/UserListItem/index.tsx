@@ -135,7 +135,7 @@ const styles = StyleSheet.create({
   university: { fontSize: 12, color: "#666" },
   subText: { fontSize: 12, color: "black" },
   followButton: {
-    backgroundColor: "#007bff",
+    backgroundColor: "#6647FF",
     paddingVertical: 6,
     paddingHorizontal: 10,
     borderRadius: 6,

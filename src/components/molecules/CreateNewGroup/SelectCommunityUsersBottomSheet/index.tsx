@@ -1,0 +1,89 @@
+import React, { useCallback, useState } from "react";
+import { ActivityIndicator, Image, Text, TextInput, View } from "react-native";
+import { FlatList } from "react-native-actions-sheet";
+
+import { useUsersProfileForConnections } from "@/services/users";
+import { getUserStore } from "@/storage/user";
+import { NewGroupUserListItem } from "../UserList";
+import { Users } from "@/types/connections";
+
+type Props = {
+  setSelectedUsers: (value: Users[]) => void;
+  selectedUsers: Users[];
+};
+
+const SelectCommunityUsersBottomSheet = ({
+  selectedUsers,
+  setSelectedUsers,
+}: Props) => {
+  const [searchInput, setSearchInput] = useState("");
+  const userData = getUserStore();
+  const {
+    data,
+    fetchNextPage,
+    isFetchingNextPage,
+    hasNextPage,
+    isLoading,
+    isFetching,
+  } = useUsersProfileForConnections(searchInput, 10, true);
+
+  const userProfiles =
+    data?.pages
+      .flatMap((page) => page.users)
+      .filter((user) => user._id !== userData?.id) || [];
+
+  const renderItem = ({ item }: { item: Users }) => {
+    return (
+      <NewGroupUserListItem
+        item={item}
+        selectedUsers={selectedUsers}
+        setSelectedUsers={setSelectedUsers}
+      />
+    );
+  };
+
+  return (
+    <View
+      style={{
+        height: "100%",
+        alignItems: "center",
+        paddingTop: 20,
+        gap: 10,
+        width: "100%",
+      }}
+    >
+      <View className="w-full p-3">
+        <TextInput
+          style={{ paddingStart: 8 }}
+          onChangeText={(text) => setSearchInput(text)}
+          className="border border-neutral-200 w-full   rounded-lg h-14 p-0"
+          placeholderTextColor="#a9a9a9"
+          placeholder="Search User..."
+        />
+      </View>
+
+      <FlatList
+        data={userProfiles || []}
+        style={{
+          width: "100%",
+          height: "100%",
+        }}
+        keyExtractor={(item, index) => item._id + index}
+        renderItem={renderItem}
+        ListEmptyComponent={
+          isFetching ? (
+            <View className="flex-1 justify-center items-center">
+              <ActivityIndicator size="large" color="#7367f0" />
+            </View>
+          ) : (
+            <View className="flex-1 justify-center items-center">
+              <Text>No Result Found</Text>
+            </View>
+          )
+        }
+      />
+    </View>
+  );
+};
+
+export default SelectCommunityUsersBottomSheet;

@@ -1,7 +1,7 @@
 import { RootStackParamList } from "@/types/navigation";
 import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
-import { User } from "iconoir-react-native";
+import { Community } from "@/types/Community";
 import UniversityLogoPlaceHolder from "@/assets/unibuzz_rounded.svg";
 import React from "react";
 import {
@@ -15,12 +15,19 @@ import {
 import { CommunityGroupTypeEnum } from "@/types/CommunityGroup";
 
 type NavigationProp = StackNavigationProp<RootStackParamList, "Timeline">;
+
+type Props = {
+  communityLogo: string;
+  data: any;
+  currSelectedGroup: Community | null;
+  setCurrSelectedGroup: (value: Community) => void;
+};
 const GroupSelectors = ({
   currSelectedGroup,
   setCurrSelectedGroup,
-
+  communityLogo,
   data,
-}: any) => {
+}: Props) => {
   const navigation = useNavigation<NavigationProp>();
 
   const handleGroupNavigate = () => {
@@ -34,8 +41,6 @@ const GroupSelectors = ({
   const isSelected = currSelectedGroup?._id === data?._id;
   const isGroupOfficial =
     data?.communityGroupType === CommunityGroupTypeEnum.OFFICIAL;
-
-  //   console.log("data", currSelectedGroup?.communityLogoUrl);
 
   return (
     <TouchableOpacity
@@ -74,11 +79,18 @@ const GroupSelectors = ({
           )}
           {isGroupOfficial && (
             <View style={styles.badgeWrapper}>
-              <UniversityLogoPlaceHolder
-                width={12}
-                height={12}
-                style={styles.badgeImage}
-              />
+              {communityLogo?.length ? (
+                <Image
+                  source={{ uri: communityLogo }}
+                  style={styles.badgeImage}
+                />
+              ) : (
+                <UniversityLogoPlaceHolder
+                  width={12}
+                  height={12}
+                  style={styles.badgeImage}
+                />
+              )}
             </View>
           )}
         </View>
@@ -176,6 +188,7 @@ const styles = StyleSheet.create({
     width: 12,
     height: 12,
     borderRadius: 6,
+    objectFit: "contain",
   },
 
   icon: {

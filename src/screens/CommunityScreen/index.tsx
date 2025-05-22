@@ -176,13 +176,9 @@ const CommunityScreen = ({ route }: any) => {
             </View>
 
             <Text style={styles.title}>{communityData?.name}</Text>
-            {/* <Text style={styles.aiPowered}>AI POWERED</Text> */}
           </View>
           <Text style={styles.description}>{communityData?.about}</Text>
 
-          <Text style={styles.members}>
-            {communityData?.users.length} members
-          </Text>
           <TouchableOpacity
             disabled={isJoinLoading || isLeaveLoading}
             onPress={() => handleToggleJoinCommunity()}

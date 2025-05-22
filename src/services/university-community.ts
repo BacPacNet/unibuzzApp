@@ -42,7 +42,7 @@ export function useGetSubscribedCommunities() {
 export async function getUserFilteredSubscribedCommunities(
   communityId: string,
   token: string,
-  data: any,
+  data: any
 ) {
   const response: any = await client(`/community/filtered/${communityId}`, {
     method: "POST",
@@ -58,23 +58,7 @@ export function useGetFilteredSubscribedCommunities(communityId: string = "") {
   return useMutation({
     mutationFn: (data: any) =>
       getUserFilteredSubscribedCommunities(communityId, cookieValue, data),
-    //   onSuccess: (response: any) => {
-    //     const communityData: any = queryClient.getQueryData(['useGetSubscribedCommunties'])
 
-    //     if (communityData) {
-    //       const updatedCommunityData = communityData.map((item: any) => {
-    //         if (item._id === response._id) {
-    //           return {
-    //             ...item,
-    //             communityGroups: response.communityGroups,
-    //           }
-    //         }
-    //         return item
-    //       })
-
-    //       queryClient.setQueryData(['useGetSubscribedCommunties'], updatedCommunityData)
-    //     }
-    //   },
     onError: (res: any) => {
       Toast.show(res.response?.data.message || "Something went wrong");
     },
@@ -123,11 +107,9 @@ export const useLeaveCommunity = () => {
     mutationFn: (communityId: string) =>
       leaveCommunity(communityId, cookieValue),
     onSuccess: () => {
-      //   queryClient.invalidateQueries({ queryKey: ["communityGroupsPost"] });
       queryClient.invalidateQueries({
         queryKey: ["useGetSubscribedCommunties"],
       });
-      //   queryClient.setQueryData(["community"], []);
       Toast.show(`Left Community`);
     },
     onError: (res: any) => {
@@ -138,16 +120,16 @@ export const useLeaveCommunity = () => {
 
 export async function getAllCommunityGroupPost(
   communityId: string,
-  communityGroupID: string,
+  communityGroupId: string,
   token: any,
   page: number,
-  limit: number,
+  limit: number
 ) {
   const response: any = await client(
-    `/communitypost/${communityId}/${communityGroupID ? communityGroupID : ""}?page=${page}&limit=${limit}`,
+    `/communitypost/group?communityId=${communityId}&communityGroupId=${communityGroupId}&page=${page}&limit=${limit}`,
     {
       headers: { Authorization: `Bearer ${token}` },
-    },
+    }
   );
   return response;
 }
@@ -156,7 +138,7 @@ export function useGetCommunityGroupPost(
   communityId: string,
   communityGroupID: string,
   isCommunity: boolean,
-  limit: number,
+  limit: number
 ) {
   const cookieValue = getToken() as string;
   return useInfiniteQuery({
@@ -167,7 +149,7 @@ export function useGetCommunityGroupPost(
         communityGroupID,
         cookieValue,
         pageParam,
-        limit,
+        limit
       ),
     getNextPageParam: (lastPage) => {
       if (lastPage.currentPage < lastPage.totalPages) {
@@ -184,20 +166,20 @@ export async function getAllCommunityPost(
   communityId: string,
   token: any,
   page: number,
-  limit: number,
+  limit: number
 ) {
   const response: any = await client(
     `/communitypost/timelinePost?communityId=${communityId}&page=${page}&limit=${limit}`,
     {
       headers: { Authorization: `Bearer ${token}` },
-    },
+    }
   );
   return response;
 }
 export function useGetCommunityPost(
   communityId: string,
   isCommunity: boolean,
-  limit: number,
+  limit: number
 ) {
   const cookieValue = getToken() as string;
   return useInfiniteQuery({

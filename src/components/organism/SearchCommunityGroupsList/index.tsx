@@ -1,5 +1,6 @@
-import UniversityLogoPlaceHolder from "@/assets/unibuzz_rounded.svg";
-import React, { useCallback } from "react";
+// import UniversityLogoPlaceHolder from "@/assets/unibuzz_rounded.svg";
+import UniversityLogoPlaceHolder from "@/assets/avatarPlaceholder.png";
+import React, { useCallback, useState } from "react";
 import {
   View,
   Text,
@@ -21,25 +22,33 @@ const SearchCommunityGroupList: React.FC<{
   isFetching,
   handleNavigateToGroup,
 }) => {
-  const CommunityHolder = useCallback(({ item }: any) => {
+  const CommunityHolder = ({ item }: any) => {
+    const [imageError, setImageError] = useState(false);
+
+    const imageUrl = item?.communityGroupLogoUrl?.imageUrl;
+
     return (
       <TouchableOpacity
         onPress={() => handleNavigateToGroup(item)}
-        style={[styles.communityContainer]}
+        style={styles.communityContainer}
       >
         <View style={styles.innerContainer}>
           <Image
-            source={{ uri: item?.communityGroupLogoUrl?.imageUrl }}
+            source={
+              !imageUrl || imageError
+                ? UniversityLogoPlaceHolder
+                : { uri: imageUrl }
+            }
             style={styles.communityImage}
+            onError={() => setImageError(true)}
           />
-
           <View style={styles.textContainer}>
             <Text style={styles.communityName}>{item?.title}</Text>
           </View>
         </View>
       </TouchableOpacity>
     );
-  }, []);
+  };
 
   if (isFetching)
     return (
@@ -61,7 +70,7 @@ const SearchCommunityGroupList: React.FC<{
       data={data}
       keyExtractor={(item, index) => item?._id + index}
       initialNumToRender={10}
-      renderItem={CommunityHolder}
+      renderItem={({ item }) => <CommunityHolder item={item} />}
       getItemLayout={(_, index) => ({ length: 80, offset: 80 * index, index })}
       removeClippedSubviews
       //   refreshing={isUserProfilesLoading}

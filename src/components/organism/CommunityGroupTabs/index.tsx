@@ -1,6 +1,20 @@
 import React from "react";
 import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 import CommunityGroupAll from "../../molecules/LeftSideBar/CommunityGroups";
+import { Community, CommunityGroup } from "@/types/Community";
+import { User } from "@/models/auth";
+
+type Props = {
+  communityLogo: string;
+  currTab: string;
+  setCurrTab: (value: string) => void;
+  allGroups: CommunityGroup[];
+  joinedGroups: CommunityGroup[];
+  myGroups: CommunityGroup[];
+  currSelectedGroup: Community | null;
+  setCurrSelectedGroup: (group: Community | null) => void;
+  userData: Partial<User>;
+};
 
 const CommunityGroupTabs = ({
   currTab,
@@ -11,7 +25,8 @@ const CommunityGroupTabs = ({
   currSelectedGroup,
   setCurrSelectedGroup,
   userData,
-}: any) => {
+  communityLogo,
+}: Props) => {
   const renderCurrentTabContent = () => {
     switch (currTab) {
       case "All":
@@ -22,6 +37,7 @@ const CommunityGroupTabs = ({
             currSelectedGroup={currSelectedGroup}
             setCurrSelectedGroup={setCurrSelectedGroup}
             userData={userData}
+            communityLogo={communityLogo}
           />
         );
       case "Joined":
@@ -32,6 +48,7 @@ const CommunityGroupTabs = ({
             currSelectedGroup={currSelectedGroup}
             setCurrSelectedGroup={setCurrSelectedGroup}
             userData={userData}
+            communityLogo={communityLogo}
           />
         );
       case "My":
@@ -42,6 +59,7 @@ const CommunityGroupTabs = ({
             currSelectedGroup={currSelectedGroup}
             setCurrSelectedGroup={setCurrSelectedGroup}
             userData={userData}
+            communityLogo={communityLogo}
           />
         );
       default:

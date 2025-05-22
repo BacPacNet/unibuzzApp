@@ -1,26 +1,44 @@
 import { FormInput } from "@/components/atoms/FormInput";
+import MultiSelectDropdown from "@/components/atoms/MultiSelectDropDown";
 import RadioInput from "@/components/atoms/RadioInput";
 import ReusableButton from "@/components/atoms/ReusableButton";
 import TextAreaWithWordCount from "@/components/atoms/TextAreaWIthWordCount";
-import SelectUsersForGroupChat from "@/components/molecules/Message/SelectUsersForGroupChat";
-import SelectCommunityUsersBottomSheet from "@/components/molecules/SelectCommunityUsersBottomSheet";
+import SelectCommunityUsersBottomSheet from "@/components/molecules/CreateNewGroup/SelectCommunityUsersBottomSheet";
+import SelectedChip from "@/components/molecules/CreateNewGroup/SelectedChip";
+import SelectedUserChips from "@/components/molecules/CreateNewGroup/SelectedUserChips";
 import { useCommunityFilterContext } from "@/context/CommunityFilterProvider/CommunityFilterProvider";
 import { useHeader } from "@/context/HeaderProvider/Header";
+import {
+  filterData,
+  filterFacultyData,
+  getUniqueById,
+} from "@/lib/communityGroup";
 import { useCreateCommunityGroup } from "@/services/community-group";
-import { useGetCommunity } from "@/services/university-community";
+import {
+  useGetCommunity,
+  useGetFilteredSubscribedCommunities,
+} from "@/services/university-community";
+import { useUploadToS3 } from "@/services/upload";
 import { replaceImage } from "@/services/uploadImage";
 import { getUserStore } from "@/storage/user";
+import { CommunityUsers } from "@/types/Community";
 import { CreateCommunityGroupType } from "@/types/CommunityGroup";
 import { RootStackParamList } from "@/types/navigation";
+import {
+  degreeAndMajors,
+  occupationAndDepartment,
+  value,
+} from "@/types/register";
+import { UPLOAD_CONTEXT } from "@/types/uploads";
 import {
   useFocusEffect,
   useNavigation,
   useRoute,
 } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
-import { MediaImage, NavArrowLeft, User, Xmark } from "iconoir-react-native";
-import React, { useCallback, useRef, useState } from "react";
-import { useForm } from "react-hook-form";
+import { MediaImage, NavArrowLeft, Xmark } from "iconoir-react-native";
+import React, { useCallback, useEffect, useRef, useState } from "react";
+import { Controller, useForm } from "react-hook-form";
 import {
   Image,
   KeyboardAvoidingView,
@@ -52,31 +70,60 @@ type NavigationProp = StackNavigationProp<
 const NewCommunityGroupScreen = () => {
   const navigate = useNavigation<NavigationProp>();
   const route = useRoute();
-  const userData = getUserStore();
+
   const { communityId } = route.params as any;
   const { changeHeaderShownStatus } = useHeader();
   const { data: communityData, isFetching } = useGetCommunity(communityId);
   const { createSelectedFilters, setCreateSelectedFilters } =
     useCommunityFilterContext();
   const { mutate: createGroup, isPending } = useCreateCommunityGroup();
+  const { mutateAsync: uploadToS3 } = useUploadToS3();
+  const { mutate } = useGetFilteredSubscribedCommunities(communityId);
+
   const {
-    handleSubmit,
+    register: GroupRegister,
+    watch,
     control,
+    handleSubmit: handleGroupCreate,
     formState: { errors },
-  } = useForm<CreateCommunityGroupType>();
+    setValue,
+  } = useForm<CreateCommunityGroupType>({
+    defaultValues: {
+      communityGroupLogoUrl: null,
+      communityGroupLogoCoverUrl: null,
+      title: "",
+      description: "",
+      communityGroupAccess: "",
+      communityGroupType: "",
+      selectedUsers: [],
+    },
+  });
+  const categoryRef = useRef<HTMLDivElement>(null);
+  const SelectedUsers = watch("selectedUsers") as unknown as CommunityUsers[];
+  const description = watch("description") || "";
+  const studentYear = watch("studentYear") || "";
+  const major = watch("major") || "";
+  const occupation = watch("occupation") || "";
+  const affiliation = watch("affiliation") || "";
 
   const [previewProfileImage, setPreviewProfileImage] = useState<string | null>(
-    null,
+    null
   );
   const [previewBannerImage, setPreviewBannerImage] = useState<string | null>(
-    null,
+    null
   );
   const [isProfileLoading, setIsProfileLoading] = useState(false);
   const [imageToUpload, setImageToUpload] = useState<ImageAsset | null>(null);
   const [bannerToUpload, setBannerToUpload] = useState<ImageAsset | null>(null);
   const [searchInput, setSearchInput] = useState<string>("");
-  const [selectedUsers, setSelectedUsers] = useState<any>([]);
+  const [individualsUsers, setIndividualsUsers] = useState<any[]>([]);
+  const [filteredUsers, setFilterUsers] = useState<any>();
+  const [filteredFacultyUsers, setFilterFacultyUsers] = useState<any>();
   const actionSheetRef = useRef<ActionSheetRef>(null);
+  const yearActionSheetRef = useRef<ActionSheetRef>(null);
+  const majorActionSheetRef = useRef<ActionSheetRef>(null);
+  const occupationActionSheetRef = useRef<ActionSheetRef>(null);
+  const affiliationActionSheetRef = useRef<ActionSheetRef>(null);
   useFocusEffect(
     useCallback(() => {
       changeHeaderShownStatus(false);
@@ -84,7 +131,7 @@ const NewCommunityGroupScreen = () => {
       return () => {
         changeHeaderShownStatus(true);
       };
-    }, []),
+    }, [])
   );
 
   const handleNavigateToFilterScreen = () => {
@@ -110,48 +157,94 @@ const NewCommunityGroupScreen = () => {
     });
   };
 
+  const handleRemove = (fieldName: any, itemToRemove: string) => {
+    const currentValue = (watch(fieldName) as string[]) || [];
+    const updatedValue = currentValue.filter((item) => item !== itemToRemove);
+    setValue(fieldName, updatedValue);
+  };
   const onSubmit = async (data: CreateCommunityGroupType) => {
-    // return console.log("data", data, "fil", createSelectedFilters);
     let logoImageData;
     let CoverImageData;
 
-    if (imageToUpload) {
-      setIsProfileLoading(true);
-      const UploadedImageLink = await replaceImage(imageToUpload, "");
-
-      logoImageData = {
-        imageUrl: UploadedImageLink?.imageUrl,
-        publicId: UploadedImageLink?.publicId,
-      };
-    }
     if (bannerToUpload) {
-      setIsProfileLoading(true);
-      const UploadedImageLink = await replaceImage(bannerToUpload, "");
-
-      CoverImageData = {
-        imageUrl: UploadedImageLink?.imageUrl,
-        publicId: UploadedImageLink?.publicId,
+      const uploadPayload = {
+        files: [bannerToUpload],
+        context: UPLOAD_CONTEXT.DP,
       };
+
+      CoverImageData = await uploadToS3(uploadPayload);
+      setValue("communityGroupLogoCoverUrl", CoverImageData.data[0]);
+    }
+    if (imageToUpload) {
+      const uploadPayload = {
+        files: [imageToUpload],
+        context: UPLOAD_CONTEXT.COVER_DP,
+      };
+      logoImageData = await uploadToS3(uploadPayload);
+      setValue("communityGroupLogoUrl", logoImageData as any);
     }
 
     const communityGroupCategory = {
       communityGroupCategory: createSelectedFilters,
     };
 
+    const mergedUsers = [
+      ...individualsUsers,
+      ...SelectedUsers,
+      ...filteredUsers,
+      ...filteredFacultyUsers,
+    ];
+    const uniqueUsers = getUniqueById(mergedUsers);
     const payload = {
       ...data,
       ...communityGroupCategory,
-      communityGroupLogoUrl: logoImageData,
-      communityGroupLogoCoverUrl: CoverImageData,
+      selectedUsers: uniqueUsers,
+      communityGroupLogoUrl: logoImageData?.data[0],
+      communityGroupLogoCoverUrl: CoverImageData?.data[0],
+      universityAdminId: communityData?.adminId,
     };
 
-    // return console.log("payy", payload);
+    createGroup(
+      { communityId: communityId, data: payload },
+      {
+        onSuccess: () => {
+          setCreateSelectedFilters([]);
+          setIsProfileLoading(false);
 
-    createGroup({ communityId: communityId, data: payload });
-    setCreateSelectedFilters([]);
-    setIsProfileLoading(false);
-    navigate.goBack();
+          navigate.navigate("manageGroupStack", {
+            screen: "SearchCommunityGroupScreen",
+
+            params: { communityId: communityId, change: Date.now() },
+          });
+        },
+      }
+    );
   };
+
+  const removeUser = (userId: string) => {
+    setIndividualsUsers((prev: any[]) => prev.filter((u) => u._id !== userId));
+  };
+
+  useEffect(() => {
+    const allUsers = communityData?.users || [];
+    const allStudentUsers = allUsers.filter((user) => user.role == "student");
+
+    const filters = { year: studentYear, major: major };
+
+    const filtered = filterData(allStudentUsers, filters);
+
+    setFilterUsers(filtered);
+  }, [studentYear, major, communityData]);
+
+  useEffect(() => {
+    const allUsers = communityData?.users || [];
+    const allFacultyUsers = allUsers.filter((user) => user.role == "faculty");
+
+    const filters = { occupation: occupation, affiliation: affiliation };
+    const filtered = filterFacultyData(allFacultyUsers, filters);
+
+    setFilterFacultyUsers(filtered);
+  }, [occupation, affiliation]);
 
   return (
     <SafeAreaView style={styles.container}>
@@ -298,21 +391,18 @@ const NewCommunityGroupScreen = () => {
             <View style={styles.section}>
               <Text style={styles.inputLabels}>Group Category</Text>
               {Object.values(createSelectedFilters).flat()?.length ? (
-                <TouchableOpacity style={styles.filterChip}>
-                  <Text style={styles.filterChipText}>
-                    {Object.values(createSelectedFilters).flat()?.length}{" "}
-                    Categories Selected
-                  </Text>
-                  <Xmark
-                    onPress={() => setCreateSelectedFilters([])}
-                    width={24}
-                    height={24}
-                    color="#000"
-                  />
-                </TouchableOpacity>
+                <SelectedChip
+                  selectedItem={[
+                    Object.values(createSelectedFilters)
+                      .flat()
+                      ?.length?.toString() + " Categories Selected",
+                  ]}
+                  onRemove={() => setCreateSelectedFilters([])}
+                />
               ) : (
-                <View></View>
+                ""
               )}
+
               <ReusableButton
                 buttonText="Select Group Category"
                 variant="shade"
@@ -321,29 +411,71 @@ const NewCommunityGroupScreen = () => {
             </View>
             <View style={styles.section}>
               <Text style={styles.inputLabels}>Add Members</Text>
-              {selectedUsers?.length ? (
-                <TouchableOpacity style={styles.filterChip}>
-                  <Text style={styles.filterChipText}>
-                    {selectedUsers?.length} Users Selected
-                  </Text>
-                  <Xmark
-                    onPress={() => setSelectedUsers([])}
-                    width={24}
-                    height={24}
-                    color="#000"
-                  />
-                </TouchableOpacity>
-              ) : (
-                <View></View>
-              )}
-              <ReusableButton
-                onPress={() => actionSheetRef.current?.show()}
-                buttonText="Add to Group Chat"
-                variant="shade"
-              />
+
+              <View>
+                <SelectedUserChips
+                  selectedUsers={individualsUsers}
+                  onRemove={(id) => removeUser(id as string)}
+                />
+                <ReusableButton
+                  onPress={() => actionSheetRef.current?.show()}
+                  buttonText="Add Individuals"
+                  variant="shade"
+                />
+              </View>
+              <View>
+                <SelectedChip
+                  selectedItem={studentYear}
+                  //   onRemove={(id) => console.log(id as string)}
+                  onRemove={(year) => handleRemove("studentYear", year)}
+                />
+                <ReusableButton
+                  onPress={() => yearActionSheetRef.current?.show()}
+                  buttonText="Add Year"
+                  variant="shade"
+                />
+              </View>
+              <View>
+                <SelectedChip
+                  selectedItem={major}
+                  onRemove={(Major) => handleRemove("major", Major)}
+                />
+                <ReusableButton
+                  onPress={() => majorActionSheetRef.current?.show()}
+                  buttonText="Add Major"
+                  variant="shade"
+                />
+              </View>
+              <View>
+                <SelectedChip
+                  selectedItem={occupation}
+                  onRemove={(occupation) =>
+                    handleRemove("occupation", occupation)
+                  }
+                />
+                <ReusableButton
+                  onPress={() => occupationActionSheetRef.current?.show()}
+                  buttonText="Add Occupation"
+                  variant="shade"
+                />
+              </View>
+              <View>
+                <SelectedChip
+                  selectedItem={affiliation}
+                  onRemove={(affiliation) =>
+                    handleRemove("affiliation", affiliation)
+                  }
+                />
+                <ReusableButton
+                  onPress={() => affiliationActionSheetRef.current?.show()}
+                  buttonText="Add Affiliation"
+                  variant="shade"
+                />
+              </View>
             </View>
             <ReusableButton
-              onPress={handleSubmit(onSubmit)}
+              //   onPress={handleSubmit(onSubmit)}
+              onPress={handleGroupCreate(onSubmit)}
               buttonText="Create Group"
               variant="primary"
               isLoading={isProfileLoading || isPending}
@@ -359,13 +491,114 @@ const NewCommunityGroupScreen = () => {
         onClose={() => setSearchInput("")}
       >
         <SelectCommunityUsersBottomSheet
-          data={communityData?.users?.filter(
-            (user) => user?.id !== userData?.id,
+          setSelectedUsers={setIndividualsUsers}
+          selectedUsers={individualsUsers}
+        />
+      </ActionSheet>
+      <ActionSheet
+        ref={yearActionSheetRef}
+        gestureEnabled={true}
+        // snapPoints={[70, 100]}
+
+        onClose={() => setSearchInput("")}
+      >
+        <Controller
+          name="studentYear"
+          control={control}
+          render={({ field }) => (
+            <MultiSelectDropdown
+              options={Object.keys(degreeAndMajors)}
+              value={field.value || []}
+              onChange={field.onChange}
+              placeholder="Select Year"
+              label="Year (Students)"
+              err={false}
+              //   filteredCount={filteredYearCount}
+              multiSelect={false}
+            />
           )}
-          isFetching={isFetching}
-          setSearchInput={setSearchInput}
-          setSelectedUsers={setSelectedUsers}
-          selectedUsers={selectedUsers}
+        />
+      </ActionSheet>
+      <ActionSheet
+        ref={majorActionSheetRef}
+        gestureEnabled={true}
+        // snapPoints={[70, 100]}
+        onClose={() => setSearchInput("")}
+        containerStyle={{
+          height: "100%",
+        }}
+      >
+        <Controller
+          name="major"
+          control={control}
+          render={({ field }) => (
+            <MultiSelectDropdown
+              options={value}
+              value={field.value || []}
+              onChange={field.onChange}
+              placeholder="Add By Major"
+              label="Major (Students)"
+              err={false}
+              search={true}
+              //   filteredCount={filteredMajorsCount}
+              parentCategory={studentYear}
+            />
+          )}
+        />
+      </ActionSheet>
+
+      <ActionSheet
+        ref={occupationActionSheetRef}
+        gestureEnabled={true}
+        // snapPoints={[70, 100]}
+        onClose={() => setSearchInput("")}
+        containerStyle={{
+          height: "100%",
+        }}
+      >
+        <Controller
+          name="occupation"
+          control={control}
+          render={({ field }) => (
+            <MultiSelectDropdown
+              options={Object.keys(occupationAndDepartment)}
+              value={field.value || []}
+              onChange={field.onChange}
+              placeholder="Add By Major"
+              label="Occupation (Faculty)"
+              err={false}
+              search={true}
+              multiSelect={false}
+              //   filteredCount={filteredOccupationCount}
+            />
+          )}
+        />
+      </ActionSheet>
+      <ActionSheet
+        ref={affiliationActionSheetRef}
+        gestureEnabled={true}
+        // snapPoints={[70, 100]}
+        onClose={() => setSearchInput("")}
+        containerStyle={{
+          height: "100%",
+        }}
+      >
+        <Controller
+          name="affiliation"
+          control={control}
+          render={({ field }) => (
+            <MultiSelectDropdown
+              options={value}
+              value={field.value || []}
+              onChange={field.onChange}
+              placeholder="Add By Major"
+              label="Affiliation/Department (Faculty)"
+              err={false}
+              search={true}
+              //   filteredCount={filteredAffiliationCount}
+              parentCategory={occupation}
+            />
+          )}
         />
       </ActionSheet>
     </SafeAreaView>
@@ -461,7 +694,7 @@ const styles = StyleSheet.create({
     borderRadius: 4,
     borderWidth: 1,
     borderColor: "#6744FF",
-    backgroundColor: "white",
+    backgroundColor: "#6647FF",
     marginRight: 8,
 
     height: 28,
@@ -469,7 +702,7 @@ const styles = StyleSheet.create({
     marginVertical: 8,
   },
   filterChipText: {
-    color: "#6744FF",
+    color: "white",
     marginRight: 4,
   },
 });
