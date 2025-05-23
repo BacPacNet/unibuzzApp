@@ -5,21 +5,39 @@ import { Xmark } from "iconoir-react-native";
 interface Props {
   selectedItem: string[];
   onRemove: (userId: string) => void;
+  variant?: "primary" | "border";
 }
 
-const SelectedChip: React.FC<Props> = ({ selectedItem, onRemove }) => {
+const SelectedChip: React.FC<Props> = ({
+  selectedItem,
+  onRemove,
+  variant = "primary",
+}) => {
   if (!selectedItem?.length) return <View />;
 
   return (
     <View style={styles.filterChipContainer}>
       {selectedItem.map((item) => (
-        <TouchableOpacity key={item} style={styles.filterChip}>
-          <Text style={styles.filterChipText}>{item}</Text>
+        <TouchableOpacity
+          key={item}
+          style={[
+            styles.filterChip,
+            variant === "border" ? styles.borderChip : styles.primaryChip,
+          ]}
+        >
+          <Text
+            style={[
+              styles.filterChipText,
+              variant === "border" ? styles.borderText : styles.primaryText,
+            ]}
+          >
+            {item}
+          </Text>
           <Xmark
             onPress={() => onRemove(item)}
             width={24}
             height={24}
-            color="#fff"
+            color={variant === "border" ? "#6744FF" : "#fff"}
           />
         </TouchableOpacity>
       ))}
@@ -29,7 +47,6 @@ const SelectedChip: React.FC<Props> = ({ selectedItem, onRemove }) => {
 
 const styles = StyleSheet.create({
   filterChipContainer: {
-    display: "flex",
     flexDirection: "row",
     flexWrap: "wrap",
   },
@@ -37,21 +54,29 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     alignSelf: "flex-start",
-
     paddingHorizontal: 12,
     borderRadius: 4,
     borderWidth: 1,
-    borderColor: "#6744FF",
-    backgroundColor: "#6647FF",
     marginRight: 8,
-
     height: 28,
-    width: "auto",
     marginVertical: 8,
   },
+  primaryChip: {
+    borderColor: "#6744FF",
+    backgroundColor: "#6647FF",
+  },
+  borderChip: {
+    borderColor: "#6744FF",
+    backgroundColor: "#fff",
+  },
   filterChipText: {
-    color: "white",
     marginRight: 4,
+  },
+  borderText: {
+    color: "#6744FF",
+  },
+  primaryText: {
+    color: "#fff",
   },
 });
 

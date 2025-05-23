@@ -10,8 +10,9 @@ import {
   ActivityIndicator,
 } from "react-native";
 import { Search } from "iconoir-react-native";
-import DiscoverUniversityCard from "@/components/molecules/UniversityCard";
+import DiscoverUniversityCard from "@/components/molecules/University/UniversityCard";
 import { useGetFilteredUniversity } from "@/services/universitySearch";
+import UniversitySearchFilters from "@/components/molecules/University/UniversityFilters";
 
 const AllUniversities = () => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -30,40 +31,10 @@ const AllUniversities = () => {
 
   return (
     <View className="flex-1  bg-white">
-      <View className="p-4 flex ">
-        <Title>Faculty Setup</Title>
-        <View className="flex flex-row gap-2 items-center mt-4">
-          {["Region", "Country", "City", "Type"].map((item) => (
-            <Text className="border px-3 py-1 rounded-full border-neutral-200 text-black">
-              {item}
-            </Text>
-          ))}
-          <Text className="border px-3 py-1 rounded-full border-neutral-200 bg-primary-500 text-white ">
-            Reset
-          </Text>
-        </View>
-
-        <View className=" flex  relative mt-0 ">
-          <Search
-            style={{ top: "50%", left: 10 }}
-            width={20}
-            height={20}
-            color={"#d4d4d4"}
-            className="absolute  z-30"
-          />
-          <TextInput
-            className="py-2 ps-10 pe-3 border-2 border-neutral-200  rounded-full drop-shadow-sm text-neutral-400 outline-none"
-            placeholder="Search"
-            placeholderTextColor="#9ca3af"
-            style={{ marginTop: 0 }}
-            onChangeText={(text) => setQuery(JSON.stringify({ Search: text }))}
-          />
-        </View>
-      </View>
-
+      <UniversitySearchFilters setQuery={setQuery} />
       <FlatList
         data={data?.pages?.flatMap((page) => page.Universities) || []}
-        keyExtractor={(item, index) => item._id + item?.Universities?.name}
+        keyExtractor={(item, index) => item._id + item?.index}
         renderItem={renderItem}
         onEndReached={() => {
           if (hasNextPage && !isFetchingNextPage) {

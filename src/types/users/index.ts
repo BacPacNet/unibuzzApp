@@ -1,3 +1,16 @@
+import { status } from "../CommunityGroup";
+
+export interface UserCommunityGroup {
+  id: string;
+  status: status;
+}
+
+export interface UserCommunities {
+  communityId: string;
+  isVerified: boolean;
+  communityGroups: UserCommunityGroup[];
+}
+
 export interface userProfileType {
   users_id: string | null;
   profile_dp?: { imageUrl: string; publicId: string };
@@ -19,6 +32,7 @@ export interface userProfileType {
   followers: following[];
   totalFilled: number;
   _id: string;
+  communities: UserCommunities[];
 }
 
 interface following {

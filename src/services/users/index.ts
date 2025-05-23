@@ -13,7 +13,7 @@ export async function getAllUsersForConnections(
   studyYear: string[],
   major: string[],
   occupation: string[],
-  affiliation: string[]
+  affiliation: string[],
 ): Promise<ProfileConnection> {
   const params = new URLSearchParams();
 
@@ -39,7 +39,7 @@ export function useUsersProfileForConnections(
   studyYear?: string[],
   major?: string[],
   occupation?: string[],
-  affiliation?: string[]
+  affiliation?: string[],
 ) {
   const cookieValue = getToken() as string;
   const debouncedSearchTerm = useDebounce(name, 1000);
@@ -56,7 +56,7 @@ export function useUsersProfileForConnections(
         studyYear || [],
         major || [],
         occupation || [],
-        affiliation || []
+        affiliation || [],
       ),
     getNextPageParam: (lastPage) => {
       if (lastPage.currentPage < lastPage.totalPages) {

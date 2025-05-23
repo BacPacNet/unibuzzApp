@@ -1,3 +1,4 @@
+import EditCommunityGroupScreen from "@/screens/EditCommunityGroupScreen";
 import NewCommunityGroupFilterScreen from "@/screens/NewCommunityGroupFIltersScreen";
 import NewCommunityGroupScreen from "@/screens/NewCommunityGroupScreen";
 import SearchCommunityGroupFilterScreen from "@/screens/SearchCommunityGroupFilterScreen";
@@ -23,6 +24,10 @@ const ManageGroups = () => {
       <Stack.Screen
         name="NewCommunityGroupFilterScreen"
         component={NewCommunityGroupFilterScreen}
+      />
+      <Stack.Screen
+        name="EditCommunityGroupScreen"
+        component={EditCommunityGroupScreen}
       />
     </Stack.Navigator>
   );
