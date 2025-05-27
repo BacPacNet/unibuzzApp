@@ -1,18 +1,19 @@
 import React, { useEffect, useMemo, useState } from "react";
-import { Image, Platform, StyleSheet, Text, View } from "react-native";
+import { Platform, StyleSheet, Text, View } from "react-native";
 import NavbarSubscribedUniversity from "../SubscribedUniversity";
 import { getUserStore } from "@/storage/user";
 import { useGetSubscribedCommunities } from "@/services/university-community";
 import { Community } from "@/types/Community";
-import CommunityGroupAll from "../CommunityGroups";
+
 import { useNavigation } from "@react-navigation/native";
 import { RootStackParamList } from "@/types/navigation";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { useCommunityContext } from "@/context/CommunityProvider/CommunityProvider";
-import UniversityLogoPlaceHolder from "@/assets/uniorangeIcon.svg";
+
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { FilterList } from "iconoir-react-native";
 import CommunityGroupTabs from "@/components/organism/CommunityGroupTabs";
+import CommunityLogo from "@/components/atoms/LogoHolder";
 
 type NavigationProp = StackNavigationProp<RootStackParamList, "Timeline">;
 const UniversitySec = () => {
@@ -28,8 +29,8 @@ const UniversitySec = () => {
   const [currSelectedGroup, setCurrSelectedGroup] =
     useState<Community | null>();
   const [community, setCommunity] = useState<Community>();
-  const [logoSrc, setLogoSrc] = useState(community?.communityLogoUrl.imageUrl);
   const [currTab, setCurrTab] = useState("All");
+
   const handleCommunityClick = (id: string) => {
     navigation.navigate("Community", { communityId: id });
     setCurrSelectedGroup(community);
@@ -92,10 +93,6 @@ const UniversitySec = () => {
     }
   }, [subscribedCommunities, currentCommunityId]);
 
-  useEffect(() => {
-    setLogoSrc(community?.communityLogoUrl.imageUrl);
-  }, [community]);
-
   return (
     <View>
       <Text style={styles.headerText}>UNIVERSITIES</Text>
@@ -110,23 +107,9 @@ const UniversitySec = () => {
       <View className="mt-4">
         <Text style={styles.headerText}>University Groups</Text>
         <View style={styles.communityImageContainer}>
-          <View style={styles.imageWrapper}>
-            {logoSrc ? (
-              <Image
-                source={{ uri: community?.communityLogoUrl?.imageUrl }}
-                style={styles.communityImage}
-                onError={() => setLogoSrc("")}
-              />
-            ) : (
-              <View style={styles.universityPlaceHolder}>
-                <UniversityLogoPlaceHolder
-                  width={20}
-                  height={20}
-                  style={styles.communityImage}
-                />
-              </View>
-            )}
-          </View>
+          <CommunityLogo
+            logoUrl={community?.communityLogoUrl?.imageUrl || ""}
+          />
 
           <TouchableOpacity
             onPress={() => handleManageGroupNavigate()}

@@ -42,7 +42,7 @@ export function useGetSubscribedCommunities() {
 export async function getUserFilteredSubscribedCommunities(
   communityId: string,
   token: string,
-  data: any
+  data: any,
 ) {
   const response: any = await client(`/community/filtered/${communityId}`, {
     method: "POST",
@@ -118,18 +118,47 @@ export const useLeaveCommunity = () => {
   });
 };
 
+export async function joinCommunityFromUniversityAPI(
+  universityId: string,
+  token: string,
+) {
+  const response = await client(
+    `/community/join?universityId=${universityId}`,
+    {
+      method: "POST",
+      headers: { Authorization: `Bearer ${token}` },
+    },
+  );
+  return response;
+}
+
+export const useJoinCommunityFromUniversity = () => {
+  const cookieValue = getToken() as string;
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (universityId: string) =>
+      joinCommunityFromUniversityAPI(universityId, cookieValue),
+    onSuccess: (response: any) => {
+      queryClient.invalidateQueries({
+        queryKey: ["useGetSubscribedCommunties"],
+      });
+    },
+  });
+};
+
 export async function getAllCommunityGroupPost(
   communityId: string,
   communityGroupId: string,
   token: any,
   page: number,
-  limit: number
+  limit: number,
 ) {
   const response: any = await client(
     `/communitypost/group?communityId=${communityId}&communityGroupId=${communityGroupId}&page=${page}&limit=${limit}`,
     {
       headers: { Authorization: `Bearer ${token}` },
-    }
+    },
   );
   return response;
 }
@@ -138,7 +167,7 @@ export function useGetCommunityGroupPost(
   communityId: string,
   communityGroupID: string,
   isCommunity: boolean,
-  limit: number
+  limit: number,
 ) {
   const cookieValue = getToken() as string;
   return useInfiniteQuery({
@@ -149,7 +178,7 @@ export function useGetCommunityGroupPost(
         communityGroupID,
         cookieValue,
         pageParam,
-        limit
+        limit,
       ),
     getNextPageParam: (lastPage) => {
       if (lastPage.currentPage < lastPage.totalPages) {
@@ -166,20 +195,20 @@ export async function getAllCommunityPost(
   communityId: string,
   token: any,
   page: number,
-  limit: number
+  limit: number,
 ) {
   const response: any = await client(
     `/communitypost/timelinePost?communityId=${communityId}&page=${page}&limit=${limit}`,
     {
       headers: { Authorization: `Bearer ${token}` },
-    }
+    },
   );
   return response;
 }
 export function useGetCommunityPost(
   communityId: string,
   isCommunity: boolean,
-  limit: number
+  limit: number,
 ) {
   const cookieValue = getToken() as string;
   return useInfiniteQuery({

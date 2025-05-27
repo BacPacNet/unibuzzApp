@@ -42,11 +42,12 @@ export type RootStackParamList = {
   };
   SearchCommunityGroupFilterScreen: any;
   NewCommunityGroupScreen: any;
+  EditCommunityGroupScreen: any;
   NewCommunityGroupFilterScreen: any;
   NewGroupPost: any;
   //   University: {
 
-  SettingsStack: undefined;
+  SettingsStack: any;
   Settings: undefined;
   UniversityVerification: undefined;
   UserNameChange: undefined;

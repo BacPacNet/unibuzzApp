@@ -199,6 +199,15 @@ const CommunityGroupScreen = ({ route }: any) => {
     membersBottomSheet.current?.hide();
   };
 
+  const handleNavigateToEditCommunityGroupScreen = () => {
+    hideBottomBar();
+    setModalVisible(false);
+    navigation.navigate("manageGroupStack", {
+      screen: "EditCommunityGroupScreen",
+      params: { communityId: communityId, communityGroups: communityGroups },
+    });
+  };
+
   const FlatListHeaderWithError = () => (
     <View>
       <FlatListCommunityHeader
@@ -332,6 +341,7 @@ const CommunityGroupScreen = ({ route }: any) => {
         modalVisible={modalVisible}
         setModalVisible={setModalVisible}
         isAdmin={isGroupAdmin}
+        onEdit={() => handleNavigateToEditCommunityGroupScreen()}
         onLeave={() => handleToggleJoinCommunityGroup()}
       />
     </SafeAreaView>

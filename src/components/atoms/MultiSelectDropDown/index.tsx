@@ -24,6 +24,7 @@ interface MultiSelectDropdownProps {
   disabled?: boolean;
   parentCategory?: string[];
   setErr?: (value: boolean) => void;
+  setCityOptions?: any;
 }
 
 const MultiSelectDropdown = ({
@@ -47,7 +48,7 @@ const MultiSelectDropdown = ({
       setFilteredOptions(options);
     } else {
       const filtered = options.filter((option) =>
-        option.toLowerCase().includes(searchInput.toLowerCase())
+        option.toLowerCase().includes(searchInput.toLowerCase()),
       );
       setFilteredOptions(filtered);
     }

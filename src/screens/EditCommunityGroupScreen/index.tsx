@@ -6,7 +6,7 @@ import { SelectUserProfileChips } from "@/components/atoms/SelectedUserProfileCh
 import TextAreaWithWordCount from "@/components/atoms/TextAreaWIthWordCount";
 import SelectCommunityUsersBottomSheet from "@/components/molecules/CreateNewGroup/SelectCommunityUsersBottomSheet";
 import SelectedChip from "@/components/molecules/CreateNewGroup/SelectedChip";
-import SelectedUserChips from "@/components/molecules/CreateNewGroup/SelectedUserChips";
+
 import { useCommunityFilterContext } from "@/context/CommunityFilterProvider/CommunityFilterProvider";
 import { useHeader } from "@/context/HeaderProvider/Header";
 import {
@@ -14,11 +14,8 @@ import {
   filterFacultyData,
   getUniqueById,
 } from "@/lib/communityGroup";
-import { useCreateCommunityGroup } from "@/services/community-group";
-import {
-  useGetCommunity,
-  useGetFilteredSubscribedCommunities,
-} from "@/services/university-community";
+import { useUpdateCommunityGroup } from "@/services/community-group";
+import { useGetCommunity } from "@/services/university-community";
 import { useUploadToS3 } from "@/services/upload";
 import { CommunityUsers } from "@/types/Community";
 import { CreateCommunityGroupType } from "@/types/CommunityGroup";
@@ -28,6 +25,7 @@ import {
   occupationAndDepartment,
   value,
 } from "@/types/register";
+
 import { UPLOAD_CONTEXT } from "@/types/uploads";
 import {
   useFocusEffect,
@@ -35,7 +33,7 @@ import {
   useRoute,
 } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
-import { MediaImage, NavArrowLeft, Xmark } from "iconoir-react-native";
+import { MediaImage, NavArrowLeft } from "iconoir-react-native";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import {
@@ -51,6 +49,7 @@ import {
 import ActionSheet, { ActionSheetRef } from "react-native-actions-sheet";
 import { launchImageLibrary } from "react-native-image-picker";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { Toast } from "react-native-toast-notifications";
 
 type ImageAsset = {
   uri: string;
@@ -63,29 +62,32 @@ type ImageAsset = {
 
 type NavigationProp = StackNavigationProp<
   RootStackParamList,
-  "NewCommunityGroupScreen"
+  "EditCommunityGroupScreen"
 >;
 
-const NewCommunityGroupScreen = () => {
+const EditCommunityGroupScreen = () => {
   const navigate = useNavigation<NavigationProp>();
   const route = useRoute();
 
-  const { communityId } = route.params as any;
+  const { communityId, communityGroups } = route.params as any;
   const { changeHeaderShownStatus } = useHeader();
   const { data: communityData, isFetching } = useGetCommunity(communityId);
   const { createSelectedFilters, setCreateSelectedFilters } =
     useCommunityFilterContext();
-  const { mutate: createGroup, isPending } = useCreateCommunityGroup();
   const { mutateAsync: uploadToS3 } = useUploadToS3();
-  const { mutate } = useGetFilteredSubscribedCommunities(communityId);
+  const { mutate: mutateEditGroup, isPending } = useUpdateCommunityGroup();
+  const yearActionSheetRef = useRef<ActionSheetRef>(null);
+  const majorActionSheetRef = useRef<ActionSheetRef>(null);
+  const occupationActionSheetRef = useRef<ActionSheetRef>(null);
+  const affiliationActionSheetRef = useRef<ActionSheetRef>(null);
 
   const {
-    register: GroupRegister,
     watch,
     control,
     handleSubmit: handleGroupCreate,
     formState: { errors },
     setValue,
+    reset,
   } = useForm<CreateCommunityGroupType>({
     defaultValues: {
       communityGroupLogoUrl: null,
@@ -97,7 +99,6 @@ const NewCommunityGroupScreen = () => {
       selectedUsers: [],
     },
   });
-  const categoryRef = useRef<HTMLDivElement>(null);
   const SelectedUsers = watch("selectedUsers") as unknown as CommunityUsers[];
   const description = watch("description") || "";
   const studentYear = watch("studentYear") || "";
@@ -106,7 +107,7 @@ const NewCommunityGroupScreen = () => {
   const affiliation = watch("affiliation") || "";
 
   const [previewProfileImage, setPreviewProfileImage] = useState<string | null>(
-    null,
+    communityGroups?.communityGroupLogoUrl?.imageUrl,
   );
   const [previewBannerImage, setPreviewBannerImage] = useState<string | null>(
     null,
@@ -119,18 +120,15 @@ const NewCommunityGroupScreen = () => {
   const [filteredUsers, setFilterUsers] = useState<any>();
   const [filteredFacultyUsers, setFilterFacultyUsers] = useState<any>();
   const actionSheetRef = useRef<ActionSheetRef>(null);
-  const yearActionSheetRef = useRef<ActionSheetRef>(null);
-  const majorActionSheetRef = useRef<ActionSheetRef>(null);
-  const occupationActionSheetRef = useRef<ActionSheetRef>(null);
-  const affiliationActionSheetRef = useRef<ActionSheetRef>(null);
 
   useFocusEffect(
     useCallback(() => {
       changeHeaderShownStatus(false);
-
+      setCreateSelectedFilters(communityGroups?.communityGroupCategory);
       return () => {
         changeHeaderShownStatus(true);
         setCreateSelectedFilters([]);
+        setIndividualsUsers([]);
       };
     }, []),
   );
@@ -158,12 +156,13 @@ const NewCommunityGroupScreen = () => {
     });
   };
 
-  const handleRemove = (fieldName: any, itemToRemove: string) => {
-    const currentValue = (watch(fieldName) as string[]) || [];
-    const updatedValue = currentValue.filter((item) => item !== itemToRemove);
-    setValue(fieldName, updatedValue);
-  };
   const onSubmit = async (data: CreateCommunityGroupType) => {
+    // return console.log("data", data);
+
+    if (Object.values(createSelectedFilters).flat()?.length < 1) {
+      return Toast.show("At least one group category is required.");
+    }
+    setIsProfileLoading(true);
     let logoImageData;
     let CoverImageData;
 
@@ -202,20 +201,20 @@ const NewCommunityGroupScreen = () => {
       selectedUsers: uniqueUsers,
       communityGroupLogoUrl: logoImageData?.data[0],
       communityGroupLogoCoverUrl: CoverImageData?.data[0],
-      universityAdminId: communityData?.adminId,
+      //   universityAdminId: communityData?.adminId,
     };
+    // return console.log("pay", payload);
 
-    createGroup(
-      { communityId: communityId, data: payload },
+    mutateEditGroup(
+      { communityId: communityGroups?._id, payload: payload },
       {
         onSuccess: () => {
           setCreateSelectedFilters([]);
           setIsProfileLoading(false);
 
-          navigate.navigate("manageGroupStack", {
-            screen: "SearchCommunityGroupScreen",
-
-            params: { communityId: communityId, change: Date.now() },
+          navigate.navigate("CommunityGroup", {
+            communityId: communityId,
+            communityGroupId: communityGroups?._id,
           });
         },
       },
@@ -247,17 +246,60 @@ const NewCommunityGroupScreen = () => {
     setFilterFacultyUsers(filtered);
   }, [occupation, affiliation]);
 
+  useEffect(() => {
+    if (communityGroups) {
+      const {
+        title,
+        description,
+        communityGroupAccess,
+        communityGroupType,
+        communityGroupCategory,
+        users,
+      } = communityGroups;
+      const defaultCommunityGroup = {
+        title: title,
+        description: description,
+        communityGroupAccess: communityGroupAccess,
+        communityGroupType: communityGroupType,
+
+        selectedUsers: [],
+        communityGroupLogoUrl: null,
+        communityGroupLogoCoverUrl: null,
+      };
+      // setSelectedFilters(communityGroupCategory)
+      setPreviewProfileImage(communityGroups?.communityGroupLogoUrl?.imageUrl);
+      setPreviewBannerImage(
+        communityGroups?.communityGroupLogoCoverUrl?.imageUrl,
+      );
+      setCreateSelectedFilters(communityGroupCategory);
+      reset(defaultCommunityGroup);
+    }
+  }, [communityGroups, reset]);
+
+  const handleGOBack = () => {
+    navigate.navigate("CommunityGroup", {
+      communityId: communityId,
+      communityGroupId: communityGroups?._id,
+    });
+  };
+
+  const handleRemove = (fieldName: any, itemToRemove: string) => {
+    const currentValue = (watch(fieldName) as string[]) || [];
+    const updatedValue = currentValue.filter((item) => item !== itemToRemove);
+    setValue(fieldName, updatedValue);
+  };
+
   return (
     <SafeAreaView style={styles.container}>
       {/* Header */}
       <View style={styles.header}>
         <TouchableOpacity
-          onPress={() => navigate.goBack()}
+          onPress={() => handleGOBack()}
           style={styles.backButton}
         >
           <NavArrowLeft width={24} height={24} color="#000" />
         </TouchableOpacity>
-        <Text style={styles.headerTitle}>Create Group</Text>
+        <Text style={styles.headerTitle}>Edit Group</Text>
       </View>
 
       <KeyboardAvoidingView
@@ -369,7 +411,7 @@ const NewCommunityGroupScreen = () => {
                 required
               />
             </View>
-            <View style={styles.section}>
+            {/* <View style={styles.section}>
               <Text style={styles.inputLabels}>Group Type</Text>
               <RadioInput
                 name="communityGroupType"
@@ -388,7 +430,7 @@ const NewCommunityGroupScreen = () => {
                 ]}
                 required
               />
-            </View>
+            </View> */}
             <View style={styles.section}>
               <Text style={styles.inputLabels}>Group Category</Text>
               {Object.values(createSelectedFilters).flat()?.length ? (
@@ -411,14 +453,13 @@ const NewCommunityGroupScreen = () => {
               />
             </View>
             <View style={styles.section}>
-              <Text style={styles.inputLabels}>Individuals</Text>
+              <Text style={styles.inputLabels}>Add Members</Text>
 
               <View>
                 {/* <SelectedUserChips
                   selectedUsers={individualsUsers}
                   onRemove={(id) => removeUser(id as string)}
                 /> */}
-
                 <SelectUserProfileChips
                   individualsUsers={individualsUsers}
                   onRemove={(id) => removeUser(id as string)}
@@ -430,69 +471,71 @@ const NewCommunityGroupScreen = () => {
                   variant="shade"
                 />
               </View>
-              <View style={styles.section}>
-                <Text style={styles.inputLabels}>Students</Text>
-                <View style={styles.selectedChipContainer}>
-                  <SelectedChip
-                    selectedItem={studentYear}
-                    //   onRemove={(id) => console.log(id as string)}
-                    onRemove={(year) => handleRemove("studentYear", year)}
-                    variant="border"
-                  />
-                  <SelectedChip
-                    selectedItem={major}
-                    onRemove={(Major) => handleRemove("major", Major)}
-                  />
-                </View>
+            </View>
 
-                <ReusableButton
-                  onPress={() => yearActionSheetRef.current?.show()}
-                  buttonText="Add Year"
-                  variant="shade"
+            <View style={styles.section}>
+              <Text style={styles.inputLabels}>Students</Text>
+              <View style={styles.selectedChipContainer}>
+                <SelectedChip
+                  selectedItem={studentYear}
+                  //   onRemove={(id) => console.log(id as string)}
+                  onRemove={(year) => handleRemove("studentYear", year)}
+                  variant="border"
                 />
-                <View>
-                  <ReusableButton
-                    onPress={() => majorActionSheetRef.current?.show()}
-                    buttonText="Add Major"
-                    variant="shade"
-                  />
-                </View>
+                <SelectedChip
+                  selectedItem={major}
+                  onRemove={(Major) => handleRemove("major", Major)}
+                />
               </View>
 
-              <View style={styles.section}>
-                <Text style={styles.inputLabels}>Faculty</Text>
-                <View style={styles.selectedChipContainer}>
-                  <SelectedChip
-                    selectedItem={occupation}
-                    onRemove={(occupation) =>
-                      handleRemove("occupation", occupation)
-                    }
-                    variant="border"
-                  />
-                  <SelectedChip
-                    selectedItem={affiliation}
-                    onRemove={(affiliation) =>
-                      handleRemove("affiliation", affiliation)
-                    }
-                  />
-                </View>
+              <ReusableButton
+                onPress={() => yearActionSheetRef.current?.show()}
+                buttonText="Add Year"
+                variant="shade"
+              />
+              <View>
                 <ReusableButton
-                  onPress={() => occupationActionSheetRef.current?.show()}
-                  buttonText="Add Occupation"
-                  variant="shade"
-                />
-
-                <ReusableButton
-                  onPress={() => affiliationActionSheetRef.current?.show()}
-                  buttonText="Add Affiliation"
+                  onPress={() => majorActionSheetRef.current?.show()}
+                  buttonText="Add Major"
                   variant="shade"
                 />
               </View>
             </View>
+
+            <View style={styles.section}>
+              <Text style={styles.inputLabels}>Faculty</Text>
+              <View style={styles.selectedChipContainer}>
+                <SelectedChip
+                  selectedItem={occupation}
+                  onRemove={(occupation) =>
+                    handleRemove("occupation", occupation)
+                  }
+                  variant="border"
+                />
+                <SelectedChip
+                  selectedItem={affiliation}
+                  onRemove={(affiliation) =>
+                    handleRemove("affiliation", affiliation)
+                  }
+                />
+              </View>
+              <ReusableButton
+                onPress={() => occupationActionSheetRef.current?.show()}
+                buttonText="Add Occupation"
+                variant="shade"
+              />
+
+              <ReusableButton
+                onPress={() => affiliationActionSheetRef.current?.show()}
+                buttonText="Add Affiliation"
+                variant="shade"
+              />
+            </View>
             <ReusableButton
               //   onPress={handleSubmit(onSubmit)}
+              disabled={isPending}
               onPress={handleGroupCreate(onSubmit)}
-              buttonText="Create Group"
+              buttonText="Update Group"
               variant="primary"
               isLoading={isProfileLoading || isPending}
             />
@@ -511,6 +554,7 @@ const NewCommunityGroupScreen = () => {
           selectedUsers={individualsUsers}
         />
       </ActionSheet>
+
       <ActionSheet
         ref={yearActionSheetRef}
         gestureEnabled={true}
@@ -621,7 +665,7 @@ const NewCommunityGroupScreen = () => {
   );
 };
 
-export default NewCommunityGroupScreen;
+export default EditCommunityGroupScreen;
 
 const styles = StyleSheet.create({
   container: {
@@ -652,7 +696,7 @@ const styles = StyleSheet.create({
     padding: 16,
   },
   section: {
-    marginBottom: 12,
+    marginBottom: 32,
   },
   photoSection: {
     alignItems: "flex-start",
@@ -706,6 +750,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     flexWrap: "wrap",
   },
+
   filterChip: {
     flexDirection: "row",
     alignItems: "center",

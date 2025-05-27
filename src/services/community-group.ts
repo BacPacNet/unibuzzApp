@@ -58,7 +58,7 @@ export const useCreateCommunityGroup = () => {
     mutationFn: ({ communityId, data }: any) =>
       CreateCommunityGroup(communityId, cookieValue, data),
     onSuccess: (response: any) => {
-      queryClient.invalidateQueries({ queryKey: ["communityGroups"] });
+      //   queryClient.invalidateQueries({ queryKey: ["communityGroups"] });
       queryClient.invalidateQueries({
         queryKey: ["useGetSubscribedCommunties"],
       });
@@ -67,6 +67,41 @@ export const useCreateCommunityGroup = () => {
     },
     onError: (error: any) => {
       Toast.show(error.response.data.message);
+    },
+  });
+};
+
+export async function UpdateCommunityGroup(data: any, id: string, token: any) {
+  const response = await client(`/communitygroup/${id}`, {
+    method: "PUT",
+    headers: { Authorization: `Bearer ${token}` },
+    data,
+  });
+  return response;
+}
+
+export const useUpdateCommunityGroup = () => {
+  const cookieValue = getToken() as string;
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({
+      communityId,
+      payload,
+    }: {
+      communityId: string;
+      payload: any;
+    }) => UpdateCommunityGroup(payload, communityId, cookieValue),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["communityGroup"] });
+
+      queryClient.invalidateQueries({
+        queryKey: ["useGetSubscribedCommunties"],
+      });
+      Toast.show("Updated Sucessfully");
+    },
+    onError: (res: any) => {
+      console.error(res.response.data.message);
+      Toast.show(res.response.data.message);
     },
   });
 };
