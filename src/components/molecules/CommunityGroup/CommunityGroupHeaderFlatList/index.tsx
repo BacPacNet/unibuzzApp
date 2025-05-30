@@ -60,12 +60,12 @@ const FlatListCommunityHeader: React.FC<Props> = ({
 }) => {
   const onSettingsPress = useCallback(
     () => setModalVisible(true),
-    [setModalVisible]
+    [setModalVisible],
   );
 
   const onJoinPress = useCallback(
     () => handleToggleJoinCommunityGroup(),
-    [handleToggleJoinCommunityGroup]
+    [handleToggleJoinCommunityGroup],
   );
 
   return (

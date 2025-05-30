@@ -53,6 +53,7 @@ export type RootStackParamList = {
   UserPasswordChange: undefined;
   UserEmailChange: undefined;
   UserAccountDeactivation: undefined;
+  SinglePost: any;
 };
 
 export type RootScreenProps<

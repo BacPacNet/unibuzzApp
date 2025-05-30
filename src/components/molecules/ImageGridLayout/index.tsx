@@ -1,5 +1,8 @@
+import ImageWithFallback from "@/components/atoms/ImageWithFallBack";
+import { getMimeTypeFromUrl, imageMimeTypes } from "@/utils";
+import { Page } from "iconoir-react-native";
 import React, { useState } from "react";
-import { View, Image, Text } from "react-native";
+import { View, Image, Text, Linking, StyleSheet } from "react-native";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import ImageViewing from "react-native-image-viewing";
 
@@ -13,12 +16,18 @@ const ImageGridLayout = ({ imagesData }: Props) => {
   const [isOpen, setIsOpen] = useState(false);
   const [photoIndex, setPhotoIndex] = useState(0);
 
+  const imageItems = imagesData.filter((item) =>
+    imageMimeTypes.includes(getMimeTypeFromUrl(item.imageUrl)),
+  );
+  const fileItems = imagesData.filter(
+    (item) => !imageMimeTypes.includes(getMimeTypeFromUrl(item.imageUrl)),
+  );
   const handleImageClick = (index: number) => {
     setPhotoIndex(index);
     setIsOpen(true);
   };
 
-  const formattedImages = imagesData?.map(({ imageUrl }: any) => ({
+  const formattedImages = imageItems?.map(({ imageUrl }: any) => ({
     uri: imageUrl,
   }));
 
@@ -31,10 +40,11 @@ const ImageGridLayout = ({ imagesData }: Props) => {
             style={{ height: "100%" }}
             className=""
           >
-            <Image
-              source={{ uri: formattedImages[0].uri }}
-              className="w-full h-full rounded-lg"
-              resizeMode="cover"
+            <ImageWithFallback
+              uri={formattedImages[0]?.uri}
+              style={{ width: "100%", height: "100%", borderRadius: 12 }}
+              iconProps={{ color: "gray" }}
+              resizeMode="contain"
             />
           </TouchableOpacity>
         );
@@ -44,15 +54,14 @@ const ImageGridLayout = ({ imagesData }: Props) => {
             style={{ width: "100%", height: "100%" }}
             className="flex-1 flex flex-row gap-2  "
           >
-            {formattedImages.slice(0, 2).map((img, index) => (
+            {formattedImages?.slice(0, 2).map((img, index) => (
               <View key={index} style={{ flex: 1 }}>
                 <TouchableOpacity onPress={() => handleImageClick(index)}>
-                  <Image
-                    key={index}
-                    source={{ uri: img.uri }}
-                    style={{ width: "100%", height: "100%" }}
-                    className="rounded-lg"
-                    resizeMode="cover"
+                  <ImageWithFallback
+                    uri={img?.uri}
+                    style={{ width: "100%", height: "100%", borderRadius: 12 }}
+                    iconProps={{ color: "gray" }}
+                    resizeMode="contain"
                   />
                 </TouchableOpacity>
               </View>
@@ -61,105 +70,74 @@ const ImageGridLayout = ({ imagesData }: Props) => {
         );
       case 3:
         return (
-          <View className="flex-1 flex gap-2">
-            <View className="flex-1 flex-row gap-2">
-              {formattedImages.slice(0, 2).map((img, index) => (
+          <View className="flex-1 flex flex-row gap-2">
+            <View className="w-1/2">
+              <TouchableOpacity
+                onPress={() => handleImageClick(2)}
+                style={{ height: "100%" }}
+                className=""
+              >
+                <ImageWithFallback
+                  uri={formattedImages[2]?.uri}
+                  style={{ width: "100%", height: "100%", borderRadius: 12 }}
+                  iconProps={{ color: "gray" }}
+                  resizeMode="cover"
+                />
+              </TouchableOpacity>
+            </View>
+            <View className="w-1/2 flex gap-2">
+              {formattedImages?.slice(0, 2).map((img, index) => (
                 <View key={index} style={{ flex: 1 }}>
                   <TouchableOpacity onPress={() => handleImageClick(index)}>
-                    <Image
-                      key={index}
-                      source={{ uri: img.uri }}
-                      style={{ width: "100%", height: "100%" }}
-                      className="rounded-lg"
+                    <ImageWithFallback
+                      uri={img?.uri}
+                      style={{
+                        width: "100%",
+                        height: "100%",
+                        borderRadius: 12,
+                      }}
+                      iconProps={{ color: "gray" }}
                       resizeMode="cover"
                     />
                   </TouchableOpacity>
                 </View>
               ))}
             </View>
-            <View style={{ flex: 1 }}>
-              <TouchableOpacity
-                onPress={() => handleImageClick(2)}
-                style={{ height: "100%" }}
-                className=""
-              >
-                <Image
-                  source={{ uri: formattedImages[2]?.uri }}
-                  style={{ width: "100%", height: "100%" }}
-                  resizeMode="cover"
-                  className="rounded-lg"
-                />
-              </TouchableOpacity>
-            </View>
           </View>
+          //   <View className="flex-1 flex  gap-2">
+          //     <View className="flex-1 flex-row gap-2">
+          //       {formattedImages.slice(0, 2).map((img, index) => (
+          //         <View key={index} style={{ flex: 1 }}>
+          //           <TouchableOpacity onPress={() => handleImageClick(index)}>
+          //             <Image
+          //               key={index}
+          //               source={{ uri: img?.uri }}
+          //               style={{ width: "100%", height: "100%" }}
+          //               className="rounded-lg"
+          //               resizeMode="cover"
+          //             />
+          //           </TouchableOpacity>
+          //         </View>
+          //       ))}
+          //     </View>
+          //     <View style={{ flex: 1 }}>
+          //       <TouchableOpacity
+          //         onPress={() => handleImageClick(2)}
+          //         style={{ height: "100%", width: "100%" }}
+          //         className=""
+          //       >
+          //         <Image
+          //           source={{ uri: formattedImages[2]?.uri }}
+          //           style={{ width: "100%", height: "100%" }}
+          //           resizeMode="cover"
+          //           className="rounded-lg"
+          //         />
+          //       </TouchableOpacity>
+          //     </View>
+          //   </View>
         );
       default:
-        return (
-          <View className="flex-1 flex-row gap-2">
-            <View className="flex-1 flex w-3/4 flex-col gap-2">
-              <View className="flex-1 flex-row gap-2">
-                {formattedImages?.slice(0, 2)?.map((img, index) => (
-                  <View key={index} style={{ flex: 1 }}>
-                    <TouchableOpacity onPress={() => handleImageClick(index)}>
-                      <Image
-                        key={index}
-                        source={{ uri: img.uri }}
-                        style={{ width: "100%", height: "100%" }}
-                        className="rounded-lg"
-                        resizeMode="cover"
-                      />
-                    </TouchableOpacity>
-                  </View>
-                ))}
-              </View>
-              <View style={{ flex: 1 }}>
-                <TouchableOpacity
-                  onPress={() => handleImageClick(2)}
-                  style={{ height: "100%" }}
-                  className=""
-                >
-                  <Image
-                    source={{ uri: formattedImages[2]?.uri }}
-                    className="w-full h-full rounded-lg"
-                    resizeMode="cover"
-                  />
-                </TouchableOpacity>
-              </View>
-            </View>
-            <View style={{ width: "30%" }} className="relative overflow-hidden">
-              <TouchableOpacity
-                onPress={() => handleImageClick(3)}
-                style={{ height: "100%" }}
-                className=""
-              >
-                <Image
-                  source={{ uri: formattedImages[3]?.uri }}
-                  style={{ width: "100%", height: "100%" }}
-                  resizeMode="cover"
-                  className="rounded-lg"
-                />
-              </TouchableOpacity>
-              {formattedImages.length > 4 && (
-                <View
-                  style={{
-                    position: "absolute",
-                    right: -5,
-                    bottom: -4,
-                    overflow: "hidden",
-                  }}
-                  className="bg-neutral-200 w-10 h-10 p-2 rounded-full flex items-center"
-                >
-                  <TouchableOpacity
-                    onPress={() => handleImageClick(3)}
-                    className="flex items-center justify-center w-10 h-10"
-                  >
-                    <Text className="w-10 h-10 text-center">+</Text>
-                  </TouchableOpacity>
-                </View>
-              )}
-            </View>
-          </View>
-        );
+        return;
     }
   };
 
@@ -168,7 +146,7 @@ const ImageGridLayout = ({ imagesData }: Props) => {
   }
 
   return (
-    <View style={{ height: 150 }} className="bg-white py-2 px-4">
+    <View style={styles.mainContainer} className="flex-1 bg-white py-2 px-4">
       {isOpen && (
         <ImageViewing
           images={formattedImages}
@@ -184,9 +162,50 @@ const ImageGridLayout = ({ imagesData }: Props) => {
           )}
         />
       )}
-      {renderImages()}
+      <View style={formattedImages?.length ? styles.imageContainer : undefined}>
+        {renderImages()}
+      </View>
+
+      {fileItems?.length > 0 && (
+        <View style={{ marginTop: 5 }}>
+          {fileItems?.map((item, index) => (
+            <TouchableOpacity
+              key={index}
+              onPress={() => Linking.openURL(item.imageUrl)}
+              style={{
+                borderWidth: 1,
+                borderColor: "#e5e7eb",
+                backgroundColor: "#fff",
+                padding: 12,
+                borderRadius: 8,
+                flexDirection: "row",
+                alignItems: "center",
+                marginBottom: 8,
+              }}
+            >
+              <Page width={24} height={24} style={{ marginRight: 8 }} />
+              <Text numberOfLines={1} style={{ flex: 1 }}>
+                {decodeURIComponent(
+                  item.imageUrl.split("/").pop() || "Unknown File",
+                )}
+              </Text>
+            </TouchableOpacity>
+          ))}
+        </View>
+      )}
     </View>
   );
 };
 
 export default ImageGridLayout;
+
+const styles = StyleSheet.create({
+  mainContainer: {
+    // minHeight: 190,
+    maxHeight: 380,
+  },
+  imageContainer: {
+    minHeight: 150,
+    maxHeight: 200,
+  },
+});

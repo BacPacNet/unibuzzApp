@@ -107,10 +107,10 @@ const NewCommunityGroupScreen = () => {
   const affiliation = watch("affiliation") || "";
 
   const [previewProfileImage, setPreviewProfileImage] = useState<string | null>(
-    null
+    null,
   );
   const [previewBannerImage, setPreviewBannerImage] = useState<string | null>(
-    null
+    null,
   );
   const [isProfileLoading, setIsProfileLoading] = useState(false);
   const [imageToUpload, setImageToUpload] = useState<ImageAsset | null>(null);
@@ -131,7 +131,7 @@ const NewCommunityGroupScreen = () => {
       return () => {
         changeHeaderShownStatus(true);
       };
-    }, [])
+    }, []),
   );
 
   const handleNavigateToFilterScreen = () => {
@@ -217,7 +217,7 @@ const NewCommunityGroupScreen = () => {
             params: { communityId: communityId, change: Date.now() },
           });
         },
-      }
+      },
     );
   };
 

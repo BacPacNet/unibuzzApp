@@ -26,10 +26,21 @@ import {
 import { getUserStore } from "@/storage/user";
 import { Toast } from "react-native-toast-notifications";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import PostCardOption from "../PostCardOption";
+import PostActionModal from "../../PostOptions";
+import { useNavigation } from "@react-navigation/native";
+import { StackNavigationProp } from "@react-navigation/stack";
+import { RootStackParamList } from "@/types/navigation";
+
+type ScreenNavigationProp = StackNavigationProp<RootStackParamList, "Home">;
 
 const PostCard = memo(
-  ({ data, isTimeline = true, communityGroupId = "" }: PostCardType) => {
+  ({
+    data,
+    isTimeline = true,
+    communityGroupId = "",
+    isSinglePost = false,
+  }: PostCardType) => {
+    const navigation = useNavigation<ScreenNavigationProp>();
     const [visible, setVisible] = useState(false);
     const { width } = useWindowDimensions();
     const userData = getUserStore();
@@ -46,10 +57,11 @@ const PostCard = memo(
       useLikeUnilikeGroupPost(
         data?.communityId,
         communityGroupId,
-        !!data?.communityId && isTimeline,
+        isTimeline,
+        isSinglePost,
       );
     const { mutate: LikeUnlikeTimelinePost, isPending: isLikeUnlikePending } =
-      useLikeUnlikeTimelinePost();
+      useLikeUnlikeTimelinePost("" as string, data?.user?._id, isSinglePost);
 
     const sharePost = async (
       message = "Hey, check out this amazing post! https://example.com/post/123",
@@ -62,51 +74,83 @@ const PostCard = memo(
     };
 
     const LikeUnlikeHandler = (postId: string) => {
-      if (!data?.communityId) {
+      if (
+        isSinglePost || !isTimeline ? !data?.communityId : !data?.community?._id
+      ) {
         LikeUnlikeTimelinePost(postId);
-      } else if (data?.communityId) {
+      } else if (
+        isSinglePost || !isTimeline ? data?.communityId : data?.community?._id
+      ) {
         LikeUnlikeGroupPost(postId);
       }
     };
 
     const handleDeletePost = () => {
-      if (data?.communityId) {
+      if (
+        isSinglePost || !isTimeline ? data?.communityId : data?.community?._id
+      ) {
         mutateDeleteCommunityPost(data?._id);
       } else {
         mutateDeletePost(data?._id);
       }
+
       setVisible(false);
+      if (isSinglePost) {
+        navigation.goBack();
+      }
     };
 
     const hideBottomBar = () => {
       commentBottomSheet.current?.hide();
     };
 
+    const postSourceText = useMemo(() => {
+      if (data?.community?.name && data?.communityGroupName) {
+        return `Posted in ${data?.communityGroupName} group at ${data?.community?.name}`;
+      }
+      if (data?.community?.name) {
+        return `Posted from ${data?.community?.name}`;
+      }
+      return "";
+    }, [data, communityGroupId]);
+
     return (
-      <View className="relative bg-white flex gap-4 my-4 z-1">
-        {visible && (
-          <PostCardOption
-            handleDeletePost={handleDeletePost}
-            isAdmin={data?.user?._id === userData?.id}
-          />
-        )}
+      <View
+        className={`relative bg-white ${isSinglePost ? "flex-1 " : ""} flex   gap-4 my-4 z-1`}
+      >
         <PostCardUserDetails
           visible={visible}
           setVisible={setVisible}
           name={data?.user?.firstName + " " + data?.user?.lastName}
           year={data?.userProfile?.study_year}
+          major={data?.userProfile?.major}
           degree={data?.userProfile?.degree}
           university={data?.userProfile?.university_name}
+          affiliation={data?.userProfile?.affiliation}
+          occupation={data?.userProfile?.occupation}
+          role={data?.userProfile?.role}
+          communityName={data?.community?.name}
+          communityGroupName={data?.communityGroupName}
           dp={data?.userProfile?.profile_dp?.imageUrl || " "}
           postId={data?._id}
-          type={data?.communityId ? PostType.Community : PostType.Timeline}
-          isAdmin={data?.user?._id == userData?.id}
+          type={
+            isSinglePost
+              ? data?.communityId
+                ? PostType.Community
+                : PostType.Timeline
+              : data?.community?._id
+                ? PostType.Community
+                : PostType.Timeline
+          }
+          //   isAdmin={data?.user?._id == userData?.id}
+          isAdmin={
+            isSinglePost
+              ? data?.user_id == userData?.id
+              : data?.user?._id == userData?.id
+          }
           postAdminId={data?.user?._id}
         />
-
-        <ImageGridLayout imagesData={data?.imageUrl || []} />
-
-        {data?.content && (
+        {Number(data?.content?.length) > 1 && data?.content ? (
           <View className="px-4">
             <RenderHtml
               contentWidth={width}
@@ -115,15 +159,18 @@ const PostCard = memo(
               ignoredDomTags={["label", "input"]}
             />
           </View>
+        ) : (
+          <View></View>
         )}
+        <View style={{ flex: 1 }}>
+          <ImageGridLayout imagesData={data?.imageUrl || []} />
+        </View>
 
         <View className="px-4">
           <Text className="text-neutral-400">
             {dayjs(data?.createdAt).format("h:mm A · MMM D, YYYY")}
-            {data?.communityId
-              ? `· Post from   ${data?.userProfile?.university_name} `
-              : ""}
-            <Text className=""> </Text>
+
+            <Text className="">{" " + postSourceText} </Text>
           </Text>
         </View>
         <View className="flex flex-row justify-between py-2 px-4 border-t border-b border-neutral-300">
@@ -170,6 +217,29 @@ const PostCard = memo(
             />
           </TouchableOpacity>
         </View>
+
+        <PostActionModal
+          modalVisible={visible}
+          setModalVisible={setVisible}
+          isAdmin={
+            isSinglePost
+              ? data?.user_id == userData?.id
+              : data?.user?._id == userData?.id
+          }
+          onDelete={handleDeletePost}
+          postID={data?._id}
+          //   type={data?.community?._id ? PostType.Community : PostType.Timeline}
+          type={
+            isSinglePost
+              ? data?.communityId
+                ? PostType.Community
+                : PostType.Timeline
+              : data?.community?._id
+                ? PostType.Community
+                : PostType.Timeline
+          }
+          isSinglePost={isSinglePost}
+        />
         <ActionSheet
           useBottomSafeAreaPadding
           ref={commentBottomSheet}
@@ -186,10 +256,21 @@ const PostCard = memo(
         >
           <CommentBottomSheet
             postId={data?._id}
-            type={data?.communityId ? PostType.Community : PostType.Timeline}
+            type={
+              isSinglePost
+                ? data?.communityId
+                  ? PostType.Community
+                  : PostType.Timeline
+                : data?.community?._id
+                  ? PostType.Community
+                  : PostType.Timeline
+            }
             width={width}
-            adminID={data?.user?._id}
+            // adminID={data?.user?._id}
+            adminID={isSinglePost ? data?.user_id : data?.user?._id}
+            level={data?.level}
             hideBottomBar={hideBottomBar}
+            postAuthorName={data?.user?.firstName + " " + data?.user?.lastName}
           />
         </ActionSheet>
       </View>

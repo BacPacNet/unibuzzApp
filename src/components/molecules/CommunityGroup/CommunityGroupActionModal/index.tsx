@@ -33,10 +33,6 @@ const CommunityGroupActionModal = ({
           activeOpacity={1}
           onPress={(e) => e.stopPropagation()}
         >
-          {/* <View style={styles.modalHeader}>
-            <Text style={styles.modalTitle}>Actions</Text>
-          </View> */}
-
           <View style={styles.optionContainer}>
             <TouchableOpacity onPress={onLeave} style={styles.optionHolder}>
               <Text style={styles.optionText}>Leave</Text>

@@ -1,17 +1,18 @@
 import { useCreateUserPost } from "@/services/timeline";
 import {
-  DEFAULT_TOOLBAR_ITEMS,
+  DropCursorBridge,
+  LinkBridge,
+  PlaceholderBridge,
   RichText,
+  TenTapStartKit,
   Toolbar,
   useEditorBridge,
 } from "@10play/tentap-editor";
 import { useFocusEffect } from "@react-navigation/native";
-import { MediaImage, NavArrowLeft } from "iconoir-react-native";
+import { MediaImage, NavArrowLeft, PagePlus } from "iconoir-react-native";
 import React, { useCallback, useState } from "react";
 import {
   ActivityIndicator,
-  FlatList,
-  Image,
   KeyboardAvoidingView,
   Platform,
   SafeAreaView,
@@ -20,10 +21,16 @@ import {
   View,
 } from "react-native";
 import { launchImageLibrary } from "react-native-image-picker";
-import avatar from "../../assets/avatar.png";
-import avatar2 from "../../assets/appDrawerIcon.png";
+import DocumentPicker from "react-native-document-picker";
+
 import { replaceImage } from "@/services/uploadImage";
 import { UserPostType } from "@/types/postType";
+import { PostInputData } from "@/types/constant";
+import { UPLOAD_CONTEXT } from "@/types/uploads";
+import { useUploadToS3 } from "@/services/upload";
+import { validateUploadedFiles } from "@/utils";
+import { Toast } from "react-native-toast-notifications";
+import MediaPreviewList from "@/components/molecules/MediaPreview";
 
 type ImageAsset = {
   uri: string;
@@ -33,17 +40,39 @@ type ImageAsset = {
   width?: number;
   type?: string;
 };
+
+type fileType = {
+  uri: string;
+  name?: string | null;
+  size?: number | null;
+
+  type?: string | null;
+};
 const NewPost = ({ navigation }: any) => {
   const [images, setImages] = useState<ImageAsset[]>([]);
+  const [files, setFiles] = useState<fileType[]>([]);
   const editor = useEditorBridge({
     autofocus: true,
     avoidIosKeyboard: true,
-    initialContent: "test",
+    // initialContent: "test",
+    bridgeExtensions: [
+      ...TenTapStartKit,
+      PlaceholderBridge.configureExtension({
+        placeholder: "Hey there! Start typing...",
+      }),
+      LinkBridge.configureExtension({ openOnClick: false }),
+      DropCursorBridge.configureExtension({
+        color: "#84affe",
+        width: 2,
+      }),
+    ],
   });
   const { mutate: CreateTimelinePost, isPending } = useCreateUserPost();
+  const { mutateAsync: uploadToS3 } = useUploadToS3();
   const [postAccessType, setPostAccessType] = useState<UserPostType>(
     UserPostType.PUBLIC,
   );
+  const [isPostCreating, setIsPostCreating] = useState(false);
   const [showPostType, setShowPostType] = useState(false);
 
   useFocusEffect(
@@ -74,47 +103,141 @@ const NewPost = ({ navigation }: any) => {
     [setPostAccessType, setShowPostType],
   );
 
-  const processImages = async (imagesData: any[]) => {
-    const promises = imagesData.map((image) => replaceImage(image, ""));
-    const results = await Promise.all(promises);
-    return results.map((result) => ({
-      imageUrl: result?.imageUrl,
-      publicId: result?.publicId,
-    }));
-  };
-
   const handleImagePick = useCallback(() => {
     launchImageLibrary(
       { mediaType: "photo", selectionLimit: 0 },
       (response: any) => {
         if (response.assets && response.assets.length > 0) {
+          const images = response.assets.map((asset: any) => ({
+            ...asset,
+            size: asset.fileSize,
+            type: asset.type,
+          }));
+          const validationResult = validateUploadedFiles(images);
+
+          if (!validationResult.isValid) {
+            Toast.show(validationResult.message);
+            return;
+          }
+
+          const totalFiles = files.length + images.length;
+          if (totalFiles > 4) {
+            Toast.show("You can upload a maximum of 4 files.");
+            return;
+          }
           setImages((prevImages) => [...prevImages, ...response.assets]);
         }
       },
     );
   }, []);
 
-  const handleImageRemove = useCallback((index: number) => {
-    setImages((prev) => prev.filter((_, i) => i !== index));
-  }, []);
+  const handleImageRemove = useCallback(
+    (identifier: number | string, isImage: boolean) => {
+      if (isImage) {
+        setImages((prev) => prev.filter((_, i) => i !== identifier));
+      } else {
+        setFiles((prev) => prev.filter((file) => file.name !== identifier));
+      }
+    },
+    [],
+  );
+
+  const handleFilePick = async () => {
+    try {
+      const res = await DocumentPicker.pick({
+        type: [
+          DocumentPicker.types.pdf,
+          DocumentPicker.types.docx,
+          DocumentPicker.types.doc,
+        ],
+        allowMultiSelection: true,
+      });
+
+      const validationResult = validateUploadedFiles(
+        res.map((file: any) => ({
+          ...file,
+          size: file.size,
+          type: file.type,
+        })),
+      );
+
+      if (!validationResult.isValid) {
+        Toast.show(validationResult.message);
+        return;
+      }
+
+      const totalFiles = files.length + images.length;
+      if (totalFiles > 4) {
+        Toast.show("You can upload a maximum of 4 files.");
+        return;
+      }
+
+      setFiles(res);
+    } catch (err) {
+      if (DocumentPicker.isCancel(err)) {
+        console.log("User cancelled picker");
+      } else {
+        console.error("DocumentPicker Error:", err);
+      }
+    }
+  };
 
   const handlePostCreate = async () => {
     const text = await editor.getHTML();
-    let fileLinks;
-    if (images && images.length > 0) {
-      fileLinks = await processImages(images);
-    }
-    const data = {
+    const isEmpty = text.replace(/<[^>]+>/g, "").trim() === "";
+
+    const cleanedText = isEmpty ? "" : text;
+    const payload: PostInputData = {
+      content: cleanedText,
       PostType: postAccessType,
-      content: text,
-      imageUrl: fileLinks,
     };
-    CreateTimelinePost(data);
+
+    if (!cleanedText && !images?.length && !files?.length) {
+      Toast.show("Post must contain text or at least one file.");
+      return;
+    }
+    setIsPostCreating(true);
+
+    if (images?.length || files?.length) {
+      const mergedFiles = [
+        ...(images || []).map((image) => ({
+          uri: image.uri,
+          fileName: image.fileName || `upload_${Date.now()}.jpg`,
+          type: image.type || "image/jpeg",
+        })),
+        ...(files || []).map((file: any) => ({
+          uri: file.uri,
+          fileName: file.name || `file_${Date.now()}`,
+          type: file.type || "application/octet-stream",
+        })),
+      ];
+
+      const uploadPayload = {
+        files: mergedFiles,
+        context: UPLOAD_CONTEXT.TIMELINE,
+      };
+
+      const uploadResponse = await uploadToS3(uploadPayload);
+      if (uploadResponse.success) {
+        payload.imageUrl = uploadResponse.data;
+      }
+    }
+
+    CreateTimelinePost(payload, {
+      onSuccess: () => {
+        setImages([]);
+        setFiles([]);
+        editor.setContent("");
+        navigation.goBack();
+      },
+    });
+
+    setIsPostCreating(false);
   };
 
   return (
     <View className="flex-1 bg-white relative">
-      {showPostType && (
+      {/* {showPostType && (
         <View className="flex gap-2 absolute bg-white shadow-md w-48 top-16 right-24 z-40 ">
           <TouchableOpacity
             className={` ${postAccessType == UserPostType.PUBLIC ? "bg-primary-500" : ""} `}
@@ -160,7 +283,7 @@ const NewPost = ({ navigation }: any) => {
             </Text>
           </TouchableOpacity>
         </View>
-      )}
+      )} */}
       <View className="  flex flex-row gap-4 items-center justify-between border-b border-neutral-300 p-3">
         <View className=" flex flex-row gap-4 items-center">
           <TouchableOpacity onPress={() => navigation.goBack()}>
@@ -168,21 +291,21 @@ const NewPost = ({ navigation }: any) => {
           </TouchableOpacity>
         </View>
         <View className="flex flex-row items-center gap-4">
-          <View>
+          {/* <View>
             <TouchableOpacity
               onPress={() => setShowPostType(!showPostType)}
               className="bg-[#F3F2FF] px-4 py-2 rounded-lg"
             >
               <Text className="text-primary-500">Visibility</Text>
             </TouchableOpacity>
-          </View>
+          </View> */}
           <TouchableOpacity
             onPress={() => handlePostCreate()}
             className="bg-primary-500 px-4 py-2 rounded-lg"
-            disabled={isPending}
+            disabled={isPending || isPostCreating}
           >
-            {isPending ? (
-              <ActivityIndicator />
+            {isPending || isPostCreating ? (
+              <ActivityIndicator color={"white"} />
             ) : (
               <Text className={`text-center font-bold text-white`}>Post</Text>
             )}
@@ -201,10 +324,15 @@ const NewPost = ({ navigation }: any) => {
             bottom: 0,
           }}
         >
-          <TouchableOpacity onPress={handleImagePick}>
-            <MediaImage height={20} width={20} color={"#a3a3a3"} />
-          </TouchableOpacity>
-          <FlatList
+          <View className="flex flex-row gap-2 items-center">
+            <TouchableOpacity onPress={handleImagePick}>
+              <MediaImage height={20} width={20} color={"#a3a3a3"} />
+            </TouchableOpacity>
+            <TouchableOpacity onPress={handleFilePick}>
+              <PagePlus height={20} width={20} color={"#a3a3a3"} />
+            </TouchableOpacity>
+          </View>
+          {/* <FlatList
             data={images}
             horizontal
             keyExtractor={(item, index) => index.toString()}
@@ -223,6 +351,12 @@ const NewPost = ({ navigation }: any) => {
                 </TouchableOpacity>
               </View>
             )}
+          /> */}
+          <MediaPreviewList
+            files={[...images, ...files]}
+            onRemove={(index: any, isImage: boolean) =>
+              handleImageRemove(index, isImage)
+            }
           />
           <Toolbar editor={editor} />
         </KeyboardAvoidingView>

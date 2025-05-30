@@ -41,6 +41,7 @@ import {
 import CommunityGroupActionModal from "@/components/molecules/CommunityGroup/CommunityGroupActionModal";
 import FlatListCommunityHeader from "@/components/molecules/CommunityGroup/CommunityGroupHeaderFlatList";
 import { Refresh } from "@/components/atoms/RefreshSpinner";
+import CreatePostButton from "@/components/atoms/CreatePostButton";
 
 type NavigationProp = StackNavigationProp<RootStackParamList, "CommunityGroup">;
 
@@ -133,9 +134,9 @@ const CommunityGroupScreen = ({ route }: any) => {
   useEffect(() => {
     if (communityGroups && userData) {
       setIsUserJoinedCommunityGroup(
-        communityGroups.users.some(
+        communityGroups?.users?.some(
           (item) =>
-            item.userId.toString() === userData.id && item.isRequestAccepted,
+            item?.userId?.toString() === userData.id && item?.isRequestAccepted,
         ),
       );
     }
@@ -242,21 +243,15 @@ const CommunityGroupScreen = ({ route }: any) => {
 
   return (
     <SafeAreaView className="bg-white flex-1">
-      <View style={styles.plusButtonContainer}>
-        {isUserJoinedCommunityGroup && (
-          <TouchableOpacity
-            onPress={() =>
-              navigation.navigate("NewGroupPost", {
-                communityId,
-                communityGroupId,
-              })
-            }
-            style={styles.createButton}
-          >
-            <Text style={{ color: "white", fontSize: 24 }}>+</Text>
-          </TouchableOpacity>
-        )}
-      </View>
+      <CreatePostButton
+        isAllowed={isUserJoinedCommunityGroup || isGroupAdmin}
+        onPress={() =>
+          navigation.navigate("NewGroupPost", {
+            communityId,
+            communityGroupId,
+          })
+        }
+      />
       {isFetching ? (
         <Refresh />
       ) : (
@@ -341,27 +336,6 @@ const CommunityGroupScreen = ({ route }: any) => {
 export default CommunityGroupScreen;
 
 const styles = StyleSheet.create({
-  plusButtonContainer: {
-    position: "absolute",
-    right: 20,
-    top: "80%",
-    zIndex: 200,
-  },
-  createButton: {
-    backgroundColor: "#6744FF",
-    padding: 15,
-    height: 60,
-    width: 60,
-    borderRadius: 30,
-    justifyContent: "center",
-    alignItems: "center",
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 4,
-    elevation: 5,
-  },
-
   flatListStyle: {
     width: "100%",
     height: "100%",

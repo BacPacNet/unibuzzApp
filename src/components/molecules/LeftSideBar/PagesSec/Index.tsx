@@ -1,6 +1,5 @@
 import React from "react";
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
-import { CubeScanSolid, InfoCircle, MessageText } from "iconoir-react-native";
 import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { RootStackParamList } from "@/types/navigation";
@@ -21,17 +20,21 @@ type NavigationProp = StackNavigationProp<RootStackParamList, "Community">;
 const LeftSideBarPagesSection = () => {
   const navigation = useNavigation<NavigationProp>();
 
-  const handleRedirect = () => {
-    // navigation.navigate("DiscoverStack", {
-    //   screen: "Discover",
-    // });
+  const handleRedirect = (route: string) => {
+    if (route == "Discover") {
+      navigation.navigate("DiscoverStack", {
+        screen: "Discover",
+      });
+    } else if (route == "Community") {
+      navigation.navigate("Timeline");
+    }
   };
   return (
     <View style={styles.container}>
       <Text style={styles.headerText}>PAGES</Text>
       {menuItems.map((item, index) => (
         <TouchableOpacity
-          onPress={handleRedirect}
+          onPress={() => handleRedirect(item.title)}
           key={index}
           style={styles.menuItem}
         >

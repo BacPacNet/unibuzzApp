@@ -45,6 +45,7 @@ import ManageGroups from "./ManageGroups";
 import { CommunityFilterProvider } from "@/context/CommunityFilterProvider/CommunityFilterProvider";
 import NewGroupPost from "@/screens/NewGroupPost";
 import SettingsStack from "./SettingsStack";
+import SinglePost from "@/screens/SinglePost/SinglePost";
 
 const Stack = createStackNavigator<RootStackParamList>();
 const Tab = createBottomTabNavigator<RootStackParamList>();
@@ -150,6 +151,14 @@ function ApplicationNavigator() {
         <Tab.Screen
           name="SettingsStack"
           component={SettingsStack}
+          options={{
+            tabBarButton: () => null,
+            // unmountOnBlur: true,
+          }}
+        />
+        <Tab.Screen
+          name="SinglePost"
+          component={SinglePost}
           options={{
             tabBarButton: () => null,
             // unmountOnBlur: true,
