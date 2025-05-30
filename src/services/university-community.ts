@@ -118,6 +118,35 @@ export const useLeaveCommunity = () => {
   });
 };
 
+export async function joinCommunityFromUniversityAPI(
+  universityId: string,
+  token: string,
+) {
+  const response = await client(
+    `/community/join?universityId=${universityId}`,
+    {
+      method: "POST",
+      headers: { Authorization: `Bearer ${token}` },
+    },
+  );
+  return response;
+}
+
+export const useJoinCommunityFromUniversity = () => {
+  const cookieValue = getToken() as string;
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (universityId: string) =>
+      joinCommunityFromUniversityAPI(universityId, cookieValue),
+    onSuccess: (response: any) => {
+      queryClient.invalidateQueries({
+        queryKey: ["useGetSubscribedCommunties"],
+      });
+    },
+  });
+};
+
 export async function getAllCommunityGroupPost(
   communityId: string,
   communityGroupId: string,

@@ -24,6 +24,7 @@ interface MultiSelectDropdownProps {
   disabled?: boolean;
   parentCategory?: string[];
   setErr?: (value: boolean) => void;
+  setCityOptions?: any;
 }
 
 const MultiSelectDropdown = ({

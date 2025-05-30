@@ -4,6 +4,7 @@ import RNFetchBlob from "react-native-blob-util";
 import { UploadContextType } from "@/types/Uploads";
 import { Toast } from "react-native-toast-notifications";
 import { getToken } from "@/storage/token";
+import { NEXT_PUBLIC_API_BASE_URL } from "@env";
 
 export interface S3UploadItem {
   imageUrl: string | null;
@@ -47,7 +48,7 @@ async function uploadToS3WithRNFetchBlob(
   try {
     const response = await RNFetchBlob.fetch(
       "POST",
-      "http://10.0.2.2:8000/v1/upload",
+      `${NEXT_PUBLIC_API_BASE_URL}/upload`,
       {
         Authorization: `Bearer ${cookieValue}`,
         "Content-Type": "multipart/form-data",
