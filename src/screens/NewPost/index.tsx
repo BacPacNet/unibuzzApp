@@ -70,7 +70,7 @@ const NewPost = ({ navigation }: any) => {
   const { mutate: CreateTimelinePost, isPending } = useCreateUserPost();
   const { mutateAsync: uploadToS3 } = useUploadToS3();
   const [postAccessType, setPostAccessType] = useState<UserPostType>(
-    UserPostType.PUBLIC,
+    UserPostType.PUBLIC
   );
   const [isPostCreating, setIsPostCreating] = useState(false);
   const [showPostType, setShowPostType] = useState(false);
@@ -92,7 +92,7 @@ const NewPost = ({ navigation }: any) => {
           },
         });
       };
-    }, [navigation]),
+    }, [navigation])
   );
 
   const handlePostVisibilityTypeChange = useCallback(
@@ -100,7 +100,7 @@ const NewPost = ({ navigation }: any) => {
       setPostAccessType(type);
       setShowPostType(false);
     },
-    [setPostAccessType, setShowPostType],
+    [setPostAccessType, setShowPostType]
   );
 
   const handleImagePick = useCallback(() => {
@@ -127,7 +127,7 @@ const NewPost = ({ navigation }: any) => {
           }
           setImages((prevImages) => [...prevImages, ...response.assets]);
         }
-      },
+      }
     );
   }, []);
 
@@ -139,7 +139,7 @@ const NewPost = ({ navigation }: any) => {
         setFiles((prev) => prev.filter((file) => file.name !== identifier));
       }
     },
-    [],
+    []
   );
 
   const handleFilePick = async () => {
@@ -158,7 +158,7 @@ const NewPost = ({ navigation }: any) => {
           ...file,
           size: file.size,
           type: file.type,
-        })),
+        }))
       );
 
       if (!validationResult.isValid) {
@@ -237,53 +237,6 @@ const NewPost = ({ navigation }: any) => {
 
   return (
     <View className="flex-1 bg-white relative">
-      {/* {showPostType && (
-        <View className="flex gap-2 absolute bg-white shadow-md w-48 top-16 right-24 z-40 ">
-          <TouchableOpacity
-            className={` ${postAccessType == UserPostType.PUBLIC ? "bg-primary-500" : ""} `}
-            onPress={() => handlePostVisibilityTypeChange(UserPostType.PUBLIC)}
-          >
-            <Text
-              className={` p-2 ${postAccessType == UserPostType.PUBLIC ? "text-white" : "text-black"} `}
-            >
-              PUBLIC
-            </Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            className={` ${postAccessType == UserPostType.FOLLOWER_ONLY ? "bg-primary-500" : ""} `}
-            onPress={() =>
-              handlePostVisibilityTypeChange(UserPostType.FOLLOWER_ONLY)
-            }
-          >
-            <Text
-              className={` p-2 ${postAccessType == UserPostType.FOLLOWER_ONLY ? "text-white" : "text-black"} `}
-            >
-              FOLLOWER ONLY
-            </Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            className={` ${postAccessType == UserPostType.MUTUAL ? "bg-primary-500" : ""} `}
-            onPress={() => handlePostVisibilityTypeChange(UserPostType.MUTUAL)}
-          >
-            <Text
-              className={` p-2 ${postAccessType == UserPostType.MUTUAL ? "text-white" : "text-black"} `}
-            >
-              MUTUAL
-            </Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            className={` ${postAccessType == UserPostType.ONLY_ME ? "bg-primary-500" : ""} `}
-            onPress={() => handlePostVisibilityTypeChange(UserPostType.ONLY_ME)}
-          >
-            <Text
-              className={` p-2 ${postAccessType == UserPostType.ONLY_ME ? "text-white" : "text-black"} `}
-            >
-              ONLY ME
-            </Text>
-          </TouchableOpacity>
-        </View>
-      )} */}
       <View className="  flex flex-row gap-4 items-center justify-between border-b border-neutral-300 p-3">
         <View className=" flex flex-row gap-4 items-center">
           <TouchableOpacity onPress={() => navigation.goBack()}>
@@ -291,14 +244,6 @@ const NewPost = ({ navigation }: any) => {
           </TouchableOpacity>
         </View>
         <View className="flex flex-row items-center gap-4">
-          {/* <View>
-            <TouchableOpacity
-              onPress={() => setShowPostType(!showPostType)}
-              className="bg-[#F3F2FF] px-4 py-2 rounded-lg"
-            >
-              <Text className="text-primary-500">Visibility</Text>
-            </TouchableOpacity>
-          </View> */}
           <TouchableOpacity
             onPress={() => handlePostCreate()}
             className="bg-primary-500 px-4 py-2 rounded-lg"
@@ -332,26 +277,7 @@ const NewPost = ({ navigation }: any) => {
               <PagePlus height={20} width={20} color={"#a3a3a3"} />
             </TouchableOpacity>
           </View>
-          {/* <FlatList
-            data={images}
-            horizontal
-            keyExtractor={(item, index) => index.toString()}
-            renderItem={({ item, index }) => (
-              <View className="relative m-2 ">
-                <Image
-                  source={{ uri: item.uri }}
-                  className="w-24 h-24 rounded"
-                />
 
-                <TouchableOpacity
-                  onPress={() => handleImageRemove(index)}
-                  className="absolute top-1 right-1 bg-red-500 p-1 rounded-full"
-                >
-                  <Text className="text-white text-xs">X</Text>
-                </TouchableOpacity>
-              </View>
-            )}
-          /> */}
           <MediaPreviewList
             files={[...images, ...files]}
             onRemove={(index: any, isImage: boolean) =>

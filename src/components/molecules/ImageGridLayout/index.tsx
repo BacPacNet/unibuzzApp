@@ -17,10 +17,10 @@ const ImageGridLayout = ({ imagesData }: Props) => {
   const [photoIndex, setPhotoIndex] = useState(0);
 
   const imageItems = imagesData.filter((item) =>
-    imageMimeTypes.includes(getMimeTypeFromUrl(item.imageUrl)),
+    imageMimeTypes.includes(getMimeTypeFromUrl(item.imageUrl))
   );
   const fileItems = imagesData.filter(
-    (item) => !imageMimeTypes.includes(getMimeTypeFromUrl(item.imageUrl)),
+    (item) => !imageMimeTypes.includes(getMimeTypeFromUrl(item.imageUrl))
   );
   const handleImageClick = (index: number) => {
     setPhotoIndex(index);
@@ -104,37 +104,6 @@ const ImageGridLayout = ({ imagesData }: Props) => {
               ))}
             </View>
           </View>
-          //   <View className="flex-1 flex  gap-2">
-          //     <View className="flex-1 flex-row gap-2">
-          //       {formattedImages.slice(0, 2).map((img, index) => (
-          //         <View key={index} style={{ flex: 1 }}>
-          //           <TouchableOpacity onPress={() => handleImageClick(index)}>
-          //             <Image
-          //               key={index}
-          //               source={{ uri: img?.uri }}
-          //               style={{ width: "100%", height: "100%" }}
-          //               className="rounded-lg"
-          //               resizeMode="cover"
-          //             />
-          //           </TouchableOpacity>
-          //         </View>
-          //       ))}
-          //     </View>
-          //     <View style={{ flex: 1 }}>
-          //       <TouchableOpacity
-          //         onPress={() => handleImageClick(2)}
-          //         style={{ height: "100%", width: "100%" }}
-          //         className=""
-          //       >
-          //         <Image
-          //           source={{ uri: formattedImages[2]?.uri }}
-          //           style={{ width: "100%", height: "100%" }}
-          //           resizeMode="cover"
-          //           className="rounded-lg"
-          //         />
-          //       </TouchableOpacity>
-          //     </View>
-          //   </View>
         );
       default:
         return;
@@ -186,7 +155,7 @@ const ImageGridLayout = ({ imagesData }: Props) => {
               <Page width={24} height={24} style={{ marginRight: 8 }} />
               <Text numberOfLines={1} style={{ flex: 1 }}>
                 {decodeURIComponent(
-                  item.imageUrl.split("/").pop() || "Unknown File",
+                  item.imageUrl.split("/").pop() || "Unknown File"
                 )}
               </Text>
             </TouchableOpacity>
