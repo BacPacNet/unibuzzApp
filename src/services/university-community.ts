@@ -226,3 +226,32 @@ export function useGetCommunityPost(
     retry: false,
   });
 }
+
+export async function getPost(
+  postID: string,
+  isType: string | null,
+  commentId: string,
+  token: string,
+) {
+  const response: any = await client(
+    `/communitypost/post/${postID}?isType=${isType}&commentId=${commentId}`,
+    {
+      headers: { Authorization: `Bearer ${token}` },
+    },
+  );
+  return response;
+}
+
+export function useGetPost(
+  postId: string,
+  isType: string | null = "userPost",
+  commentId: string = " ",
+) {
+  const cookieValue = getToken() as string;
+
+  return useQuery({
+    queryKey: ["getPost", postId],
+    queryFn: () => getPost(postId, isType, commentId, cookieValue),
+    enabled: !!postId && !!cookieValue,
+  });
+}

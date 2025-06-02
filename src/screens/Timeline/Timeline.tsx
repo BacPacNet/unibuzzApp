@@ -5,17 +5,18 @@ import {
   Text,
   View,
 } from "react-native";
-import React, { useCallback, useState } from "react";
+import React from "react";
 
 import PostCard from "@/components/molecules/Timeline/PostCard";
 import { useGetTimelinePosts } from "@/services/timeline";
 import { RefreshControl } from "react-native-gesture-handler";
 import { useQueryClient } from "@tanstack/react-query";
-import { useHeader } from "@/context/HeaderProvider/Header";
-import { useFocusEffect, useNavigation } from "@react-navigation/native";
-import { TouchableOpacity } from "@gorhom/bottom-sheet";
+
+import { useNavigation } from "@react-navigation/native";
+
 import { StackNavigationProp } from "@react-navigation/stack";
 import { RootStackParamList } from "@/types/navigation";
+import CreatePostButton from "@/components/atoms/CreatePostButton";
 
 type NavigationProp = StackNavigationProp<RootStackParamList, "Timeline">;
 const Timeline = () => {
@@ -32,8 +33,7 @@ const Timeline = () => {
   } = useGetTimelinePosts(10);
 
   const queryClient = useQueryClient();
-  const { changeHeaderShownStatus, setCurrScreen } = useHeader();
-  const [lastOffset, setLastOffset] = useState(0);
+
   const timlineDatas =
     TimelinePosts?.pages.flatMap((page) => page?.allPosts) || [];
 
@@ -44,37 +44,12 @@ const Timeline = () => {
     setRefreshing(false);
   }, []);
 
-  //   useFocusEffect(
-  //     useCallback(() => {
-  //       setCurrScreen("timeline");
-
-  //       return () => {
-  //         setCurrScreen("");
-  //       };
-  //     }, [])
-  //   );
-
-  //   const handleScroll = (event: any) => {
-  //     const contentOffsetY = event.nativeEvent.contentOffset.y;
-  //     if (contentOffsetY > lastOffset) {
-  //       changeHeaderShownStatus(false);
-  //     } else if (contentOffsetY < lastOffset && contentOffsetY > 0) {
-  //       changeHeaderShownStatus(true);
-  //     }
-
-  //     setLastOffset(contentOffsetY);
-  //   };
-
   return (
     <View style={{ position: "relative" }} className="bg-white flex-1 relative">
-      <View style={styles.plusButtonContainer}>
-        <TouchableOpacity
-          onPress={() => navigation.navigate("NewPost")}
-          style={styles.createButton}
-        >
-          <Text style={{ color: "white", fontSize: 24 }}>+</Text>
-        </TouchableOpacity>
-      </View>
+      <CreatePostButton
+        isAllowed={true}
+        onPress={() => navigation.navigate("NewPost")}
+      />
       <FlatList
         data={timlineDatas}
         style={{
@@ -98,7 +73,7 @@ const Timeline = () => {
               <ActivityIndicator size="large" color="#7367f0" />
             </View>
           ) : (
-            <View />
+            <View></View>
           )
         }
         ListEmptyComponent={
@@ -118,26 +93,3 @@ const Timeline = () => {
 };
 
 export default Timeline;
-
-const styles = StyleSheet.create({
-  plusButtonContainer: {
-    position: "absolute",
-    right: 20,
-    top: "80%",
-    zIndex: 200,
-  },
-  createButton: {
-    backgroundColor: "#6744FF",
-    padding: 15,
-    height: 60,
-    width: 60,
-    borderRadius: 30,
-    justifyContent: "center",
-    alignItems: "center",
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 4,
-    elevation: 5,
-  },
-});

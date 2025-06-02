@@ -98,18 +98,22 @@ export interface UserPostData extends PostInputData {}
 
 export interface CommunityPostData extends PostInputData {
   communityId?: string | number;
+  communityGroupId?: string | null;
+  isPostVerified: boolean;
 }
 
 export interface PostCommentData {
   postID?: string | undefined;
   content: string;
-  imageUrl?: {
-    imageUrl: string;
-    publicId: string;
-  };
+
+  imageUrl?: Array<{
+    imageUrl: string | null;
+    publicId: string | null;
+  }>;
   adminId?: string | number;
   commentId?: string | undefined;
   commenterProfileId: string;
+  level?: number;
 }
 
 interface ErrorResponse {

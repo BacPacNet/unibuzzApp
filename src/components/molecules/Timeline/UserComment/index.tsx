@@ -1,7 +1,8 @@
-import React, { memo } from "react";
+import React from "react";
 import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import avatar from "../../../../assets/avatar.png";
 import {
+  BinMinusIn,
   ChatBubbleEmpty,
   MoreHoriz,
   Reply,
@@ -12,7 +13,10 @@ import dayjs from "dayjs";
 import { getUserStore } from "@/storage/user";
 import RenderHTML from "react-native-render-html";
 import ImageGallery from "../../ImageGrid";
-import { CommentsProp } from "@/types/postType";
+import { CommentsProp, PostType } from "@/types/postType";
+import { useDeleteUserPostComment } from "@/services/timeline";
+import { useDeleteCommunityPostComment } from "@/services/communityPost";
+import { userTypeEnum } from "@/storage/register";
 
 const UserComment = ({
   item,
@@ -24,18 +28,34 @@ const UserComment = ({
   setShowTotalReply,
   showTotalReply,
   handleNavigate,
+  setModalVisible,
+  type,
 }: CommentsProp) => {
   const userData = getUserStore();
+  const { mutate: deleteUserPost } = useDeleteUserPostComment();
+  const { mutate: deleteCommunityPost } = useDeleteCommunityPostComment();
+  const role = item?.commenterProfileId?.role;
+  const isStudent = role === userTypeEnum.Student;
+  const handleDelete = () => {
+    if (type === PostType.Community) {
+      deleteCommunityPost(item._id);
+    } else {
+      deleteUserPost(item._id);
+    }
+  };
 
   const handleReplyTo = (data: any) => {
-    if (item?.level == 0) {
+    if (setModalVisible) {
       setReplyingTo({
         commentId: data?._id,
         name: data?.commenterId.firstName,
         level: 1,
+        profileDp: data?.commenterProfileId?.profile_dp?.imageUrl,
       });
+      setModalVisible(true);
     }
   };
+
   return (
     <View style={styles.container}>
       <View className="flex flex-row justify-between   ">
@@ -66,11 +86,14 @@ const UserComment = ({
               </Text>
               <View className="flex">
                 <Text style={styles.userDetails}>
-                  {item?.commenterProfileId?.study_year}.
-                  {item?.commenterProfileId?.degree}
+                  {isStudent
+                    ? item?.commenterProfileId?.study_year
+                    : item?.commenterProfileId?.occupation}
                 </Text>
                 <Text style={styles.userDetails}>
-                  {item?.commenterProfileId?.major}
+                  {isStudent
+                    ? item?.commenterProfileId?.major
+                    : item?.commenterProfileId?.affiliation}
                 </Text>
               </View>
             </TouchableOpacity>
@@ -113,7 +136,9 @@ const UserComment = ({
           )}
 
           <TouchableOpacity
-            onPress={() => likePostCommentHandler(item._id)}
+            onPress={() =>
+              likePostCommentHandler(item._id, item.level.toString())
+            }
             className="flex flex-row gap-2 items-center"
           >
             <ThumbsUp
@@ -137,6 +162,14 @@ const UserComment = ({
             <ChatBubbleEmpty height={24} width={24} />
             <Text>{item.totalCount}</Text>
           </TouchableOpacity>
+          {userData?.id === item?.commenterId?._id && (
+            <TouchableOpacity
+              onPress={handleDelete}
+              className="flex flex-row gap-2 items-center"
+            >
+              <BinMinusIn height={24} width={24} />
+            </TouchableOpacity>
+          )}
           <TouchableOpacity className="flex flex-row gap-2 items-center">
             <ShareAndroid height={24} width={24} />
           </TouchableOpacity>
@@ -155,6 +188,7 @@ const UserComment = ({
                 likePostCommentHandler={likePostCommentHandler}
                 setShowTotalReply={setShowTotalReply}
                 showTotalReply={showTotalReply}
+                type={type}
               />
             ))}
           {item?.level === 0 &&

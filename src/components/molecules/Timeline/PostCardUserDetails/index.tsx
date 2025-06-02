@@ -1,14 +1,12 @@
-import React, { useState } from "react";
+import React from "react";
 import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import avatar from "../../../../assets/avatar.png";
-import { MoreHoriz } from "iconoir-react-native";
-import PostCardOption from "../PostCardOption";
-import { useDeleteUserPost } from "@/services/timeline";
-import { useDeleteCommunityPost } from "@/services/communityPost";
+
 import { useNavigation } from "@react-navigation/native";
 import { RootStackParamList } from "@/types/navigation";
 import { StackNavigationProp } from "@react-navigation/stack";
 import PostOption from "@/assets/icons/postOption";
+import { userTypeEnum } from "@/storage/register";
 type Props = {
   name: string;
   year: string;
@@ -21,6 +19,14 @@ type Props = {
   postAdminId: string;
   setVisible: (visible: boolean) => void;
   visible: boolean;
+  communityName?: string;
+  communityGroupName?: string;
+  major: string;
+  //   adminId: string;
+  role?: string;
+  occupation?: string;
+  affiliation?: string;
+  isPostVerified?: boolean;
 };
 
 type NavigationProp = StackNavigationProp<RootStackParamList, "Timeline">;
@@ -28,29 +34,26 @@ type NavigationProp = StackNavigationProp<RootStackParamList, "Timeline">;
 const PostCardUserDetails = ({
   name,
   year,
-  degree,
   dp,
-  isAdmin,
+
   postId,
   type,
-  university,
+
   postAdminId,
   visible,
   setVisible,
+  major,
+  affiliation,
+
+  occupation,
+  role,
+  isPostVerified,
 }: Props) => {
   const navigate = useNavigation<NavigationProp>();
-  const { mutate: mutateDeletePost } = useDeleteUserPost();
-  const { mutate: mutateDeleteCommunityPost } = useDeleteCommunityPost();
 
-  const handleDeletePost = () => {
-    if (type === "Community") {
-      mutateDeleteCommunityPost(postId);
-    }
-    if (type === "Timeline") {
-      mutateDeletePost(postId);
-    }
-    setVisible(false);
-  };
+  const isStudent =
+    (role ? role.charAt(0).toUpperCase() + role.slice(1) : "") ==
+    userTypeEnum.Student;
 
   const handleNavigate = () => {
     navigate.navigate("ProfileStack", {
@@ -84,10 +87,10 @@ const PostCardUserDetails = ({
           </View>
           <View>
             <Text style={styles.fontSize} className="text-neutral-500 ">
-              {year} {degree}
+              {isStudent ? year : occupation}
             </Text>
             <Text style={styles.fontSize} className="text-neutral-500 ">
-              {university}
+              {isStudent ? major : affiliation}
             </Text>
           </View>
         </View>

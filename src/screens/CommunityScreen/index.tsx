@@ -32,6 +32,7 @@ import PostCard from "@/components/molecules/Timeline/PostCard";
 import { useQueryClient } from "@tanstack/react-query";
 import { RootStackParamList } from "@/types/navigation";
 import { StackNavigationProp } from "@react-navigation/stack";
+import CreatePostButton from "@/components/atoms/CreatePostButton";
 
 type NavigationProp = StackNavigationProp<RootStackParamList, "Community">;
 
@@ -209,20 +210,14 @@ const CommunityScreen = ({ route }: any) => {
 
   return (
     <SafeAreaView className="bg-white flex-1">
-      <View style={styles.plusButtonContainer}>
-        {communityData?.adminId == userData?.id && (
-          <TouchableOpacity
-            onPress={() =>
-              navigation.navigate("NewGroupPost", {
-                communityId,
-              })
-            }
-            style={styles.createButton}
-          >
-            <Text style={{ color: "white", fontSize: 24 }}>+</Text>
-          </TouchableOpacity>
-        )}
-      </View>
+      <CreatePostButton
+        isAllowed={communityData?.adminId == userData?.id}
+        onPress={() =>
+          navigation.navigate("NewGroupPost", {
+            communityId,
+          })
+        }
+      />
       <FlatList
         // data={communityDatas}
         data={isUserJoinedCommunity || communityPostError ? communityDatas : []}
@@ -286,26 +281,6 @@ const CommunityScreen = ({ route }: any) => {
 export default CommunityScreen;
 
 const styles = StyleSheet.create({
-  plusButtonContainer: {
-    position: "absolute",
-    right: 20,
-    top: "80%",
-    zIndex: 200,
-  },
-  createButton: {
-    backgroundColor: "#6744FF",
-    padding: 15,
-    height: 60,
-    width: 60,
-    borderRadius: 30,
-    justifyContent: "center",
-    alignItems: "center",
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 4,
-    elevation: 5,
-  },
   card: {
     backgroundColor: "#fff",
 

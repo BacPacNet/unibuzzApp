@@ -17,27 +17,32 @@ export type PostCardType = {
       lastName: string;
       _id: string;
     };
+    user_id: string;
     _id: string;
     university: string;
-    adminId: string;
+    // adminId: string;
     year: string;
     text: string;
     link?: string;
     date: string;
     avatarLink: string;
-    communityGroupId?: string;
-    communityId?: string;
+    communityGroupId?: any;
+    communityId?: any;
+    community: any;
     commentCount: number;
     content?: string;
-
+    level: string;
     userProfile: {
+      university_name: string;
       study_year: string;
       degree: string;
-      university_name: string;
+      major: string;
+      affiliation: string;
+      occupation: string;
+      role: string;
       profile_dp: {
         imageUrl: string;
       };
-      major: string;
     };
 
     imageUrl: {
@@ -45,9 +50,12 @@ export type PostCardType = {
     }[];
     createdAt: string;
     likeCount: string[];
+    communityName: string;
+    communityGroupName: string;
   };
   isTimeline: boolean;
   communityGroupId?: string;
+  isSinglePost: boolean;
 };
 
 export type CommentsProp = {
@@ -60,6 +68,7 @@ export type CommentsProp = {
       firstName: string;
       lastName: string;
       _id: string;
+      id: string;
     };
     commenterProfileId: {
       profile_dp: {
@@ -70,6 +79,9 @@ export type CommentsProp = {
       study_year: string;
       degree: string;
       major: string;
+      role: string;
+      occupation: string;
+      affiliation: string;
     };
     content: string;
     createdAt: string;
@@ -80,8 +92,10 @@ export type CommentsProp = {
   setShowReply?: any;
   showReply?: any;
   setReplyingTo: (value: any) => void;
-  likePostCommentHandler: (value: string) => void;
+  likePostCommentHandler: (value: string, value2: string) => void;
   setShowTotalReply: (value: number) => void;
+  setModalVisible?: (value: boolean) => void;
   showTotalReply: number;
   handleNavigate?: any;
+  type: PostType;
 };

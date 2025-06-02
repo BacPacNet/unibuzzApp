@@ -1,4 +1,3 @@
-import { useCreateUserPost } from "@/services/timeline";
 import {
   DropCursorBridge,
   LinkBridge,
@@ -8,7 +7,7 @@ import {
   Toolbar,
   useEditorBridge,
 } from "@10play/tentap-editor";
-import { useFocusEffect } from "@react-navigation/native";
+
 import { MediaImage, NavArrowLeft, PagePlus } from "iconoir-react-native";
 import React, { useCallback, useState } from "react";
 import {
@@ -21,16 +20,24 @@ import {
   View,
 } from "react-native";
 import { launchImageLibrary } from "react-native-image-picker";
-import DocumentPicker from "react-native-document-picker";
+import { PostCommentData } from "@/types/constant";
 
-import { replaceImage } from "@/services/uploadImage";
-import { UserPostType } from "@/types/postType";
-import { PostInputData } from "@/types/constant";
+import { Toast } from "react-native-toast-notifications";
+import { getUserProfileStore } from "@/storage/user";
 import { UPLOAD_CONTEXT } from "@/types/uploads";
 import { useUploadToS3 } from "@/services/upload";
 import { validateUploadedFiles } from "@/utils";
-import { Toast } from "react-native-toast-notifications";
+
 import MediaPreviewList from "@/components/molecules/MediaPreview";
+import {
+  useCreateGroupPostComment,
+  useCreateGroupPostCommentReply,
+} from "@/services/communityPost";
+import { PostType } from "@/types/postType";
+import {
+  useCreateUserPostComment,
+  useCreateUserPostCommentReply,
+} from "@/services/timeline";
 
 type ImageAsset = {
   uri: string;
@@ -48,13 +55,36 @@ type fileType = {
 
   type?: string | null;
 };
-const NewPost = ({ navigation }: any) => {
+
+type Props = {
+  postId: string;
+  type: PostType.Community | PostType.Timeline;
+  adminID: string;
+  setModalVisible: (value: boolean) => void;
+  level: boolean;
+  commentData: {
+    commentId: string;
+    name: string;
+    profileDp: string;
+  };
+  postAuthorName: string;
+};
+
+const NewComment = ({
+  setModalVisible,
+  adminID,
+  postId,
+  type,
+  level,
+  commentData,
+  postAuthorName,
+}: Props) => {
+  const userProfileData = getUserProfileStore();
   const [images, setImages] = useState<ImageAsset[]>([]);
   const [files, setFiles] = useState<fileType[]>([]);
   const editor = useEditorBridge({
     autofocus: true,
     avoidIosKeyboard: true,
-    // initialContent: "test",
     bridgeExtensions: [
       ...TenTapStartKit,
       PlaceholderBridge.configureExtension({
@@ -67,41 +97,26 @@ const NewPost = ({ navigation }: any) => {
       }),
     ],
   });
-  const { mutate: CreateTimelinePost, isPending } = useCreateUserPost();
   const { mutateAsync: uploadToS3 } = useUploadToS3();
-  const [postAccessType, setPostAccessType] = useState<UserPostType>(
-    UserPostType.PUBLIC
-  );
+
+  const {
+    mutateAsync: mutateUserPostComment,
+    isPending: isUserPostCommentPending,
+  } = useCreateUserPostComment();
+  const {
+    mutateAsync: CreateUserPostCommentReply,
+    isPending: CreateUserPostCommentReplyLoading,
+  } = useCreateUserPostCommentReply(false, postId || "");
+
+  const {
+    mutateAsync: mutateGroupPostComment,
+    isPending: isGroupPostCommentPending,
+  } = useCreateGroupPostComment();
+  const {
+    mutateAsync: CreateGroupPostCommentReply,
+    isPending: useCreateGroupPostCommentReplyLoading,
+  } = useCreateGroupPostCommentReply(false, postId || "");
   const [isPostCreating, setIsPostCreating] = useState(false);
-  const [showPostType, setShowPostType] = useState(false);
-
-  useFocusEffect(
-    useCallback(() => {
-      navigation.getParent().setOptions({
-        tabBarStyle: { display: "none" },
-      });
-
-      return () => {
-        navigation.getParent().setOptions({
-          tabBarStyle: {
-            display: "flex",
-            backgroundColor: "white",
-            height: 60,
-            paddingBottom: 10,
-            paddingTop: 10,
-          },
-        });
-      };
-    }, [navigation])
-  );
-
-  const handlePostVisibilityTypeChange = useCallback(
-    (type: UserPostType) => {
-      setPostAccessType(type);
-      setShowPostType(false);
-    },
-    [setPostAccessType, setShowPostType]
-  );
 
   const handleImagePick = useCallback(() => {
     launchImageLibrary(
@@ -127,7 +142,7 @@ const NewPost = ({ navigation }: any) => {
           }
           setImages((prevImages) => [...prevImages, ...response.assets]);
         }
-      }
+      },
     );
   }, []);
 
@@ -139,117 +154,83 @@ const NewPost = ({ navigation }: any) => {
         setFiles((prev) => prev.filter((file) => file.name !== identifier));
       }
     },
-    []
+    [],
   );
 
-  const handleFilePick = async () => {
-    try {
-      const res = await DocumentPicker.pick({
-        type: [
-          DocumentPicker.types.pdf,
-          DocumentPicker.types.docx,
-          DocumentPicker.types.doc,
-        ],
-        allowMultiSelection: true,
-      });
-
-      const validationResult = validateUploadedFiles(
-        res.map((file: any) => ({
-          ...file,
-          size: file.size,
-          type: file.type,
-        }))
-      );
-
-      if (!validationResult.isValid) {
-        Toast.show(validationResult.message);
-        return;
-      }
-
-      const totalFiles = files.length + images.length;
-      if (totalFiles > 4) {
-        Toast.show("You can upload a maximum of 4 files.");
-        return;
-      }
-
-      setFiles(res);
-    } catch (err) {
-      if (DocumentPicker.isCancel(err)) {
-        console.log("User cancelled picker");
-      } else {
-        console.error("DocumentPicker Error:", err);
-      }
-    }
-  };
-
-  const handlePostCreate = async () => {
+  const handleComment = async () => {
+    // const text = await editor.getHTML();
     const text = await editor.getHTML();
     const isEmpty = text.replace(/<[^>]+>/g, "").trim() === "";
 
     const cleanedText = isEmpty ? "" : text;
-    const payload: PostInputData = {
-      content: cleanedText,
-      PostType: postAccessType,
-    };
 
-    if (!cleanedText && !images?.length && !files?.length) {
+    if (!cleanedText && !images?.length) {
       Toast.show("Post must contain text or at least one file.");
       return;
     }
     setIsPostCreating(true);
+    const payload: PostCommentData = {
+      content: cleanedText,
+      commenterProfileId: userProfileData?._id || "",
+      postID: postId,
+    };
 
-    if (images?.length || files?.length) {
-      const mergedFiles = [
-        ...(images || []).map((image) => ({
-          uri: image.uri,
-          fileName: image.fileName || `upload_${Date.now()}.jpg`,
-          type: image.type || "image/jpeg",
-        })),
-        ...(files || []).map((file: any) => ({
-          uri: file.uri,
-          fileName: file.name || `file_${Date.now()}`,
-          type: file.type || "application/octet-stream",
-        })),
-      ];
-
+    if (images?.length) {
       const uploadPayload = {
-        files: mergedFiles,
-        context: UPLOAD_CONTEXT.TIMELINE,
+        files: images,
+        context: UPLOAD_CONTEXT.POST_COMMENT,
       };
-
-      const uploadResponse = await uploadToS3(uploadPayload);
-      if (uploadResponse.success) {
-        payload.imageUrl = uploadResponse.data;
-      }
+      const imageData = await uploadToS3(uploadPayload);
+      payload.imageUrl = imageData.data;
     }
 
-    CreateTimelinePost(payload, {
-      onSuccess: () => {
-        setImages([]);
-        setFiles([]);
-        editor.setContent("");
-        navigation.goBack();
-      },
-    });
+    if (type === PostType.Timeline) {
+      if (level) {
+        payload.level = 0;
+        payload.commentId = commentData?.commentId;
+        await CreateUserPostCommentReply(payload);
+      } else {
+        await mutateUserPostComment(payload);
+      }
+    } else if (type === PostType.Community) {
+      if (level) {
+        payload.level = 0;
 
+        payload.commentId = commentData?.commentId;
+        await CreateGroupPostCommentReply(payload);
+      } else {
+        payload.adminId = adminID;
+        await mutateGroupPostComment(payload);
+      }
+    }
+    setModalVisible(false);
     setIsPostCreating(false);
+  };
+
+  const handleBack = () => {
+    setModalVisible(false);
   };
 
   return (
     <View className="flex-1 bg-white relative">
       <View className="  flex flex-row gap-4 items-center justify-between border-b border-neutral-300 p-3">
         <View className=" flex flex-row gap-4 items-center">
-          <TouchableOpacity onPress={() => navigation.goBack()}>
+          <TouchableOpacity onPress={() => handleBack()}>
             <NavArrowLeft height={24} width={24} />
           </TouchableOpacity>
+          <Text>
+            {level
+              ? `Replying to ${commentData.name}`
+              : `Commenting on ${postAuthorName} post`}
+          </Text>
         </View>
         <View className="flex flex-row items-center gap-4">
           <TouchableOpacity
-            onPress={() => handlePostCreate()}
+            onPress={() => handleComment()}
             className="bg-primary-500 px-4 py-2 rounded-lg"
-            disabled={isPending || isPostCreating}
+            // disabled={isPending || isPostCreating}
           >
-            {isPending || isPostCreating ? (
+            {isPostCreating ? (
               <ActivityIndicator color={"white"} />
             ) : (
               <Text className={`text-center font-bold text-white`}>Post</Text>
@@ -273,9 +254,6 @@ const NewPost = ({ navigation }: any) => {
             <TouchableOpacity onPress={handleImagePick}>
               <MediaImage height={20} width={20} color={"#a3a3a3"} />
             </TouchableOpacity>
-            <TouchableOpacity onPress={handleFilePick}>
-              <PagePlus height={20} width={20} color={"#a3a3a3"} />
-            </TouchableOpacity>
           </View>
 
           <MediaPreviewList
@@ -291,4 +269,4 @@ const NewPost = ({ navigation }: any) => {
   );
 };
 
-export default NewPost;
+export default NewComment;
