@@ -6,6 +6,7 @@ import {
   TextInput,
   TouchableOpacity,
   ScrollView,
+  Switch,
 } from "react-native";
 
 import Title from "@/components/atoms/Title";
@@ -20,8 +21,10 @@ import { SelectInputWithSearch } from "@/components/atoms/SelectInputWithSearch"
 
 const ProfileStudentForm = ({
   onSubmit,
+  handlePrev,
 }: {
   onSubmit: (data: any) => Promise<void>;
+  handlePrev: () => void;
 }) => {
   const {
     formState: { errors: ProfileFormErrors },
@@ -33,7 +36,7 @@ const ProfileStudentForm = ({
   } = useFormContext();
 
   type DegreeKeys = keyof typeof degreeAndMajors;
-  const currDegree: DegreeKeys = watch("degree");
+  const currDegree: DegreeKeys = watch("year");
   const currMa: DegreeKeys = watch("major");
   const userType = getValues("userType");
 
@@ -70,36 +73,48 @@ const ProfileStudentForm = ({
             <Text className={`text-md text-neutral-900 `}>{userType}</Text>
           </View>
 
-          <SelectUniversityDropdownBottomSheet
-            placeholder="Select University Name"
-            icon="single"
-            search={true}
-            control={control}
-            name="universityName"
-            rules={{ required: "University is required!" }}
-            setValue={setValue}
-          />
-
+          <View className="mb-4">
+            <SelectUniversityDropdownBottomSheet
+              placeholder="Select University Name"
+              icon="single"
+              search={true}
+              control={control}
+              name="universityName"
+              rules={{ required: "University is required!" }}
+              setValue={setValue}
+              isMarginBottom={false}
+            />
+            <View className="flex flex-row items-center">
+              <Text className="text-[12px] text-neutral-500 text-start">
+                Join the university community after signing up
+              </Text>
+              <Controller
+                name={"isJoinUniversity"}
+                control={control}
+                // rules={{ required: 'This field is required.' }}
+                render={({ field }) => (
+                  <View className="flex items-center gap-2">
+                    <Switch
+                      trackColor={{ false: "#767577", true: "#81b0ff" }}
+                      thumbColor={field.value ? "#f4f3f4" : "#f4f3f4"}
+                      ios_backgroundColor="#3e3e3e"
+                      onValueChange={field.onChange}
+                      value={field.value}
+                    />
+                  </View>
+                )}
+              />
+            </View>
+          </View>
           <SelectInputWithSearch
             isLabelShown={false}
             placeholder="Year"
             name="year"
-            options={currYear}
-            control={control}
-            search={true}
-            required
-            rules={{ required: "Year is required!" }}
-          />
-
-          <SelectInputWithSearch
-            isLabelShown={false}
-            placeholder="Select a degree"
-            name="degree"
             options={Object.keys(degreeAndMajors)}
             control={control}
             search={true}
             required
-            rules={{ required: "degree is required!" }}
+            rules={{ required: "Year is required!" }}
           />
 
           <View className="w-full flex flex-col relative mb-4">
@@ -124,6 +139,11 @@ const ProfileStudentForm = ({
           onPress={handleSubmit(onSubmit)}
           buttonText="Next Step"
           variant="primary"
+        />
+        <ReusableButton
+          onPress={handlePrev}
+          buttonText="Review Profile"
+          variant="shade"
         />
 
         <Text className="text-[12px] text-neutral-600 text-center">

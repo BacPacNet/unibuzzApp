@@ -53,6 +53,14 @@ const PostCard = memo(
       return data?.likeCount?.some((like: any) => like.userId == userData?.id);
     }, [data]);
 
+    const resolvedPostType = isSinglePost
+      ? data?.communityId || data?.community?._id
+        ? PostType.Community
+        : PostType.Timeline
+      : data?.communityId || data?.community?._id
+        ? PostType.Community
+        : PostType.Timeline;
+
     const { mutate: LikeUnlikeGroupPost, isPending: isLikeUnlikeGroupPending } =
       useLikeUnilikeGroupPost(
         data?.communityId,
@@ -133,15 +141,7 @@ const PostCard = memo(
           communityGroupName={data?.communityGroupName}
           dp={data?.userProfile?.profile_dp?.imageUrl || " "}
           postId={data?._id}
-          type={
-            isSinglePost
-              ? data?.communityId
-                ? PostType.Community
-                : PostType.Timeline
-              : data?.community?._id
-                ? PostType.Community
-                : PostType.Timeline
-          }
+          type={resolvedPostType}
           //   isAdmin={data?.user?._id == userData?.id}
           isAdmin={
             isSinglePost
@@ -229,15 +229,7 @@ const PostCard = memo(
           onDelete={handleDeletePost}
           postID={data?._id}
           //   type={data?.community?._id ? PostType.Community : PostType.Timeline}
-          type={
-            isSinglePost
-              ? data?.communityId
-                ? PostType.Community
-                : PostType.Timeline
-              : data?.community?._id
-                ? PostType.Community
-                : PostType.Timeline
-          }
+          type={resolvedPostType}
           isSinglePost={isSinglePost}
         />
         <ActionSheet
@@ -256,15 +248,7 @@ const PostCard = memo(
         >
           <CommentBottomSheet
             postId={data?._id}
-            type={
-              isSinglePost
-                ? data?.communityId
-                  ? PostType.Community
-                  : PostType.Timeline
-                : data?.community?._id
-                  ? PostType.Community
-                  : PostType.Timeline
-            }
+            type={resolvedPostType}
             width={width}
             // adminID={data?.user?._id}
             adminID={isSinglePost ? data?.user_id : data?.user?._id}

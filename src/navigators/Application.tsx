@@ -46,6 +46,7 @@ import { CommunityFilterProvider } from "@/context/CommunityFilterProvider/Commu
 import NewGroupPost from "@/screens/NewGroupPost";
 import SettingsStack from "./SettingsStack";
 import SinglePost from "@/screens/SinglePost/SinglePost";
+import ForgetPasswordScreen from "@/screens/ForgetPasswordScreen/ForgetPasswordScreen";
 
 const Stack = createStackNavigator<RootStackParamList>();
 const Tab = createBottomTabNavigator<RootStackParamList>();
@@ -354,6 +355,10 @@ function ApplicationNavigator() {
             />
           )}
           <Stack.Screen name="LoginScreen" component={LoginScreen} />
+          <Stack.Screen
+            name="ForgetPassword"
+            component={ForgetPasswordScreen}
+          />
           <Stack.Screen name="RegisterScreen" component={RegisterScreen} />
         </Stack.Navigator>
       </UnauthenticatedGuard>

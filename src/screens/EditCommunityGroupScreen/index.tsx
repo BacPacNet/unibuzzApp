@@ -71,7 +71,7 @@ const EditCommunityGroupScreen = () => {
 
   const { communityId, communityGroups } = route.params as any;
   const { changeHeaderShownStatus } = useHeader();
-  const { data: communityData, isFetching } = useGetCommunity(communityId);
+  const { data: communityData, isLoading } = useGetCommunity(communityId);
   const { createSelectedFilters, setCreateSelectedFilters } =
     useCommunityFilterContext();
   const { mutateAsync: uploadToS3 } = useUploadToS3();
@@ -124,7 +124,9 @@ const EditCommunityGroupScreen = () => {
   useFocusEffect(
     useCallback(() => {
       changeHeaderShownStatus(false);
+
       setCreateSelectedFilters(communityGroups?.communityGroupCategory);
+
       return () => {
         changeHeaderShownStatus(true);
         setCreateSelectedFilters([]);

@@ -1,3 +1,5 @@
+import { status } from "./CommunityGroup";
+
 export interface Community {
   _id: string;
   communityCoverUrl: { imageUrl: string; publicId: string };
@@ -15,8 +17,7 @@ export interface Community {
 }
 
 export interface CommunityUsers {
-  id?: string;
-  userId?: string;
+  _id: string;
   isRequestAccepted: boolean;
   firstName: string;
   lastName: string;
@@ -28,6 +29,7 @@ export interface CommunityUsers {
   occupation: string;
   affiliation: string;
   role: string;
+  status: status;
 }
 
 export interface CommunityGroup {

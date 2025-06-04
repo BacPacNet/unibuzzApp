@@ -6,6 +6,7 @@ export type RootStackParamList = {
   Example: undefined;
   LoginScreen: undefined;
   RegisterScreen: undefined;
+  ForgetPassword: undefined;
   Timeline: undefined;
   NewPost: undefined;
   ProfileStack: any;

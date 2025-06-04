@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { useFormContext } from "react-hook-form";
-import { View, Text } from "react-native";
+import { Controller, useFormContext } from "react-hook-form";
+import { View, Text, Switch } from "react-native";
 
 import Title from "@/components/atoms/Title";
 import SupportingText from "@/components/atoms/SupportingText";
@@ -13,8 +13,10 @@ import SelectUniversityDropdownBottomSheet from "@/components/atoms/SelectUniver
 
 const ProfileFacultyForm = ({
   onSubmit,
+  handlePrev,
 }: {
   onSubmit: (data: any) => Promise<void>;
+  handlePrev: () => void;
 }) => {
   const {
     formState: { errors: ProfileFormErrors },
@@ -58,7 +60,7 @@ const ProfileFacultyForm = ({
           <Text className={`text-md text-neutral-900 `}>{userType}</Text>
         </View>
 
-        <SelectUniversityDropdownBottomSheet
+        {/* <SelectUniversityDropdownBottomSheet
           placeholder="Select University Name"
           icon="single"
           search={true}
@@ -66,7 +68,40 @@ const ProfileFacultyForm = ({
           name="universityName"
           rules={{ required: "University is required!" }}
           setValue={setValue}
-        />
+        /> */}
+        <View className="mb-4">
+          <SelectUniversityDropdownBottomSheet
+            placeholder="Select University Name"
+            icon="single"
+            search={true}
+            control={control}
+            name="universityName"
+            rules={{ required: "University is required!" }}
+            setValue={setValue}
+            isMarginBottom={false}
+          />
+          <View className="flex flex-row items-center">
+            <Text className="text-[12px] text-neutral-500 text-start">
+              Join the university community after signing up
+            </Text>
+            <Controller
+              name={"isJoinUniversity"}
+              control={control}
+              // rules={{ required: 'This field is required.' }}
+              render={({ field }) => (
+                <View className="flex items-center gap-2">
+                  <Switch
+                    trackColor={{ false: "#767577", true: "#81b0ff" }}
+                    thumbColor={field.value ? "#f4f3f4" : "#f4f3f4"}
+                    ios_backgroundColor="#3e3e3e"
+                    onValueChange={field.onChange}
+                    value={field.value}
+                  />
+                </View>
+              )}
+            />
+          </View>
+        </View>
 
         <SelectInputWithSearch
           label="Occupation"
@@ -95,6 +130,11 @@ const ProfileFacultyForm = ({
         onPress={handleSubmit(onSubmit)}
         buttonText="Next Step"
         variant="primary"
+      />
+      <ReusableButton
+        onPress={handlePrev}
+        buttonText="Review Profile"
+        variant="shade"
       />
 
       <Text className="text-md text-neutral-600 text-center">

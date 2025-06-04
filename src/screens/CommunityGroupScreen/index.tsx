@@ -106,11 +106,16 @@ const CommunityGroupScreen = ({ route }: any) => {
       ) || false
     );
   }, [userProfileData, communityGroups]);
+
   const userStatus = useMemo(() => {
     return communityGroups?.users?.find(
-      (user) => user.userId === userProfileData?.users_id,
+      (user) => user._id === userProfileData?.users_id,
     )?.status as status;
   }, [communityGroups, userProfileData]);
+
+  const CommunityGroupMember = communityGroups?.users?.filter(
+    (user: { status: status }) => user.status === status.accepted,
+  );
 
   useFocusEffect(
     useCallback(() => {
@@ -136,7 +141,7 @@ const CommunityGroupScreen = ({ route }: any) => {
       setIsUserJoinedCommunityGroup(
         communityGroups?.users?.some(
           (item) =>
-            item?.userId?.toString() === userData.id && item?.isRequestAccepted,
+            item?._id?.toString() === userData.id && item?.isRequestAccepted,
         ),
       );
     }
@@ -276,6 +281,7 @@ const CommunityGroupScreen = ({ route }: any) => {
                 data={item}
                 isTimeline={false}
                 communityGroupId={communityGroupId}
+                isSinglePost={false}
               />
             )
           }
@@ -324,11 +330,12 @@ const CommunityGroupScreen = ({ route }: any) => {
         }}
       >
         <CommunityGroupMembersModal
-          users={communityGroups?.users || []}
+          users={CommunityGroupMember || []}
           communityGroupId={communityGroupId}
           isGroupAdmin={
             communityGroups?.adminUserId.toString() === userData?.id?.toString()
           }
+          adminId={communityGroups?.adminUserId as string}
           hideBottomBar={hideBottomBar}
         />
       </ActionSheet>

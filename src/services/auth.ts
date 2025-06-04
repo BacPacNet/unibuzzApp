@@ -3,10 +3,12 @@ import { client } from "./api-client";
 import { RegisterForm, LoginForm, UserResponseType } from "@/models/auth";
 import { storeUser, storeUserProfile } from "@/storage/user";
 import { storeToken } from "@/storage/token";
-import { useToast } from "react-native-toast-notifications";
+import { Toast, useToast } from "react-native-toast-notifications";
 import { useNavigation } from "@react-navigation/native";
 import { useAuth } from "@/context/AuthProvider/AuthContext";
 import { removeRegisterData } from "@/storage/register";
+import { MESSAGES } from "@/content/constant";
+import { useUserPasswordReset } from "@/context/UserPasswordResetProvider/UserPasswordResetProvider";
 
 const login = async (data: LoginForm): Promise<UserResponseType> => {
   const result = await client<UserResponseType, LoginForm>("auth/login", {
@@ -68,6 +70,42 @@ export const useHandleRegister = () => {
     onError(error: any) {
       console.log("Axios error:", error.response?.data.message);
       toast.show(error.response?.data.message || "Something went wrong");
+    },
+  });
+};
+
+interface data {
+  email: string;
+  userName: string;
+  password: string;
+  confirmpassword: string;
+  birthDate: string;
+  gender: string;
+  country: string;
+  firstName: string;
+  lastName: string;
+  verificationEmail: string;
+  verificationOtp: string;
+  universityEmail: string;
+  UniversityOtp: string;
+  UniversityOtpOK: string;
+  referralCode: string;
+}
+
+async function register_v2(data: data) {
+  const response: { isRegistered: boolean } = await client(`/auth/register`, {
+    method: "POST",
+    data,
+  });
+  return response;
+}
+
+export const useHandleRegister_v2 = () => {
+  return useMutation({
+    mutationFn: (data: data) => register_v2(data),
+    onError: (error: any) => {
+      console.log(error);
+      Toast.show(error.response.data.message || MESSAGES.SOMETHING_WENT_WRONG);
     },
   });
 };
@@ -173,3 +211,72 @@ export const useHandleUniversityEmailVerification = () => {
 };
 
 //university email  verification check end
+
+// reset password
+
+async function resetPasswordCodeGenerate(data: { email: string }) {
+  const response: any = await client(
+    `/auth/send-reset-password-otp?email=${data.email}`,
+    { method: "POST", data },
+  );
+  return response;
+}
+
+export const useResetPasswordCodeGenerate = () => {
+  return useMutation({
+    mutationFn: (data: { email: string }) => resetPasswordCodeGenerate(data),
+    onSuccess: () => {
+      Toast.show("OTP sent successfully");
+    },
+    onError: (error: any) => {
+      Toast.show(error.response.data.message || MESSAGES.SOMETHING_WENT_WRONG);
+    },
+  });
+};
+
+async function verifyResetPasswordOtp(data: { email: string }) {
+  const response: any = await client(`/auth/verify-reset-password-otp`, {
+    method: "POST",
+    data,
+  });
+  return response;
+}
+
+export const useVerifyResetPasswordOtp = () => {
+  //   const { setResetPasswordToken } = useUniStore()
+  const { setResetPasswordToken } = useUserPasswordReset();
+  return useMutation({
+    mutationFn: (data: { email: string }) => verifyResetPasswordOtp(data),
+    onSuccess: (res: any) => {
+      setResetPasswordToken(res.resetToken);
+    },
+    onError: (error: any) => {
+      Toast.show(error.response.data.message || MESSAGES.SOMETHING_WENT_WRONG);
+    },
+  });
+};
+
+async function resetPassword(data: any) {
+  const response: any = await client(`/auth/reset-password`, {
+    method: "POST",
+    data,
+  });
+  return response;
+}
+
+export const useResetPassword = () => {
+  const { resetPasswordResetData } = useUserPasswordReset();
+  return useMutation({
+    mutationFn: (data: any) => resetPassword(data),
+    onSuccess: () => {
+      Toast.show("Password has been reset");
+      resetPasswordResetData();
+    },
+    onError: (error: any) => {
+      if (error.response.data.message == "Password reset failed") {
+        resetPasswordResetData();
+      }
+      Toast.show(error.response.data.message || MESSAGES.SOMETHING_WENT_WRONG);
+    },
+  });
+};

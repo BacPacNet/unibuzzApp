@@ -13,6 +13,7 @@ import { ToastProvider } from "react-native-toast-notifications";
 import { getToken } from "./storage/token";
 import { SafeScreen } from "./components/template";
 import AuthProvider from "./context/AuthProvider/AuthProvider";
+import { UserPasswordResetProvider } from "./context/UserPasswordResetProvider/UserPasswordResetProvider";
 
 export const queryClient = new QueryClient();
 
@@ -25,10 +26,12 @@ function App() {
         <SafeAreaProvider>
           {/* <SafeScreen> */}
           <AuthProvider>
-            <ToastProvider>
-              <ApplicationNavigator />
-              {/* <DevToolsBubble /> */}
-            </ToastProvider>
+            <UserPasswordResetProvider>
+              <ToastProvider>
+                <ApplicationNavigator />
+                {/* <DevToolsBubble /> */}
+              </ToastProvider>
+            </UserPasswordResetProvider>
           </AuthProvider>
           {/* </SafeScreen> */}
         </SafeAreaProvider>

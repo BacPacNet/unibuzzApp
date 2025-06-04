@@ -9,6 +9,7 @@ import {
 } from "@tanstack/react-query";
 import { Community } from "@/types/Community";
 import { Toast } from "react-native-toast-notifications";
+import { updateUserProfileCommunities } from "@/storage/user";
 
 export async function getCommunity(communityId: string) {
   const response = await client(`/community/${communityId}`);
@@ -79,11 +80,15 @@ export const useJoinCommunity = () => {
   return useMutation({
     mutationFn: (communityId: string) =>
       joinCommunity(communityId, cookieValue),
-    onSuccess: () => {
+    onSuccess: (response: any) => {
       queryClient.invalidateQueries({ queryKey: ["communityGroupsPost"] });
       queryClient.invalidateQueries({
         queryKey: ["useGetSubscribedCommunties"],
       });
+      queryClient.invalidateQueries({
+        queryKey: ["community"],
+      });
+      updateUserProfileCommunities(response.user.communities);
       Toast.show(`Joined Community `);
     },
     onError: (res: any) => {
@@ -106,10 +111,14 @@ export const useLeaveCommunity = () => {
   return useMutation({
     mutationFn: (communityId: string) =>
       leaveCommunity(communityId, cookieValue),
-    onSuccess: () => {
+    onSuccess: (response: any) => {
       queryClient.invalidateQueries({
         queryKey: ["useGetSubscribedCommunties"],
       });
+      queryClient.invalidateQueries({
+        queryKey: ["community"],
+      });
+      updateUserProfileCommunities(response.data.community);
       Toast.show(`Left Community`);
     },
     onError: (res: any) => {

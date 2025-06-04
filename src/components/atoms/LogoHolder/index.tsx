@@ -1,9 +1,13 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { View, Image, Platform, StyleSheet } from "react-native";
 import UniversityLogoPlaceHolder from "@/assets/uniorangeIcon.svg";
 
 const CommunityLogo = ({ logoUrl }: { logoUrl: string }) => {
   const [logoSrc, setLogoSrc] = useState(logoUrl);
+
+  useEffect(() => {
+    setLogoSrc(logoUrl);
+  }, [logoUrl]);
 
   return (
     <View style={[styles.imageWrapper]}>

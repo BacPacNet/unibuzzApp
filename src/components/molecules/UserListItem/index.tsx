@@ -31,6 +31,7 @@ interface Props {
   isGroupAdmin?: boolean;
   handleRemoveClick?: (id: string) => void;
   isRemovePending?: boolean;
+  isViewerAdmin: boolean;
 }
 
 const UserListItem: React.FC<Props> = ({
@@ -50,6 +51,7 @@ const UserListItem: React.FC<Props> = ({
   showCommunityGroupMember,
   handleRemoveClick,
   isRemovePending,
+  isViewerAdmin,
 }) => {
   const navigation = useNavigation();
   const { mutate: toggleFollow, isPending } = useToggleFollow();
@@ -60,6 +62,11 @@ const UserListItem: React.FC<Props> = ({
   //   const handleProfileClick = () => navigation.navigate('UserProfile', { userId: id })
 
   const isStudent = role == userTypeEnum.Student;
+  const showRemoveButton =
+    !isSelfProfile && isViewerAdmin && showCommunityGroupMember;
+  const showFollowButton = !isSelfProfile && !showRemoveButton;
+
+  console.log("showRemoveButton", showRemoveButton);
 
   return (
     <View style={styles.itemContainer}>
@@ -84,7 +91,21 @@ const UserListItem: React.FC<Props> = ({
         </View>
       </TouchableOpacity>
 
-      {!isSelfProfile && isGroupAdmin && showCommunityGroupMember ? (
+      {showRemoveButton && (
+        <TouchableOpacity
+          disabled={isRemovePending}
+          onPress={() => handleRemoveClick && handleRemoveClick(id)}
+          style={styles.removeButton}
+        >
+          {isRemovePending ? (
+            <ActivityIndicator size="small" color="#fff" />
+          ) : (
+            <Text style={styles.removeButtonText}>Remove</Text>
+          )}
+        </TouchableOpacity>
+      )}
+
+      {/* {!isSelfProfile && isGroupAdmin && showCommunityGroupMember ? (
         <TouchableOpacity
           disabled={isRemovePending}
           onPress={() => handleRemoveClick && handleRemoveClick(id)}
@@ -109,7 +130,7 @@ const UserListItem: React.FC<Props> = ({
             </Text>
           )}
         </TouchableOpacity>
-      ) : null}
+      ) : null} */}
     </View>
   );
 };

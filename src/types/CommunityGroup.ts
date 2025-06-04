@@ -11,7 +11,8 @@ interface users {
 }
 
 export interface CommunityGroupUsers {
-  userId: string;
+  //  userId: string
+  _id: string;
   isRequestAccepted: boolean;
   firstName: string;
   lastName: string;

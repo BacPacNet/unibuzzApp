@@ -10,6 +10,7 @@ import {
 import ReusableButton from "../../../atoms/ReusableButton";
 import JoinGroupButton from "../../../atoms/JoinGroupButton";
 import UniversityLogoPlaceHolder from "@/assets/unibuzz_rounded.svg";
+import { status } from "@/types/CommunityGroup";
 
 type CommunityGroup = {
   title: string;
@@ -67,7 +68,9 @@ const FlatListCommunityHeader: React.FC<Props> = ({
     () => handleToggleJoinCommunityGroup(),
     [handleToggleJoinCommunityGroup],
   );
-
+  const totalCommunityGroupMember = communityGroups?.users.filter(
+    (user: { status: status }) => user.status === status.accepted,
+  ).length;
   return (
     <View style={styles.card}>
       <Image
@@ -133,7 +136,7 @@ const FlatListCommunityHeader: React.FC<Props> = ({
 
         <TouchableOpacity onPress={() => membersBottomSheet.current?.show()}>
           <Text style={styles.members}>
-            {communityGroups?.users.length} members
+            {totalCommunityGroupMember} members
           </Text>
         </TouchableOpacity>
 

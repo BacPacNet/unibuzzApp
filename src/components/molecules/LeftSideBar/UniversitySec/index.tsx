@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { Platform, StyleSheet, Text, View } from "react-native";
 import NavbarSubscribedUniversity from "../SubscribedUniversity";
-import { getUserStore } from "@/storage/user";
+import { getUserProfileStore, getUserStore } from "@/storage/user";
 import { useGetSubscribedCommunities } from "@/services/university-community";
 import { Community } from "@/types/Community";
 
@@ -20,6 +20,7 @@ const UniversitySec = () => {
   const { currentCommunityId, currentCommunityGroupId } = useCommunityContext();
 
   const userData = getUserStore();
+  const userProfileData = getUserProfileStore();
   const {
     data: subscribedCommunities,
     isFetching,
@@ -54,12 +55,11 @@ const UniversitySec = () => {
       ?.filter((userCommunityGroup) =>
         userCommunityGroup?.users?.some(
           (selectCommunityGroup) =>
-            selectCommunityGroup?.userId?.toString() ===
-            userData?.id?.toString(),
+            selectCommunityGroup?._id?.toString() === userData?.id?.toString(),
         ),
       )
       ?.filter((group) => group.title.toLowerCase());
-  }, [subscribedCommunities, currentCommunityId, userData]);
+  }, [subscribedCommunities, currentCommunityId, userData, userProfileData]);
 
   const subscribedCommunitiesAllGroups = useMemo(() => {
     const groups = subscribedCommunities?.find(
@@ -79,7 +79,7 @@ const UniversitySec = () => {
     )?.communityGroups;
 
     return groups?.filter((group) => group?.adminUserId === userData?.id) || [];
-  }, [subscribedCommunities, currentCommunityId, userData]);
+  }, [subscribedCommunities, currentCommunityId, userData, userProfileData]);
 
   useEffect(() => {
     if (currentCommunityId && subscribedCommunities) {
@@ -108,7 +108,7 @@ const UniversitySec = () => {
         <Text style={styles.headerText}>University Groups</Text>
         <View style={styles.communityImageContainer}>
           <CommunityLogo
-            logoUrl={community?.communityLogoUrl?.imageUrl || ""}
+            logoUrl={community?.communityLogoUrl?.imageUrl as string}
           />
 
           <TouchableOpacity
