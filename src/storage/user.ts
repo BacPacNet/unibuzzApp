@@ -36,7 +36,7 @@ export const removeUserStore = () => {
 };
 
 export const storeUserProfile = async (
-  userProfile: userProfileType,
+  userProfile: userProfileType
 ): Promise<void> => {
   try {
     storage.set(StorageKeys.USER_PROFILE, JSON.stringify(userProfile));
@@ -47,7 +47,7 @@ export const storeUserProfile = async (
 };
 
 export const updateUserProfileCommunities = async (
-  communities: UserCommunities[],
+  communities: UserCommunities[]
 ): Promise<void> => {
   try {
     const rawProfile = storage.getString(StorageKeys.USER_PROFILE);
@@ -67,6 +67,29 @@ export const updateUserProfileCommunities = async (
     storage.set(StorageKeys.USER_PROFILE, JSON.stringify(updatedProfile));
   } catch (error) {
     console.error("Failed to update communities in user profile", error);
+  }
+};
+export const updateUserProfileFollowing = async (
+  followings: any
+): Promise<void> => {
+  try {
+    const rawProfile = storage.getString(StorageKeys.USER_PROFILE);
+
+    if (!rawProfile) {
+      console.warn("No existing user profile found in storage.");
+      return;
+    }
+
+    const profile: userProfileType = JSON.parse(rawProfile);
+
+    const updatedProfile: userProfileType = {
+      ...profile,
+      following: followings,
+    };
+
+    storage.set(StorageKeys.USER_PROFILE, JSON.stringify(updatedProfile));
+  } catch (error) {
+    console.error("Failed to update following in user profile", error);
   }
 };
 

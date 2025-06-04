@@ -35,7 +35,7 @@ export const CommunityGroupMembersModal = ({
           setMembers(response.data.users);
           hideBottomBar();
         },
-      },
+      }
     );
   };
 
@@ -57,8 +57,13 @@ export const CommunityGroupMembersModal = ({
             imageUrl={user.profileImageUrl}
             type=""
             isSelfProfile={userProfileData?.users_id === user._id}
+            // isFollowing={
+            //   !!userProfileData?.following?.some((u) => u.userId === user._id)
+            // }
             isFollowing={
-              !!userProfileData?.following?.some((u) => u.userId === user._id)
+              userProfileData?.following?.some(
+                (userItem) => userItem.userId === user._id
+              ) as boolean
             }
             role={user.role || "student"}
             affiliation={user.affiliation}
