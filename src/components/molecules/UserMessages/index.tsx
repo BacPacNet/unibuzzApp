@@ -83,7 +83,11 @@ const UserCard = ({
           <Text className="text-[18px] font-semibold text-neutral-900">
             {name}
           </Text>
-          <Text className="text-md text-gray-500">{dayjs(date).fromNow()}</Text>
+          {/* {date && (
+            <Text className="text-md text-gray-500">
+              {dayjs(date).fromNow()}
+            </Text>
+          )} */}
         </View>
         <Text className="text-lg text-gray-800">{content}</Text>
 
@@ -128,7 +132,7 @@ const UserMessages = ({
       return () => {
         changeHeaderShownStatus(true);
       };
-    }, []),
+    }, [])
   );
 
   if (isFetching)
@@ -151,7 +155,7 @@ const UserMessages = ({
           const currentDate = dayjs(item.createdAt).format("MMMM D, YYYY");
           const shouldShowDateDivider = !dayjs(item.createdAt).isSame(
             previousDate,
-            "day",
+            "day"
           );
           previousDate = item.createdAt;
 

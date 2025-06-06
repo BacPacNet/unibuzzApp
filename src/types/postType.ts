@@ -45,6 +45,19 @@ export type PostCardType = {
       };
     };
 
+    profile: {
+      university_name: string;
+      study_year: string;
+      degree: string;
+      major: string;
+      affiliation: string;
+      occupation: string;
+      role: string;
+      profile_dp: {
+        imageUrl: string;
+      };
+    };
+
     imageUrl: {
       imageUrl: string;
     }[];
@@ -56,6 +69,8 @@ export type PostCardType = {
   isTimeline: boolean;
   communityGroupId?: string;
   isSinglePost: boolean;
+  initialComment?: any;
+  toShowInitial?: boolean;
 };
 
 export type CommentsProp = {

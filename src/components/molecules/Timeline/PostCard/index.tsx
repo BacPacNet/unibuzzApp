@@ -1,4 +1,11 @@
-import React, { memo, useMemo, useRef, useState } from "react";
+import React, {
+  memo,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import {
   Share,
   Text,
@@ -27,9 +34,10 @@ import { getUserStore } from "@/storage/user";
 import { Toast } from "react-native-toast-notifications";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import PostActionModal from "../../PostOptions";
-import { useNavigation } from "@react-navigation/native";
+import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { RootStackParamList } from "@/types/navigation";
+import { RenderCreatedAt } from "@/components/atoms/CreatedAt";
 
 type ScreenNavigationProp = StackNavigationProp<RootStackParamList, "Home">;
 
@@ -39,12 +47,15 @@ const PostCard = memo(
     isTimeline = true,
     communityGroupId = "",
     isSinglePost = false,
+    initialComment,
+    toShowInitial = false,
   }: PostCardType) => {
     const navigation = useNavigation<ScreenNavigationProp>();
     const [visible, setVisible] = useState(false);
     const { width } = useWindowDimensions();
     const userData = getUserStore();
     const commentBottomSheet = useRef<ActionSheetRef>(null);
+    const [showInitial, setShowInitial] = useState(false);
     const insets = useSafeAreaInsets();
     const { mutate: mutateDeletePost } = useDeleteUserPost();
     const { mutate: mutateDeleteCommunityPost } = useDeleteCommunityPost();
@@ -66,13 +77,13 @@ const PostCard = memo(
         data?.communityId,
         communityGroupId,
         isTimeline,
-        isSinglePost,
+        isSinglePost
       );
     const { mutate: LikeUnlikeTimelinePost, isPending: isLikeUnlikePending } =
       useLikeUnlikeTimelinePost("" as string, data?.user?._id, isSinglePost);
 
     const sharePost = async (
-      message = "Hey, check out this amazing post! https://example.com/post/123",
+      message = "Hey, check out this amazing post! https://example.com/post/123"
     ) => {
       try {
         await Share.share({ message });
@@ -112,12 +123,28 @@ const PostCard = memo(
       commentBottomSheet.current?.hide();
     };
 
+    useFocusEffect(
+      useCallback(() => {
+        if (toShowInitial) {
+          setShowInitial(true);
+          commentBottomSheet.current?.show();
+        }
+
+        return () => {
+          setShowInitial(false);
+        };
+      }, [data, toShowInitial])
+    );
+
     const postSourceText = useMemo(() => {
-      if (data?.community?.name && data?.communityGroupName) {
-        return `Posted in ${data?.communityGroupName} group at ${data?.community?.name}`;
+      if (
+        (data?.community?.name || data?.communityName) &&
+        data?.communityGroupName
+      ) {
+        return `Posted in ${data?.communityGroupName} group at ${data?.community?.name || data?.communityName}`;
       }
-      if (data?.community?.name) {
-        return `Posted from ${data?.community?.name}`;
+      if (data?.community?.name || data?.communityName) {
+        return `Posted from ${data?.community?.name || data?.communityName}`;
       }
       return "";
     }, [data, communityGroupId]);
@@ -130,19 +157,34 @@ const PostCard = memo(
           visible={visible}
           setVisible={setVisible}
           name={data?.user?.firstName + " " + data?.user?.lastName}
-          year={data?.userProfile?.study_year}
-          major={data?.userProfile?.major}
+          year={
+            isSinglePost
+              ? data?.profile?.study_year
+              : data?.userProfile?.study_year
+          }
+          major={isSinglePost ? data?.profile?.major : data?.userProfile?.major}
           degree={data?.userProfile?.degree}
           university={data?.userProfile?.university_name}
-          affiliation={data?.userProfile?.affiliation}
-          occupation={data?.userProfile?.occupation}
+          affiliation={
+            isSinglePost
+              ? data?.profile?.affiliation
+              : data?.userProfile?.affiliation
+          }
+          occupation={
+            isSinglePost
+              ? data?.profile?.occupation
+              : data?.userProfile?.occupation
+          }
           role={data?.userProfile?.role}
-          communityName={data?.community?.name}
-          communityGroupName={data?.communityGroupName}
+          communityName={
+            isSinglePost ? data?.communityName : data?.community?.name
+          }
+          communityGroupName={
+            isSinglePost ? data?.communityGroupName : data?.communityGroupName
+          }
           dp={data?.userProfile?.profile_dp?.imageUrl || " "}
           postId={data?._id}
           type={resolvedPostType}
-          //   isAdmin={data?.user?._id == userData?.id}
           isAdmin={
             isSinglePost
               ? data?.user_id == userData?.id
@@ -167,12 +209,12 @@ const PostCard = memo(
         </View>
 
         <View className="px-4">
-          <Text className="text-neutral-400">
-            {dayjs(data?.createdAt).format("h:mm A · MMM D, YYYY")}
-
-            <Text className="">{" " + postSourceText} </Text>
-          </Text>
+          <RenderCreatedAt
+            date={data?.createdAt}
+            postSourceText={postSourceText}
+          />
         </View>
+
         <View className="flex flex-row justify-between py-2 px-4 border-t border-b border-neutral-300">
           <View className="flex flex-row gap-4">
             <TouchableOpacity
@@ -190,7 +232,10 @@ const PostCard = memo(
               />
             </TouchableOpacity>
             <TouchableOpacity
-              onPress={() => commentBottomSheet.current?.show()}
+              onPress={() => {
+                commentBottomSheet.current?.show();
+                setShowInitial(false);
+              }}
               className="flex flex-row gap-2 items-center"
             >
               <Text className="text-lg font-bold text-neutral-500">
@@ -255,11 +300,14 @@ const PostCard = memo(
             level={data?.level}
             hideBottomBar={hideBottomBar}
             postAuthorName={data?.user?.firstName + " " + data?.user?.lastName}
+            setShowInitial={setShowInitial}
+            showInitial={showInitial}
+            initialComment={initialComment}
           />
         </ActionSheet>
       </View>
     );
-  },
+  }
 );
 
 export default PostCard;

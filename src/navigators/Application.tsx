@@ -10,7 +10,7 @@ import { useTheme } from "@/theme";
 
 import type { RootStackParamList } from "@/types/navigation";
 import OnboardingScreen from "@/screens/OnboardingScreen/OnboardingScreen";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { storage } from "@/App";
 import AuthGuard from "@/components/template/AuthGuard/AuthGuard";
 import UnauthenticatedGuard from "@/components/template/UnauthenticatedGuard/UnauthenticatedGuard";
@@ -32,7 +32,7 @@ import Logo from "@/assets/unibuzz_logo.svg";
 import { HeaderProvider, useHeader } from "@/context/HeaderProvider/Header";
 import HomeStack from "./HomeStack";
 import DiscoverStack from "./DiscoverStack";
-import tabIcons from "@/constant/tabIcons";
+
 import RightSideSidebar from "@/components/organism/RightSideSidebar";
 import ProfileStack from "./ProfileStack";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -40,13 +40,15 @@ import LeftSideSideBar from "@/components/organism/LeftSideSideBar";
 import CommunityScreen from "@/screens/CommunityScreen";
 import { CommunityProvider } from "@/context/CommunityProvider/CommunityProvider";
 import CommunityGroupScreen from "@/screens/CommunityGroupScreen";
-import SearchCommunityGroupScreen from "@/screens/SearchCommunityGroupsScreen";
+
 import ManageGroups from "./ManageGroups";
 import { CommunityFilterProvider } from "@/context/CommunityFilterProvider/CommunityFilterProvider";
 import NewGroupPost from "@/screens/NewGroupPost";
 import SettingsStack from "./SettingsStack";
 import SinglePost from "@/screens/SinglePost/SinglePost";
 import ForgetPasswordScreen from "@/screens/ForgetPasswordScreen/ForgetPasswordScreen";
+import { getTabIcons } from "@/constant/tabIcons";
+import { useGetUserNotificationTotalCount } from "@/services/notification";
 
 const Stack = createStackNavigator<RootStackParamList>();
 const Tab = createBottomTabNavigator<RootStackParamList>();
@@ -57,6 +59,8 @@ function ApplicationNavigator() {
   const [isAppFirstLaunched, setIsAppFirstLaunched] = useState(false);
   const userProfileStore = getUserProfileStore();
   const user = getUserStore();
+  const { data: unreadNotificationCount } = useGetUserNotificationTotalCount();
+
   useEffect(() => {
     const appData = storage.contains("isAppFirstLaunched");
     if (!appData) {
@@ -72,11 +76,33 @@ function ApplicationNavigator() {
   }, []);
 
   //tabs
+
+  const knownTabNames = [
+    "Home",
+    "Example",
+    "Connection",
+    "Messages",
+    "Notifications",
+    "AIAssistant",
+  ] as const;
+
+  type TabName = (typeof knownTabNames)[number];
+
+  function isTabName(name: string): name is TabName {
+    return knownTabNames.includes(name as TabName);
+  }
+
   function TabsGroup() {
+    const tabIcons = getTabIcons(unreadNotificationCount || 0);
     return (
       <Tab.Navigator
         screenOptions={({ route }) => ({
-          tabBarIcon: ({ focused }) => tabIcons[route.name]?.(focused) || <></>,
+          tabBarIcon: ({ focused }) => {
+            if (isTabName(route.name)) {
+              return tabIcons[route.name](focused);
+            }
+            return null;
+          },
           tabBarActiveTintColor: "#6744FF",
           tabBarInactiveTintColor: "black",
           tabBarStyle: { backgroundColor: "white" },

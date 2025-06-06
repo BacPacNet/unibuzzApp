@@ -9,7 +9,7 @@ import {
   ShareAndroid,
   ThumbsUp,
 } from "iconoir-react-native";
-import dayjs from "dayjs";
+
 import { getUserStore } from "@/storage/user";
 import RenderHTML from "react-native-render-html";
 import ImageGallery from "../../ImageGrid";
@@ -17,6 +17,7 @@ import { CommentsProp, PostType } from "@/types/postType";
 import { useDeleteUserPostComment } from "@/services/timeline";
 import { useDeleteCommunityPostComment } from "@/services/communityPost";
 import { userTypeEnum } from "@/storage/register";
+import { RenderCreatedAt } from "@/components/atoms/CreatedAt";
 
 const UserComment = ({
   item,
@@ -108,7 +109,6 @@ const UserComment = ({
       </View>
       {/* comment  */}
       <View>
-        {/* <Text className="text-black">{item?.content}</Text> */}
         <RenderHTML
           contentWidth={width}
           source={{ html: item?.content }}
@@ -120,9 +120,8 @@ const UserComment = ({
         images={item?.imageUrl}
         imageCount={item?.imageUrl?.length}
       />
-      <View>
-        <Text>{dayjs(item?.createdAt).format("h:mm A · MMM D, YYYY")}</Text>
-      </View>
+
+      <RenderCreatedAt date={item?.createdAt} />
 
       <View className="flex flex-row justify-end">
         <View className="flex flex-row gap-4">
@@ -146,7 +145,7 @@ const UserComment = ({
               width={24}
               color={
                 item?.likeCount?.some(
-                  (like: any) => like.userId === userData?.id,
+                  (like: any) => like.userId === userData?.id
                 )
                   ? "#6647FF"
                   : "black"
@@ -160,7 +159,7 @@ const UserComment = ({
             onPress={() => setShowReply(showReply.length ? "" : item._id)}
           >
             <ChatBubbleEmpty height={24} width={24} />
-            <Text>{item.totalCount}</Text>
+            <Text>{item.totalCount || item?.replies?.length}</Text>
           </TouchableOpacity>
           {userData?.id === item?.commenterId?._id && (
             <TouchableOpacity

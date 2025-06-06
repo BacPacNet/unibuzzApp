@@ -4,15 +4,18 @@ import React from "react";
 import { ActivityIndicator, StyleSheet, Text, View } from "react-native";
 
 const SinglePost = ({ route }: any) => {
-  const { postID, type } = route.params;
+  const { postID, type, commentId } = route.params;
 
   const { data, isFetching, isPending, isError, isLoading } = useGetPost(
     postID,
     type,
-    " ",
+    commentId || ""
   );
 
   const item = data?.post;
+  const comment = data?.comment;
+
+  console.log("comment", commentId);
 
   if (isError) {
     return (
@@ -32,7 +35,13 @@ const SinglePost = ({ route }: any) => {
 
   return (
     <View style={styles.container}>
-      <PostCard data={item} isTimeline={false} isSinglePost={true} />
+      <PostCard
+        data={item}
+        isTimeline={false}
+        isSinglePost={true}
+        initialComment={comment}
+        toShowInitial={!!commentId}
+      />
     </View>
   );
 };

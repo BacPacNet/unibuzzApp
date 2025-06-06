@@ -68,6 +68,7 @@ type Props = {
     profileDp: string;
   };
   postAuthorName: string;
+  showInitial: boolean;
 };
 
 const NewComment = ({
@@ -78,6 +79,7 @@ const NewComment = ({
   level,
   commentData,
   postAuthorName,
+  showInitial,
 }: Props) => {
   const userProfileData = getUserProfileStore();
   const [images, setImages] = useState<ImageAsset[]>([]);
@@ -106,7 +108,7 @@ const NewComment = ({
   const {
     mutateAsync: CreateUserPostCommentReply,
     isPending: CreateUserPostCommentReplyLoading,
-  } = useCreateUserPostCommentReply(false, postId || "");
+  } = useCreateUserPostCommentReply(showInitial, postId || "");
 
   const {
     mutateAsync: mutateGroupPostComment,
@@ -115,7 +117,7 @@ const NewComment = ({
   const {
     mutateAsync: CreateGroupPostCommentReply,
     isPending: useCreateGroupPostCommentReplyLoading,
-  } = useCreateGroupPostCommentReply(false, postId || "");
+  } = useCreateGroupPostCommentReply(showInitial, postId || "");
   const [isPostCreating, setIsPostCreating] = useState(false);
 
   const handleImagePick = useCallback(() => {
@@ -142,7 +144,7 @@ const NewComment = ({
           }
           setImages((prevImages) => [...prevImages, ...response.assets]);
         }
-      },
+      }
     );
   }, []);
 
@@ -154,7 +156,7 @@ const NewComment = ({
         setFiles((prev) => prev.filter((file) => file.name !== identifier));
       }
     },
-    [],
+    []
   );
 
   const handleComment = async () => {

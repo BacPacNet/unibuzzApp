@@ -12,20 +12,20 @@ import { Toast } from "react-native-toast-notifications";
 export async function getAllCommunityGroups(
   communityId: string,
   communityGroupId: string,
-  token: any,
+  token: any
 ) {
   const response: any = await client(
     `/communitygroup/${communityId}?${communityGroupId ? `communityGroupId=${communityGroupId}` : ""}`,
     {
       headers: { Authorization: `Bearer ${token}` },
-    },
+    }
   );
   return response;
 }
 
 export function useGetCommunityGroup(
   communityId: string,
-  communityGroupId: string = "",
+  communityGroupId: string = ""
 ) {
   const cookieValue = getToken() as string;
 
@@ -40,7 +40,7 @@ export function useGetCommunityGroup(
 export async function CreateCommunityGroup(
   communityId: string,
   token: any,
-  data: any,
+  data: any
 ) {
   const response = await client(`/communitygroup/${communityId}`, {
     method: "POST",
@@ -200,7 +200,7 @@ export const useLeaveCommunityGroup = () => {
 async function removeUserFromCommunityGroupAPI(
   communityGroupId: string,
   userId: string,
-  token: string,
+  token: string
 ) {
   return await client(`/communitygroup/${communityGroupId}/user/${userId}`, {
     method: "DELETE",
@@ -230,6 +230,84 @@ export const useRemoveUserFromCommunityGroup = () => {
       const errorMessage =
         error?.response?.data?.message || "Something went wrong";
       Toast.show(errorMessage);
+    },
+  });
+};
+
+async function ChangeCommunityGroupStatusAPI(
+  data: { status: string },
+  communityGroupId: string,
+  token: string
+) {
+  return await client(`/communitygroup/status/${communityGroupId}`, {
+    method: "PUT",
+    headers: { Authorization: `Bearer ${token}` },
+    data,
+  });
+}
+
+export const useChangeCommunityGroupStatus = (communityGroupId: string) => {
+  const cookieValue = getToken() as string;
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (data: {
+      status: string;
+      notificationId: string;
+      communityGroupId: string;
+      adminId: string;
+      userId: string;
+    }) => ChangeCommunityGroupStatusAPI(data, communityGroupId, cookieValue),
+
+    onSuccess: () => {
+      //   queryClient.invalidateQueries({ queryKey: ["user_notification"] });
+      queryClient.invalidateQueries({ queryKey: ["userNotification"] });
+      Toast.show(`status of community group changed`);
+    },
+
+    onError: (error: any) => {
+      const errorMessage =
+        error?.response?.data?.message || "Something went wrong";
+      console.error("Error changing status:", errorMessage);
+    },
+  });
+};
+
+async function acceptRejectPrivateGroupAPI(
+  data: { status: string },
+  communityGroupId: string,
+  token: string
+) {
+  return await client(`/communitygroup/join-request/${communityGroupId}`, {
+    method: "PUT",
+    headers: { Authorization: `Bearer ${token}` },
+    data,
+  });
+}
+
+export const useJoinRequestPrivateGroup = (communityGroupId: string) => {
+  const cookieValue = getToken() as string;
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (data: {
+      status: string;
+      notificationId: string;
+      userId: string;
+      adminId: string;
+      communityGroupId: string;
+    }) => acceptRejectPrivateGroupAPI(data, communityGroupId, cookieValue),
+
+    onSuccess: () => {
+      //   queryClient.invalidateQueries({ queryKey: ["user_notification"] });
+      queryClient.invalidateQueries({ queryKey: ["userNotification"] });
+      //showCustomSuccessToast(`status of Community Group changed`)
+    },
+
+    onError: (error: any) => {
+      const errorMessage =
+        error?.response?.data?.message || "Something went wrong";
+      console.error("Error changing status:", errorMessage);
     },
   });
 };

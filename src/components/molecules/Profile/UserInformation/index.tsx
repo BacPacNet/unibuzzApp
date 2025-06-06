@@ -92,10 +92,10 @@ const ProfileInfo: React.FC<ProfileInfoProps> = ({
         />
       )}
 
-      {birthday && (
+      {birthday?.length && (
         <InfoItem
           icon={<BirthdayCake height={24} width={24} color={"grey"} />}
-          text={dayjs(birthday).format("DD MMM YYYY")}
+          text={dayjs(birthday || new Date()).format("DD MMM YYYY")}
         />
       )}
     </View>
