@@ -51,10 +51,21 @@ const PostCardUserDetails = ({
 }: Props) => {
   const navigate = useNavigation<NavigationProp>();
 
-  const isStudent =
-    (role ? role.charAt(0).toUpperCase() + role.slice(1) : "") ==
-    userTypeEnum.Student;
+  const normalizedRole = role
+    ? role.charAt(0).toUpperCase() + role.slice(1).toLowerCase()
+    : null;
 
+  const isStudent = normalizedRole === userTypeEnum.Student;
+
+  let roleInfo;
+
+  if (isStudent) {
+    roleInfo = year || "Student (Year not specified)";
+  } else if (normalizedRole) {
+    roleInfo = normalizedRole;
+  } else {
+    roleInfo = occupation || "Unknown Role";
+  }
   const handleNavigate = () => {
     navigate.navigate("ProfileStack", {
       screen: "Profile",

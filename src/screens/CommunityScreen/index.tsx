@@ -1,10 +1,6 @@
 import { useCommunityContext } from "@/context/CommunityProvider/CommunityProvider";
-import {
-  useFocusEffect,
-  useNavigation,
-  useRoute,
-} from "@react-navigation/native";
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import { useFocusEffect, useNavigation } from "@react-navigation/native";
+import React, { useCallback, useEffect, useState } from "react";
 import {
   ActivityIndicator,
   FlatList,
@@ -16,12 +12,9 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import ActionSheet, { ActionSheetRef } from "react-native-actions-sheet";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
-import UniversityLogoPlaceHolder from "@/assets/unibuzz_rounded.svg";
+
 import {
   useGetCommunity,
-  useGetCommunityGroupPost,
   useGetCommunityPost,
   useJoinCommunity,
   useLeaveCommunity,
@@ -33,6 +26,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { RootStackParamList } from "@/types/navigation";
 import { StackNavigationProp } from "@react-navigation/stack";
 import CreatePostButton from "@/components/atoms/CreatePostButton";
+import CommunityLogo from "@/components/atoms/LogoHolder";
 
 type NavigationProp = StackNavigationProp<RootStackParamList, "Community">;
 
@@ -41,8 +35,7 @@ const CommunityScreen = ({ route }: any) => {
   const { communityId } = route.params;
   const { setCurrentCommunityId } = useCommunityContext();
   const userData = getUserStore();
-
-  const { data: communityData } = useGetCommunity(communityId);
+  const { data: communityData, isFetching } = useGetCommunity(communityId);
   const { mutate: joinCommunity, isPending: isJoinLoading } =
     useJoinCommunity();
   const { mutate: leaveCommunity, isPending: isLeaveLoading } =
@@ -58,7 +51,6 @@ const CommunityScreen = ({ route }: any) => {
     isLoading,
   } = useGetCommunityPost(communityId, true, 10);
   const [communityDatas, setCommunityDatas] = useState<any>([]);
-  const [hasInitialized, setHasInitialized] = useState(false);
 
   const [isUserJoinedCommunity, setIsUserJoinedCommunity] = useState<
     boolean | null
@@ -67,10 +59,7 @@ const CommunityScreen = ({ route }: any) => {
     communityData?.communityCoverUrl?.imageUrl,
   );
   const [ImageSrcErr, setImageSrcErr] = useState(false);
-  const [logoSrc, setLogoSrc] = useState(
-    communityData?.communityLogoUrl?.imageUrl,
-  );
-  const [logoSrcErr, setLogoSrcErr] = useState(false);
+
   const [refreshing, setRefreshing] = React.useState(false);
 
   const queryClient = useQueryClient();
@@ -86,22 +75,20 @@ const CommunityScreen = ({ route }: any) => {
   );
 
   useEffect(() => {
-    setLogoSrcErr(false);
+    // setLogoSrcErr(false);
     setImageSrcErr(false);
     if (communityData) {
-      setLogoSrc(communityData?.communityLogoUrl?.imageUrl);
       setImageSrc(communityData?.communityCoverUrl?.imageUrl);
     }
   }, [communityData]);
 
   useEffect(() => {
-    if (!hasInitialized && communityData && userData) {
+    if (communityData && userData) {
       setIsUserJoinedCommunity(
         communityData.users.some(
-          (user) => user?.id?.toString() === userData?.id,
+          (user) => user?._id?.toString() === userData.id,
         ),
       );
-      setHasInitialized(true);
     }
   }, [communityData, userData]);
 
@@ -114,17 +101,9 @@ const CommunityScreen = ({ route }: any) => {
 
   const handleToggleJoinCommunity = () => {
     if (!isUserJoinedCommunity) {
-      joinCommunity(communityId, {
-        onSuccess: () => {
-          setIsUserJoinedCommunity(true);
-        },
-      });
+      joinCommunity(communityId, {});
     } else {
-      leaveCommunity(communityId, {
-        onSuccess: () => {
-          setIsUserJoinedCommunity(false);
-        },
-      });
+      leaveCommunity(communityId, {});
     }
   };
 
@@ -133,6 +112,9 @@ const CommunityScreen = ({ route }: any) => {
 
     queryClient.invalidateQueries({
       queryKey: ["communityGroupsPost", communityId, ""],
+    });
+    queryClient.invalidateQueries({
+      queryKey: ["community"],
     });
     setRefreshing(false);
   }, []);
@@ -158,7 +140,7 @@ const CommunityScreen = ({ route }: any) => {
 
         <View style={styles.content}>
           <View style={styles.titleContainer}>
-            <View style={styles.imageWrapper}>
+            {/* <View style={styles.imageWrapper}>
               {logoSrc?.length && !logoSrcErr ? (
                 <Image
                   source={{ uri: communityData?.communityLogoUrl?.imageUrl }}
@@ -174,19 +156,22 @@ const CommunityScreen = ({ route }: any) => {
                   />
                 </View>
               )}
-            </View>
+            </View> */}
+            <CommunityLogo
+              logoUrl={communityData?.communityLogoUrl?.imageUrl || ""}
+            />
 
             <Text style={styles.title}>{communityData?.name}</Text>
           </View>
           <Text style={styles.description}>{communityData?.about}</Text>
 
           <TouchableOpacity
-            disabled={isJoinLoading || isLeaveLoading}
+            disabled={isJoinLoading || isLeaveLoading || isFetching}
             onPress={() => handleToggleJoinCommunity()}
             style={styles.button}
           >
             <Text style={styles.buttonText}>
-              {isJoinLoading || isLeaveLoading ? (
+              {isJoinLoading || isLeaveLoading || isFetching ? (
                 <ActivityIndicator />
               ) : !isUserJoinedCommunity ? (
                 "Join Community"
@@ -230,7 +215,7 @@ const CommunityScreen = ({ route }: any) => {
         }
         renderItem={({ item }) =>
           isUserJoinedCommunity ? (
-            <PostCard data={item} isTimeline={false} />
+            <PostCard data={item} isTimeline={false} isSinglePost={false} />
           ) : (
             <Text></Text>
           )

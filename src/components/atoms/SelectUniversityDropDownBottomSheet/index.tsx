@@ -13,6 +13,7 @@ import {
 import { Controller } from "react-hook-form";
 import { NavArrowDown, NavArrowUp, Xmark } from "iconoir-react-native";
 import { useUniversitySearch } from "@/services/universitySearch";
+import CommunityLogo from "../LogoHolder";
 
 interface SelectDropdownProps {
   control: any;
@@ -23,6 +24,7 @@ interface SelectDropdownProps {
   search?: boolean;
   rules?: object;
   setValue?: (name: string, value: any) => void;
+  isMarginBottom?: boolean;
 }
 
 const SelectUniversityDropdownBottomSheet: React.FC<SelectDropdownProps> = ({
@@ -34,17 +36,22 @@ const SelectUniversityDropdownBottomSheet: React.FC<SelectDropdownProps> = ({
   search = false,
   rules,
   setValue,
+  isMarginBottom = true,
 }) => {
   const [show, setShow] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const searchRef = useRef<TextInput>(null);
 
-  const { data: universities, isFetching } = useUniversitySearch(
-    searchTerm || " ",
+  const { data: universitiesData, isFetching } = useUniversitySearch(
+    show,
+    searchTerm,
+    1,
+    10,
   );
+  const universities = universitiesData?.result?.universities;
 
   return (
-    <View style={styles.container}>
+    <View style={[isMarginBottom && styles.container]}>
       {label && <Text style={styles.label}>{label}</Text>}
       <Controller
         control={control}
@@ -108,7 +115,7 @@ const SelectUniversityDropdownBottomSheet: React.FC<SelectDropdownProps> = ({
                     )}
                   </View>
                   <FlatList
-                    data={universities?.result}
+                    data={universities}
                     keyExtractor={(item) => item._id}
                     renderItem={({ item }) => (
                       <TouchableOpacity
@@ -119,10 +126,7 @@ const SelectUniversityDropdownBottomSheet: React.FC<SelectDropdownProps> = ({
                           setShow(false);
                         }}
                       >
-                        <Image
-                          style={styles.universityLogo}
-                          source={{ uri: item?.logos?.[0] }}
-                        />
+                        <CommunityLogo logoUrl={item?.logo} />
                         <Text style={styles.optionText}>{item?.name}</Text>
                       </TouchableOpacity>
                     )}
@@ -194,6 +198,7 @@ const styles = StyleSheet.create({
     borderTopLeftRadius: 16,
     borderTopRightRadius: 16,
     maxHeight: "80%",
+    minHeight: 550,
   },
   modalHeader: {
     padding: 16,
@@ -219,6 +224,7 @@ const styles = StyleSheet.create({
     padding: 16,
     borderBottomWidth: 1,
     borderBottomColor: "#E5E7EB",
+    gap: 4,
   },
   universityLogo: {
     width: 40,

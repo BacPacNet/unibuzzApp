@@ -7,7 +7,7 @@ import useDebounce from "@/hooks/useDebounce";
 import { getToken } from "@/storage/token";
 import { ProfileConnection } from "@/types/connections";
 import { client } from "./api-client";
-import { getUserStore } from "@/storage/user";
+import { getUserStore, updateUserProfileFollowing } from "@/storage/user";
 import { UsersProfileForConnectionsResponse } from "@/types/generic";
 
 export async function getUserMututal(
@@ -15,13 +15,13 @@ export async function getUserMututal(
   page: number,
   limit: number,
   name: string,
-  userId: string,
+  userId: string
 ) {
   const response: ProfileConnection = await client(
     `/userprofile/mutuals?page=${page}&limit=${limit}&name=${name}&userId=${userId}`,
     {
       headers: { Authorization: `Bearer ${token}` },
-    },
+    }
   );
   return response;
 }
@@ -31,13 +31,13 @@ export async function getUserFollowing(
   page: number,
   limit: number,
   name: string,
-  userId: string,
+  userId: string
 ) {
   const response: ProfileConnection = await client(
     `/userprofile/following?page=${page}&limit=${limit}&name=${name}&userId=${userId}`,
     {
       headers: { Authorization: `Bearer ${token}` },
-    },
+    }
   );
   return response;
 }
@@ -46,13 +46,13 @@ export async function getUserFollowers(
   page: number,
   limit: number,
   name: string,
-  userId: string,
+  userId: string
 ) {
   const response: ProfileConnection = await client(
     `/userprofile/followers?page=${page}&limit=${limit}&name=${name}&userId=${userId}`,
     {
       headers: { Authorization: `Bearer ${token}` },
-    },
+    }
   );
   return response;
 }
@@ -67,19 +67,19 @@ export async function toggleFollow(id: string, token: any) {
 
 export const useToggleFollow = () => {
   const cookieValue = getToken() as string;
-  //const { setUserfollowing } = useUniStore()
+
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (id: string) => toggleFollow(id, cookieValue),
 
-    onSuccess: (_response: any, userId: string) => {
+    onSuccess: (response: any, userId: string) => {
       //  storeUserProfile(response);
       //setUserfollowing(response.followed.following)
       //  if (type == "Following") {
       //    queryClient.invalidateQueries({ queryKey: ["getUserFollow"] });
       //  }
       //  else {
-
+      updateUserProfileFollowing(response.following);
       queryClient.setQueryData(
         ["usersProfileForConnections"],
         (userProfileConnection: UsersProfileForConnectionsResponse) => {
@@ -95,11 +95,11 @@ export const useToggleFollow = () => {
                       ...user,
                       isFollowing: !user.isFollowing,
                     }
-                  : user,
+                  : user
               ),
             })),
           };
-        },
+        }
       );
       queryClient.invalidateQueries({
         queryKey: ["getUserFollowers"],
@@ -115,7 +115,7 @@ export function useGetUserMutuals(
   name: string,
   userId: string,
   limit: number,
-  enabled: boolean,
+  enabled: boolean
 ) {
   const cookieValue = getToken() as string;
   const debouncedSearchTerm = useDebounce(name, 1000);
@@ -128,7 +128,7 @@ export function useGetUserMutuals(
         pageParam,
         limit,
         debouncedSearchTerm,
-        userId,
+        userId
       ),
     getNextPageParam: (lastPage) => {
       if (lastPage.currentPage < lastPage.totalPages) {
@@ -145,7 +145,7 @@ export function useGetUserFollowing(
   name: string,
   limit: number,
   enabled: boolean,
-  userId: string,
+  userId: string
 ) {
   const cookieValue = getToken() as string;
   const debouncedSearchTerm = useDebounce(name, 1000);
@@ -158,7 +158,7 @@ export function useGetUserFollowing(
         pageParam,
         limit,
         debouncedSearchTerm,
-        userId,
+        userId
       ),
     getNextPageParam: (lastPage) => {
       if (lastPage.currentPage < lastPage.totalPages) {
@@ -175,7 +175,7 @@ export function useGetUserFollowers(
   name: string,
   limit: number,
   enabled: boolean,
-  userId: string,
+  userId: string
 ) {
   const cookieValue = getToken() as string;
   const debouncedSearchTerm = useDebounce(name, 1000);
@@ -188,7 +188,7 @@ export function useGetUserFollowers(
         pageParam,
         limit,
         debouncedSearchTerm,
-        userId,
+        userId
       ),
     getNextPageParam: (lastPage) => {
       if (lastPage.currentPage < lastPage.totalPages) {

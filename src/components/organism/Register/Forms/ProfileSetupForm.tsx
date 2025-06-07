@@ -11,8 +11,10 @@ import { SelectInputWithSearch } from "@/components/atoms/SelectInputWithSearch"
 
 const ProfileSetupForm = ({
   onSubmit,
+  handlePrev,
 }: {
   onSubmit: (data: any) => Promise<void>;
+  handlePrev: () => void;
 }) => {
   const {
     formState: { errors: ProfileFormErrors },
@@ -102,6 +104,11 @@ const ProfileSetupForm = ({
         onPress={handleSubmit(onSubmit)}
         buttonText="Next Step"
         variant="primary"
+      />
+      <ReusableButton
+        onPress={handlePrev}
+        buttonText="Review Account"
+        variant="shade"
       />
 
       {/* Footer */}

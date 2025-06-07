@@ -1,10 +1,4 @@
-import {
-  ActivityIndicator,
-  FlatList,
-  StyleSheet,
-  Text,
-  View,
-} from "react-native";
+import { ActivityIndicator, FlatList, Text, View } from "react-native";
 import React from "react";
 
 import PostCard from "@/components/molecules/Timeline/PostCard";
@@ -58,7 +52,9 @@ const Timeline = () => {
         }}
         // onScroll={handleScroll}
         keyExtractor={(item, index) => item._id + index}
-        renderItem={({ item }) => <PostCard data={item} isTimeline={true} />}
+        renderItem={({ item }) => (
+          <PostCard data={item} isTimeline={true} isSinglePost={false} />
+        )}
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
         }

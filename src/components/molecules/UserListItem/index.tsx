@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   View,
   Text,
@@ -11,6 +11,9 @@ import { useNavigation } from "@react-navigation/native";
 import { useToggleFollow } from "@/services/connection";
 import { userTypeEnum } from "@/types/register";
 import defaultAvatar from "@/assets/avatar.png";
+import { StackNavigationProp } from "@react-navigation/stack";
+import { RootStackParamList } from "@/types/navigation";
+import { Toast } from "react-native-toast-notifications";
 
 interface Props {
   firstName: string;
@@ -31,7 +34,9 @@ interface Props {
   isGroupAdmin?: boolean;
   handleRemoveClick?: (id: string) => void;
   isRemovePending?: boolean;
+  isViewerAdmin: boolean;
 }
+type NavigationProp = StackNavigationProp<RootStackParamList, "CommunityGroup">;
 
 const UserListItem: React.FC<Props> = ({
   id,
@@ -50,16 +55,39 @@ const UserListItem: React.FC<Props> = ({
   showCommunityGroupMember,
   handleRemoveClick,
   isRemovePending,
+  isViewerAdmin,
 }) => {
-  const navigation = useNavigation();
-  const { mutate: toggleFollow, isPending } = useToggleFollow();
+  const navigation = useNavigation<NavigationProp>();
+  const { mutateAsync: toggleFollow, isPending } = useToggleFollow();
+  const [isFollowingState, setIsFollowingState] = useState(isFollowing);
+  const [isProcessing, setIsProcessing] = useState(false);
 
-  const handleFollow = () => toggleFollow(id);
+  const handleFollowClick = async () => {
+    setIsFollowingState(true);
+    setIsProcessing(true);
 
-  const handleProfileClick = () => console.log("1212");
+    try {
+      await toggleFollow(id);
+    } catch (err) {
+      setIsFollowingState(false);
+      Toast.show("Failed to follow");
+    } finally {
+      setIsProcessing(false);
+    }
+  };
+
+  const handleProfileClick = () => {
+    navigation.navigate("ProfileStack", {
+      screen: "Profile",
+      params: { userId: id },
+    });
+  };
   //   const handleProfileClick = () => navigation.navigate('UserProfile', { userId: id })
 
   const isStudent = role == userTypeEnum.Student;
+  const showRemoveButton =
+    !isSelfProfile && isViewerAdmin && showCommunityGroupMember;
+  const showFollowButton = !isSelfProfile && !showRemoveButton;
 
   return (
     <View style={styles.itemContainer}>
@@ -84,7 +112,7 @@ const UserListItem: React.FC<Props> = ({
         </View>
       </TouchableOpacity>
 
-      {!isSelfProfile && isGroupAdmin && showCommunityGroupMember ? (
+      {showRemoveButton && (
         <TouchableOpacity
           disabled={isRemovePending}
           onPress={() => handleRemoveClick && handleRemoveClick(id)}
@@ -96,20 +124,22 @@ const UserListItem: React.FC<Props> = ({
             <Text style={styles.removeButtonText}>Remove</Text>
           )}
         </TouchableOpacity>
-      ) : !isSelfProfile ? (
+      )}
+
+      {showFollowButton && (
         <TouchableOpacity
-          onPress={isFollowing ? handleProfileClick : handleFollow}
+          onPress={isFollowing ? handleProfileClick : handleFollowClick}
           style={styles.followButton}
         >
-          {isPending ? (
+          {isProcessing ? (
             <ActivityIndicator size="small" color="#fff" />
           ) : (
             <Text style={styles.followText}>
-              {isFollowing ? "View Profile" : "Follow"}
+              {isFollowingState ? "View Profile" : "Follow"}
             </Text>
           )}
         </TouchableOpacity>
-      ) : null}
+      )}
     </View>
   );
 };

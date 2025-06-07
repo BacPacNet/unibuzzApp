@@ -16,12 +16,15 @@ export interface FormDataType {
   occupation: string;
   universityId: string;
   verificationEmail: string;
+  universityLogo: string;
   verificationOtp: string;
   universityEmail: string;
   universityName: string;
   UniversityOtp: string;
   UniversityOtpOK: string;
   referralCode: string;
+  isJoinUniversity: boolean;
+  isUniversityVerified: boolean;
 }
 
 export const value = [
@@ -393,7 +396,7 @@ export const occupationAndDepartment = {
 
 export const GenderOptions = ["Male", "Female"];
 
-export const userType = ["Student", "Faculty", "Applicant"];
+export const userType = ["student", "faculty"];
 export const currYear = [
   "1st",
   "2nd",

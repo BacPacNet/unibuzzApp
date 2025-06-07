@@ -2,7 +2,25 @@ import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 dayjs.extend(relativeTime);
 
+dayjs.locale("en-short", {
+  relativeTime: {
+    future: "in %s",
+    past: "%s",
+    s: "1s",
+    m: "1m",
+    mm: "%dm",
+    h: "1h",
+    hh: "%dh",
+    d: "1d",
+    dd: "%dd",
+    M: "1mo",
+    MM: "%dmo",
+    y: "1y",
+    yy: "%dy",
+  },
+});
 export const timeAgo = (timestamp: string) => {
+  if (!timestamp?.length) return null;
   return dayjs(timestamp).fromNow();
 };
 
@@ -11,7 +29,7 @@ export const validateUploadedFiles = (
   options: {
     maxFiles?: number;
     maxSize?: number;
-  } = {},
+  } = {}
 ): { isValid: boolean; message: string } => {
   const {
     maxFiles = 4,

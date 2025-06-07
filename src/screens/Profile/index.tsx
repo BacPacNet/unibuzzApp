@@ -170,7 +170,9 @@ const Profile = ({ route }: any) => {
         }}
         onScroll={handleScroll}
         keyExtractor={(item, index) => item?._id + index}
-        renderItem={({ item }) => <PostCard data={item} />}
+        renderItem={({ item }) => (
+          <PostCard data={item} isSinglePost={false} isTimeline={false} />
+        )}
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
         }

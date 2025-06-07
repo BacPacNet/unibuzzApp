@@ -88,7 +88,7 @@ const AccountCreationForm = ({ isPending, onSubmit }: Props) => {
 
         <FormInput
           label="Username"
-          placeholder="Enter First Name"
+          placeholder="Enter Username"
           isLabelShown={false}
           required
           name="userName"

@@ -24,7 +24,6 @@ const SelectedUserProfileChips = ({
   name,
 }: Props) => {
   const [imageError, setImageError] = useState(false);
-  //   return console.log("avatarSrc", avatarSrc);
 
   return (
     <View style={styles.chipContainer}>
@@ -76,10 +75,10 @@ export const SelectUserProfileChips = ({
     >
       {individualsUsers?.map((item, index) => (
         <SelectedUserProfileChips
-          key={item._id || index}
-          avatarUrl={item.profile.profile_dp.imageUrl}
-          name={item.firstName}
-          userId={item._id}
+          key={item?._id || index}
+          avatarUrl={item?.profile?.profile_dp?.imageUrl}
+          name={item?.firstName}
+          userId={item?._id}
           onRemove={onRemove}
         />
       ))}

@@ -10,6 +10,7 @@ interface Props {
   users: CommunityGroupUsers[];
   isGroupAdmin: boolean;
   communityGroupId: string;
+  adminId: string;
   hideBottomBar: () => void;
 }
 
@@ -18,6 +19,7 @@ export const CommunityGroupMembersModal = ({
   isGroupAdmin,
   communityGroupId,
   hideBottomBar,
+  adminId,
 }: Props) => {
   const userProfileData = getUserProfileStore();
 
@@ -33,7 +35,7 @@ export const CommunityGroupMembersModal = ({
           setMembers(response.data.users);
           hideBottomBar();
         },
-      },
+      }
     );
   };
 
@@ -43,8 +45,8 @@ export const CommunityGroupMembersModal = ({
       <ScrollView>
         {members?.map((user) => (
           <UserListItem
-            key={user.userId}
-            id={user.userId}
+            key={user._id as string}
+            id={user._id}
             firstName={user.firstName}
             lastName={user.lastName}
             university=""
@@ -54,16 +56,20 @@ export const CommunityGroupMembersModal = ({
             occupation={user.occupation}
             imageUrl={user.profileImageUrl}
             type=""
-            isSelfProfile={userProfileData?.users_id === user.userId}
+            isSelfProfile={userProfileData?.users_id === user._id}
+            // isFollowing={
+            //   !!userProfileData?.following?.some((u) => u.userId === user._id)
+            // }
             isFollowing={
-              !!userProfileData?.following?.some(
-                (u) => u.userId === user.userId,
-              )
+              userProfileData?.following?.some(
+                (userItem) => userItem.userId === user._id
+              ) as boolean
             }
             role={user.role || "student"}
             affiliation={user.affiliation}
             showCommunityGroupMember
             isGroupAdmin={isGroupAdmin}
+            isViewerAdmin={adminId === userProfileData?.users_id}
             handleRemoveClick={handleRemoveUser}
             isRemovePending={isPending}
           />

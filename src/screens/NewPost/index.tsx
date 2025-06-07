@@ -70,7 +70,7 @@ const NewPost = ({ navigation }: any) => {
   const { mutate: CreateTimelinePost, isPending } = useCreateUserPost();
   const { mutateAsync: uploadToS3 } = useUploadToS3();
   const [postAccessType, setPostAccessType] = useState<UserPostType>(
-    UserPostType.PUBLIC
+    UserPostType.PUBLIC,
   );
   const [isPostCreating, setIsPostCreating] = useState(false);
   const [showPostType, setShowPostType] = useState(false);
@@ -92,7 +92,7 @@ const NewPost = ({ navigation }: any) => {
           },
         });
       };
-    }, [navigation])
+    }, [navigation]),
   );
 
   const handlePostVisibilityTypeChange = useCallback(
@@ -100,7 +100,7 @@ const NewPost = ({ navigation }: any) => {
       setPostAccessType(type);
       setShowPostType(false);
     },
-    [setPostAccessType, setShowPostType]
+    [setPostAccessType, setShowPostType],
   );
 
   const handleImagePick = useCallback(() => {
@@ -127,7 +127,7 @@ const NewPost = ({ navigation }: any) => {
           }
           setImages((prevImages) => [...prevImages, ...response.assets]);
         }
-      }
+      },
     );
   }, []);
 
@@ -139,7 +139,7 @@ const NewPost = ({ navigation }: any) => {
         setFiles((prev) => prev.filter((file) => file.name !== identifier));
       }
     },
-    []
+    [],
   );
 
   const handleFilePick = async () => {
@@ -158,7 +158,7 @@ const NewPost = ({ navigation }: any) => {
           ...file,
           size: file.size,
           type: file.type,
-        }))
+        })),
       );
 
       if (!validationResult.isValid) {

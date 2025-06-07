@@ -17,10 +17,10 @@ const ImageGridLayout = ({ imagesData }: Props) => {
   const [photoIndex, setPhotoIndex] = useState(0);
 
   const imageItems = imagesData.filter((item) =>
-    imageMimeTypes.includes(getMimeTypeFromUrl(item.imageUrl))
+    imageMimeTypes.includes(getMimeTypeFromUrl(item.imageUrl)),
   );
   const fileItems = imagesData.filter(
-    (item) => !imageMimeTypes.includes(getMimeTypeFromUrl(item.imageUrl))
+    (item) => !imageMimeTypes.includes(getMimeTypeFromUrl(item.imageUrl)),
   );
   const handleImageClick = (index: number) => {
     setPhotoIndex(index);
@@ -155,7 +155,7 @@ const ImageGridLayout = ({ imagesData }: Props) => {
               <Page width={24} height={24} style={{ marginRight: 8 }} />
               <Text numberOfLines={1} style={{ flex: 1 }}>
                 {decodeURIComponent(
-                  item.imageUrl.split("/").pop() || "Unknown File"
+                  item.imageUrl.split("/").pop() || "Unknown File",
                 )}
               </Text>
             </TouchableOpacity>

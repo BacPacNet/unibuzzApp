@@ -5,6 +5,7 @@ import {
   SafeAreaView,
   StyleSheet,
   Text,
+  TouchableOpacity,
   View,
 } from "react-native";
 import { FlatList } from "react-native-actions-sheet";
@@ -34,6 +35,9 @@ type Props = {
   hideBottomBar: () => void;
   level: string;
   postAuthorName?: string;
+  setShowInitial: (value: boolean) => void;
+  showInitial: boolean;
+  initialComment: any;
 };
 
 const CommentBottomSheet = ({
@@ -44,6 +48,9 @@ const CommentBottomSheet = ({
   hideBottomBar,
   level,
   postAuthorName,
+  showInitial,
+  setShowInitial,
+  initialComment,
 }: Props) => {
   const [showReply, setShowReply] = useState(false);
   const [replyingTo, setReplyingTo] = useState<any>(null);
@@ -62,8 +69,8 @@ const CommentBottomSheet = ({
   } = useGetUserPostComments(postId, type == PostType.Timeline, 5);
 
   const { mutate: likeUserPostComment } = useLikeUnlikeUserPostComment(
-    false,
-    postId,
+    showInitial,
+    postId
   );
 
   // community
@@ -75,7 +82,10 @@ const CommentBottomSheet = ({
     isFetching: communityCommentsIsFetching,
   } = useGetCommunityPostComments(postId, type == PostType.Community, 5);
 
-  const { mutate: likeGroupPostComment } = useLikeUnlikeGroupPostComment();
+  const { mutate: likeGroupPostComment } = useLikeUnlikeGroupPostComment(
+    showInitial,
+    postId
+  );
 
   const userCommentsData =
     commentsData?.pages.flatMap((page) => page.finalComments) || [];
@@ -94,7 +104,7 @@ const CommentBottomSheet = ({
     if (type === PostType.Timeline) {
       likeUserPostComment({ userPostCommentId: commentId, level });
     } else if (type === PostType.Community) {
-      likeGroupPostComment(commentId);
+      likeGroupPostComment({ communityGroupPostCommentId: commentId, level });
     }
   };
 
@@ -117,12 +127,26 @@ const CommentBottomSheet = ({
         <View>
           <FlatList
             data={
-              type == PostType.Community
-                ? communityPostCommentsData
-                : userCommentsData
+              showInitial
+                ? [initialComment]
+                : type == PostType.Community
+                  ? communityPostCommentsData
+                  : userCommentsData
             }
             style={styles.flatList}
-            keyExtractor={(item, index) => item._id + index}
+            keyExtractor={(item, index) => item?._id + index}
+            ListHeaderComponent={
+              showInitial ? (
+                <View className="flex flex-row justify-end px-4">
+                  <TouchableOpacity
+                    onPress={() => setShowInitial(false)}
+                    className="bg-primary-500 px-2 py-1 rounded-lg"
+                  >
+                    <Text className="text-white text-md">See All</Text>
+                  </TouchableOpacity>
+                </View>
+              ) : null
+            }
             renderItem={({ item }) => (
               <UserComment
                 item={item}
@@ -196,6 +220,7 @@ const CommentBottomSheet = ({
       >
         <NewComment
           setModalVisible={setModalVisible}
+          showInitial={showInitial}
           type={type}
           postId={postId}
           adminID={adminID}

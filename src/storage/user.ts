@@ -1,6 +1,6 @@
 import { storage } from "@/App";
 import { User } from "@/models/auth";
-import { userProfileType } from "@/types/users";
+import { UserCommunities, userProfileType } from "@/types/users";
 
 enum StorageKeys {
   USER = "user",
@@ -36,13 +36,60 @@ export const removeUserStore = () => {
 };
 
 export const storeUserProfile = async (
-  userProfile: userProfileType,
+  userProfile: userProfileType
 ): Promise<void> => {
   try {
     storage.set(StorageKeys.USER_PROFILE, JSON.stringify(userProfile));
   } catch (error) {
     // Handle error
     console.error("Failed to save token", error);
+  }
+};
+
+export const updateUserProfileCommunities = async (
+  communities: UserCommunities[]
+): Promise<void> => {
+  try {
+    const rawProfile = storage.getString(StorageKeys.USER_PROFILE);
+
+    if (!rawProfile) {
+      console.warn("No existing user profile found in storage.");
+      return;
+    }
+
+    const profile: userProfileType = JSON.parse(rawProfile);
+
+    const updatedProfile: userProfileType = {
+      ...profile,
+      communities: communities,
+    };
+
+    storage.set(StorageKeys.USER_PROFILE, JSON.stringify(updatedProfile));
+  } catch (error) {
+    console.error("Failed to update communities in user profile", error);
+  }
+};
+export const updateUserProfileFollowing = async (
+  followings: any
+): Promise<void> => {
+  try {
+    const rawProfile = storage.getString(StorageKeys.USER_PROFILE);
+
+    if (!rawProfile) {
+      console.warn("No existing user profile found in storage.");
+      return;
+    }
+
+    const profile: userProfileType = JSON.parse(rawProfile);
+
+    const updatedProfile: userProfileType = {
+      ...profile,
+      following: followings,
+    };
+
+    storage.set(StorageKeys.USER_PROFILE, JSON.stringify(updatedProfile));
+  } catch (error) {
+    console.error("Failed to update following in user profile", error);
   }
 };
 

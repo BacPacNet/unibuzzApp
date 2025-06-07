@@ -89,7 +89,8 @@ const Step = ({
   const isCurrentStep = idx === currentStep && subStep < 2;
 
   const handleBack = () => {
-    // console.log("idx",idx);
+    return;
+
     setStep(idx);
     setSubStep(0);
   };

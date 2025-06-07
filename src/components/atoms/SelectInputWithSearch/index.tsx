@@ -154,6 +154,9 @@ export function SelectInputWithSearch({
                       maxToRenderPerBatch={10}
                       initialNumToRender={10}
                       windowSize={5}
+                      ListEmptyComponent={
+                        <Text style={styles.emptyText}>No Result Found</Text>
+                      }
                     />
                   </TouchableOpacity>
                 </TouchableOpacity>
@@ -226,6 +229,7 @@ const styles = StyleSheet.create({
     borderTopLeftRadius: 16,
     borderTopRightRadius: 16,
     maxHeight: "80%",
+    minHeight: 550,
   },
   modalHeader: {
     padding: 16,
@@ -249,5 +253,11 @@ const styles = StyleSheet.create({
   optionText: {
     fontSize: 14,
     color: "#1F2937",
+  },
+
+  emptyText: {
+    textAlign: "center",
+    fontSize: 30,
+    fontWeight: "700",
   },
 });

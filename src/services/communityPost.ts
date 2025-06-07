@@ -260,15 +260,142 @@ export async function LikeUnilikeGroupPostCommnet(
   return response;
 }
 
-export const useLikeUnlikeGroupPostComment = () => {
+export const useLikeUnlikeGroupPostComment = (
+  showInitial: boolean,
+  postId: string
+) => {
   const cookieValue = getToken();
   const queryClient = useQueryClient();
+  const userData = getUserStore();
   return useMutation({
-    mutationFn: (communityGroupPostCommentId: any) =>
-      LikeUnilikeGroupPostCommnet(communityGroupPostCommentId, cookieValue),
+    mutationFn: ({
+      communityGroupPostCommentId,
+      level,
+    }: {
+      communityGroupPostCommentId: string;
+      level: string;
+    }) => LikeUnilikeGroupPostCommnet(communityGroupPostCommentId, cookieValue),
+    onSuccess: (_, variables) => {
+      const { communityGroupPostCommentId, level } = variables;
+      const currUserComments = queryClient.getQueryData<{
+        pages: any[];
+        pageParams: any[];
+      }>(["communityPostComments"]);
 
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["communityPostComments"] });
+      if (showInitial) {
+        const singlePostData: any = queryClient.getQueryData([
+          "getPost",
+          postId,
+        ]);
+
+        if (singlePostData?.comment) {
+          const comment = singlePostData.comment;
+
+          if (level === "0" && comment._id === communityGroupPostCommentId) {
+            const hasLiked = comment.likeCount.some(
+              (like: any) => like.userId === userData?.id
+            );
+
+            const updatedComment = {
+              ...comment,
+              likeCount: hasLiked
+                ? comment.likeCount.filter(
+                    (like: any) => like.userId !== userData?.id
+                  )
+                : [...comment.likeCount, { userId: userData?.id }],
+            };
+
+            queryClient.setQueryData(["getPost", postId], {
+              ...singlePostData,
+              comment: updatedComment,
+            });
+          }
+
+          if (level === "1") {
+            const updatedReplies = comment.replies.map((reply: any) => {
+              if (reply._id === communityGroupPostCommentId) {
+                const hasLiked = reply.likeCount.some(
+                  (like: any) => like.userId === userData?.id
+                );
+
+                return {
+                  ...reply,
+                  likeCount: hasLiked
+                    ? reply.likeCount.filter(
+                        (like: any) => like.userId !== userData?.id
+                      )
+                    : [...reply.likeCount, { userId: userData?.id }],
+                };
+              }
+              return reply;
+            });
+
+            queryClient.setQueryData(["getPost", postId], {
+              ...singlePostData,
+              comment: {
+                ...comment,
+                replies: updatedReplies,
+              },
+            });
+          }
+        }
+      }
+
+      //   single end
+      if (currUserComments) {
+        queryClient.setQueryData(["communityPostComments"], {
+          ...currUserComments,
+          pages: currUserComments.pages.map((page) => {
+            return {
+              ...page,
+              finalComments: page.finalComments.map((comment: any) => {
+                if (
+                  level === "0" &&
+                  comment._id === communityGroupPostCommentId
+                ) {
+                  const hasLiked = comment.likeCount.some(
+                    (like: any) => like.userId === userData?.id
+                  );
+
+                  return {
+                    ...comment,
+                    likeCount: hasLiked
+                      ? comment.likeCount.filter(
+                          (like: any) => like.userId !== userData?.id
+                        )
+                      : [...comment.likeCount, { userId: userData?.id }],
+                  };
+                }
+
+                if (level === "1") {
+                  return {
+                    ...comment,
+                    replies: comment.replies.map((reply: any) => {
+                      if (reply._id === communityGroupPostCommentId) {
+                        const hasLiked = reply.likeCount.some(
+                          (like: any) => like.userId === userData?.id
+                        );
+
+                        return {
+                          ...reply,
+                          likeCount: hasLiked
+                            ? reply.likeCount.filter(
+                                (like: any) => like.userId !== userData?.id
+                              )
+                            : [...reply.likeCount, { userId: userData?.id }],
+                        };
+                      }
+                      return reply;
+                    }),
+                  };
+                }
+
+                return comment;
+              }),
+            };
+          }),
+        });
+      }
     },
     onError: (res: any) => {
       Toast.show(res.response?.data.message || "Something went wrong");

@@ -16,8 +16,11 @@ import { OtpInput } from "react-native-otp-entry";
 import { CheckCircleSolid } from "iconoir-react-native";
 
 import UniversityLogoPlaceHolder from "@/assets/unibuzz_rounded.svg";
-import { useHandleUniversityEmailVerificationGenerate } from "@/services/auth";
-import { storeRegisterData } from "@/storage/register";
+import {
+  useHandleRegister_v2,
+  useHandleUniversityEmailVerificationGenerate,
+} from "@/services/auth";
+import { getRegisterData, storeRegisterData } from "@/storage/register";
 import ReusableButton from "@/components/atoms/ReusableButton";
 import { FormInput } from "@/components/atoms/FormInput";
 import { ScrollView } from "react-native";
@@ -55,6 +58,8 @@ const UniversityVerificationForm = ({
   const otpRef = useRef<any>(null);
   const { mutate: generateUniversityEmailOTP, isPending } =
     useHandleUniversityEmailVerificationGenerate();
+  const { mutateAsync: HandleRegister, isPending: registerIsPending } =
+    useHandleRegister_v2();
 
   const handleUniversityEmailSendCode = () => {
     const email = getValues("universityEmail");
@@ -81,11 +86,18 @@ const UniversityVerificationForm = ({
     generateUniversityEmailOTP(data);
   };
 
-  const handleNext = () => {
-    setStep(3);
-    setSubStep(0);
-    storeRegisterData({ ...all, step: 3, subStep: 0 });
+  const handleNext = async () => {
+    const data = await getRegisterData();
+
+    // storeRegisterData({ ...all, step: 3, subStep: 0 });
     // localStorage.setItem('registerData', JSON.stringify({ ...all, step: 3, subStep: 0 }))
+
+    const res = await HandleRegister(data);
+    if (res?.isRegistered) {
+      storeRegisterData({ ...data, step: 4, subStep: 0 });
+      setStep(4);
+      setSubStep(0);
+    }
   };
 
   const handleLoginEmailSendCodeCount = () => {
@@ -134,8 +146,8 @@ const UniversityVerificationForm = ({
       <View className="w-full flex  my-4">
         <View>
           <FormInput
-            label=" Email Address"
-            disabled={true}
+            label="University Email"
+            disabled={false}
             placeholder="Email Address"
             name="universityEmail"
             control={control}
@@ -168,7 +180,7 @@ const UniversityVerificationForm = ({
             )}
           </TouchableOpacity>
           {isCounting && (
-            <Text className="text-xs text-neutral-500 text-center">
+            <Text className="text-md text-neutral-500 text-center">
               Resend Available after {countdown}s
             </Text>
           )}

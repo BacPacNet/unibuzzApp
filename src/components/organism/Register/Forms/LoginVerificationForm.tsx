@@ -14,11 +14,13 @@ interface Props {
   isVerificationSuccess: boolean;
   isPending: boolean;
   onSubmit: (data: any) => Promise<void>;
+  handlePrev: () => void;
 }
 
 const LoginVerificationForm = ({
   onSubmit,
   isPending: verificationIsPending,
+  handlePrev,
 }: Props) => {
   const [countdown, setCountdown] = useState(30);
   const [isCounting, setIsCounting] = useState(false);
@@ -173,6 +175,11 @@ const LoginVerificationForm = ({
             variant="primary"
             disabled={verificationIsPending}
             isLoading={verificationIsPending}
+          />
+          <ReusableButton
+            onPress={handlePrev}
+            buttonText="Review Profile"
+            variant="shade"
           />
         </View>
       </KeyboardAvoidingView>

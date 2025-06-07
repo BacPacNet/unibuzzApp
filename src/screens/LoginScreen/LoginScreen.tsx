@@ -157,7 +157,10 @@ function LoginScreen() {
               {loginErrors.password.message}
             </Text>
           )}
-          <TouchableOpacity className="mt-1 mb-4 text-md">
+          <TouchableOpacity
+            onPress={() => navigation.navigate("ForgetPassword")}
+            className="mt-1 mb-4 text-md"
+          >
             <Text className="text-md ">Forgot Password?</Text>
           </TouchableOpacity>
 
