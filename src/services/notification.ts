@@ -13,13 +13,13 @@ import { Toast } from "react-native-toast-notifications";
 export async function getUserMainNotification(
   token: string,
   page: number,
-  limit: number
+  limit: number,
 ) {
   const response: UserMainNotificationsProps = await client(
     `/notification/user?page=${page}&limit=${limit}`,
     {
       headers: { Authorization: `Bearer ${token}` },
-    }
+    },
   );
   return response;
 }
@@ -67,7 +67,7 @@ export function useGetUserNotificationTotalCount() {
 
 export async function JoinCommunityGroup(
   data: { groupId: string; id: string },
-  token: string
+  token: string,
 ) {
   const response = await client(`/notification/join/`, {
     method: "PUT",
@@ -95,28 +95,38 @@ export const useJoinCommunityGroup = () => {
   });
 };
 
-// export async function markAllNotificationAsRead(token: string) {
-//   const response = await client(`/notification/user/read-all`, {
-//     method: "PUT",
-//     headers: { Authorization: `Bearer ${token}` },
-//   });
-//   return response;
-// }
-// export const useMarkAllNotificationAsRead = () => {
-//   const cookieValue = getToken() as string;
-//   const queryClient = useQueryClient();
+export async function markAllNotificationAsRead(token: string) {
+  const response = await client(`/notification/user/read-all`, {
+    method: "PUT",
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  return response;
+}
+export const useMarkAllNotificationAsRead = () => {
+  const cookieValue = getToken() as string;
+  const queryClient = useQueryClient();
 
-//   return useMutation({
-//     mutationFn: () => markAllNotificationAsRead(cookieValue),
+  return useMutation({
+    mutationFn: () => markAllNotificationAsRead(cookieValue),
 
-//     onSuccess: () => {
-//       queryClient.invalidateQueries({ queryKey: ["userNotification"] });
-//       queryClient.invalidateQueries({
-//         queryKey: ["user_notification_total_count"],
-//       });
-//     },
-//     onError: (res: any) => {
-//       console.log(res.response.data.message, "res");
-//     },
-//   });
-// };
+    onSuccess: () => {
+      //   queryClient.invalidateQueries({ queryKey: ["userNotification"] });
+      //   const count = queryClient.getQueryData(["user_notification_total_count"]);
+      //   queryClient.setQueryData(["user_notification_total_count"], 0);
+      //   console.log("count", count);
+
+      queryClient.invalidateQueries({
+        queryKey: ["user_notification_total_count"],
+      });
+
+      //   setTimeout(() => {
+      //     queryClient.invalidateQueries({
+      //       queryKey: ["user_notification_total_count"],
+      //     });
+      //   }, 100);
+    },
+    onError: (res: any) => {
+      console.log(res.response.data.message, "res");
+    },
+  });
+};

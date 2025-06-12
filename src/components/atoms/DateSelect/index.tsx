@@ -1,3 +1,5 @@
+import { convertToDateObj } from "@/utils";
+import { format } from "date-fns";
 import { NavArrowDown, Xmark } from "iconoir-react-native";
 import React, { useState } from "react";
 import { Controller } from "react-hook-form";
@@ -12,7 +14,7 @@ interface SelectInputProps {
   required?: boolean;
   isLabelShown?: boolean;
   rules?: object;
-
+  currDob: string;
   onChange?: (value: string) => void;
 }
 
@@ -24,7 +26,7 @@ export function DateSelect({
   control,
   required = false,
   rules,
-
+  currDob,
   onChange,
 }: SelectInputProps) {
   const [open, setOpen] = useState(false);
@@ -35,6 +37,11 @@ export function DateSelect({
     const year = date.getFullYear();
     return `${day}/${month}/${year}`;
   };
+
+  const dobFormat = currDob?.includes("/")
+    ? convertToDateObj(currDob)
+    : Number(currDob);
+  const dateOfBirth = dobFormat && format(new Date(dobFormat), "dd/MM/yyyy");
 
   return (
     <View style={styles.container}>
@@ -60,7 +67,11 @@ export function DateSelect({
                 onPress={() => setOpen(true)}
               >
                 <Text style={[styles.selectText, !value && styles.placeholder]}>
-                  {value ? formatDate(new Date(value)) : placeholder}
+                  {!!value && typeof value == "object"
+                    ? formatDate(new Date(value))
+                    : currDob?.length
+                      ? dateOfBirth
+                      : dateOfBirth}
                 </Text>
                 {value ? (
                   <Xmark
@@ -91,7 +102,7 @@ export function DateSelect({
                 onConfirm={(date: any) => {
                   setOpen(false);
 
-                  formOnChange(date);
+                  formOnChange(format(new Date(date), "dd/MM/yyyy"));
                 }}
                 onCancel={() => {
                   setOpen(false);

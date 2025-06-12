@@ -92,7 +92,7 @@ const PostCardUserDetails = ({
 
         <View>
           <View>
-            <Text className="font-semibold text-neutral-900 text-lg">
+            <Text className="font-semibold text-neutral-900 text-sm">
               {name}
             </Text>
           </View>

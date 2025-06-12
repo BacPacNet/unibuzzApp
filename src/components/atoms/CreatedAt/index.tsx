@@ -1,13 +1,7 @@
-import React from "react";
+import React, { useMemo } from "react";
 import { View, Text, StyleSheet } from "react-native";
-import dayjs from "dayjs";
-import utc from "dayjs/plugin/utc";
-import timezone from "dayjs/plugin/timezone";
-import "dayjs/locale/en";
 
-dayjs.extend(utc);
-dayjs.extend(timezone);
-dayjs.locale("en");
+import { format } from "date-fns";
 
 export function RenderCreatedAt({
   date,
@@ -20,30 +14,15 @@ export function RenderCreatedAt({
     console.warn("Invalid or undefined date input:", date);
     return null;
   }
-
-  let formatted: any = "";
-
-  try {
-    const parsed = dayjs.utc(new Date(date)).local();
-
-    if (!parsed.isValid()) {
-      console.warn("Invalid date after parsing:", date);
-      return null;
-    }
-
-    const timeStr = parsed.format("h:mm A");
-
-    const dateStr = parsed.format("MMM, YYYY");
-    formatted = `${timeStr} · ${dateStr} ·`;
-  } catch (e: any) {
-    console.warn("Error formatting date:", date, e?.message ?? String(e));
-    return null;
-  }
+  const formattedDate = useMemo(
+    () => format(date as unknown as Date, "h:mm a · MMM d, yyyy"),
+    [date],
+  );
 
   return (
     <View style={styles.container}>
       <Text style={styles.text}>
-        {`${formatted} ${postSourceText ? ` ${postSourceText}` : ""}`}
+        {`${formattedDate} ${postSourceText ? ` ${postSourceText}` : ""}`}
       </Text>
     </View>
   );

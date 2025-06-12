@@ -1,6 +1,15 @@
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
+import "dayjs/locale/en";
+import customParseFormat from "dayjs/plugin/customParseFormat";
+import advancedFormat from "dayjs/plugin/advancedFormat";
+import { isValid, parse } from "date-fns";
+import { getUserProfileStore } from "@/storage/user";
+
 dayjs.extend(relativeTime);
+dayjs.locale("en");
+dayjs.extend(customParseFormat);
+dayjs.extend(advancedFormat);
 
 dayjs.locale("en-short", {
   relativeTime: {
@@ -24,12 +33,18 @@ export const timeAgo = (timestamp: string) => {
   return dayjs(timestamp).fromNow();
 };
 
+export const convertToDateObj = (dateStr: string) => {
+  const format = "dd/MM/yyyy";
+  const parsed = parse(dateStr, format, new Date());
+
+  return isValid(parsed) ? parsed : null;
+};
 export const validateUploadedFiles = (
   files: File[],
   options: {
     maxFiles?: number;
     maxSize?: number;
-  } = {}
+  } = {},
 ): { isValid: boolean; message: string } => {
   const {
     maxFiles = 4,
@@ -69,6 +84,7 @@ export const imageMimeTypes = [
   "image/heic",
   "image/heif",
   "image/jpg",
+  "image/gif",
 ];
 
 export const getMimeTypeFromUrl = (url: string): string => {
@@ -85,7 +101,19 @@ export const getMimeTypeFromUrl = (url: string): string => {
       return "image/heic";
     case "heif":
       return "image/heif";
+    case "gif":
+      return "image/gif";
     default:
       return "other";
   }
+};
+
+export const IsUniversityVerified = (): boolean => {
+  const userProfileData = getUserProfileStore();
+  return (
+    userProfileData?.email?.some(
+      (university) =>
+        university.UniversityName === userProfileData.university_name,
+    ) || false
+  );
 };

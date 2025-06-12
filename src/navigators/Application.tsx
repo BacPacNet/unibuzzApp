@@ -10,7 +10,7 @@ import { useTheme } from "@/theme";
 
 import type { RootStackParamList } from "@/types/navigation";
 import OnboardingScreen from "@/screens/OnboardingScreen/OnboardingScreen";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { storage } from "@/App";
 import AuthGuard from "@/components/template/AuthGuard/AuthGuard";
 import UnauthenticatedGuard from "@/components/template/UnauthenticatedGuard/UnauthenticatedGuard";
@@ -59,7 +59,6 @@ function ApplicationNavigator() {
   const [isAppFirstLaunched, setIsAppFirstLaunched] = useState(false);
   const userProfileStore = getUserProfileStore();
   const user = getUserStore();
-  const { data: unreadNotificationCount } = useGetUserNotificationTotalCount();
 
   useEffect(() => {
     const appData = storage.contains("isAppFirstLaunched");
@@ -93,7 +92,13 @@ function ApplicationNavigator() {
   }
 
   function TabsGroup() {
-    const tabIcons = getTabIcons(unreadNotificationCount || 0);
+    const { data: unreadNotificationCount } =
+      useGetUserNotificationTotalCount();
+
+    const tabIcons = useMemo(
+      () => getTabIcons(unreadNotificationCount || 0),
+      [unreadNotificationCount],
+    );
     return (
       <Tab.Navigator
         screenOptions={({ route }) => ({
@@ -105,13 +110,22 @@ function ApplicationNavigator() {
           },
           tabBarActiveTintColor: "#6744FF",
           tabBarInactiveTintColor: "black",
-          tabBarStyle: { backgroundColor: "white" },
-          tabBarLabelStyle: { fontSize: 12, fontWeight: "500" },
+          tabBarStyle: {
+            backgroundColor: "white",
+          },
+          tabBarLabelStyle: {
+            fontSize: 12,
+            fontWeight: "500",
+          },
           headerShown: false,
           tabBarHideOnKeyboard: true,
         })}
       >
-        <Tab.Screen name="Home" component={HomeStack} />
+        <Tab.Screen
+          name="Home"
+          component={HomeStack}
+          //   options={{ unmountOnBlur: false }}
+        />
         <Tab.Screen
           name="Connection"
           component={ConnectionStack}

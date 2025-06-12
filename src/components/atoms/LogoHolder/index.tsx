@@ -2,7 +2,13 @@ import React, { useEffect, useState } from "react";
 import { View, Image, Platform, StyleSheet } from "react-native";
 import UniversityLogoPlaceHolder from "@/assets/uniorangeIcon.svg";
 
-const CommunityLogo = ({ logoUrl }: { logoUrl: string }) => {
+const CommunityLogo = ({
+  logoUrl,
+  variant = "default",
+}: {
+  logoUrl: string;
+  variant?: "small" | "default";
+}) => {
   const [logoSrc, setLogoSrc] = useState(logoUrl);
 
   useEffect(() => {
@@ -10,19 +16,37 @@ const CommunityLogo = ({ logoUrl }: { logoUrl: string }) => {
   }, [logoUrl]);
 
   return (
-    <View style={[styles.imageWrapper]}>
+    <View
+      style={[
+        styles.imageWrapper,
+        variant === "small" ? styles.smallWrapper : styles.defaultWrapper,
+      ]}
+    >
       {logoSrc ? (
         <Image
           source={{ uri: logoSrc }}
-          style={styles.communityImage}
+          style={[
+            styles.communityImage,
+            variant === "small" ? styles.smallImage : styles.defaultImage,
+          ]}
           onError={() => setLogoSrc("")}
         />
       ) : (
-        <View style={styles.universityPlaceHolder}>
+        <View
+          style={[
+            styles.universityPlaceHolder,
+            variant === "small"
+              ? styles.smallPlaceholder
+              : styles.defaultPlaceholder,
+          ]}
+        >
           <UniversityLogoPlaceHolder
-            width={20}
-            height={20}
-            style={styles.communityImage}
+            width={variant === "small" ? 16 : 20}
+            height={variant === "small" ? 16 : 20}
+            style={[
+              styles.communityImage,
+              variant === "small" ? styles.smallImage : styles.defaultImage,
+            ]}
           />
         </View>
       )}
@@ -32,9 +56,7 @@ const CommunityLogo = ({ logoUrl }: { logoUrl: string }) => {
 
 const styles = StyleSheet.create({
   imageWrapper: {
-    padding: 4,
     backgroundColor: "#fff",
-    borderRadius: 24,
     ...Platform.select({
       ios: {
         shadowColor: "#000",
@@ -47,18 +69,39 @@ const styles = StyleSheet.create({
       },
     }),
   },
+  defaultWrapper: {
+    padding: 4,
+    borderRadius: 200,
+  },
+  smallWrapper: {
+    padding: 3,
+    borderRadius: 200,
+  },
   communityImage: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
     resizeMode: "contain",
   },
-  universityPlaceHolder: {
+  defaultImage: {
     width: 40,
     height: 40,
+    borderRadius: 100,
+  },
+  smallImage: {
+    width: 32,
+    height: 32,
+    borderRadius: 200,
+  },
+  universityPlaceHolder: {
     display: "flex",
     justifyContent: "center",
     alignItems: "center",
+  },
+  defaultPlaceholder: {
+    width: 40,
+    height: 40,
+  },
+  smallPlaceholder: {
+    width: 32,
+    height: 32,
   },
 });
 

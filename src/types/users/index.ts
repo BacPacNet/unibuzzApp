@@ -26,6 +26,7 @@ export interface userProfileType {
   study_year?: string;
   degree?: string;
   major?: string;
+  role: string;
   affiliation?: string;
   occupation?: string;
   following: following[];

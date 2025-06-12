@@ -77,13 +77,13 @@ const PostCard = memo(
         data?.communityId,
         communityGroupId,
         isTimeline,
-        isSinglePost
+        isSinglePost,
       );
     const { mutate: LikeUnlikeTimelinePost, isPending: isLikeUnlikePending } =
       useLikeUnlikeTimelinePost("" as string, data?.user?._id, isSinglePost);
 
     const sharePost = async (
-      message = "Hey, check out this amazing post! https://example.com/post/123"
+      message = "Hey, check out this amazing post! https://example.com/post/123",
     ) => {
       try {
         await Share.share({ message });
@@ -133,7 +133,7 @@ const PostCard = memo(
         return () => {
           setShowInitial(false);
         };
-      }, [data, toShowInitial])
+      }, [data, toShowInitial]),
     );
 
     const postSourceText = useMemo(() => {
@@ -221,7 +221,7 @@ const PostCard = memo(
               onPress={() => LikeUnlikeHandler(data?._id)}
               className="flex flex-row gap-2 items-center"
             >
-              <Text className="text-lg font-bold text-neutral-500">
+              <Text className="text-sm font-bold text-neutral-500">
                 {data?.likeCount?.length}
               </Text>
               <ThumbsUp
@@ -238,7 +238,7 @@ const PostCard = memo(
               }}
               className="flex flex-row gap-2 items-center"
             >
-              <Text className="text-lg font-bold text-neutral-500">
+              <Text className="text-sm font-bold text-neutral-500">
                 {data?.commentCount}
               </Text>
               <ChatBubbleEmpty
@@ -307,7 +307,7 @@ const PostCard = memo(
         </ActionSheet>
       </View>
     );
-  }
+  },
 );
 
 export default PostCard;

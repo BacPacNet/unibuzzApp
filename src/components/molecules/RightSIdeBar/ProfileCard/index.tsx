@@ -1,11 +1,31 @@
 import React from "react";
-import { View, Text, Image, StyleSheet, TouchableOpacity } from "react-native";
+import {
+  View,
+  Text,
+  Image,
+  StyleSheet,
+  TouchableOpacity,
+  ActivityIndicator,
+  Share,
+} from "react-native";
 import avatar from "@/assets/avatar.png";
 import { getUserProfileStore, getUserStore } from "@/storage/user";
-import { EditPencil } from "iconoir-react-native";
+import {
+  ChatBubble,
+  ChatBubbleSolid,
+  EditPencil,
+  MoreHoriz,
+  UserPlus,
+} from "iconoir-react-native";
 import { RootStackParamList } from "@/types/navigation";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { useNavigation } from "@react-navigation/native";
+import { useToggleFollow } from "@/services/connection";
+import DropdownWrapper from "../../SelectDropDownWrapper";
+import { Toast } from "react-native-toast-notifications";
+import { useCreateUserChat } from "@/services/Messages";
+import ProfileDropdownMenu from "@/components/atoms/ProfileDropdownMenu";
+import ReusableButton from "@/components/atoms/ReusableButton";
 
 type Props = {
   name?: string;
@@ -15,6 +35,12 @@ type Props = {
   degree?: string;
   isSelfProfile?: boolean;
   toShow: boolean;
+  isStudent: boolean;
+  occupation?: string;
+  major?: string;
+  affiliation?: string;
+  isSideBar?: boolean;
+  userId?: string;
 };
 
 type NavigationProp = StackNavigationProp<RootStackParamList, "Profile">;
@@ -27,75 +53,195 @@ const ProfileCard = ({
   year,
   isSelfProfile,
   toShow = false,
+  isStudent,
+  major,
+  occupation,
+  affiliation,
+  isSideBar = false,
+  userId,
 }: Props) => {
   const user = getUserStore();
   const userProfile = getUserProfileStore();
+  const userFollowingIDs =
+    userProfile && userProfile?.following?.map((following) => following.userId);
   const { navigate } = useNavigation<NavigationProp>();
-  return (
-    <View style={styles.card}>
-      <View style={styles.profilePicWrapper}>
-        <Image
-          source={avatarUrl ? { uri: avatarUrl } : avatar}
-          style={styles.profilePic}
-        />
-      </View>
-      <View style={styles.info}>
-        <View className="flex flex-row items-center justify-between">
-          <Text style={styles.name}>
-            {name ? name : user?.firstName + " " + user?.lastName}
-          </Text>
-          {isSelfProfile && toShow && (
-            <TouchableOpacity
-              onPress={() => navigate("ProfileEdit")}
-              style={styles.editButton}
-            >
-              <Text className="text-[#6744FF]">Edit</Text>
-              <EditPencil width={22} height={22} color="#6744FF" />
-            </TouchableOpacity>
-          )}
-        </View>
+  const { mutate: toggleFollow, isPending } = useToggleFollow();
+  const { mutateAsync: mutateCreateUserChat, isPending: userChatPending } =
+    useCreateUserChat();
 
-        <View style={styles.universityContainer}>
-          <Text className="line-clamp-2" style={styles.university}>
-            {university ? university : userProfile?.university_name}
-          </Text>
-          {/* <View style={styles.badgeWrapper}>
-            <Text style={styles.badge}>Admin</Text>
-          </View> */}
+  const handleMessage = async () => {
+    const createChatResponse: any = await mutateCreateUserChat({
+      userId: userId,
+    });
+    navigate("Messages", { selectedUserId: createChatResponse._id });
+  };
+
+  const first =
+    isSideBar && isStudent
+      ? userProfile?.study_year
+      : isStudent
+        ? year
+        : userProfile?.occupation || occupation;
+
+  const second =
+    isSideBar && isStudent
+      ? userProfile?.major
+      : isStudent && !isSideBar
+        ? major
+        : !isStudent && !isSideBar
+          ? affiliation
+          : !isStudent && isSideBar
+            ? userProfile?.affiliation
+            : affiliation;
+
+  const sharePost = async (
+    message = `Hey, check out ${name} profile ${NEXT_PUBLIC_API_BASE_URL}/${userId}`,
+  ) => {
+    try {
+      await Share.share({ message });
+    } catch (error: any) {
+      Toast.show(error || "Something went wrong");
+    }
+  };
+
+  return (
+    <View style={styles.mainContainer}>
+      <View style={styles.headerContainer}>
+        {isSelfProfile && toShow ? (
+          <ReusableButton
+            buttonContent={
+              <View className="flex-row items-center justify-center gap-1">
+                <Text className="text-[#6744FF]">Edit Profile</Text>
+                <EditPencil
+                  width={22}
+                  height={22}
+                  color="#ffff"
+                  fill={"#6744FF"}
+                />
+              </View>
+            }
+            variant={"shade"}
+            onPress={() => navigate("ProfileEdit")}
+            height="small"
+            isRounded={true}
+            size={115}
+          />
+        ) : !isSelfProfile && toShow ? (
+          <View className="flex flex-row gap-2">
+            <DropdownWrapper
+              position="bottom"
+              renderDropdown={() => (
+                <ProfileDropdownMenu
+                  name={name || user?.firstName + " " + user?.lastName}
+                  userId={userId as string}
+                />
+              )}
+            >
+              <TouchableOpacity style={styles.editButton}>
+                <MoreHoriz height={20} width={20} color={"#6744FF"} />
+              </TouchableOpacity>
+            </DropdownWrapper>
+            <TouchableOpacity onPress={handleMessage} style={styles.editButton}>
+              <ChatBubbleSolid height={20} width={20} color={"#6744FF"} />
+            </TouchableOpacity>
+            <ReusableButton
+              buttonContent={
+                userFollowingIDs?.includes(userId as string) ? (
+                  <Text className="text-primary font-bold text-2xs">
+                    Following
+                  </Text>
+                ) : (
+                  <View className="flex-row items-center justify-center gap-1">
+                    <Text className="text-white font-bold text-2xs">
+                      Follow
+                    </Text>
+                    <UserPlus height={16} width={16} color={"white"} />
+                  </View>
+                )
+              }
+              variant={
+                userFollowingIDs?.includes(userId as string)
+                  ? "border_primary"
+                  : "primary"
+              }
+              onPress={() => toggleFollow(userId as string)}
+              isLoading={isPending}
+              activityIndicatorColor={
+                userFollowingIDs?.includes(userId as string)
+                  ? "#6744FF"
+                  : "white"
+              }
+              disabled={isPending}
+              height="small"
+              isRounded={true}
+              size="small"
+            />
+          </View>
+        ) : null}
+      </View>
+
+      <View style={styles.card}>
+        <View style={styles.profilePicWrapper}>
+          <Image
+            source={
+              isSideBar
+                ? { uri: userProfile?.profile_dp?.imageUrl }
+                : avatarUrl
+                  ? { uri: avatarUrl }
+                  : avatar
+            }
+            style={styles.profilePic}
+          />
         </View>
-        <Text style={styles.year}>
-          {year ? year : userProfile?.study_year}{" "}
-          {degree ? degree : userProfile?.degree}
-        </Text>
+        <View style={styles.info}>
+          <View className="flex   justify-between">
+            <Text style={styles.name}>
+              {name ? name : user?.firstName + " " + user?.lastName}
+            </Text>
+            <View style={styles.universityContainer}>
+              <Text style={styles.year}>{first}</Text>
+              <Text style={styles.year}>{second}</Text>
+            </View>
+          </View>
+        </View>
       </View>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
+  mainContainer: {
+    padding: 16,
+    flex: 1,
+  },
+  headerContainer: {
+    flexDirection: "column",
+    alignItems: "flex-end",
+  },
   card: {
     flexDirection: "row",
     alignItems: "center",
-    padding: 10,
-    flex: 1,
   },
   profilePicWrapper: {
-    backgroundColor: "#f3d1e6",
     borderRadius: 50,
     padding: 3,
   },
   profilePic: {
-    width: 60,
-    height: 60,
-    borderRadius: 30,
+    width: 80,
+    height: 80,
+    borderRadius: 200,
   },
   info: {
-    marginLeft: 10,
+    marginLeft: 8,
     flex: 1,
+    display: "flex",
+    flexDirection: "row",
+    justifyContent: "space-between",
   },
   name: {
-    fontSize: 18,
-    fontWeight: "bold",
+    fontSize: 16,
+    fontWeight: "semibold",
+    color: "#3A3B3C",
   },
   university: {
     color: "#555",
@@ -104,11 +250,12 @@ const styles = StyleSheet.create({
   },
   universityContainer: {
     display: "flex",
-    flexDirection: "row",
-    gap: 5,
-    alignItems: "center",
+    flex: 1,
+    gap: 1,
+    alignItems: "flex-start",
     width: "100%",
   },
+
   badgeWrapper: {
     marginTop: 2,
   },
@@ -122,18 +269,28 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
   year: {
-    color: "#888",
-    fontSize: 12,
+    color: "#6B7280",
+    fontSize: 14,
   },
 
   editButton: {
-    paddingHorizontal: 10,
+    backgroundColor: "#F3F2FF",
 
-    borderColor: "#6744FF",
-    borderWidth: 1,
-    borderRadius: 8,
-    width: 70,
-    height: 30,
+    borderRadius: 200,
+    width: 32,
+    height: 32,
+    display: "flex",
+    flexDirection: "row",
+    gap: 2,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  editButtonPrimary: {
+    backgroundColor: "#6744FF",
+
+    borderRadius: 200,
+    width: 32,
+    height: 32,
     display: "flex",
     flexDirection: "row",
     gap: 2,

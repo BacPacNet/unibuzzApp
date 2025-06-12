@@ -67,13 +67,13 @@ function LoginScreen() {
         <View style={{ marginBottom: 50 }} className="flex items-center ">
           <UnibuzzLogo width={121} height={28} />
         </View>
-        <Text className="text-xl font-bold text-neutral-900 pt-2">
+        <Text className="text-md font-bold text-neutral-900 pt-2">
           Login to your account
         </Text>
 
         <View>
           <View className="my-4">
-            <Text className="font-medium text-neutral-900 mb-2 text-md">
+            <Text className="font-medium text-neutral-900 mb-2 text-sm">
               Email Address
             </Text>
             <Controller
@@ -119,7 +119,7 @@ function LoginScreen() {
         </View>
 
         <View className="mb-4">
-          <Text className="font-medium text-neutral-900 mb-2 text-md">
+          <Text className="font-medium text-neutral-900 mb-2 text-sm">
             Password
           </Text>
           <View className="relative">
@@ -159,9 +159,9 @@ function LoginScreen() {
           )}
           <TouchableOpacity
             onPress={() => navigation.navigate("ForgetPassword")}
-            className="mt-1 mb-4 text-md"
+            className="mt-1 mb-4 text-xs"
           >
-            <Text className="text-md ">Forgot Password?</Text>
+            <Text className="text-xs ">Forgot Password?</Text>
           </TouchableOpacity>
 
           <ReusableButton
@@ -170,6 +170,7 @@ function LoginScreen() {
             variant="primary"
             disabled={isPending}
             isLoading={isPending}
+            height="medium"
           />
         </View>
         {/* </Card> */}

@@ -35,11 +35,11 @@ export async function getCommunityPostComments(
   postId: string,
   token: any,
   page: number,
-  limit: number
+  limit: number,
 ) {
   const response: any = await client(
     `/communitypostcomment/${postId}?page=${page}&limit=${limit}`,
-    { headers: { Authorization: `Bearer ${token}` } }
+    { headers: { Authorization: `Bearer ${token}` } },
   );
   return response;
 }
@@ -47,7 +47,7 @@ export async function getCommunityPostComments(
 export function useGetCommunityPostComments(
   postId: string,
   isCommunity: boolean,
-  limit: number
+  limit: number,
 ) {
   {
     const cookieValue = getToken();
@@ -70,11 +70,11 @@ export function useGetCommunityPostComments(
 
 export async function LikeUnilikeGroupPost(
   communityGroupPostId: string,
-  token: any
+  token: any,
 ) {
   const response = await client(
     `/communitypost/likeunlike/${communityGroupPostId}`,
-    { method: "PUT", headers: { Authorization: `Bearer ${token}` } }
+    { method: "PUT", headers: { Authorization: `Bearer ${token}` } },
   );
   return response;
 }
@@ -83,7 +83,7 @@ export const useLikeUnilikeGroupPost = (
   communityId: string = "",
   communityGroupId: string = "",
   isTimeline: boolean,
-  isSinglePost: boolean
+  isSinglePost: boolean,
 ) => {
   const cookieValue = getToken() as string;
   const userData = getUserStore();
@@ -107,7 +107,7 @@ export const useLikeUnilikeGroupPost = (
           if (!oldData || !oldData.post) return oldData;
 
           const hasLiked = oldData.post.likeCount.some(
-            (like: any) => like.userId === userData?.id
+            (like: any) => like.userId === userData?.id,
           );
 
           return {
@@ -116,7 +116,7 @@ export const useLikeUnilikeGroupPost = (
               ...oldData.post,
               likeCount: hasLiked
                 ? oldData.post.likeCount.filter(
-                    (like: any) => like.userId !== userData?.id
+                    (like: any) => like.userId !== userData?.id,
                   )
                 : [
                     ...oldData.post.likeCount,
@@ -144,14 +144,14 @@ export const useLikeUnilikeGroupPost = (
                 if (post._id !== postId) return post;
 
                 const hasLiked = post.likeCount.some(
-                  (like: any) => like.userId === userData?.id
+                  (like: any) => like.userId === userData?.id,
                 );
 
                 return {
                   ...post,
                   likeCount: hasLiked
                     ? post.likeCount.filter(
-                        (like: any) => like.userId !== userData?.id
+                        (like: any) => like.userId !== userData?.id,
                       )
                     : [
                         ...post.likeCount,
@@ -170,14 +170,14 @@ export const useLikeUnilikeGroupPost = (
                 if (post._id !== postId) return post;
 
                 const hasLiked = post.likeCount.some(
-                  (like: any) => like.userId === userData?.id
+                  (like: any) => like.userId === userData?.id,
                 );
 
                 return {
                   ...post,
                   likeCount: hasLiked
                     ? post.likeCount.filter(
-                        (like: any) => like.userId !== userData?.id
+                        (like: any) => like.userId !== userData?.id,
                       )
                     : [
                         ...post.likeCount,
@@ -248,21 +248,21 @@ export const useCreateGroupPostComment = () => {
 
 export async function LikeUnilikeGroupPostCommnet(
   communityGroupPostCommentId: string,
-  token: any
+  token: any,
 ) {
   const response = await client(
     `/communitypostcomment/likeUnlike/${communityGroupPostCommentId}`,
     {
       method: "PUT",
       headers: { Authorization: `Bearer ${token}` },
-    }
+    },
   );
   return response;
 }
 
 export const useLikeUnlikeGroupPostComment = (
   showInitial: boolean,
-  postId: string
+  postId: string,
 ) => {
   const cookieValue = getToken();
   const queryClient = useQueryClient();
@@ -293,14 +293,14 @@ export const useLikeUnlikeGroupPostComment = (
 
           if (level === "0" && comment._id === communityGroupPostCommentId) {
             const hasLiked = comment.likeCount.some(
-              (like: any) => like.userId === userData?.id
+              (like: any) => like.userId === userData?.id,
             );
 
             const updatedComment = {
               ...comment,
               likeCount: hasLiked
                 ? comment.likeCount.filter(
-                    (like: any) => like.userId !== userData?.id
+                    (like: any) => like.userId !== userData?.id,
                   )
                 : [...comment.likeCount, { userId: userData?.id }],
             };
@@ -315,14 +315,14 @@ export const useLikeUnlikeGroupPostComment = (
             const updatedReplies = comment.replies.map((reply: any) => {
               if (reply._id === communityGroupPostCommentId) {
                 const hasLiked = reply.likeCount.some(
-                  (like: any) => like.userId === userData?.id
+                  (like: any) => like.userId === userData?.id,
                 );
 
                 return {
                   ...reply,
                   likeCount: hasLiked
                     ? reply.likeCount.filter(
-                        (like: any) => like.userId !== userData?.id
+                        (like: any) => like.userId !== userData?.id,
                       )
                     : [...reply.likeCount, { userId: userData?.id }],
                 };
@@ -354,14 +354,14 @@ export const useLikeUnlikeGroupPostComment = (
                   comment._id === communityGroupPostCommentId
                 ) {
                   const hasLiked = comment.likeCount.some(
-                    (like: any) => like.userId === userData?.id
+                    (like: any) => like.userId === userData?.id,
                   );
 
                   return {
                     ...comment,
                     likeCount: hasLiked
                       ? comment.likeCount.filter(
-                          (like: any) => like.userId !== userData?.id
+                          (like: any) => like.userId !== userData?.id,
                         )
                       : [...comment.likeCount, { userId: userData?.id }],
                   };
@@ -373,14 +373,14 @@ export const useLikeUnlikeGroupPostComment = (
                     replies: comment.replies.map((reply: any) => {
                       if (reply._id === communityGroupPostCommentId) {
                         const hasLiked = reply.likeCount.some(
-                          (like: any) => like.userId === userData?.id
+                          (like: any) => like.userId === userData?.id,
                         );
 
                         return {
                           ...reply,
                           likeCount: hasLiked
                             ? reply.likeCount.filter(
-                                (like: any) => like.userId !== userData?.id
+                                (like: any) => like.userId !== userData?.id,
                               )
                             : [...reply.likeCount, { userId: userData?.id }],
                         };
@@ -410,14 +410,14 @@ export async function CreateGroupPostCommentReply(data: any, token: any) {
       method: "POST",
       headers: { Authorization: `Bearer ${token}` },
       data,
-    }
+    },
   );
   return response;
 }
 
 export const useCreateGroupPostCommentReply = (
   showInitial: boolean,
-  postId: string
+  postId: string,
 ) => {
   const cookieValue = getToken() as string;
   const queryClient = useQueryClient();
@@ -477,7 +477,7 @@ export const useCreateGroupPostCommentReply = (
 
 export async function deleteCommunityPostComment(
   postId: string,
-  token: string
+  token: string,
 ) {
   const response = await client(`/communitypostcomment/${postId}`, {
     method: "DELETE",

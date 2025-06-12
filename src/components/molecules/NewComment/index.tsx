@@ -144,7 +144,7 @@ const NewComment = ({
           }
           setImages((prevImages) => [...prevImages, ...response.assets]);
         }
-      }
+      },
     );
   }, []);
 
@@ -156,7 +156,7 @@ const NewComment = ({
         setFiles((prev) => prev.filter((file) => file.name !== identifier));
       }
     },
-    []
+    [],
   );
 
   const handleComment = async () => {

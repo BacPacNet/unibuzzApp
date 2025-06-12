@@ -24,6 +24,7 @@ const Timeline = () => {
     isFetchingNextPage: timelinePostIsFetchingNextPage,
     hasNextPage: timelinePostHasNextPage,
     isFetching,
+    isPending,
   } = useGetTimelinePosts(10);
 
   const queryClient = useQueryClient();
@@ -38,6 +39,13 @@ const Timeline = () => {
     setRefreshing(false);
   }, []);
 
+  if (isPending) {
+    return (
+      <View className="flex-1 justify-center items-center">
+        <ActivityIndicator size="large" color="#7367f0" />
+      </View>
+    );
+  }
   return (
     <View style={{ position: "relative" }} className="bg-white flex-1 relative">
       <CreatePostButton

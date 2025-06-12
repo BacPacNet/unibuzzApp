@@ -8,18 +8,26 @@ import { Toast } from "react-native-toast-notifications";
 import { client } from "./api-client";
 import { getToken } from "@/storage/token";
 
-const editProfile = async (data: any, id: string) => {
-  const res = await client(`/userprofile/${id}`, { method: "PUT", data });
+const editProfile = async (data: any, id: string, token: string) => {
+  const res = await client(`/userprofile/${id}`, {
+    method: "PUT",
+    data,
+    headers: { Authorization: `Bearer ${token}` },
+  });
   return res;
 };
 
 export const useEditProfile = () => {
   const userProfileData = getUserProfileStore();
   const queryClient = useQueryClient();
+  const cookieValue = getToken() as string;
   return useMutation({
-    mutationFn: (data: any) => editProfile(data, userProfileData?._id || ""),
+    mutationFn: (data: any) =>
+      editProfile(data, userProfileData?._id || "", cookieValue),
     onSuccess: async (response: any) => {
-      await storeUserProfile(response.updatedUserProfile);
+      console.log("response", response);
+
+      storeUserProfile(response.data);
       Toast.show("Profile Updated");
 
       queryClient.invalidateQueries({ queryKey: ["getRefetchUserData"] });

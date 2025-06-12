@@ -23,9 +23,10 @@ interface Message {
   readByUsers?: string[];
 }
 
-const Messages = () => {
+const Messages = ({ route }: any) => {
   const [currTab, setCurrTab] = useState("Inbox");
   const [selectedChat, setSelectedChat] = useState<any>(undefined);
+  const { selectedUserId } = route.params;
   const {
     data: chatsData,
     isLoading: isChatLoading,
@@ -245,6 +246,17 @@ const Messages = () => {
       }
     };
   }, [socket, selectedChat]);
+
+  useEffect(() => {
+    if (selectedUserId) {
+      const selectedChatBySearchQuery = chats?.find(
+        (item) => item._id.toString() == selectedUserId,
+      );
+      if (selectedChatBySearchQuery) {
+        setSelectedChat(selectedChatBySearchQuery);
+      }
+    }
+  }, [selectedUserId, chats]);
 
   const renderTab = () => {
     if (isFetching) {

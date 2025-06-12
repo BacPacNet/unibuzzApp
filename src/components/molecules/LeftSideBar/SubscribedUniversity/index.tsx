@@ -9,11 +9,11 @@ import {
   Platform,
 } from "react-native";
 import Badge from "@/assets/badge.svg";
-import UniversityLogoPlaceHolder from "@/assets/unibuzz_rounded.svg";
 
 import { Community } from "@/types/Community";
 import { User } from "@/models/auth";
 import ReusableButton from "@/components/atoms/ReusableButton";
+import CommunityLogo from "@/components/atoms/LogoHolder";
 
 interface Props {
   subscribedCommunities: Community[];
@@ -78,7 +78,7 @@ const CommunityHolder = ({
       ]}
     >
       <View style={styles.innerContainer}>
-        {!logoSrc ? (
+        {/* {!logoSrc ? (
           <View style={styles.imageWrapper}>
             {!logoSrc ? (
               <Image
@@ -100,8 +100,8 @@ const CommunityHolder = ({
             height={40}
             style={styles.communityImage}
           />
-        )}
-
+        )} */}
+        <CommunityLogo logoUrl={community?.communityLogoUrl?.imageUrl} />
         <View style={styles.textContainer}>
           <Text
             style={[

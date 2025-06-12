@@ -70,7 +70,7 @@ const CommentBottomSheet = ({
 
   const { mutate: likeUserPostComment } = useLikeUnlikeUserPostComment(
     showInitial,
-    postId
+    postId,
   );
 
   // community
@@ -84,7 +84,7 @@ const CommentBottomSheet = ({
 
   const { mutate: likeGroupPostComment } = useLikeUnlikeGroupPostComment(
     showInitial,
-    postId
+    postId,
   );
 
   const userCommentsData =
@@ -136,7 +136,7 @@ const CommentBottomSheet = ({
             style={styles.flatList}
             keyExtractor={(item, index) => item?._id + index}
             ListHeaderComponent={
-              showInitial ? (
+              showInitial && [initialComment]?.length > 1 ? (
                 <View className="flex flex-row justify-end px-4">
                   <TouchableOpacity
                     onPress={() => setShowInitial(false)}

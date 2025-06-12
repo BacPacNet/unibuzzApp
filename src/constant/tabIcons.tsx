@@ -75,7 +75,7 @@ import { Text, View } from "react-native";
 // };
 
 export const getTabIcons = (
-  unreadCount: number = 0
+  unreadCount: number = 0,
 ): Record<
   | "Home"
   | "Example"
@@ -89,37 +89,37 @@ export const getTabIcons = (
     Home: (focused: boolean) => (
       <HomeSimpleDoor
         fill={focused ? "#6744FF" : "#6B7280"}
-        height={24}
-        width={24}
+        height={28}
+        width={28}
         color="white"
       />
     ),
     Example: (focused: boolean) =>
       focused ? (
-        <Eye height={24} width={24} color="#6744FF" />
+        <Eye height={24} width={28} color="#6744FF" />
       ) : (
-        <EyeClosed height={24} width={24} />
+        <EyeClosed height={24} width={28} />
       ),
     Connection: (focused: boolean) => (
       <Group
-        height={24}
-        width={24}
+        height={28}
+        width={28}
         color="white"
         fill={focused ? "#6744FF" : "#6B7280"}
       />
     ),
     Messages: (focused: boolean) => (
       <MailSolid
-        height={24}
-        width={24}
+        height={28}
+        width={28}
         color={focused ? "#6744FF" : "#6B7280"}
       />
     ),
     Notifications: (focused: boolean) => (
       <View style={{ position: "relative" }}>
         <BellNotificationSolid
-          height={24}
-          width={24}
+          height={28}
+          width={28}
           color={focused ? "#6744FF" : "#6B7280"}
         />
         {unreadCount && Number(unreadCount) > 0 ? (
@@ -144,7 +144,7 @@ export const getTabIcons = (
       </View>
     ),
     AIAssistant: (focused: boolean) => (
-      <Spark height={24} width={24} color={focused ? "#6744FF" : "black"} />
+      <Spark height={28} width={28} color={focused ? "#6744FF" : "black"} />
     ),
   }) satisfies Record<string, (focused: boolean) => JSX.Element>;
 

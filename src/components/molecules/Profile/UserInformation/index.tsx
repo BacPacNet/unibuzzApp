@@ -9,13 +9,10 @@ import {
   MapPin,
 } from "iconoir-react-native";
 import dayjs from "dayjs";
+import { convertToDateObj } from "@/utils";
+import { format } from "date-fns";
 
 type ProfileInfoProps = {
-  affiliation?: string;
-  occupation?: string;
-  degree?: string;
-  major?: string;
-  year?: string;
   email?: string;
   phone?: string;
   location?: string;
@@ -29,75 +26,41 @@ type InfoItemProps = {
 };
 
 const ProfileInfo: React.FC<ProfileInfoProps> = ({
-  affiliation,
-  occupation,
-  degree,
-  major,
-  year,
   email,
   phone,
   location,
   birthday,
   country,
 }) => {
+  const dobFormat = birthday?.includes("/")
+    ? convertToDateObj(birthday)
+    : Number(birthday);
+  const dateOfBirth =
+    dobFormat && !isNaN(Number(dobFormat))
+      ? format(new Date(dobFormat), "dd MMM yyyy")
+      : format(new Date(birthday as string), "dd MMM yyyy");
+
   return (
     <View style={styles.container}>
-      {affiliation && occupation ? (
-        <>
-          {occupation && (
-            <InfoItem
-              icon={<GraduationCap height={24} width={24} color={"grey"} />}
-              text={occupation}
-            />
-          )}
-          {affiliation && (
-            <InfoItem
-              icon={<Book height={24} width={24} color={"grey"} />}
-              text={affiliation}
-            />
-          )}
-        </>
-      ) : (
-        <>
-          {degree && (
-            <InfoItem
-              icon={<GraduationCap height={24} width={24} color={"grey"} />}
-              text={year + " Year, " + degree}
-            />
-          )}
-          {major && (
-            <InfoItem
-              icon={<Book height={24} width={24} color={"grey"} />}
-              text={major}
-            />
-          )}
-        </>
-      )}
-      {email && (
-        <InfoItem
-          icon={<Mail height={24} width={24} color={"grey"} />}
-          text={email}
-        />
-      )}
-      {phone && (
-        <InfoItem
-          icon={<Phone height={24} width={24} color={"grey"} />}
-          text={phone}
-        />
-      )}
-      {(location || country) && (
-        <InfoItem
-          icon={<MapPin height={24} width={24} color={"grey"} />}
-          text={`${location ? location + ", " : ""}${country}`}
-        />
-      )}
+      <InfoItem
+        icon={<Mail height={24} width={24} color={"grey"} />}
+        text={email || "--"}
+      />
 
-      {birthday?.length && (
-        <InfoItem
-          icon={<BirthdayCake height={24} width={24} color={"grey"} />}
-          text={dayjs(birthday || new Date()).format("DD MMM YYYY")}
-        />
-      )}
+      <InfoItem
+        icon={<Phone height={24} width={24} color={"grey"} />}
+        text={phone || "--"}
+      />
+
+      <InfoItem
+        icon={<MapPin height={24} width={24} color={"grey"} />}
+        text={`${location ? location + ", " : ""}${country}` || "--"}
+      />
+
+      <InfoItem
+        icon={<BirthdayCake height={24} width={24} color={"grey"} />}
+        text={dateOfBirth || "--"}
+      />
     </View>
   );
 };
@@ -120,8 +83,9 @@ const styles = StyleSheet.create({
     gap: 10,
   },
   text: {
-    fontSize: 14,
+    fontSize: 12,
     color: "#6B7280",
+    fontWeight: "500",
   },
 });
 
