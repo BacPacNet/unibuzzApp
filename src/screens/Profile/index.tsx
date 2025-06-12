@@ -172,17 +172,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
 
-  //   UniversityLogoPic: {
-  //     width: 30,
-  //     height: 30,
-  //     borderRadius: 30,
-
-  //     shadowColor: "#000",
-  //     shadowOpacity: 0.1,
-  //     shadowOffset: { width: 2, height: 2 },
-  //     shadowRadius: 4,
-  //     elevation: 3,
-  //   },
   container: {
     display: "flex",
     gap: 2,

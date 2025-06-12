@@ -110,20 +110,9 @@ export const useMarkAllNotificationAsRead = () => {
     mutationFn: () => markAllNotificationAsRead(cookieValue),
 
     onSuccess: () => {
-      //   queryClient.invalidateQueries({ queryKey: ["userNotification"] });
-      //   const count = queryClient.getQueryData(["user_notification_total_count"]);
-      //   queryClient.setQueryData(["user_notification_total_count"], 0);
-      //   console.log("count", count);
-
       queryClient.invalidateQueries({
         queryKey: ["user_notification_total_count"],
       });
-
-      //   setTimeout(() => {
-      //     queryClient.invalidateQueries({
-      //       queryKey: ["user_notification_total_count"],
-      //     });
-      //   }, 100);
     },
     onError: (res: any) => {
       console.log(res.response.data.message, "res");
