@@ -1,51 +1,38 @@
-import {
-  View,
-  Text,
-  StyleSheet,
-  ActivityIndicator,
-  FlatList,
-  RefreshControl,
-} from "react-native";
-import React, { useState } from "react";
+import { View, Text, FlatList, RefreshControl } from "react-native";
+import React, { useState, useCallback } from "react";
 import { getUserStore } from "@/storage/user";
 import { useGetUserData, useGetUserPosts } from "@/services/user";
 import PostCard from "@/components/molecules/Timeline/PostCard";
 import { useQueryClient } from "@tanstack/react-query";
 import { FlatListProfileHeaderPart } from "@/components/molecules/Profile/FlatListProfileHeader";
+import { LoadingState } from "@/components/atoms/LoadingState";
+import { styles } from "./styles";
+import { ProfileProps } from "./types";
 
-const Profile = ({ route }: any) => {
+const Profile = ({ route }: ProfileProps) => {
   const { userId } = route.params;
-
   const userData = getUserStore();
+  const queryClient = useQueryClient();
+  const [refreshing, setRefreshing] = useState(false);
+  const [lastOffset, setLastOffset] = useState(0);
+
   const { data: userProfileData, isLoading: isUserProfileDataLoading } =
     useGetUserData(userId);
 
   const {
     isLoading,
     data: userSelfPosts,
-    error,
     fetchNextPage: userSelfPostsFetchNextpage,
     isFetchingNextPage: userSelfIsFetchingNextPage,
     hasNextPage: userSelfHasNextPage,
     isFetching,
   } = useGetUserPosts(userId, 5);
+
   const userSelfPostData =
     userSelfPosts?.pages.flatMap((page) => page?.data) || [];
 
-  const [refreshing, setRefreshing] = React.useState(false);
-
-  const [lastOffset, setLastOffset] = useState(0);
-
-  const queryClient = useQueryClient();
-
-  const {
-    profile,
-    firstName,
-    lastName,
-
-    university_id,
-    university,
-  } = userProfileData || {};
+  const { profile, firstName, lastName, university_id, university } =
+    userProfileData || {};
 
   const {
     bio,
@@ -66,34 +53,44 @@ const Profile = ({ route }: any) => {
     display_email,
   } = profile || {};
 
-  const onRefresh = React.useCallback(() => {
+  const onRefresh = useCallback(() => {
     setRefreshing(true);
-
     queryClient.invalidateQueries({ queryKey: ["userPosts", userId] });
     setRefreshing(false);
-  }, []);
+  }, [queryClient, userId]);
 
   const handleScroll = (event: any) => {
     const contentOffsetY = event.nativeEvent.contentOffset.y;
-
     setLastOffset(contentOffsetY);
   };
 
   if (isUserProfileDataLoading) {
-    return (
-      <View className="flex-1 justify-center items-center">
-        <ActivityIndicator size="large" color="#7367f0" />
-      </View>
-    );
+    return <LoadingState />;
   }
 
+  const renderFooter = () => {
+    if (userSelfIsFetchingNextPage && userSelfHasNextPage) {
+      return <LoadingState />;
+    }
+    return <View />;
+  };
+
+  const renderEmpty = () => {
+    if (isFetching) {
+      return <LoadingState />;
+    }
+    return (
+      <View style={styles.emptyContainer}>
+        <Text>No Result Found</Text>
+      </View>
+    );
+  };
+
   return (
-    <View className="bg-white flex-1 ">
+    <View style={styles.container}>
       <FlatList
         data={userSelfPostData}
-        style={{
-          width: "100%",
-        }}
+        style={styles.flatList}
         onScroll={handleScroll}
         keyExtractor={(item, index) => item?._id + index}
         ListHeaderComponent={
@@ -131,61 +128,11 @@ const Profile = ({ route }: any) => {
             userSelfPostsFetchNextpage();
           }
         }}
-        ListFooterComponent={
-          userSelfIsFetchingNextPage && userSelfHasNextPage ? (
-            <View>
-              <ActivityIndicator size="large" color="#7367f0" />
-            </View>
-          ) : (
-            <View />
-          )
-        }
-        ListEmptyComponent={
-          isFetching ? (
-            <View className="flex-1 justify-center items-center">
-              <ActivityIndicator size="large" color="#7367f0" />
-            </View>
-          ) : (
-            <View className="flex-1 justify-center items-center">
-              <Text>No Result Found</Text>
-            </View>
-          )
-        }
+        ListFooterComponent={renderFooter}
+        ListEmptyComponent={renderEmpty}
       />
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  editButton: {
-    paddingHorizontal: 10,
-    margin: 10,
-    borderColor: "#6744FF",
-    borderWidth: 1,
-    borderRadius: 8,
-    width: 70,
-    height: 30,
-    display: "flex",
-    flexDirection: "row",
-    gap: 2,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-
-  container: {
-    display: "flex",
-    gap: 2,
-  },
-  row: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginBottom: 10,
-  },
-  text: {
-    marginLeft: 10,
-    fontSize: 16,
-    color: "#333",
-  },
-});
 
 export default Profile;

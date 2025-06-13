@@ -56,12 +56,15 @@ const noHeaderScreens = [];
 function ApplicationNavigator() {
   const { variant, navigationTheme } = useTheme();
   const { isAuthenticated, setAuthenticated, deauthenticate } = useAuth();
-  const [isAppFirstLaunched, setIsAppFirstLaunched] = useState(false);
+  const [isAppFirstLaunched, setIsAppFirstLaunched] = useState<boolean | null>(
+    null,
+  );
   const userProfileStore = getUserProfileStore();
   const user = getUserStore();
 
   useEffect(() => {
     const appData = storage.contains("isAppFirstLaunched");
+
     if (!appData) {
       storage.set("isAppFirstLaunched", true);
       setIsAppFirstLaunched(true);
@@ -73,6 +76,10 @@ function ApplicationNavigator() {
       setAuthenticated();
     }
   }, []);
+
+  if (isAppFirstLaunched === null) {
+    return null;
+  }
 
   //tabs
 
@@ -388,12 +395,13 @@ function ApplicationNavigator() {
       </AuthGuard>
       <UnauthenticatedGuard>
         <Stack.Navigator key={variant} screenOptions={{ headerShown: false }}>
-          {isAppFirstLaunched && (
+          {/* {isAppFirstLaunched && (
             <Stack.Screen
               name="OnboardingScreen"
               component={OnboardingScreen}
             />
-          )}
+          )} */}
+          <Stack.Screen name="OnboardingScreen" component={OnboardingScreen} />
           <Stack.Screen name="LoginScreen" component={LoginScreen} />
           <Stack.Screen
             name="ForgetPassword"

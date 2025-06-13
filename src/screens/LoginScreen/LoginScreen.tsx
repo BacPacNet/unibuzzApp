@@ -3,14 +3,11 @@ import {
   Text,
   TextInput,
   TouchableOpacity,
-  ActivityIndicator,
-  Alert,
   KeyboardAvoidingView,
   Platform,
-  Image,
+  StyleSheet,
 } from "react-native";
-import Card from "@/components/atoms/Card";
-import UnibuzzLogo from "@/assets/unibuzz_logo.svg";
+
 import { Controller, useForm } from "react-hook-form";
 import { useState } from "react";
 import { LoginForm } from "@/models/auth";
@@ -20,7 +17,8 @@ import { StackNavigationProp } from "@react-navigation/stack";
 import { RootStackParamList } from "@/types/navigation";
 import { Eye, EyeClosed } from "iconoir-react-native";
 import ReusableButton from "@/components/atoms/ReusableButton";
-//import { styles } from "./style";
+import { FormInput } from "@/components/atoms/FormInput";
+
 type LoginScreenNavigationProp = StackNavigationProp<
   RootStackParamList,
   "LoginScreen"
@@ -41,19 +39,6 @@ function LoginScreen() {
     },
   });
 
-  //  const onSubmit = async (data: LoginForm) => {
-  //    mutateLogin(data, {
-  //      onError: (err) => {
-  //        if (isAxiosError(err)) {
-  //          Alert.alert('Login Failed', err.response?.data?.message || 'Something went wrong.');
-  //        }
-  //      },
-  //      onSuccess: () => {
-  //        Alert.alert('Success', 'You are logged in!');
-  //        router.push('/dashboard');
-  //      },
-  //    });
-  //  };
   const onSubmit = async (data: LoginForm) => {
     mutateLogin(data);
   };
@@ -63,135 +48,164 @@ function LoginScreen() {
       behavior={Platform.OS === "ios" ? "padding" : "height"}
       className="flex-1"
     >
-      <View className="flex-1 p-4 bg-white justify-center">
-        <View style={{ marginBottom: 50 }} className="flex items-center ">
-          <UnibuzzLogo width={121} height={28} />
-        </View>
-        <Text className="text-md font-bold text-neutral-900 pt-2">
-          Login to your account
-        </Text>
-
+      <View
+        style={styles.container}
+        className="flex-1 p-4 bg-white justify-between h-full"
+      >
+        <View></View>
         <View>
-          <View className="my-4">
-            <Text className="font-medium text-neutral-900 mb-2 text-sm">
-              Email Address
-            </Text>
-            <Controller
-              control={control}
-              render={({ field: { onChange, onBlur, value } }) => (
-                <TextInput
-                  placeholder="john.dowry@example.com"
-                  autoCapitalize="none"
-                  className={`border rounded-lg p-3 ${loginErrors.email ? "border-red-500" : "border-neutral-300"}`}
-                  onBlur={onBlur}
-                  onChangeText={(value) => onChange(value)}
-                  value={value}
-                />
-              )}
-              name="email"
-              rules={{
-                required: "Please enter your email!",
-                pattern: {
-                  value: /^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/,
-                  message: "Invalid email format",
-                },
-              }}
-            />
-            {/*<TextInput
+          <Text style={styles.title}>Sign In</Text>
+
+          <View style={styles.formContainer}>
+            <View className="">
+              <FormInput
+                isLabelShown={true}
+                label="  Email Address/Username"
                 placeholder="john.dowry@example.com"
+                name="email"
+                control={control}
                 keyboardType="email-address"
-                autoCapitalize="none"
-                className={`border rounded-lg p-3 ${loginErrors.email ? "border-red-500" : "border-neutral-300"}`}
-                {...registerLogin("email", {
+                rules={{
                   required: "Please enter your email!",
                   pattern: {
                     value: /^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/,
                     message: "Invalid email format",
                   },
-                })}
-              />*/}
-            {loginErrors.email && (
-              <Text className="text-xs text-red-500 mt-1">
-                {loginErrors.email.message}
-              </Text>
-            )}
+                }}
+                isError={!!loginErrors.email}
+                errorMessage={
+                  loginErrors.email
+                    ? loginErrors.email.message?.toString()
+                    : "email  is required"
+                }
+              />
+
+              <View style={styles.passwordContainer}>
+                <Text style={styles.passwordLabel}>Password</Text>
+                <View style={styles.inputContainer}>
+                  <Controller
+                    control={control}
+                    render={({ field: { onChange, onBlur, value } }) => (
+                      <TextInput
+                        placeholder="*********"
+                        secureTextEntry={!showPassword}
+                        className={`border rounded-lg  ${loginErrors.password ? "border-red-500" : "border-neutral-300"}`}
+                        onBlur={onBlur}
+                        onChangeText={(value) => onChange(value)}
+                        value={value}
+                        style={styles.textInput}
+                      />
+                    )}
+                    name="password"
+                    rules={{
+                      required: "Password is required!",
+                    }}
+                  />
+
+                  <TouchableOpacity
+                    style={styles.eyeIcon}
+                    onPress={() => setShowPassword((prev) => !prev)}
+                  >
+                    {showPassword ? (
+                      <Eye height={30} width={30} color={"#d4d4d4"} />
+                    ) : (
+                      <EyeClosed height={30} width={30} color={"#d4d4d4"} />
+                    )}
+                  </TouchableOpacity>
+                </View>
+                {loginErrors.password && (
+                  <Text className="text-2xs text-red-500 mt-1">
+                    {loginErrors.password.message}
+                  </Text>
+                )}
+                <TouchableOpacity
+                  onPress={() => navigation.navigate("ForgetPassword")}
+                  style={styles.forgotPasswordContainer}
+                >
+                  <Text style={styles.forgotPasswordText}>
+                    Forgot Password?
+                  </Text>
+                </TouchableOpacity>
+              </View>
+            </View>
           </View>
         </View>
+        {/* </Card> */}
 
-        <View className="mb-4">
-          <Text className="font-medium text-neutral-900 mb-2 text-sm">
-            Password
-          </Text>
-          <View className="relative">
-            <Controller
-              control={control}
-              render={({ field: { onChange, onBlur, value } }) => (
-                <TextInput
-                  placeholder="*********"
-                  secureTextEntry={!showPassword}
-                  className={`border rounded-lg p-3 ${loginErrors.password ? "border-red-500" : "border-neutral-300"}`}
-                  onBlur={onBlur}
-                  onChangeText={(value) => onChange(value)}
-                  value={value}
-                />
-              )}
-              name="password"
-              rules={{
-                required: "Password is required!",
-              }}
-            />
-
-            <TouchableOpacity
-              className="absolute right-2 top-3"
-              onPress={() => setShowPassword((prev) => !prev)}
-            >
-              {showPassword ? (
-                <Eye height={30} width={30} color={"#d4d4d4"} />
-              ) : (
-                <EyeClosed height={30} width={30} color={"#d4d4d4"} />
-              )}
-            </TouchableOpacity>
-          </View>
-          {loginErrors.password && (
-            <Text className="text-xs text-red-500 mt-1">
-              {loginErrors.password.message}
-            </Text>
-          )}
-          <TouchableOpacity
-            onPress={() => navigation.navigate("ForgetPassword")}
-            className="mt-1 mb-4 text-xs"
-          >
-            <Text className="text-xs ">Forgot Password?</Text>
-          </TouchableOpacity>
-
+        <View className="flex gap-4">
           <ReusableButton
             onPress={handleSubmitLogin(onSubmit)}
             buttonText="Log in"
             variant="primary"
             disabled={isPending}
             isLoading={isPending}
-            height="medium"
+            height="large"
           />
+          <ReusableButton
+            onPress={() => navigation.navigate("RegisterScreen")}
+            buttonText="Create Account"
+            variant="border"
+            disabled={isPending}
+            height="large"
+          />
+          {isError && (
+            <Text className="text-red-500 text-sm mt-4 text-center">
+              {error?.response?.data.message || "Something went wrong!"}
+            </Text>
+          )}
         </View>
-        {/* </Card> */}
-
-        <TouchableOpacity
-          onPress={() => navigation.navigate("RegisterScreen")}
-          disabled={isPending}
-          className={`border border-neutral-300 py-3  rounded-lg ${isPending ? "opacity-50" : ""}`}
-        >
-          <Text className="text-center text-neutral-900 font-bold">
-            Sign Up
-          </Text>
-        </TouchableOpacity>
-        {isError && (
-          <Text className="text-red-500 text-sm mt-4 text-center">
-            {error?.response?.data.message || "Something went wrong!"}
-          </Text>
-        )}
       </View>
     </KeyboardAvoidingView>
   );
 }
 
 export default LoginScreen;
+
+const styles = StyleSheet.create({
+  title: {
+    fontSize: 28,
+    fontWeight: "700",
+    lineHeight: 36,
+    color: "#3A3B3C",
+    fontFamily: "font-poppins",
+  },
+  container: {
+    paddingVertical: 40,
+  },
+  formContainer: {
+    marginTop: 32,
+    display: "flex",
+    flexDirection: "column",
+    gap: 16,
+  },
+  passwordContainer: {
+    marginBottom: 16,
+  },
+  passwordLabel: {
+    fontWeight: "500",
+    color: "#171717",
+    marginBottom: 8,
+    fontSize: 14,
+  },
+  inputContainer: {
+    position: "relative",
+  },
+  textInput: {
+    padding: 12,
+    fontSize: 14,
+    height: 40,
+  },
+  eyeIcon: {
+    position: "absolute",
+    right: 8,
+    top: 4,
+  },
+  forgotPasswordContainer: {
+    marginTop: 4,
+    marginBottom: 16,
+  },
+  forgotPasswordText: {
+    fontSize: 12,
+    color: "#3B82F6",
+  },
+});

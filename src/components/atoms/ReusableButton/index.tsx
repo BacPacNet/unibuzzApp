@@ -44,7 +44,7 @@ const ReusableButton: React.FC<ReusableButtonProps> = ({
   const variantClasses = {
     primary: "bg-primary-500 text-white",
     secondary: "bg-gray-500 text-white",
-    border: "border border-neutral-200 text-neutral-800 shadow-button",
+    border: "border border-neutral-200 text-neutral-800 bg-white",
     border_primary: "border border-primary text-primary",
     danger: "bg-red-500 text-white",
     shade:
@@ -54,7 +54,7 @@ const ReusableButton: React.FC<ReusableButtonProps> = ({
   const textColor = {
     primary: "text-white",
     secondary: "text-white",
-    border: "text-neutral-800 shadow-button",
+    border: "text-neutral-700 ",
     border_primary: "text-primary",
     danger: "text-white",
     shade: "text-primary-500 ",
@@ -81,7 +81,7 @@ const ReusableButton: React.FC<ReusableButtonProps> = ({
 
   return (
     <TouchableOpacity
-      className={`flex items-center justify-center   rounded-lg  mb-4 ${variantClass} ${containerStyle} ${isLoading ? "opacity-50" : ""}`}
+      className={`flex items-center justify-center   rounded-lg   ${variantClass} ${containerStyle} ${isLoading ? "opacity-50" : ""}`}
       onPress={onPress}
       disabled={disabled || isLoading}
       style={[
@@ -97,7 +97,7 @@ const ReusableButton: React.FC<ReusableButtonProps> = ({
       ) : buttonContent ? (
         <>{buttonContent}</>
       ) : (
-        <Text className={`text-center font-bold ${textColorClass}`}>
+        <Text className={`text-center font-medium ${textColorClass}`}>
           {buttonText}
         </Text>
       )}
