@@ -14,6 +14,7 @@ interface FormInputProps {
   secureTextEntry?: boolean;
   keyboardType?: "default" | "email-address" | "numeric" | "phone-pad";
   disabled?: boolean;
+  isTextArea?: boolean;
 }
 
 export function FormInput({
@@ -29,6 +30,7 @@ export function FormInput({
   secureTextEntry,
   keyboardType = "default",
   disabled = false,
+  isTextArea = false,
 }: FormInputProps) {
   return (
     <View style={styles.container}>
@@ -46,16 +48,24 @@ export function FormInput({
         render={({ field: { onChange, value } }) => (
           <TextInput
             editable={!disabled}
-            style={[styles.input, isError && styles.inputError]}
+            style={[
+              styles.input,
+              isTextArea && styles.textArea,
+              isError && styles.inputError,
+            ]}
             placeholder={placeholder}
             value={value}
             onChangeText={onChange}
             secureTextEntry={secureTextEntry}
             keyboardType={keyboardType}
             placeholderTextColor="#9CA3AF"
+            multiline={isTextArea}
+            numberOfLines={isTextArea ? 4 : 1}
+            textAlignVertical={isTextArea ? "top" : "center"}
           />
         )}
       />
+
       {isError && errorMessage && (
         <Text style={styles.errorText}>{errorMessage}</Text>
       )}
@@ -89,6 +99,9 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: "#1F2937",
     height: 40,
+  },
+  textArea: {
+    height: 122,
   },
   inputError: {
     borderColor: "#EF4444",

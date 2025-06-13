@@ -25,10 +25,13 @@ import { useGetUserData } from "@/services/user";
 import { getUserProfileStore } from "@/storage/user";
 
 import { useEditProfile } from "@/services/edit-Profile";
-import { replaceImage } from "@/services/uploadImage";
+
 import ReusableButton from "@/components/atoms/ReusableButton";
 import { DateSelect } from "@/components/atoms/DateSelect";
 import { useHeader } from "@/context/HeaderProvider/Header";
+import { UPLOAD_CONTEXT } from "@/types/uploads";
+import { useUploadToS3 } from "@/services/upload";
+import { Toast } from "react-native-toast-notifications";
 
 type ImageAsset = {
   uri: string;
@@ -51,9 +54,10 @@ export default function ProfileEdit() {
 
   const navigate = useNavigation();
   const userProfileData = getUserProfileStore();
+
   const { changeHeaderShownStatus } = useHeader();
   const [cityOptions, setCityOptions] = useState<string[]>([]);
-  const [userType, setUserType] = useState("student");
+  const [userType, setUserType] = useState(userProfileData?.role || "student");
   const [previewProfileImage, setPreviewProfileImage] = useState<string | null>(
     null,
   );
@@ -63,17 +67,20 @@ export default function ProfileEdit() {
   const { data: userProfile } = useGetUserData(
     userProfileData?.users_id as string,
   );
-  const { mutate: mutateEditProfile, isPending } = useEditProfile();
+  const { mutateAsync: mutateEditProfile, isPending } = useEditProfile();
+  const { mutateAsync: uploadToS3 } = useUploadToS3();
+
   const currCountryWatch = watch("country");
   const currCityWatch = watch("city");
+  const currDob = watch("dob");
 
   useEffect(() => {
     if (userProfile) {
-      const { firstName, lastName, gender, profile, email } = userProfile || {};
+      const { firstName, lastName, gender, profile } = userProfile || {};
       const userDefault = {
         firstName: firstName || "",
         lastName: lastName || "",
-        email: email || "",
+        display_email: profile?.display_email || "",
         gender: gender || "",
         affiliation: profile.affiliation || "",
         bio: profile.bio || "",
@@ -85,7 +92,7 @@ export default function ProfileEdit() {
         occupation: profile.occupation || "",
         phone_number: profile.phone_number || "",
         study_year: profile.study_year || "",
-        profilePicture: null,
+        // profilePicture: null,
       };
       reset(userDefault);
 
@@ -130,53 +137,73 @@ export default function ProfileEdit() {
   const onSubmit = async (data: any) => {
     setIsProfileLoading(true);
 
-    let UploadedImageLink;
-    let logoImageData;
-    if (imageToUpload) {
-      UploadedImageLink = await replaceImage(imageToUpload, "");
+    let logoImageData: any;
+    let profileImageData = userProfile?.profile?.profile_dp;
 
-      logoImageData = {
-        imageUrl: UploadedImageLink?.imageUrl,
-        publicId: UploadedImageLink?.publicId,
+    if (imageToUpload) {
+      const uploadPayload = {
+        files: [imageToUpload],
+        context: UPLOAD_CONTEXT.DP,
       };
+
+      logoImageData = await uploadToS3(uploadPayload);
+
+      profileImageData = logoImageData?.data[0];
+      setValue("profile_dp", logoImageData as any);
     }
-    mutateEditProfile({ ...data, profile_dp: logoImageData });
+
+    mutateEditProfile({
+      ...data,
+      profile_dp: profileImageData,
+      role: userType,
+    });
     setIsProfileLoading(false);
+    navigate.goBack();
   };
 
-  useFocusEffect(
-    useCallback(() => {
-      changeHeaderShownStatus(false);
+  const onError = (errors: any) => {
+    const firstError = Object.values(errors)[0];
+    if (
+      firstError &&
+      typeof firstError === "object" &&
+      "message" in firstError
+    ) {
+      Toast.show(firstError.message as string);
+    } else {
+      Toast.show("Form has errors. Please check.");
+    }
+  };
 
-      return () => {
-        changeHeaderShownStatus(true);
-      };
-    }, []),
-  );
+  //   useFocusEffect(
+  //     useCallback(() => {
+  //       changeHeaderShownStatus(false);
+
+  //       return () => {
+  //         changeHeaderShownStatus(true);
+  //       };
+  //     }, [])
+  //   );
 
   return (
     <SafeAreaView style={styles.container}>
-      {/* Header */}
-      <View style={styles.header}>
-        <TouchableOpacity
-          onPress={() => navigate.goBack()}
-          style={styles.backButton}
-        >
-          <NavArrowLeft width={24} height={24} color="#000" />
-        </TouchableOpacity>
-        <Text style={styles.headerTitle}>Profile</Text>
-      </View>
-
       <KeyboardAvoidingView
         behavior={Platform.OS === "ios" ? "padding" : "height"}
         style={styles.keyboardAvoid}
       >
         <ScrollView>
+          {/* Header */}
+          <View style={styles.header}>
+            <TouchableOpacity
+              onPress={() => navigate.goBack()}
+              style={styles.backButton}
+            >
+              <NavArrowLeft width={20} height={20} color="#6744FF" />
+              <Text style={styles.headerTitle}>Profile</Text>
+            </TouchableOpacity>
+          </View>
           <View style={styles.content}>
             {/* Profile Photo */}
             <View style={styles.photoSection}>
-              <Text style={styles.sectionTitle}>Profile Photo</Text>
-
               <TouchableOpacity
                 onPress={() => handleImagePick()}
                 style={styles.photoUpload}
@@ -197,16 +224,21 @@ export default function ProfileEdit() {
                 <User width={32} height={32} color="#9CA3AF" />
                 <Text style={styles.photoUploadText}>Select Image</Text>
               </TouchableOpacity>
+
+              <Text className="text-xs text-gray-500 ">
+                Max file size: 5 MB
+              </Text>
             </View>
 
             {/* Basic Information */}
             <View style={styles.section}>
-              <Text style={styles.sectionTitle}>Basic Information</Text>
+              <Text style={styles.required}>Required Fields *</Text>
 
               <FormInput
                 label="First Name"
                 placeholder="Enter First Name"
                 required
+                rules={{ required: "First Name is required!" }}
                 name="firstName"
                 control={control}
                 isError={!!errors.firstName}
@@ -216,7 +248,8 @@ export default function ProfileEdit() {
               <FormInput
                 label="Last Name"
                 placeholder="Family Name"
-                required={true}
+                required
+                rules={{ required: "Last Name is required!" }}
                 name="lastName"
                 control={control}
                 isError={!!errors.lastName}
@@ -230,16 +263,17 @@ export default function ProfileEdit() {
                 required
                 control={control}
                 rules={{ required: "Dob is required!" }}
+                currDob={userProfile?.profile?.dob || ""}
               />
 
-              <SelectInputWithSearch
+              {/* <SelectInputWithSearch
                 label="Gender"
                 placeholder="Choose Gender"
                 options={GenderOptions}
                 name="gender"
                 control={control}
                 search={true}
-              />
+              /> */}
 
               <FormInput
                 label="Bio"
@@ -248,6 +282,7 @@ export default function ProfileEdit() {
                 control={control}
                 isError={!!errors.bio}
                 errorMessage={errors.bio ? "bio  is required" : ""}
+                isTextArea={true}
               />
 
               <SelectInputWithSearch
@@ -276,27 +311,20 @@ export default function ProfileEdit() {
 
             {/* Contact Information */}
             <View style={styles.section}>
-              <Text style={styles.sectionTitle}>Contact Information</Text>
+              {/* <Text style={styles.sectionTitle}>Contact Information</Text> */}
 
               <FormInput
                 label="Email"
                 placeholder="Enter an email you would like to show others"
-                name="email"
+                name="display_email"
                 control={control}
                 keyboardType="email-address"
-                isError={!!errors.email}
+                isError={!!errors.display_email}
                 errorMessage={
-                  errors.email
-                    ? errors.email.message?.toString()
+                  errors.display_email
+                    ? errors.display_email.message?.toString()
                     : "email  is required"
                 }
-                rules={{
-                  required: "Please enter your email!",
-                  pattern: {
-                    value: /^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/,
-                    message: "Invalid email format",
-                  },
-                }}
               />
 
               <FormInput
@@ -318,12 +346,12 @@ export default function ProfileEdit() {
                 <Text style={styles.sectionTitle}>
                   What is your status? <Text style={styles.required}>*</Text>
                 </Text>
+                <Text style={styles.statusWarning}>
+                  You can update your status once every 6 months. After making a
+                  change, you’ll have 15 days to revert it if needed.
+                </Text>
               </View>
 
-              <Text style={styles.statusWarning}>
-                You can only change your status once every calendar year. You
-                cannot change back after updating your status for 1 year.
-              </Text>
               <StatusOptions
                 setUserType={setUserType}
                 userType={userType}
@@ -337,10 +365,9 @@ export default function ProfileEdit() {
                 buttonText="Update Profile"
                 variant="primary"
                 isLoading={isProfileLoading}
-                onPress={handleSubmit(onSubmit)}
+                onPress={handleSubmit(onSubmit, onError)}
+                height="large"
               />
-
-              <ReusableButton buttonText="Redo Changes" variant="shade" />
             </View>
           </View>
         </ScrollView>
@@ -362,31 +389,42 @@ const styles = StyleSheet.create({
     alignItems: "center",
     height: 56,
     paddingHorizontal: 16,
-    borderBottomWidth: 1,
-    borderBottomColor: "#E5E7EB",
+    gap: 8,
   },
   backButton: {
-    padding: 8,
+    display: "flex",
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
   },
   headerTitle: {
-    fontSize: 18,
+    fontSize: 16,
     fontWeight: "500",
-    marginLeft: 8,
+
+    color: "#6744FF",
+    fontFamily: "poppins",
   },
   content: {
     padding: 16,
+    paddingBottom: 0,
   },
   section: {
-    marginBottom: 32,
+    marginBottom: 16,
+    display: "flex",
+    flexDirection: "column",
+    gap: 16,
   },
   photoSection: {
-    alignItems: "center",
     marginBottom: 32,
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    gap: 16,
   },
   sectionTitle: {
     fontSize: 18,
     fontWeight: "500",
-    marginBottom: 16,
+    // marginBottom: 16,
     color: "#1F2937",
   },
   photoUpload: {
@@ -404,17 +442,19 @@ const styles = StyleSheet.create({
     marginTop: 8,
   },
   statusHeader: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "baseline",
+    display: "flex",
+    flexDirection: "column",
+    gap: 12,
   },
   required: {
     color: "#EF4444",
+    // marginBottom:16,
+    fontSize: 12,
   },
   statusWarning: {
     fontSize: 14,
     color: "#EF4444",
-    marginBottom: 16,
+    // marginBottom: 16,
   },
   statusOptions: {
     marginBottom: 16,
@@ -426,7 +466,11 @@ const styles = StyleSheet.create({
   },
 
   actions: {
-    marginTop: 16,
+    // marginTop: 32,
     marginBottom: 32,
+
+    borderTopWidth: 1,
+    borderColor: "#E5E7EB",
+    paddingTop: 32,
   },
 });

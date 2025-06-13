@@ -3,6 +3,8 @@ import SidebarMenuSectionOne from "@/components/molecules/RightSIdeBar/MenuSecOn
 import SidebarMenuSectionThree from "@/components/molecules/RightSIdeBar/MenuSecThree";
 import SidebarMenuSectionTwo from "@/components/molecules/RightSIdeBar/MenuSecTwo";
 import ProfileCard from "@/components/molecules/RightSIdeBar/ProfileCard";
+import { userTypeEnum } from "@/storage/register";
+import { getUserProfileStore } from "@/storage/user";
 import React from "react";
 import { ScrollView, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -13,10 +15,13 @@ type Props = {
 };
 
 const RightSideSidebar = ({ navigation, handleClick }: Props) => {
+  const userProfile = getUserProfileStore();
+
+  const isStudent = userProfile?.role === userTypeEnum.Student;
   return (
     <SafeAreaView>
       <ScrollView>
-        <ProfileCard toShow={true} />
+        <ProfileCard toShow={false} isSideBar={true} isStudent={isStudent} />
         <SidebarMenuSectionOne
           navigation={navigation}
           handleClick={handleClick}

@@ -4,7 +4,7 @@ export interface editProfileInputs {
   profilePicture: string | null;
   users_id: string;
   profile_dp?: string;
-  email?: string;
+  display_email?: string;
   cover_dp?: string;
   bio?: string;
   gender: string;

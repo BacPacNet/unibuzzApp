@@ -17,7 +17,7 @@ export type RootStackParamList = {
   Home: undefined;
   Connections: undefined;
   Connection: any;
-  Messages: undefined;
+  Messages: any;
   Notifications: undefined;
   AIAssistant: undefined;
   Discover: undefined;

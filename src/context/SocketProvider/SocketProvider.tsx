@@ -7,8 +7,7 @@ import {
 } from "@react-navigation/native";
 import { getUserStore } from "@/storage/user";
 import { useGetUserNotificationTotalCount } from "@/services/notification";
-// import { useGetUserData, useGetUserProfileData } from "@/services/user";
-// import { useGetNotification, useGetMessageNotification } from "@/services/notification";
+import { NEXT_PUBLIC_SOCKET_URL, NEXT_PUBLIC_SOCKET_URL_IOS } from "@env";
 
 type SocketContextType = {
   socket: Socket | null;
@@ -34,16 +33,13 @@ export const SocketProvider: React.FC<{ children: React.ReactNode }> = ({
   const [notificationType, setNotificationType] = useState("");
 
   const userData = getUserStore();
-  //   const { refetch: refetchNotification } = useGetNotification(3, true);
-  //   const { refetch: refetchMessageNotification } = useGetMessageNotification(3, true);
-  //   const { refetch: refetchUserData } = useGetUserData();
-  //   const { refetch: refetchUserProfileData } = useGetUserProfileData();
+
   const { refetch: unreadNotificationCount } =
     useGetUserNotificationTotalCount();
   const navigationRef = useNavigationContainerRef();
   const routeNames = useNavigationState((state) => state?.routeNames || []);
   const currentRoute = useNavigationState(
-    (state) => state?.routeNames?.[state.index] || ""
+    (state) => state?.routeNames?.[state.index] || "",
   );
 
   const isRouteMessage = currentRoute !== "Messages";
@@ -53,8 +49,8 @@ export const SocketProvider: React.FC<{ children: React.ReactNode }> = ({
 
     const newSocket = io(
       Platform.OS === "android"
-        ? "http://10.0.2.2:8000"
-        : "http://localhost:8000"
+        ? NEXT_PUBLIC_SOCKET_URL
+        : NEXT_PUBLIC_SOCKET_URL_IOS,
     );
 
     newSocket.on("connect", () => {
@@ -70,18 +66,9 @@ export const SocketProvider: React.FC<{ children: React.ReactNode }> = ({
       setIsConnected(false);
     });
 
-    // newSocket.on(`notification_${userData.id}`, (notification) => {
-    //   if (notification.type === "ASSIGN") {
-    //     refetchUserData();
-    //     setNotificationType("ASSIGN");
-    //   }
-    //   if (notification.type === "FOLLOW") {
-    //     refetchUserProfileData();
-    //     setNotificationType("FOLLOW");
-    //   }
-    //   refetchNotification();
-    // });
     newSocket.on(`notification_${userData.id}`, (notification) => {
+      console.log("sockert");
+
       unreadNotificationCount();
     });
 

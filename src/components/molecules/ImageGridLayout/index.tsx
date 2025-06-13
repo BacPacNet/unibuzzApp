@@ -19,6 +19,7 @@ const ImageGridLayout = ({ imagesData }: Props) => {
   const imageItems = imagesData.filter((item) =>
     imageMimeTypes.includes(getMimeTypeFromUrl(item.imageUrl)),
   );
+
   const fileItems = imagesData.filter(
     (item) => !imageMimeTypes.includes(getMimeTypeFromUrl(item.imageUrl)),
   );
@@ -51,11 +52,11 @@ const ImageGridLayout = ({ imagesData }: Props) => {
       case 2:
         return (
           <View
-            style={{ width: "100%", height: "100%" }}
+            // style={{ width: "100%", height: "100%" }}
             className="flex-1 flex flex-row gap-2  "
           >
             {formattedImages?.slice(0, 2).map((img, index) => (
-              <View key={index} style={{ flex: 1 }}>
+              <View key={index} className="w-1/2">
                 <TouchableOpacity onPress={() => handleImageClick(index)}>
                   <ImageWithFallback
                     uri={img?.uri}

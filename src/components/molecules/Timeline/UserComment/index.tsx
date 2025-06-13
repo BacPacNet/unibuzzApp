@@ -16,8 +16,9 @@ import ImageGallery from "../../ImageGrid";
 import { CommentsProp, PostType } from "@/types/postType";
 import { useDeleteUserPostComment } from "@/services/timeline";
 import { useDeleteCommunityPostComment } from "@/services/communityPost";
-import { userTypeEnum } from "@/storage/register";
+
 import { RenderCreatedAt } from "@/components/atoms/CreatedAt";
+import { userTypeEnum } from "@/types/register";
 
 const UserComment = ({
   item,
@@ -80,7 +81,7 @@ const UserComment = ({
               className=" flex-1 "
             >
               <Text
-                className="text-neutral-600 text-lg
+                className="text-neutral-600 text-sm
                  font-semibold"
               >
                 {item?.commenterId?.firstName} {item?.commenterId?.lastName}
@@ -145,7 +146,7 @@ const UserComment = ({
               width={24}
               color={
                 item?.likeCount?.some(
-                  (like: any) => like.userId === userData?.id
+                  (like: any) => like.userId === userData?.id,
                 )
                   ? "#6647FF"
                   : "black"

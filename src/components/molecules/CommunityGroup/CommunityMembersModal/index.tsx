@@ -35,7 +35,7 @@ export const CommunityGroupMembersModal = ({
           setMembers(response.data.users);
           hideBottomBar();
         },
-      }
+      },
     );
   };
 
@@ -62,7 +62,7 @@ export const CommunityGroupMembersModal = ({
             // }
             isFollowing={
               userProfileData?.following?.some(
-                (userItem) => userItem.userId === user._id
+                (userItem) => userItem.userId === user._id,
               ) as boolean
             }
             role={user.role || "student"}

@@ -9,13 +9,11 @@ const SinglePost = ({ route }: any) => {
   const { data, isFetching, isPending, isError, isLoading } = useGetPost(
     postID,
     type,
-    commentId || ""
+    commentId || "",
   );
 
   const item = data?.post;
   const comment = data?.comment;
-
-  console.log("comment", commentId);
 
   if (isError) {
     return (

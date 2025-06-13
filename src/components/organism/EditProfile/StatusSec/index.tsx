@@ -126,7 +126,7 @@ const StatusOptions: React.FC<StatusOptionsProps> = ({
           />
         </View>
       )}
-      <TouchableOpacity
+      {/* <TouchableOpacity
         style={[styles.statusOption]}
         onPress={() => setUserType("applicant")}
       >
@@ -146,7 +146,7 @@ const StatusOptions: React.FC<StatusOptionsProps> = ({
         >
           Applicant
         </Text>
-      </TouchableOpacity>
+      </TouchableOpacity> */}
     </View>
   );
 };

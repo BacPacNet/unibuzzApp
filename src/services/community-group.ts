@@ -12,20 +12,20 @@ import { Toast } from "react-native-toast-notifications";
 export async function getAllCommunityGroups(
   communityId: string,
   communityGroupId: string,
-  token: any
+  token: any,
 ) {
   const response: any = await client(
     `/communitygroup/${communityId}?${communityGroupId ? `communityGroupId=${communityGroupId}` : ""}`,
     {
       headers: { Authorization: `Bearer ${token}` },
-    }
+    },
   );
   return response;
 }
 
 export function useGetCommunityGroup(
   communityId: string,
-  communityGroupId: string = ""
+  communityGroupId: string = "",
 ) {
   const cookieValue = getToken() as string;
 
@@ -40,7 +40,7 @@ export function useGetCommunityGroup(
 export async function CreateCommunityGroup(
   communityId: string,
   token: any,
-  data: any
+  data: any,
 ) {
   const response = await client(`/communitygroup/${communityId}`, {
     method: "POST",
@@ -200,7 +200,7 @@ export const useLeaveCommunityGroup = () => {
 async function removeUserFromCommunityGroupAPI(
   communityGroupId: string,
   userId: string,
-  token: string
+  token: string,
 ) {
   return await client(`/communitygroup/${communityGroupId}/user/${userId}`, {
     method: "DELETE",
@@ -237,7 +237,7 @@ export const useRemoveUserFromCommunityGroup = () => {
 async function ChangeCommunityGroupStatusAPI(
   data: { status: string },
   communityGroupId: string,
-  token: string
+  token: string,
 ) {
   return await client(`/communitygroup/status/${communityGroupId}`, {
     method: "PUT",
@@ -276,7 +276,7 @@ export const useChangeCommunityGroupStatus = (communityGroupId: string) => {
 async function acceptRejectPrivateGroupAPI(
   data: { status: string },
   communityGroupId: string,
-  token: string
+  token: string,
 ) {
   return await client(`/communitygroup/join-request/${communityGroupId}`, {
     method: "PUT",
