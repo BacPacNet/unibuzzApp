@@ -1,6 +1,12 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useFormContext, Controller } from "react-hook-form";
-import { View, Text, KeyboardAvoidingView, Platform } from "react-native";
+import {
+  View,
+  Text,
+  KeyboardAvoidingView,
+  Platform,
+  StyleSheet,
+} from "react-native";
 
 import Title from "@/components/atoms/Title";
 import SupportingText from "@/components/atoms/SupportingText";
@@ -24,6 +30,7 @@ const LoginVerificationForm = ({
 }: Props) => {
   const [countdown, setCountdown] = useState(30);
   const [isCounting, setIsCounting] = useState(false);
+  const [isResend, setIsResend] = useState(false);
   const {
     formState: { errors: VerificationFormErrors },
     control,
@@ -64,6 +71,7 @@ const LoginVerificationForm = ({
   };
 
   const handleLoginEmailSendCodeCount = () => {
+    setIsResend(true);
     setIsCounting(true);
     setCountdown(30);
   };
@@ -79,112 +87,123 @@ const LoginVerificationForm = ({
   }, [countdown, isCounting]);
 
   return (
-    <View className="w-full">
-      <View className="flex  items-center text-center p-4 ">
-        <Title>Verification</Title>
-        <SupportingText>Verify your login credentials.</SupportingText>
-      </View>
-
-      <View className="w-full flex  mb-4">
-        <View>
-          <FormInput
-            label=" Email Address"
-            disabled={true}
-            placeholder="Enter an email you would like to show others"
-            name="email"
-            control={control}
-            keyboardType="email-address"
-            isError={!!VerificationFormErrors.email}
-            errorMessage={
-              VerificationFormErrors.email
-                ? VerificationFormErrors.email.message?.toString()
-                : "email  is required"
-            }
-            rules={{
-              required: "Please enter your email!",
-              pattern: {
-                value: /^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/,
-                message: "Invalid email format",
-              },
-            }}
-          />
-
-          <ReusableButton
-            onPress={() => handleLoginEmailSendCode()}
-            buttonText="Send Code"
-            variant="border_primary"
-            activityIndicatorColor="#6744FF"
-            disabled={isCounting}
-            isLoading={isPending && !isError}
-            textStyle="text-primary-500"
-          />
-          {isCounting && (
-            <Text className="text-md text-neutral-500 text-center">
-              Resend Available after {countdown}s
-            </Text>
-          )}
+    <View style={styles.main}>
+      <View>
+        <View style={styles.titlemargin} className=" w-full">
+          <Title className="text-start">Verification</Title>
         </View>
-      </View>
-      {/* otp  */}
-      <KeyboardAvoidingView
-        behavior={Platform.OS === "ios" ? "padding" : "height"}
-        className=""
-      >
-        <View className="">
-          <View className="my-4">
-            <Text className="font-medium text-neutral-900 mb-2">
-              Input Verification Code
-            </Text>
-
-            <Controller
-              control={control}
-              render={({ field: { onChange } }) => {
-                return (
-                  <OtpInput
-                    ref={otpRef}
-                    type="numeric"
-                    numberOfDigits={6}
-                    // onTextChange={(text) => onChange(text)}
-                    placeholder="000000"
-                    onTextChange={(text) => onChange(text || "")}
-                    focusColor="#6744FF"
-                    autoFocus={false}
-                    theme={{
-                      containerStyle: { width: 300, gap: 10 },
-                      pinCodeContainerStyle: { height: 50 },
+        <Text className=" text-sm text-neutral-500">
+          We emailed you a six-digit code to unibuzz@email.com. Enter the code
+          below to confirm your email address.
+        </Text>
+        <View className="w-full flex  mb-4">
+          <View>
+            {/* otp  */}
+            <KeyboardAvoidingView
+              behavior={Platform.OS === "ios" ? "padding" : "height"}
+              className=""
+            >
+              <View className="">
+                <View style={styles.marginTop}>
+                  <Controller
+                    control={control}
+                    render={({ field: { onChange } }) => {
+                      return (
+                        <OtpInput
+                          ref={otpRef}
+                          type="numeric"
+                          numberOfDigits={6}
+                          // onTextChange={(text) => onChange(text)}
+                          placeholder="000000"
+                          onTextChange={(text) => onChange(text || "")}
+                          focusColor="#6744FF"
+                          autoFocus={false}
+                          theme={{
+                            containerStyle: { width: 300, gap: 10 },
+                            pinCodeContainerStyle: { height: 50 },
+                          }}
+                        />
+                      );
+                    }}
+                    name="verificationOtp"
+                    rules={{
+                      required: "Please enter your verification OTP!",
+                      minLength: { value: 6, message: "OTP must be 6 digits!" },
                     }}
                   />
-                );
-              }}
-              name="verificationOtp"
-              rules={{
-                required: "Please enter your verification OTP!",
-                minLength: { value: 6, message: "OTP must be 6 digits!" },
-              }}
+                  {VerificationFormErrors?.verificationOtp && (
+                    <Text className="text-red-500 text-sm mt-1">
+                      {VerificationFormErrors?.verificationOtp?.message?.toString()}
+                    </Text>
+                  )}
+                </View>
+              </View>
+            </KeyboardAvoidingView>
+            <ReusableButton
+              onPress={() => handleLoginEmailSendCode()}
+              buttonText={
+                isCounting
+                  ? `Resend Available after ${countdown}s`
+                  : isResend
+                    ? "Resend Code"
+                    : "Send Code"
+              }
+              variant="border_primary"
+              activityIndicatorColor="#6744FF"
+              disabled={isCounting}
+              isLoading={isPending && !isError}
+              textStyle="text-primary-500"
+              height="large"
             />
-            {VerificationFormErrors?.verificationOtp && (
-              <Text className="text-red-500 text-md mt-1">
-                {VerificationFormErrors?.verificationOtp?.message?.toString()}
-              </Text>
-            )}
           </View>
-
-          <ReusableButton
-            onPress={handleSubmit(onSubmit)}
-            buttonText="Confirm"
-            variant="primary"
-            disabled={verificationIsPending}
-            isLoading={verificationIsPending}
-          />
-          <ReusableButton
-            onPress={handlePrev}
-            buttonText="Review Profile"
-            variant="shade"
-          />
         </View>
-      </KeyboardAvoidingView>
+      </View>
+      <View style={styles.buttonContainer}>
+        <ReusableButton
+          onPress={handleSubmit(onSubmit)}
+          buttonText="Confirm"
+          variant="primary"
+          disabled={verificationIsPending}
+          isLoading={verificationIsPending}
+          height="large"
+        />
+        <ReusableButton
+          onPress={handlePrev}
+          buttonText="Review Profile"
+          variant="shade"
+          height="large"
+        />
+      </View>
     </View>
   );
 };
 
 export default LoginVerificationForm;
+
+const styles = StyleSheet.create({
+  main: {
+    flex: 1,
+    width: "100%",
+    display: "flex",
+    flexDirection: "column",
+    justifyContent: "space-between",
+  },
+  titlemargin: {
+    marginBottom: 32,
+  },
+  mainContainer: {
+    display: "flex",
+    flexDirection: "column",
+    gap: 16,
+  },
+  buttonContainer: {
+    display: "flex",
+    flexDirection: "column",
+    gap: 16,
+    marginTop: 48,
+  },
+  marginTop: {
+    marginTop: 32,
+    marginBottom: 32,
+  },
+});

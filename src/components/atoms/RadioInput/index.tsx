@@ -13,6 +13,7 @@ interface RadioInputProps {
   control: any;
   options: RadioOption[];
   required?: boolean;
+  size?: "default" | "small";
 }
 
 const RadioInput: React.FC<RadioInputProps> = ({
@@ -20,6 +21,7 @@ const RadioInput: React.FC<RadioInputProps> = ({
   control,
   options,
   required = false,
+  size = "default",
 }) => {
   return (
     <Controller
@@ -43,8 +45,12 @@ const RadioInput: React.FC<RadioInputProps> = ({
                 {value === option.value && <View style={styles.radioInner} />}
               </View>
               <View>
-                <Text style={styles.label}>{option.label}</Text>
-                <Text>{option?.details}</Text>
+                <Text
+                  style={[size === "small" ? styles.smallLabel : styles.label]}
+                >
+                  {option.label}
+                </Text>
+                {option?.details && <Text>{option?.details}</Text>}
               </View>
             </TouchableOpacity>
           ))}
@@ -62,11 +68,12 @@ const styles = StyleSheet.create({
   radioOption: {
     flexDirection: "row",
     alignItems: "center",
-    marginBottom: 10,
+    paddingVertical: 12,
+    gap: 12,
   },
   radioOuter: {
-    width: 20,
-    height: 20,
+    width: 18,
+    height: 18,
     borderRadius: 10,
     borderWidth: 2,
     borderColor: "#E5E7EB",
@@ -84,8 +91,14 @@ const styles = StyleSheet.create({
     backgroundColor: "#9685FF",
   },
   label: {
-    fontSize: 16,
-    color: "#333",
+    fontSize: 28,
+    color: "#3A3B3C",
+    fontWeight: "600",
+  },
+  smallLabel: {
+    fontSize: 14,
+    color: "#3A3B3C",
+    fontWeight: "500",
   },
   errorText: {
     color: "red",

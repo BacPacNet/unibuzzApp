@@ -27,8 +27,10 @@ interface SelectInputProps {
   isLabelShown?: boolean;
   rules?: object;
   search?: boolean;
-
+  showLabel?: boolean;
   onChange?: (value: string) => void;
+  desc?: string;
+  isMarginBottom?: boolean;
 }
 
 const icons = [UserCircle, UserBadgeCheck];
@@ -43,8 +45,10 @@ export function SelectInputWithSearch({
   required = false,
   rules,
   search = false,
-
+  showLabel = false,
   onChange,
+  desc,
+  isMarginBottom = true,
 }: SelectInputProps) {
   const [modalVisible, setModalVisible] = useState(false);
   const [filteredOptions, setFilteredOptions] = useState(options);
@@ -65,7 +69,7 @@ export function SelectInputWithSearch({
   };
 
   return (
-    <View style={styles.container}>
+    <View style={[isMarginBottom && styles.container]}>
       {isLabelShown && (
         <View style={styles.labelContainer}>
           <Text style={styles.label}>{label}</Text>
@@ -123,14 +127,19 @@ export function SelectInputWithSearch({
                     onPress={(e) => e.stopPropagation()}
                   >
                     <View style={styles.modalHeader}>
-                      <Text style={styles.modalTitle}>Select {label}</Text>
+                      {showLabel && (
+                        <Text style={styles.modalTitle}>Select {label}</Text>
+                      )}
                       {search && (
-                        <TextInput
-                          style={styles.searchInput}
-                          placeholder="Search..."
-                          onChangeText={handleSearch}
-                          ref={searchRef}
-                        />
+                        <View>
+                          <TextInput
+                            style={styles.searchInput}
+                            placeholder="Search..."
+                            onChangeText={handleSearch}
+                            ref={searchRef}
+                          />
+                          <Text style={styles.desc}>{desc}</Text>
+                        </View>
                       )}
                     </View>
                     <FlatList
@@ -230,11 +239,10 @@ const styles = StyleSheet.create({
     borderTopRightRadius: 16,
     maxHeight: "80%",
     minHeight: 550,
+    paddingHorizontal: 8,
   },
   modalHeader: {
     padding: 16,
-    borderBottomWidth: 1,
-    borderBottomColor: "#E5E7EB",
   },
   modalTitle: {
     fontSize: 18,
@@ -252,12 +260,23 @@ const styles = StyleSheet.create({
   },
   optionText: {
     fontSize: 14,
+    fontWeight: "500",
+    textAlign: "left",
     color: "#1F2937",
+    lineHeight: 16,
   },
 
   emptyText: {
     textAlign: "center",
-    fontSize: 30,
-    fontWeight: "700",
+    fontSize: 20,
+    fontWeight: "600",
+  },
+  desc: {
+    fontSize: 12,
+    fontWeight: "400",
+    textAlign: "left",
+    color: "#6B7280",
+    lineHeight: 16,
+    marginTop: 8,
   },
 });

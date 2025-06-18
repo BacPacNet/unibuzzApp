@@ -1,5 +1,5 @@
 import React, { ReactNode, HTMLAttributes } from "react";
-import { Text } from "react-native";
+import { StyleSheet, Text } from "react-native";
 
 interface TitleProps extends HTMLAttributes<HTMLHeadingElement> {
   children: ReactNode;
@@ -7,8 +7,17 @@ interface TitleProps extends HTMLAttributes<HTMLHeadingElement> {
 
 export default function Title({ children, className = "" }: TitleProps) {
   return (
-    <Text className={`text-2xl font-bold text-neutral-900 ${className}`}>
+    <Text style={styles.title} className={` ${className}`}>
       {children}
     </Text>
   );
 }
+
+const styles = StyleSheet.create({
+  title: {
+    fontFamily: "poppins",
+    fontSize: 28,
+    color: "#3A3B3C",
+    fontWeight: 700,
+  },
+});
