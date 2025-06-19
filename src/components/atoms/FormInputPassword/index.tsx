@@ -97,7 +97,7 @@ export function FormInputPassword({
         </TouchableOpacity>
       </View>
 
-      {password.length > 0 && isPasswordStrengthVisible && (
+      {isPasswordStrengthVisible && (
         <View style={styles.strengthBarContainer}>
           {[1, 2, 3, 4].map((item) => (
             <View

@@ -1,20 +1,21 @@
-import React, { useState, useEffect, useCallback } from "react";
-import { View, Text, TextInput, TouchableOpacity } from "react-native";
-import { Controller, useForm } from "react-hook-form";
+import React, { useEffect } from "react";
+import { View, StyleSheet, KeyboardAvoidingView, Platform } from "react-native";
+import { useForm } from "react-hook-form";
 import ReusableButton from "@/components/atoms/ReusableButton";
-import { Eye, EyeClosed } from "iconoir-react-native";
 import { useUserPasswordReset } from "@/context/UserPasswordResetProvider/UserPasswordResetProvider";
 import { useResetPassword } from "@/services/auth";
-
+import { ForgetPasswordStep } from "@/screens/ForgetPasswordScreen/ForgetPasswordScreen";
+import { FormInputPassword } from "@/components/atoms/FormInputPassword";
+import Title from "@/components/atoms/Title";
 interface SetPasswordFormProps {
   navigation: any;
 
-  setIsVerified: (value: boolean) => void;
+  setCurrStage: (value: ForgetPasswordStep) => void;
 }
 
 const SetResetPassword: React.FC<SetPasswordFormProps> = ({
   navigation,
-  setIsVerified,
+  setCurrStage,
 }) => {
   const {
     register,
@@ -30,9 +31,6 @@ const SetResetPassword: React.FC<SetPasswordFormProps> = ({
     },
   });
 
-  const [showPassword, setShowPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [passwordStrength, setPasswordStrength] = useState(0);
   const { resetEmail, resetToken } = useUserPasswordReset();
   const password = watch("password");
   const confirmPassword = watch("confirmpassword");
@@ -42,43 +40,6 @@ const SetResetPassword: React.FC<SetPasswordFormProps> = ({
     isPending: isResetPasswordLoading,
     isError: isResetPasswordError,
   } = useResetPassword();
-
-  useEffect(() => {
-    register("password", {
-      required: "Password is required",
-      minLength: {
-        value: 8,
-        message:
-          "Password must have at least 8 characters, including 1 uppercase, 1 lowercase, 1 number, and 1 special character",
-      },
-      pattern: {
-        value: /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*]).{8,}$/,
-        message:
-          "Password must have at least 8 characters, including 1 uppercase, 1 lowercase, 1 number, and 1 special character",
-      },
-    });
-
-    register("confirmpassword", {
-      required: "Please confirm your password",
-      validate: (val) => val === password || "Passwords do not match",
-    });
-  }, [register, password]);
-
-  const calculateStrength = useCallback((password: string) => {
-    if (password.length < 8) return 0;
-
-    let score = 0;
-    if (/[A-Z]/.test(password)) score++;
-    if (/[a-z]/.test(password)) score++;
-    if (/[0-9]/.test(password)) score++;
-    if (/[^A-Za-z0-9]/.test(password)) score++;
-
-    return score;
-  }, []);
-
-  useEffect(() => {
-    setPasswordStrength(password ? calculateStrength(password) : 0);
-  }, [password, calculateStrength]);
 
   const handleResetPassword = async () => {
     const data = {
@@ -90,30 +51,35 @@ const SetResetPassword: React.FC<SetPasswordFormProps> = ({
     await ResetPassword(data, {
       onSuccess: () => {
         navigation.navigate("LoginScreen");
-        setIsVerified(false);
+        setCurrStage(ForgetPasswordStep.Success);
       },
     });
   };
 
+  useEffect(() => {
+    if (resetToken?.length == 0) {
+      setCurrStage(ForgetPasswordStep.EmailCheck);
+      return;
+    }
+  }, [resetToken]);
+
   return (
-    <View className="w-full space-y-6">
+    <View style={styles.main}>
+      <View></View>
       {/* Password Input */}
-      <View className="mb-4">
-        <View className="relative">
-          <Controller
-            control={control}
-            render={({ field: { onChange, onBlur, value } }) => (
-              <TextInput
-                placeholder="*********"
-                secureTextEntry={!showPassword}
-                className={`border    rounded-lg  ${errors.password ? "border-red-500" : "border-neutral-300"}`}
-                onBlur={onBlur}
-                onChangeText={(value) => onChange(value)}
-                value={value}
-                style={{ padding: 12, fontSize: 14, height: 40 }}
-              />
-            )}
+      <View>
+        <View style={styles.titlemargin} className=" w-full">
+          <Title className="text-start">Reset Password</Title>
+        </View>
+        <KeyboardAvoidingView
+          behavior={Platform.OS === "ios" ? "padding" : "height"}
+          style={{ display: "flex", flexDirection: "column", gap: 32 }}
+        >
+          <FormInputPassword
+            label="Password"
+            placeholder="*********"
             name="password"
+            control={control}
             rules={{
               required: "Password is required!",
               minLength: {
@@ -127,89 +93,74 @@ const SetResetPassword: React.FC<SetPasswordFormProps> = ({
                   "Password must contain uppercase, lowercase, number, and special character",
               },
             }}
+            isInfoVisible={password.length == 0}
+            isError={!!errors.password}
+            errorMessage={errors.password?.message?.toString()}
+            isPasswordStrengthVisible={true}
           />
 
-          <TouchableOpacity
-            className="absolute right-2 top-1"
-            onPress={() => setShowPassword((prev) => !prev)}
-          >
-            {showPassword ? (
-              <Eye height={30} width={30} color={"#d4d4d4"} />
-            ) : (
-              <EyeClosed height={30} width={30} color={"#d4d4d4"} />
-            )}
-          </TouchableOpacity>
-        </View>
-        {password?.length ? (
-          <View className="flex flex-row justify-between mt-2">
-            {[1, 2, 3, 4].map((item) => (
-              <View
-                key={item}
-                className={`h-1 flex-1 mx-0.5 rounded-full ${
-                  passwordStrength >= item ? "bg-green-500" : "bg-neutral-300"
-                }`}
-              />
-            ))}
-          </View>
-        ) : null}
-        {errors.password && (
-          <Text className="text-red-500 text-[12px] mt-1">
-            {errors.password.message?.toString()}
-          </Text>
-        )}
-      </View>
+          {/* Confirm Password Field */}
 
-      {/* Confirm Password Field */}
-      <View className="mb-4">
-        <View className="relative">
-          <Controller
-            control={control}
-            render={({ field: { onChange, onBlur, value } }) => (
-              <TextInput
-                placeholder="*********"
-                secureTextEntry={!showConfirmPassword}
-                className={`border rounded-lg  ${errors.password ? "border-red-500" : "border-neutral-300"}`}
-                onBlur={onBlur}
-                onChangeText={(value) => onChange(value)}
-                value={value}
-                style={{ padding: 12, fontSize: 14, height: 40 }}
-              />
-            )}
+          <FormInputPassword
+            label="Confirm Password"
+            placeholder="*********"
             name="confirmpassword"
+            control={control}
             rules={{
               required: "Password is required",
-              validate: (value) =>
+              validate: (value: string) =>
                 value === password || "Passwords do not match",
             }}
+            isPasswordStrengthVisible={false}
+            isError={!!errors.confirmpassword}
+            errorMessage={errors.confirmpassword?.message?.toString()}
           />
-
-          <TouchableOpacity
-            className="absolute right-2 top-1"
-            onPress={() => setShowConfirmPassword((prev) => !prev)}
-          >
-            {showConfirmPassword ? (
-              <Eye height={30} width={30} color={"#d4d4d4"} />
-            ) : (
-              <EyeClosed height={30} width={30} color={"#d4d4d4"} />
-            )}
-          </TouchableOpacity>
-        </View>
-        {errors.confirmpassword && (
-          <Text className="text-red-500 text-[12px] mt-1">
-            {errors.confirmpassword.message?.toString()}
-          </Text>
-        )}
+        </KeyboardAvoidingView>
       </View>
-
-      <ReusableButton
-        onPress={handleSubmit(handleResetPassword)}
-        buttonText="Reset Password"
-        variant="primary"
-        disabled={isResetPasswordLoading}
-        isLoading={isResetPasswordLoading}
-      />
+      <View style={styles.buttonContainer}>
+        <ReusableButton
+          onPress={handleSubmit(handleResetPassword)}
+          buttonText="Reset Password"
+          variant="primary"
+          disabled={isResetPasswordLoading}
+          isLoading={isResetPasswordLoading}
+          height="large"
+        />
+        <ReusableButton
+          onPress={() => navigation.navigate("LoginScreen" as any)}
+          buttonText="Sign In"
+          variant="border"
+          height="large"
+        />
+      </View>
     </View>
   );
 };
 
 export default SetResetPassword;
+
+const styles = StyleSheet.create({
+  main: {
+    flex: 1,
+    width: "100%",
+    display: "flex",
+    flexDirection: "column",
+    justifyContent: "space-between",
+    height: "100%",
+  },
+  titlemargin: {
+    marginBottom: 32,
+  },
+  mainContainer: {
+    display: "flex",
+    flexDirection: "column",
+
+    justifyContent: "center",
+  },
+  buttonContainer: {
+    display: "flex",
+    flexDirection: "column",
+    gap: 16,
+    marginTop: 64,
+  },
+});

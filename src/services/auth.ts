@@ -122,6 +122,14 @@ async function userNameAndEmailAvailability(data: {
   );
   return response;
 }
+async function emailAvailability(data: { email: string }) {
+  const response: { isAvailable: boolean } = await client(
+    `/users/check-email-availability`,
+    { method: "POST", data },
+  );
+  console.log("response", response);
+  return response;
+}
 
 export const useHandleUserEmailAndUserNameAvailability = () => {
   return useMutation({
@@ -129,7 +137,18 @@ export const useHandleUserEmailAndUserNameAvailability = () => {
       userNameAndEmailAvailability(data),
   });
 };
+
 //user name and email check end
+
+// user email availability check start
+
+export const useHandleUserEmailAvailability = () => {
+  return useMutation({
+    mutationFn: (data: { email: string }) => emailAvailability(data),
+  });
+};
+
+// user email availability check end
 
 // user email otp generate start
 

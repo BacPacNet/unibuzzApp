@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { useFormContext, Controller } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import {
   View,
   Text,
@@ -9,61 +9,59 @@ import {
 } from "react-native";
 import Title from "@/components/atoms/Title";
 import { OtpInput } from "react-native-otp-entry";
-import { useHandleLoginEmailVerificationGenerate } from "@/services/auth";
+
 import ReusableButton from "@/components/atoms/ReusableButton";
 
+import { ForgetPasswordStep } from "@/screens/ForgetPasswordScreen/ForgetPasswordScreen";
+import { useUserPasswordReset } from "@/context/UserPasswordResetProvider/UserPasswordResetProvider";
+import {
+  useResetPasswordCodeGenerate,
+  useVerifyResetPasswordOtp,
+} from "@/services/auth";
+
 interface Props {
-  isVerificationSuccess: boolean;
-  isPending: boolean;
-  onSubmit: (data: any) => Promise<void>;
-  handlePrev: () => void;
+  setCurrStage: (value: ForgetPasswordStep) => void;
+  navigation: any;
 }
 
-const LoginVerificationForm = ({
-  onSubmit,
-  isPending: verificationIsPending,
-  handlePrev,
-}: Props) => {
+const ForgetPasswordOtpCheck = ({ navigation, setCurrStage }: Props) => {
   const [countdown, setCountdown] = useState(30);
   const [isCounting, setIsCounting] = useState(false);
   const [isResend, setIsResend] = useState(false);
+  const { resetEmail } = useUserPasswordReset();
   const {
     formState: { errors: VerificationFormErrors },
     control,
     getValues,
-    setError,
-    clearErrors,
-    handleSubmit,
-  } = useFormContext();
-  const otp = getValues("verificationOtp");
-  const otpRef = useRef<any>(null);
-  const email = getValues("email");
+  } = useForm();
   const {
-    mutate: generateLoginEmailOTP,
+    mutate: generateResetPasswordOtp,
     isPending,
     isError,
-  } = useHandleLoginEmailVerificationGenerate();
+  } = useResetPasswordCodeGenerate();
+  const {
+    mutateAsync: verifyResetPasswordOtp,
+    isSuccess: isVerifyResetPasswordSuccess,
+    isPending: verificationIsPending,
+  } = useVerifyResetPasswordOtp();
 
-  const handleLoginEmailSendCode = () => {
-    if (!email) {
-      setError("email", {
-        type: "manual",
-        message: "Please enter your email!",
-      });
-      return;
-    }
-    const emailRegex = /^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/i;
-    if (!emailRegex.test(email)) {
-      setError("email", { type: "manual", message: "Invalid email format" });
-      return;
-    }
+  const otpRef = useRef<any>(null);
 
-    clearErrors("email");
-    const data = { email };
-
-    generateLoginEmailOTP(data);
-
+  const handleUniversityEmailSendCode = () => {
+    generateResetPasswordOtp({ email: resetEmail });
     handleLoginEmailSendCodeCount();
+  };
+
+  const resetPasswordOtp = async () => {
+    const data = {
+      otp: getValues("verificationOtp"),
+      email: resetEmail,
+    };
+
+    const res = await verifyResetPasswordOtp(data);
+    if (res.message === "OTP verified") {
+      setCurrStage(ForgetPasswordStep.ResetPassword);
+    }
   };
 
   const handleLoginEmailSendCodeCount = () => {
@@ -82,15 +80,20 @@ const LoginVerificationForm = ({
     return () => clearTimeout(timer);
   }, [countdown, isCounting]);
 
+  const handleOtpCheck = () => {
+    setCurrStage(ForgetPasswordStep.ResetPassword);
+  };
+
   return (
     <View style={styles.main}>
+      <View></View>
       <View>
         <View style={styles.titlemargin} className=" w-full">
-          <Title className="text-start">Verification</Title>
+          <Title className="text-start">Reset Password</Title>
         </View>
         <Text className=" text-sm text-neutral-500">
-          We emailed you a six-digit code to unibuzz@email.com. Enter the code
-          below to confirm your email address.
+          We emailed you a six-digit code to {resetEmail}. Enter the code below
+          to confirm your email address.
         </Text>
         <View className="w-full flex  mb-4">
           <View>
@@ -101,6 +104,10 @@ const LoginVerificationForm = ({
             >
               <View className="">
                 <View style={styles.marginTop}>
+                  {/* <Text className="font-medium text-neutral-900 mb-2">
+              Input Verification Code
+            </Text> */}
+
                   <Controller
                     control={control}
                     render={({ field: { onChange } }) => {
@@ -136,7 +143,7 @@ const LoginVerificationForm = ({
               </View>
             </KeyboardAvoidingView>
             <ReusableButton
-              onPress={() => handleLoginEmailSendCode()}
+              onPress={() => handleUniversityEmailSendCode()}
               buttonText={
                 isCounting
                   ? `Resend Available after ${countdown}s`
@@ -156,7 +163,7 @@ const LoginVerificationForm = ({
       </View>
       <View style={styles.buttonContainer}>
         <ReusableButton
-          onPress={handleSubmit(onSubmit)}
+          onPress={resetPasswordOtp}
           buttonText="Confirm"
           variant="primary"
           disabled={verificationIsPending}
@@ -164,9 +171,13 @@ const LoginVerificationForm = ({
           height="large"
         />
         <ReusableButton
-          onPress={handlePrev}
-          buttonText="Review Profile"
-          variant="shade"
+          onPress={() => navigation.navigate("LoginScreen" as any)}
+          buttonContent={
+            <View className="flex flex-row items-center justify-center gap-2">
+              <Text className="text-primary-500"> Sign In</Text>
+            </View>
+          }
+          variant="border"
           height="large"
         />
       </View>
@@ -174,7 +185,7 @@ const LoginVerificationForm = ({
   );
 };
 
-export default LoginVerificationForm;
+export default ForgetPasswordOtpCheck;
 
 const styles = StyleSheet.create({
   main: {
