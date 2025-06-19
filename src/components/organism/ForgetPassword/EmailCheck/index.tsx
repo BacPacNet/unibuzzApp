@@ -59,13 +59,13 @@ const ForgetPasswordEmailCheck: React.FC<Props> = ({
     }
   };
 
-//   useEffect(() => {
-//     if (resetToken.length > 1) {
-//       setCurrStage(ForgetPasswordStep.ResetPassword);
-//     } else {
-//       setCurrStage(ForgetPasswordStep.EmailCheck);
-//     }
-//   }, [resetToken]);
+  //   useEffect(() => {
+  //     if (resetToken.length > 1) {
+  //       setCurrStage(ForgetPasswordStep.ResetPassword);
+  //     } else {
+  //       setCurrStage(ForgetPasswordStep.EmailCheck);
+  //     }
+  //   }, [resetToken]);
 
   return (
     <View style={styles.main}>

@@ -1,4 +1,4 @@
-import React, {  useState } from "react";
+import React, { useState } from "react";
 import {
   View,
   FlatList,
@@ -29,11 +29,10 @@ const AllUniversities = () => {
 
   const renderItem = ({ item }: any) => <DiscoverUniversityCard data={item} />;
 
+  const handleScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
+    const { contentOffset, layoutMeasurement } = event.nativeEvent;
 
-const handleScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
-    const { contentOffset,layoutMeasurement } = event.nativeEvent;
-
-    setShowScrollTop(contentOffset.y > layoutMeasurement?.height/2); 
+    setShowScrollTop(contentOffset.y > layoutMeasurement?.height / 2);
   };
 
   const flatListRef = React.useRef<FlatList>(null);
@@ -44,7 +43,6 @@ const handleScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
 
   return (
     <View style={styles.container}>
-
       <FlatList
         ref={flatListRef}
         data={data?.pages?.flatMap((page) => page.Universities) || []}
@@ -57,11 +55,13 @@ const handleScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
         }}
         onScroll={handleScroll}
         scrollEventThrottle={16}
-        ListHeaderComponent={   <UniversitySearchFilters setQuery={setQuery} />}
+        ListHeaderComponent={<UniversitySearchFilters setQuery={setQuery} />}
         ListFooterComponent={
-          isFetchingNextPage && !isLoading && hasNextPage ? <View style={styles.centered}>
-            <ActivityIndicator size="large" color="#7367f0" />
-          </View> : null
+          isFetchingNextPage && !isLoading && hasNextPage ? (
+            <View style={styles.centered}>
+              <ActivityIndicator size="large" color="#7367f0" />
+            </View>
+          ) : null
         }
         ListEmptyComponent={
           isLoading ? (
@@ -75,7 +75,7 @@ const handleScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
           )
         }
       />
-      
+
       {showScrollTop && (
         <TouchableOpacity style={styles.scrollTopButton} onPress={scrollToTop}>
           <ArrowUp width={24} height={24} color={"#6744FF"} />

@@ -106,20 +106,20 @@ const MultiSelectDropdown = ({
       {label && <Text style={styles.label}>{label}</Text>}
 
       {search && (
-         <View className="  relative  w-full">
-         <Search
-           style={{ top: 20, right: 10,position:"absolute" }}
-           width={20}
-           height={20}
-           color={"#242526"}
-           className="  z-30"
-         />
-        <TextInput
-          placeholder="Search..."
-          value={searchInput}
-          onChangeText={setSearchInput}
-          style={styles.searchInput}
-        />
+        <View className="  relative  w-full">
+          <Search
+            style={{ top: 20, right: 10, position: "absolute" }}
+            width={20}
+            height={20}
+            color={"#242526"}
+            className="  z-30"
+          />
+          <TextInput
+            placeholder="Search..."
+            value={searchInput}
+            onChangeText={setSearchInput}
+            style={styles.searchInput}
+          />
         </View>
       )}
 
@@ -199,14 +199,13 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderRadius: 8,
     paddingVertical: 8,
-    paddingLeft:12,
-    paddingRight:35,
+    paddingLeft: 12,
+    paddingRight: 35,
     marginVertical: 10,
-    height:40
+    height: 40,
   },
   optionsList: {
     minHeight: 200,
-  
   },
   optionItem: {
     flexDirection: "row",
@@ -214,14 +213,13 @@ const styles = StyleSheet.create({
     paddingVertical: 16,
     paddingHorizontal: 8,
     justifyContent: "space-between",
-    borderBottomWidth:1,
-    borderColor:"#E5E7EB"
+    borderBottomWidth: 1,
+    borderColor: "#E5E7EB",
   },
-  optionText:{
-    color:"#3A3B3C",
-    fontSize:14,
-    fontWeight:500,
-
+  optionText: {
+    color: "#3A3B3C",
+    fontSize: 14,
+    fontWeight: 500,
   },
   optionSelected: {
     backgroundColor: "#f0f0f0",

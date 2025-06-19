@@ -50,9 +50,14 @@ const DiscoverUniversityCard = ({ data }: Props) => {
           )
         }
       />
-      <View style={styles.bottomContainer} className="w-full   rounded-b-2xl relative flex flex-row items-center gap-3">
+      <View
+        style={styles.bottomContainer}
+        className="w-full   rounded-b-2xl relative flex flex-row items-center gap-3"
+      >
         <CommunityLogo logoUrl={data?.logo} variant="small" />
-        <Text style={styles.name} className=" flex flex-row items-center ">{data?.name}</Text>
+        <Text style={styles.name} className=" flex flex-row items-center ">
+          {data?.name}
+        </Text>
       </View>
     </TouchableOpacity>
   );
@@ -60,20 +65,18 @@ const DiscoverUniversityCard = ({ data }: Props) => {
 
 export default DiscoverUniversityCard;
 
-
 const styles = StyleSheet.create({
-  bottomContainer:{
-   height:60,
-   paddingHorizontal:16,
-
+  bottomContainer: {
+    height: 60,
+    paddingHorizontal: 16,
   },
-  name:{
-    fontSize:12,
-    fontWeight:700,
-    color:"#3A3B3C",
-    fontFamily:"poppins",
-    marginLeft:8,
-    flexWrap:"wrap",
-    width:"90%"
-  }
+  name: {
+    fontSize: 12,
+    fontWeight: 700,
+    color: "#3A3B3C",
+    fontFamily: "poppins",
+    marginLeft: 8,
+    flexWrap: "wrap",
+    width: "90%",
+  },
 });
