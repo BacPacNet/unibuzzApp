@@ -1,0 +1,24 @@
+import React from "react";
+import { View, ActivityIndicator, StyleSheet } from "react-native";
+
+interface LoadingStateProps {
+  size?: "small" | "large";
+  color?: string;
+}
+
+export const LoadingState = ({
+  size = "large",
+  color = "#7367f0",
+}: LoadingStateProps) => (
+  <View style={styles.container}>
+    <ActivityIndicator size={size} color={color} />
+  </View>
+);
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+});

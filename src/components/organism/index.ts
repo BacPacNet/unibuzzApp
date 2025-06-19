@@ -1,1 +1,1 @@
-export { default as Brand } from "./OnboardingSwiper/OnboardingSwiper";
+export { default as Brand } from "./Onboarding/OnboardingSwiper/OnboardingSwiper";
