@@ -1,10 +1,8 @@
 import React, { useState, useCallback, useEffect } from "react";
-import { View, Text, TouchableOpacity } from "react-native";
-
+import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
+import Logo from "@/assets/onboarding/Unibuzz_Logo.svg";
 import Title from "@/components/atoms/Title";
 import SupportingText from "@/components/atoms/SupportingText";
-
-import LogoCircle from "@/assets/LogoCircle.svg";
 import { useHandleLogin } from "@/services/auth";
 
 import { removeRegisterData } from "@/storage/register";
@@ -53,19 +51,23 @@ const LoginForm = ({
     mutateLogin(data);
   };
   return (
-    <View className="flex w-full justify-center items-center px-4 bg-white">
-      <View className="my-4 w-full flex items-center gap-2">
-        <LogoCircle className="w-14 h-14 " />
-        <Title className="text-center">Congratulations</Title>
-        <SupportingText className="text-center text-gray-600">
-          You have successfully created an account
+    <View className="flex w-full justify-center items-center px-4 bg-white h-full">
+      <View className=" w-full flex items-center justify-center ">
+        {/* <LogoCircle className="w-14 h-14 " /> */}
+        <Logo style={styles.logo} width={112} height={26} />
+        <Title className="text-center mb-2">Congratulations</Title>
+        <SupportingText className="text-center test-xs text-neutral-500">
+          Account Creation Complete
         </SupportingText>
       </View>
 
-      <View className="w-full my-4 flex items-center justify-center">
+      <View
+        style={styles.progressContainer}
+        className="w-full  flex items-center justify-center"
+      >
         <AnimatedCircularProgress
-          size={120}
-          width={15}
+          size={80}
+          width={10}
           fill={100}
           tintColor="#6744FF"
           backgroundColor="#F3F2FF"
@@ -73,7 +75,7 @@ const LoginForm = ({
           duration={5000}
           prefill={0}
         />
-        <Text className="text-xl">Login you in...</Text>
+        <Text className="text-sm text-neutral-700">Logging you in...</Text>
       </View>
       <TouchableOpacity
         disabled={true}
@@ -85,5 +87,15 @@ const LoginForm = ({
     </View>
   );
 };
+
+const styles = StyleSheet.create({
+  logo: {
+    marginBottom: 32,
+  },
+  progressContainer: {
+    marginTop: 64,
+    marginBottom: 12,
+  },
+});
 
 export default LoginForm;

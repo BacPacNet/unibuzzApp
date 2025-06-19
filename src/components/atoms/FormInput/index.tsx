@@ -84,7 +84,7 @@ const styles = StyleSheet.create({
   label: {
     fontSize: 14,
     fontWeight: "500",
-    color: "#374151",
+    color: "#3A3B3C",
   },
   required: {
     color: "#EF4444",

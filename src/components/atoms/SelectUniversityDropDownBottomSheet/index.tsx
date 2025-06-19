@@ -103,7 +103,7 @@ const SelectUniversityDropdownBottomSheet: React.FC<SelectDropdownProps> = ({
                   onPress={(e) => e.stopPropagation()}
                 >
                   <View style={styles.modalHeader}>
-                    <Text style={styles.modalTitle}>Select University</Text>
+                    {/* <Text style={styles.modalTitle}>Select University</Text> */}
                     {search && (
                       <TextInput
                         style={styles.searchInput}
@@ -126,7 +126,7 @@ const SelectUniversityDropdownBottomSheet: React.FC<SelectDropdownProps> = ({
                           setShow(false);
                         }}
                       >
-                        <CommunityLogo logoUrl={item?.logo} />
+                        <CommunityLogo logoUrl={item?.logo} variant="small" />
                         <Text style={styles.optionText}>{item?.name}</Text>
                       </TouchableOpacity>
                     )}
@@ -199,11 +199,10 @@ const styles = StyleSheet.create({
     borderTopRightRadius: 16,
     maxHeight: "80%",
     minHeight: 550,
+    paddingHorizontal: 8,
   },
   modalHeader: {
     padding: 16,
-    borderBottomWidth: 1,
-    borderBottomColor: "#E5E7EB",
   },
   modalTitle: {
     fontSize: 18,
@@ -234,7 +233,9 @@ const styles = StyleSheet.create({
   },
   optionText: {
     fontSize: 14,
-    color: "#1F2937",
+    color: "#3A3B3C",
+    fontWeight: "600",
+    lineHeight: 20,
   },
   emptyList: {
     height: 100,

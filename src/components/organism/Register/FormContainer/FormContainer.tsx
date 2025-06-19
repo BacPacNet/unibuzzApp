@@ -23,6 +23,8 @@ import {
   useHandleUniversityEmailVerification,
   useHandleUserEmailAndUserNameAvailability,
 } from "@/services/auth";
+import VerificationOption from "../Forms/VerificationOption";
+import UniversityEmailOtpVerification from "../Forms/UniversityEmailOtpVerification";
 
 interface Props {
   step: number;
@@ -46,8 +48,6 @@ const FormContainer = ({ step, setStep, setSubStep, subStep }: Props) => {
     isPending: UniversityEmailVerificationIsPending,
   } = useHandleUniversityEmailVerification();
 
-  //   const { mutateAsync: HandleRegister, isPending: registerIsPending } =
-  //     useHandleRegister();
   const { mutateAsync: HandleRegister, isPending: registerIsPending } =
     useHandleRegister_v2();
 
@@ -69,12 +69,15 @@ const FormContainer = ({ step, setStep, setSubStep, subStep }: Props) => {
       verificationEmail: "",
       verificationOtp: "",
       universityName: "",
+      universityEmail: "",
       department: "",
       occupation: "",
       universityId: "",
       UniversityOtp: "",
       UniversityOtpOK: "",
       referralCode: "",
+      isJoinUniversity: true,
+      isUniversityVerified: false,
     },
   });
 
@@ -145,10 +148,11 @@ const FormContainer = ({ step, setStep, setSubStep, subStep }: Props) => {
     UniversityOtp: string;
   }) => {
     try {
-      const dataToSend = {
+      const dataToSend: any = {
         universityEmail: data.universityEmail,
         UniversityOtp: data.UniversityOtp,
       };
+      dataToSend.isUniversityVerified = true;
       const isAvailable =
         await handleUserUniversityEmailVerification(dataToSend);
 
@@ -183,7 +187,7 @@ const FormContainer = ({ step, setStep, setSubStep, subStep }: Props) => {
       setStep(newStep);
       return setSubStep(0);
     } else if (
-      step === 2 &&
+      step === 3 &&
       subStep === 0 &&
       methods.getValues("userType") !== userTypeEnum.Applicant
     ) {
@@ -209,6 +213,8 @@ const FormContainer = ({ step, setStep, setSubStep, subStep }: Props) => {
       return setSubStep(1);
     } else if (step === 2 && subStep === 1) {
       setSubStep(0);
+    } else if (step === 3 && subStep === 2) {
+      setSubStep(1);
     } else if (step === 3) {
       setStep(step - 1);
       if (methods.getValues("userType") == userTypeEnum.Applicant) {
@@ -271,18 +277,19 @@ const FormContainer = ({ step, setStep, setSubStep, subStep }: Props) => {
       return;
     }
 
-    if (step === 3) {
-      const res: any = await HandleRegister(data);
+    // if (step === 3) {
+    //   const res: any = await HandleRegister(data);
+    //     console.log("res",res);
 
-      if (res?.isRegistered) {
-        handleNext();
-        // removeRegisterData()
-        // saveToLocalStorage();
-      }
-      return;
-    }
+    //   if (res?.isRegistered) {
+    //     handleNext();
+    //     // removeRegisterData()
+    //     // saveToLocalStorage();
+    //   }
+    //   return;
+    // }
 
-    if (step === 2 && subStep === 0) {
+    if (step === 3 && subStep === 0) {
       const isAvailable = await userLoginEmailVerification(data);
 
       if (isAvailable?.isAvailable) {
@@ -293,7 +300,7 @@ const FormContainer = ({ step, setStep, setSubStep, subStep }: Props) => {
       return;
     }
 
-    if (step === 2 && subStep === 1) {
+    if (step === 3 && subStep === 2) {
       const isAvailable = await userUniversityEmailVerification(data);
 
       if (isAvailable?.isAvailable) {
@@ -345,7 +352,15 @@ const FormContainer = ({ step, setStep, setSubStep, subStep }: Props) => {
           handlePrev={() => handlePrev()}
         />
       );
-    } else if (step === 2 && subStep === 0) {
+    } else if (step === 2) {
+      return (
+        <VerificationOption
+          setStep={setStep}
+          setSubStep={setSubStep}
+          handlePrev={() => handlePrev()}
+        />
+      );
+    } else if (step === 3 && subStep === 0) {
       return (
         <LoginVerificationForm
           onSubmit={onSubmit}
@@ -354,7 +369,7 @@ const FormContainer = ({ step, setStep, setSubStep, subStep }: Props) => {
           handlePrev={() => handlePrev()}
         />
       );
-    } else if (step === 2 && subStep === 1) {
+    } else if (step === 3 && subStep === 1) {
       return (
         <UniversityVerificationForm
           onSubmit={onSubmit}
@@ -362,6 +377,15 @@ const FormContainer = ({ step, setStep, setSubStep, subStep }: Props) => {
           setSubStep={setSubStep}
           isVerificationSuccess={userUniversityEmailVerificationSuccess}
           isPending={UniversityEmailVerificationIsPending}
+        />
+      );
+    } else if (step === 3 && subStep === 2) {
+      return (
+        <UniversityEmailOtpVerification
+          onSubmit={onSubmit}
+          isVerificationSuccess={userUniversityEmailVerificationSuccess}
+          isPending={UniversityEmailVerificationIsPending}
+          handlePrev={() => handlePrev()}
         />
       );
     } else if (step === 3) {

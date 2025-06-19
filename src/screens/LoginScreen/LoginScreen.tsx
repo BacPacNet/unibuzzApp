@@ -170,7 +170,7 @@ const styles = StyleSheet.create({
     fontFamily: "font-poppins",
   },
   container: {
-    paddingVertical: 40,
+    paddingVertical: "8%",
   },
   formContainer: {
     marginTop: 32,
@@ -206,6 +206,6 @@ const styles = StyleSheet.create({
   },
   forgotPasswordText: {
     fontSize: 12,
-    color: "#3B82F6",
+    color: "#6744FF",
   },
 });

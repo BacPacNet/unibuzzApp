@@ -1,15 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { Controller, useFormContext } from "react-hook-form";
-import { View, Text, Switch } from "react-native";
-
+import { View, Text, StyleSheet } from "react-native";
 import Title from "@/components/atoms/Title";
-import SupportingText from "@/components/atoms/SupportingText";
-
 import { occupationAndDepartment } from "@/types/register";
-
 import ReusableButton from "@/components/atoms/ReusableButton";
 import { SelectInputWithSearch } from "@/components/atoms/SelectInputWithSearch";
 import SelectUniversityDropdownBottomSheet from "@/components/atoms/SelectUniversityDropDownBottomSheet";
+import CustomSwitch from "@/components/atoms/CustomSwitch";
 
 const ProfileFacultyForm = ({
   onSubmit,
@@ -30,6 +27,7 @@ const ProfileFacultyForm = ({
   type occupationKeys = keyof typeof occupationAndDepartment;
   const currOccupation: occupationKeys = watch("occupation");
   const currFormDepartment: occupationKeys = watch("department");
+  const universityName = watch("universityName");
 
   const [currDepartment, setCurrDepartment] = useState<any>([]);
 
@@ -44,104 +42,111 @@ const ProfileFacultyForm = ({
   const userType = getValues("userType");
 
   return (
-    <View className="w-full">
-      <View className="flex  items-center text-center p-4 ">
-        <Title>Faculty Setup</Title>
-        <SupportingText>
-          Enter your faculty information for networking
-        </SupportingText>
-      </View>
-
-      <View className="w-full flex  mb-4">
-        <View
-          style={{ height: 40 }}
-          className={`flex flex-row justify-between items-center border border-neutral-300 rounded-lg p-2   bg-white mb-4`}
-        >
-          <Text className={`text-md text-neutral-900 `}>{userType}</Text>
+    <View style={styles.main}>
+      <View className="flex w-full items-center ">
+        <View style={styles.titlemargin} className="flex items-start  w-full">
+          <Title>Faculty Setup</Title>
         </View>
 
-        {/* <SelectUniversityDropdownBottomSheet
-          placeholder="Select University Name"
-          icon="single"
-          search={true}
-          control={control}
-          name="universityName"
-          rules={{ required: "University is required!" }}
-          setValue={setValue}
-        /> */}
-        <View className="mb-4">
-          <SelectUniversityDropdownBottomSheet
-            placeholder="Select University Name"
-            icon="single"
-            search={true}
-            control={control}
-            name="universityName"
-            rules={{ required: "University is required!" }}
-            setValue={setValue}
-            isMarginBottom={false}
-          />
-          <View className="flex flex-row items-center">
-            <Text className="text-[12px] text-neutral-500 text-start">
-              Join the university community after signing up
-            </Text>
-            <Controller
-              name={"isJoinUniversity"}
+        <View style={styles.mainContainer} className="w-full ">
+          <View>
+            <SelectUniversityDropdownBottomSheet
+              placeholder="Select University Name"
+              icon="single"
+              search={true}
               control={control}
-              // rules={{ required: 'This field is required.' }}
-              render={({ field }) => (
-                <View className="flex items-center gap-2">
-                  <Switch
-                    trackColor={{ false: "#767577", true: "#81b0ff" }}
-                    thumbColor={field.value ? "#f4f3f4" : "#f4f3f4"}
-                    ios_backgroundColor="#3e3e3e"
-                    onValueChange={field.onChange}
-                    value={field.value}
-                  />
-                </View>
-              )}
+              name="universityName"
+              rules={{ required: "University is required!" }}
+              setValue={setValue}
+              isMarginBottom={false}
+              label="University"
             />
+            {universityName && (
+              <View className="flex flex-row items-center gap-2 mt-4">
+                <Text className="text-[12px] text-neutral-500 text-start">
+                  Join the university community after signing up
+                </Text>
+                <Controller
+                  name={"isJoinUniversity"}
+                  control={control}
+                  render={({ field }) => (
+                    <View className="flex items-center gap-2">
+                      <CustomSwitch
+                        value={field.value}
+                        onValueChange={field.onChange}
+                      />
+                    </View>
+                  )}
+                />
+              </View>
+            )}
           </View>
+
+          <SelectInputWithSearch
+            label="Occupation"
+            isLabelShown={true}
+            placeholder="Select a occupation"
+            name="occupation"
+            options={Object.keys(occupationAndDepartment)}
+            control={control}
+            search={true}
+            rules={{ required: "Occupation is required!" }}
+            isMarginBottom={false}
+            desc="If your occupation is not listed, choose the one that is closest to your current major."
+          />
+
+          <SelectInputWithSearch
+            isLabelShown={true}
+            placeholder="Select a Department/Affiliation "
+            options={currDepartment}
+            name="department"
+            control={control}
+            label="Department"
+            rules={{ required: "Department is required!" }}
+          />
         </View>
-
-        <SelectInputWithSearch
-          label="Occupation"
-          isLabelShown={false}
-          placeholder="Select a occupation"
-          name="occupation"
-          options={Object.keys(occupationAndDepartment)}
-          control={control}
-          search={true}
-          required
-          rules={{ required: "Occupation is required!" }}
+      </View>
+      <View style={styles.buttonContainer}>
+        <ReusableButton
+          onPress={handleSubmit(onSubmit)}
+          buttonText="Next Step"
+          variant="primary"
+          height="large"
         />
-
-        <SelectInputWithSearch
-          isLabelShown={false}
-          placeholder="Select a Department/Affiliation "
-          options={currDepartment}
-          name="department"
-          control={control}
-          required
-          rules={{ required: "Department is required!" }}
+        <ReusableButton
+          onPress={handlePrev}
+          buttonText="Review Profile"
+          variant="shade"
+          height="large"
         />
       </View>
-
-      <ReusableButton
-        onPress={handleSubmit(onSubmit)}
-        buttonText="Next Step"
-        variant="primary"
-      />
-      <ReusableButton
-        onPress={handlePrev}
-        buttonText="Review Profile"
-        variant="shade"
-      />
-
-      <Text className="text-md text-neutral-600 text-center">
-        You can add more profile information later in your profile settings!
-      </Text>
     </View>
   );
 };
 
 export default ProfileFacultyForm;
+
+const styles = StyleSheet.create({
+  main: {
+    flex: 1,
+    width: "100%",
+    display: "flex",
+    flexDirection: "column",
+    justifyContent: "space-between",
+    height: "100%",
+  },
+  titlemargin: {
+    marginBottom: 32,
+  },
+  mainContainer: {
+    display: "flex",
+    flexDirection: "column",
+    gap: 32,
+  },
+  buttonContainer: {
+    display: "flex",
+    flexDirection: "column",
+    gap: 16,
+    marginTop: 64,
+  },
+});

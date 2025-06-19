@@ -14,7 +14,7 @@ interface SelectInputProps {
   required?: boolean;
   isLabelShown?: boolean;
   rules?: object;
-  currDob: string;
+  currDob?: string;
   onChange?: (value: string) => void;
 }
 
@@ -26,7 +26,7 @@ export function DateSelect({
   control,
   required = false,
   rules,
-  currDob,
+  currDob = "",
   onChange,
 }: SelectInputProps) {
   const [open, setOpen] = useState(false);
@@ -71,7 +71,7 @@ export function DateSelect({
                     ? formatDate(new Date(value))
                     : currDob?.length
                       ? dateOfBirth
-                      : dateOfBirth}
+                      : placeholder}
                 </Text>
                 {value ? (
                   <Xmark
