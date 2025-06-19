@@ -1,37 +1,28 @@
-import React, { useEffect, useRef, useState } from "react";
-import {
-  View,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  ActivityIndicator,
-} from "react-native";
-import { Controller, useForm } from "react-hook-form";
-import {
-  useResetPasswordCodeGenerate,
-  useVerifyResetPasswordOtp,
-} from "@/services/auth";
-import { OtpInput } from "react-native-otp-entry";
+import React, { useEffect } from "react";
+import { View, StyleSheet } from "react-native";
+import { useForm } from "react-hook-form";
+import { useHandleUserEmailAvailability } from "@/services/auth";
+
 import ReusableButton from "@/components/atoms/ReusableButton";
 import { useUserPasswordReset } from "@/context/UserPasswordResetProvider/UserPasswordResetProvider";
+import { ForgetPasswordStep } from "@/screens/ForgetPasswordScreen/ForgetPasswordScreen";
+import { FormInput } from "@/components/atoms/FormInput";
+import Title from "@/components/atoms/Title";
 
 interface Props {
   navigation: any;
-
-  setIsVerified: (value: boolean) => void;
+  setCurrStage: (value: ForgetPasswordStep) => void;
 }
 
 const ForgetPasswordEmailCheck: React.FC<Props> = ({
   navigation,
 
-  setIsVerified,
+  setCurrStage,
 }) => {
   const {
     control,
     handleSubmit,
     setError,
-    clearErrors,
-    getValues,
     formState: { errors },
     watch,
   } = useForm({
@@ -42,84 +33,55 @@ const ForgetPasswordEmailCheck: React.FC<Props> = ({
   });
 
   const email = watch("email");
-  const verificationOtp = watch("verificationOtp");
-  const [isCounting, setIsCounting] = useState(false);
-  const [countdown, setCountdown] = useState(0);
-  const otpRef = useRef<any>(null);
+
   const { setResetPasswordEmail, resetToken } = useUserPasswordReset();
 
-  const { mutate: generateResetPasswordOtp, isPending } =
-    useResetPasswordCodeGenerate();
   const {
-    mutate: verifyResetPasswordOtp,
-    isSuccess: isVerifyResetPasswordSuccess,
-  } = useVerifyResetPasswordOtp();
+    mutateAsync: handleUserEmailAvailability,
+    isPending: isUserEmailAvailabilityPending,
+    isError,
+    error: userEmailAvailabilityError,
+  } = useHandleUserEmailAvailability();
 
-  const resetPasswordCodeGenerate = () => {
-    const email = getValues("email");
+  const handleEmailCheck = async () => {
+    try {
+      await handleUserEmailAvailability({ email: email });
 
-    if (!email) {
+      setResetPasswordEmail(email);
+      setCurrStage(ForgetPasswordStep.OtpCheck);
+    } catch (err: any) {
       setError("email", {
         type: "manual",
-        message: "Please enter your email!",
+        message:
+          err.response.data?.message?.toString() ||
+          "Something went wrong while checking email.",
       });
-      return;
     }
-
-    const emailRegex = /^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/i;
-    if (!emailRegex.test(email)) {
-      setError("email", { type: "manual", message: "Invalid email format" });
-      return;
-    }
-
-    clearErrors("email");
-    generateResetPasswordOtp({ email });
-    handleLoginEmailSendCodeCount();
-  };
-
-  const handleLoginEmailSendCodeCount = () => {
-    setIsCounting(true);
-    setCountdown(30);
   };
 
   useEffect(() => {
-    let timer: NodeJS.Timeout;
-    if (isCounting && countdown > 0) {
-      timer = setTimeout(() => setCountdown((prev) => prev - 1), 1000);
-    } else if (countdown === 0) {
-      setIsCounting(false);
-    }
-    return () => clearTimeout(timer);
-  }, [countdown, isCounting]);
-
-  const handleResetOtpCheck = () => {
-    const data = {
-      otp: verificationOtp,
-      email,
-    };
-    setResetPasswordEmail(email);
-
-    verifyResetPasswordOtp(data);
-  };
-
-  useEffect(() => {
-    if (resetToken.length > 1 && !isVerifyResetPasswordSuccess) {
-      setIsVerified(true);
+    if (resetToken.length > 1) {
+      setCurrStage(ForgetPasswordStep.ResetPassword);
     } else {
-      setIsVerified(false);
+      setCurrStage(ForgetPasswordStep.EmailCheck);
     }
   }, [resetToken]);
 
   return (
-    <>
-      <View>
+    <View style={styles.main}>
+      <View></View>
+      <View style={styles.mainContainer}>
+        <View style={styles.titlemargin} className="flex items-start  w-full">
+          <Title>Reset Password</Title>
+        </View>
         <View className="my-4">
-          <Text className="font-medium text-neutral-900 mb-2 text-md">
-            Email Address
-          </Text>
-          <Controller
-            control={control}
+          <FormInput
+            isLabelShown={true}
+            label="Email Address"
+            placeholder="john.dowry@example.com"
             name="email"
+            control={control}
+            keyboardType="email-address"
             rules={{
               required: "Please enter your email!",
               pattern: {
@@ -127,94 +89,58 @@ const ForgetPasswordEmailCheck: React.FC<Props> = ({
                 message: "Invalid email format",
               },
             }}
-            render={({ field: { onChange, onBlur, value } }) => (
-              <TextInput
-                placeholder="john.dowry@example.com"
-                autoCapitalize="none"
-                className={`border rounded-lg p-3 ${
-                  errors.email ? "border-red-500" : "border-neutral-300"
-                }`}
-                onBlur={onBlur}
-                onChangeText={onChange}
-                value={value}
-              />
-            )}
+            isError={!!errors.email}
+            errorMessage={
+              errors.email
+                ? errors.email.message?.toString()
+                : "email  is required"
+            }
           />
-          {errors.email && (
-            <Text className="text-md text-red-500 mt-1">
-              {errors.email.message}
-            </Text>
-          )}
         </View>
-
-        <TouchableOpacity
-          className="border border-primary-500 py-3 rounded-lg w-full mb-2"
-          disabled={isCounting}
-          onPress={resetPasswordCodeGenerate}
-        >
-          {isPending ? (
-            <ActivityIndicator color="#6744FF" />
-          ) : (
-            <Text className="text-center text-primary-500 font-bold">
-              Send Code
-            </Text>
-          )}
-        </TouchableOpacity>
-
-        {isCounting && (
-          <Text className="text-md text-neutral-500 text-center">
-            Resend Available after {countdown}s
-          </Text>
-        )}
       </View>
 
-      <View className="mb-4">
-        <View className="my-4">
-          <Text className="font-medium text-neutral-900 mb-2">
-            Input Verification Code
-          </Text>
-          <Controller
-            control={control}
-            name="verificationOtp"
-            rules={{
-              required: "Please enter your OTP!",
-              minLength: { value: 6, message: "OTP must be 6 digits!" },
-            }}
-            render={({ field: { onChange } }) => (
-              <OtpInput
-                ref={otpRef}
-                type="numeric"
-                numberOfDigits={6}
-                onTextChange={onChange}
-                focusColor="#6744FF"
-                autoFocus={false}
-                theme={{
-                  containerStyle: { width: 300, gap: 10 },
-                  pinCodeContainerStyle: { height: 50 },
-                }}
-              />
-            )}
-          />
-          {errors.verificationOtp && (
-            <Text className="text-red-500 text-md mt-1">
-              {errors.verificationOtp.message?.toString()}
-            </Text>
-          )}
-        </View>
-
+      <View style={styles.buttonContainer}>
         <ReusableButton
-          onPress={handleSubmit(handleResetOtpCheck)}
+          onPress={handleSubmit(handleEmailCheck)}
           buttonText="Reset Password"
           variant="primary"
+          height="large"
         />
         <ReusableButton
           onPress={() => navigation.navigate("LoginScreen")}
           buttonText="Back to Login"
-          variant="shade"
+          variant="border"
+          height="large"
         />
       </View>
-    </>
+    </View>
   );
 };
 
 export default ForgetPasswordEmailCheck;
+
+const styles = StyleSheet.create({
+  main: {
+    flex: 1,
+    width: "100%",
+    display: "flex",
+    flexDirection: "column",
+    justifyContent: "space-between",
+    height: "100%",
+  },
+  titlemargin: {
+    marginBottom: 32,
+  },
+  mainContainer: {
+    display: "flex",
+    flexDirection: "column",
+
+    justifyContent: "center",
+  },
+  buttonContainer: {
+    display: "flex",
+    flexDirection: "column",
+    gap: 16,
+    marginTop: 64,
+  },
+});
