@@ -3,228 +3,269 @@ import Title from "@/components/atoms/Title";
 import { cities } from "@/content/city";
 import { REGION } from "@/content/constant";
 import { COUNTRY } from "@/content/country";
-import { Search } from "iconoir-react-native";
-import React, { useRef, useState } from "react";
+import { Refresh, Search } from "iconoir-react-native";
+import React, { useRef, useState, useCallback } from "react";
 import { Controller, useForm } from "react-hook-form";
-import { Text, TextInput, TouchableOpacity, View } from "react-native";
+import { StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
 import ActionSheet, { ActionSheetRef } from "react-native-actions-sheet";
 import COUNTRY_TO_CITY from "@/content/country_to_city.json";
 import REGION_TO_COUNTRY from "@/content/region_to_country.json";
 import REGION_TO_CITY from "@/content/region_to_city.json";
 
-type Props = {
-  setQuery: (value: string) => void;
-};
+// Constants
+const FILTER_TYPES = ["Region", "Country", "City", "Type"];
+const UNIVERSITY_TYPES = ["Private", "Public", "Community"];
+const ACTION_SHEET_SNAP_POINTS = [70, 100];
 
-const UniversitySearchFilters = ({ setQuery }: Props) => {
+// Types
+type FilterType = typeof FILTER_TYPES[number];
+type UniversityType = typeof UNIVERSITY_TYPES[number];
+
+interface FilterFormData {
+  region: string;
+  country: string;
+  city: string;
+  type: UniversityType;
+  Search: string;
+}
+
+interface Props {
+  setQuery: (value: string) => void;
+}
+
+const UniversitySearchFilters: React.FC<Props> = ({ setQuery }) => {
   const {
     control,
-
     watch,
     reset,
     setValue,
-  } = useForm();
+  } = useForm<FilterFormData>();
+
   const [cityOptions, setCityOptions] = useState<string[]>(cities);
   const [countryOptions, setCountryOptions] = useState<string[]>(COUNTRY);
+  
   const regionSheetRef = useRef<ActionSheetRef>(null);
   const countrySheetRef = useRef<ActionSheetRef>(null);
   const citySheetRef = useRef<ActionSheetRef>(null);
   const typeSheetRef = useRef<ActionSheetRef>(null);
 
-  const handleBottomSheet = (target: string) => {
-    if (target == "Region") {
-      regionSheetRef.current?.show();
-    }
-    if (target == "Country") {
-      countrySheetRef.current?.show();
-    }
-    if (target == "City") {
-      citySheetRef.current?.show();
-    }
-    if (target == "Type") {
-      typeSheetRef.current?.show();
-    }
+  const sheetRefs: Record<FilterType, React.RefObject<ActionSheetRef>> = {
+    Region: regionSheetRef,
+    Country: countrySheetRef,
+    City: citySheetRef,
+    Type: typeSheetRef,
   };
 
-  const closeAllSheets = () => {
-    regionSheetRef.current?.hide();
-    countrySheetRef.current?.hide();
-    citySheetRef.current?.hide();
-    typeSheetRef.current?.hide();
-  };
+  const currentFormData = watch();
 
-  const handleRegionChange = (selectedRegion: string[], field: any) => {
-    // return console.log("selectedRegion", selectedRegion);
+  // Handlers
+  const handleBottomSheet = useCallback((filterType: FilterType) => {
+    sheetRefs[filterType].current?.show();
+  }, [sheetRefs]);
 
-    if (selectedRegion) {
-      field.onChange(selectedRegion[0]);
-      setCountryOptions((REGION_TO_COUNTRY as any)[selectedRegion[0]].sort());
-      setCityOptions((REGION_TO_CITY as any)[selectedRegion[0]].sort());
+  const closeAllSheets = useCallback(() => {
+    Object.values(sheetRefs).forEach(ref => ref.current?.hide());
+  }, [sheetRefs]);
+
+  const handleRegionChange = useCallback((selectedRegion: string[], field: any) => {
+    const region = selectedRegion?.[0];
+    
+    if (region) {
+      field.onChange(region);
+      setCountryOptions((REGION_TO_COUNTRY as any)[region].sort());
+      setCityOptions((REGION_TO_CITY as any)[region].sort());
     } else {
       setValue("region", "");
       setCountryOptions(COUNTRY);
       setCityOptions(cities);
     }
+    
     closeAllSheets();
     setQuery(JSON.stringify(watch()));
-  };
+  }, [setValue, closeAllSheets, setQuery, watch]);
 
-  const handleCountryChange = (selectedCountry: string[], field: any) => {
-    if (selectedCountry) {
-      setCityOptions((COUNTRY_TO_CITY as any)[selectedCountry[0]].sort());
-      field.onChange(selectedCountry[0]);
+  const handleCountryChange = useCallback((selectedCountry: string[], field: any) => {
+    const country = selectedCountry?.[0];
+    
+    if (country) {
+      setCityOptions((COUNTRY_TO_CITY as any)[country].sort());
+      field.onChange(country);
       setValue("city", "");
     } else {
       setValue("country", "");
       setCityOptions(cities);
     }
+    
     closeAllSheets();
     setQuery(JSON.stringify(watch()));
-  };
+  }, [setValue, closeAllSheets, setQuery, watch]);
 
-  const handleReset = () => {
+  const handleCityChange = useCallback((selectedCity: string[], field: any) => {
+    field.onChange(selectedCity?.[0]);
+    closeAllSheets();
+    setQuery(JSON.stringify(watch()));
+  }, [closeAllSheets, setQuery, watch]);
+
+  const handleTypeChange = useCallback((selectedType: string[], field: any) => {
+    field.onChange(selectedType?.[0]);
+    closeAllSheets();
+    setQuery(JSON.stringify(watch()));
+  }, [closeAllSheets, setQuery, watch]);
+
+  const handleSearch = useCallback((text: string) => {
+    const finalData = { ...currentFormData, Search: text };
+    setQuery(JSON.stringify(finalData));
+  }, [currentFormData, setQuery]);
+
+  const handleReset = useCallback(() => {
     reset();
     setCityOptions(cities);
     setCountryOptions(COUNTRY);
     setQuery(JSON.stringify(watch()));
-  };
+  }, [reset, setQuery, watch]);
+
+  // Render helpers
+  const renderFilterTag = useCallback((filterType: FilterType) => {
+    const key = filterType.toLowerCase() as keyof FilterFormData;
+    const value = currentFormData[key];
+    
+    return (
+      <Text
+        key={filterType}
+        onPress={() => handleBottomSheet(filterType)}
+        style={styles.searchTag}
+      >
+        {value?.length ? value : filterType}
+      </Text>
+    );
+  }, [currentFormData, handleBottomSheet]);
+
+  const renderActionSheet = useCallback((
+    filterType: FilterType,
+    options: string[],
+    onChange: (selected: string[], field: any) => void,
+    placeholder: string,
+    search = false
+  ) => (
+    <ActionSheet
+      ref={sheetRefs[filterType]}
+      gestureEnabled={true}
+      snapPoints={ACTION_SHEET_SNAP_POINTS}
+    >
+      <Controller
+        name={filterType.toLowerCase() as keyof FilterFormData}
+        control={control}
+        render={({ field }) => (
+          <MultiSelectDropdown
+            options={options}
+            value={Array.isArray(field.value) ? field.value : []}
+            onChange={(selected: string[]) => onChange(selected, field)}
+            placeholder={placeholder}
+            err={false}
+            multiSelect={false}
+            setCityOptions={search ? setCityOptions : undefined}
+            search={search}
+          />
+        )}
+      />
+    </ActionSheet>
+  ), [sheetRefs, control, setCityOptions]);
+
   return (
     <>
-      <View className="p-4 flex ">
-        <Title>Search Filter</Title>
-        <View className="flex flex-row gap-2 items-center mt-4">
-          {["Region", "Country", "City", "Type"].map((item) => (
-            <Text
-              onPress={() => handleBottomSheet(item)}
-              className="border px-3 py-1 rounded-full border-neutral-200 text-black"
-            >
-              {item}
-            </Text>
-          ))}
-          <TouchableOpacity onPress={handleReset}>
-            <Text className="border px-3 py-1 rounded-full border-neutral-200 bg-primary-500 text-white ">
-              Reset
-            </Text>
+      <View className="p-4 flex">
+        <Title>Discover</Title>
+        
+        <View style={styles.searchTagContainer}>
+          {FILTER_TYPES.map(renderFilterTag)}
+          <TouchableOpacity style={styles.resetButton} onPress={handleReset}>
+            <Refresh width={20} height={20} color="white" />
           </TouchableOpacity>
         </View>
 
-        <View className=" flex  relative mt-0 ">
+        <View className="flex relative">
           <Search
-            style={{ top: "50%", left: 10 }}
-            width={20}
-            height={20}
-            color={"#d4d4d4"}
-            className="absolute  z-30"
+            style={styles.searchIcon}
+            width={24}
+            height={24}
+            color="#d4d4d4"
+            className="absolute z-30"
           />
-          <TextInput
-            className="py-2 ps-10 pe-3 border-2 border-neutral-200  rounded-full drop-shadow-sm text-neutral-400 outline-none"
-            placeholder="Search"
-            placeholderTextColor="#9ca3af"
-            style={{ marginTop: 0 }}
-            onChangeText={(text) => setQuery(JSON.stringify({ Search: text }))}
+
+          <Controller
+            control={control}
+            name="Search"
+            render={({ field: { onChange, value } }) => (
+              <TextInput
+                style={styles.searchInput}
+                placeholder="Search"
+                placeholderTextColor="#9ca3af"
+                onChangeText={(text) => {
+                  onChange(text);
+                  handleSearch(text);
+                }}
+                value={value}
+              />
+            )}
           />
         </View>
       </View>
 
-      <ActionSheet
-        ref={regionSheetRef}
-        gestureEnabled={true}
-        snapPoints={[70, 100]}
-      >
-        <Controller
-          name="region"
-          control={control}
-          render={({ field }) => (
-            <MultiSelectDropdown
-              options={REGION}
-              value={field.value || []}
-              onChange={(selectedRegion: string[]) =>
-                handleRegionChange(selectedRegion, field)
-              }
-              placeholder="Region"
-              err={false}
-              multiSelect={false}
-            />
-          )}
-        />
-      </ActionSheet>
-      <ActionSheet
-        ref={countrySheetRef}
-        gestureEnabled={true}
-        snapPoints={[70, 100]}
-      >
-        <Controller
-          name="country"
-          control={control}
-          render={({ field }) => (
-            <MultiSelectDropdown
-              options={countryOptions}
-              value={field.value || []}
-              onChange={(selectedCountry: string[]) =>
-                handleCountryChange(selectedCountry, field)
-              }
-              placeholder="Country"
-              err={false}
-              multiSelect={false}
-              setCityOptions={setCityOptions}
-              search={true}
-            />
-          )}
-        />
-      </ActionSheet>
-      <ActionSheet
-        ref={citySheetRef}
-        gestureEnabled={true}
-        snapPoints={[70, 100]}
-      >
-        <Controller
-          name="city"
-          control={control}
-          render={({ field }) => (
-            <MultiSelectDropdown
-              options={cityOptions}
-              value={field.value || []}
-              onChange={(selectedCity: string[]) => {
-                field.onChange(selectedCity[0]);
-                closeAllSheets();
-                setQuery(JSON.stringify(watch()));
-              }}
-              placeholder="City"
-              err={false}
-              multiSelect={false}
-              setCityOptions={setCityOptions}
-              search={true}
-            />
-          )}
-        />
-      </ActionSheet>
-      <ActionSheet
-        ref={typeSheetRef}
-        gestureEnabled={true}
-        snapPoints={[70, 100]}
-      >
-        <Controller
-          name="type"
-          control={control}
-          render={({ field }) => (
-            <MultiSelectDropdown
-              options={["Private", "Public", "Community"]}
-              value={field.value || []}
-              onChange={(selectedCity: string[]) => {
-                field.onChange(selectedCity[0]);
-                closeAllSheets();
-                setQuery(JSON.stringify(watch()));
-              }}
-              placeholder="Type"
-              err={false}
-              multiSelect={false}
-              setCityOptions={setCityOptions}
-            />
-          )}
-        />
-      </ActionSheet>
+      {renderActionSheet("Region", REGION, handleRegionChange, "Region")}
+      {renderActionSheet("Country", countryOptions, handleCountryChange, "Country", true)}
+      {renderActionSheet("City", cityOptions, handleCityChange, "City", true)}
+      {renderActionSheet("Type", UNIVERSITY_TYPES, handleTypeChange, "Type")}
     </>
   );
 };
 
 export default UniversitySearchFilters;
+
+const styles = StyleSheet.create({
+  searchTagContainer: {
+    marginTop: 24,
+    display: "flex",
+    flexDirection: "row",
+    gap: 12,
+    alignItems: "center",
+    flexWrap: "wrap",
+  },
+  searchTag: {
+    borderWidth: 1,
+    borderColor: "#E2E8F0",
+    padding: 8,
+    borderRadius: 16,
+    fontSize: 14,
+    fontWeight: "500",
+    height: 36,
+    paddingHorizontal: 16,
+  },
+  resetButton: {
+    borderWidth: 1,
+    borderColor: "#E2E8F0",
+    width: 32,
+    height: 32,
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    borderRadius: 16,
+    fontSize: 14,
+    fontWeight: "500",
+    backgroundColor: "#6744FF",
+  },
+  searchInput: {
+    height: 42,
+    marginTop: 0,
+    paddingRight: 24,
+    paddingLeft: 58,
+    paddingVertical: 12,
+    borderWidth: 1,
+    borderColor: "#E2E8F0",
+    borderRadius: 20,
+    fontSize: 14,
+  },
+  searchIcon: {
+    top: "50%",
+    left: 24,
+  },
+});

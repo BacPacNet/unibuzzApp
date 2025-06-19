@@ -34,7 +34,7 @@ const ForgetPasswordEmailCheck: React.FC<Props> = ({
 
   const email = watch("email");
 
-  const { setResetPasswordEmail, resetToken } = useUserPasswordReset();
+  const { setResetPasswordEmail } = useUserPasswordReset();
 
   const {
     mutateAsync: handleUserEmailAvailability,
@@ -59,13 +59,13 @@ const ForgetPasswordEmailCheck: React.FC<Props> = ({
     }
   };
 
-  useEffect(() => {
-    if (resetToken.length > 1) {
-      setCurrStage(ForgetPasswordStep.ResetPassword);
-    } else {
-      setCurrStage(ForgetPasswordStep.EmailCheck);
-    }
-  }, [resetToken]);
+//   useEffect(() => {
+//     if (resetToken.length > 1) {
+//       setCurrStage(ForgetPasswordStep.ResetPassword);
+//     } else {
+//       setCurrStage(ForgetPasswordStep.EmailCheck);
+//     }
+//   }, [resetToken]);
 
   return (
     <View style={styles.main}>
