@@ -1,6 +1,5 @@
 import React, { useState } from "react";
-import { View, Image, Text, TouchableOpacity } from "react-native";
-
+import { View, Image, Text, TouchableOpacity, StyleSheet } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { RootStackParamList } from "@/types/navigation";
@@ -41,7 +40,7 @@ const DiscoverUniversityCard = ({ data }: Props) => {
         source={{ uri: imageSrc }}
         style={{
           width: "100%",
-          height: 200,
+          height: 194,
           borderTopLeftRadius: 10,
           borderTopRightRadius: 10,
         }}
@@ -51,12 +50,33 @@ const DiscoverUniversityCard = ({ data }: Props) => {
           )
         }
       />
-      <View className="w-full p-4  rounded-b-2xl relative flex flex-row items-center gap-2">
-        <CommunityLogo logoUrl={data?.logo} />
-        <Text className=" flex flex-row items-center">{data?.name}</Text>
+      <View
+        style={styles.bottomContainer}
+        className="w-full   rounded-b-2xl relative flex flex-row items-center gap-3"
+      >
+        <CommunityLogo logoUrl={data?.logo} variant="small" />
+        <Text style={styles.name} className=" flex flex-row items-center ">
+          {data?.name}
+        </Text>
       </View>
     </TouchableOpacity>
   );
 };
 
 export default DiscoverUniversityCard;
+
+const styles = StyleSheet.create({
+  bottomContainer: {
+    height: 60,
+    paddingHorizontal: 16,
+  },
+  name: {
+    fontSize: 12,
+    fontWeight: 700,
+    color: "#3A3B3C",
+    fontFamily: "poppins",
+    marginLeft: 8,
+    flexWrap: "wrap",
+    width: "90%",
+  },
+});

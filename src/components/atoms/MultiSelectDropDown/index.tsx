@@ -8,6 +8,7 @@ import {
 } from "react-native";
 import BouncyCheckbox from "react-native-bouncy-checkbox";
 import { FlatList } from "react-native-actions-sheet";
+import { Search } from "iconoir-react-native";
 interface MultiSelectDropdownProps {
   options: string[];
   onChange: (value: string[]) => void;
@@ -76,7 +77,7 @@ const MultiSelectDropdown = ({
         style={[styles.optionItem, isSelected && styles.optionSelected]}
         onPress={() => handleSelect(item)}
       >
-        <Text>{item}</Text>
+        <Text style={styles.optionText}>{item}</Text>
         {multiSelect && (
           <View className="flex justify-center items-center">
             <BouncyCheckbox
@@ -105,12 +106,21 @@ const MultiSelectDropdown = ({
       {label && <Text style={styles.label}>{label}</Text>}
 
       {search && (
-        <TextInput
-          placeholder="Search..."
-          value={searchInput}
-          onChangeText={setSearchInput}
-          style={styles.searchInput}
-        />
+        <View className="  relative  w-full">
+          <Search
+            style={{ top: 20, right: 10, position: "absolute" }}
+            width={20}
+            height={20}
+            color={"#242526"}
+            className="  z-30"
+          />
+          <TextInput
+            placeholder="Search..."
+            value={searchInput}
+            onChangeText={setSearchInput}
+            style={styles.searchInput}
+          />
+        </View>
       )}
 
       <FlatList
@@ -185,11 +195,14 @@ const styles = StyleSheet.create({
     fontSize: 12,
   },
   searchInput: {
-    borderColor: "#ccc",
+    borderColor: "#E5E7EB",
     borderWidth: 1,
     borderRadius: 8,
-    padding: 10,
+    paddingVertical: 8,
+    paddingLeft: 12,
+    paddingRight: 35,
     marginVertical: 10,
+    height: 40,
   },
   optionsList: {
     minHeight: 200,
@@ -197,9 +210,16 @@ const styles = StyleSheet.create({
   optionItem: {
     flexDirection: "row",
     alignItems: "center",
-    paddingVertical: 10,
+    paddingVertical: 16,
     paddingHorizontal: 8,
     justifyContent: "space-between",
+    borderBottomWidth: 1,
+    borderColor: "#E5E7EB",
+  },
+  optionText: {
+    color: "#3A3B3C",
+    fontSize: 14,
+    fontWeight: 500,
   },
   optionSelected: {
     backgroundColor: "#f0f0f0",
