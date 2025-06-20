@@ -93,6 +93,31 @@ export const useChangeUserEmail = () => {
   });
 };
 
+const changeUserName = async (data: any, token: string) => {
+  const res = await client(`/users/changeUserName`, {
+    method: "PUT",
+    headers: { Authorization: `Bearer ${token}` },
+    data,
+  });
+  return res;
+};
+export const useChangeUserName = () => {
+  // const setUserData = useUniStore((state) => state.setUserData)
+  const cookieValue = getToken() as string;
+  return useMutation({
+    mutationFn: (data: any) => changeUserName(data, cookieValue),
+    onSuccess: (response: any) => {
+      console.log("response", response);
+      storeUser(response);
+      // setUserData(response)
+    },
+    onError: (res: any) => {
+      console.log(res.response.data.message, "res");
+      Toast.show(res.response.data.message);
+    },
+  });
+};
+
 const deActivateUserAccount = async (data: any, token: string) => {
   const res = await client(`/users/deActivateUserAccount`, {
     method: "PUT",

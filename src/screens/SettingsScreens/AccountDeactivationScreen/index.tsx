@@ -1,88 +1,75 @@
+import BackHeader from "@/components/atoms/BackHeader";
 import { FormInput } from "@/components/atoms/FormInput";
+import { FormInputPassword } from "@/components/atoms/FormInputPassword";
 import ReusableButton from "@/components/atoms/ReusableButton";
-import { useHeader } from "@/context/HeaderProvider/Header";
-import {
-  useChangeUserPassword,
-  useDeActivateUserAccount,
-} from "@/services/user";
+import { useDeActivateUserAccount } from "@/services/user";
 import { getUserStore } from "@/storage/user";
-import { useFocusEffect, useNavigation } from "@react-navigation/native";
-import { Eye, EyeClosed, NavArrowLeft } from "iconoir-react-native";
-import React, { useCallback, useState } from "react";
-import { Controller, useForm } from "react-hook-form";
+import { useNavigation } from "@react-navigation/native";
+import React from "react";
+import { useForm } from "react-hook-form";
 import {
   KeyboardAvoidingView,
   Platform,
   ScrollView,
   StyleSheet,
   Text,
-  TextInput,
-  TouchableOpacity,
   View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { Toast } from "react-native-toast-notifications";
 
-type PasswordVisibilityState = {
-  showPassword: boolean;
-  showNewPassword: boolean;
-  showConfirmPassword: boolean;
+const rules = {
+  required: "Password is required!",
+  minLength: {
+    value: 8,
+    message: "Password must be at least 8 characters",
+  },
+  pattern: {
+    value: /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*(),.?":{}|<>]).{8,}$/,
+    message:
+      "Password must contain uppercase, lowercase, number, and special character",
+  },
 };
 
 const UserAccountDeactivationScreen = () => {
   const { goBack } = useNavigation();
-  const { changeHeaderShownStatus } = useHeader();
   const user = getUserStore();
   const {
     mutate,
     error,
     isPending: isPendingChangeApi,
     isSuccess,
+    reset,
   } = useDeActivateUserAccount();
 
-  const [passwordVisibility, setPasswordVisibility] =
-    useState<PasswordVisibilityState>({
-      showPassword: false,
-      showNewPassword: false,
-      showConfirmPassword: false,
-    });
   const {
     formState: { errors },
     control,
     handleSubmit,
+    watch,
   } = useForm();
 
-  const togglePasswordVisibility = (field: keyof PasswordVisibilityState) => {
-    setPasswordVisibility((prevState: any) => ({
-      ...prevState,
-      [field]: !prevState[field],
-    }));
-  };
+  const password = watch("password");
 
-  useFocusEffect(
-    useCallback(() => {
-      changeHeaderShownStatus(false);
-
-      return () => {
-        changeHeaderShownStatus(true);
-      };
-    }, []),
-  );
-
-  const onSubmit = (data: any) => {
-    console.log("data", data);
-    // mutate(data)
+  const onSubmit = (formData: any) => {
+    const data = {
+      Password: formData.password,
+      email: user?.email,
+      userName: user?.userName,
+    };
+    mutate(
+      { ...data },
+      {
+        onSuccess: () => {
+          reset();
+          Toast.show("Account has been Deactivated");
+        },
+      },
+    );
   };
 
   return (
     <SafeAreaView style={styles.containerMain}>
-      {/* Header */}
-      <View style={styles.header}>
-        <TouchableOpacity onPress={() => goBack()} style={styles.backButton}>
-          <NavArrowLeft width={24} height={24} color="#000" />
-        </TouchableOpacity>
-        <Text style={styles.headerTitle}>Account</Text>
-      </View>
-
       <KeyboardAvoidingView
         behavior={Platform.OS === "ios" ? "padding" : "height"}
         style={styles.keyboardAvoid}
@@ -92,8 +79,8 @@ const UserAccountDeactivationScreen = () => {
           keyboardShouldPersistTaps="handled"
           showsVerticalScrollIndicator={false}
         >
+          <BackHeader label="Settings" onPress={() => goBack()} />
           <View style={styles.paddingContainer} className="flex   ">
-            {/* <Title>University Verification</Title> */}
             <Text style={styles.title}>Account Deactivation</Text>
             <Text style={styles.desc}>
               Deactivating your Unibuzz account will permanently remove all
@@ -101,143 +88,79 @@ const UserAccountDeactivationScreen = () => {
             </Text>
 
             <View style={styles.inputContainer}>
-              <View>
-                <View style={styles.labelContainer}>
-                  <Text style={styles.label}>User Name</Text>
-                </View>
-                <Text style={styles.dummyInput}>
-                  {user?.firstName + " " + user?.lastName}
-                </Text>
-              </View>
-              <View>
-                <View style={styles.labelContainer}>
-                  <Text style={styles.label}>Current Email</Text>
-                </View>
-                <Text style={styles.dummyInput}>{user?.email}</Text>
-                <Text>
-                  In case you change your mind, we will send a reactivation link
-                  valid for 30 days.
-                </Text>
-              </View>
+              <FormInput
+                label="Username"
+                placeholder="Username"
+                //   required
+                name="userName"
+                control={control}
+                isError={!!errors.userName}
+                disabled={true}
+                errorMessage={
+                  errors.userName
+                    ? errors.userName.message?.toString()
+                    : "Please enter your username!"
+                }
+                currentValue={user?.userName}
+              />
+
+              <FormInput
+                label="Email"
+                placeholder="Email"
+                //   required
+                name="userName"
+                control={control}
+                isError={!!errors.userName}
+                disabled={true}
+                errorMessage={
+                  errors.userName
+                    ? errors.userName.message?.toString()
+                    : "Please enter your username!"
+                }
+                currentValue={user?.email}
+              />
 
               {/* password  */}
-              <View className="relative">
-                <Text style={styles.label}>New Password</Text>
-                <Controller
-                  control={control}
-                  render={({ field: { onChange, onBlur, value } }) => (
-                    <TextInput
-                      placeholder="*********"
-                      secureTextEntry={!passwordVisibility.showNewPassword}
-                      className={`border    rounded-lg  ${errors.showNewPassword ? "border-red-500" : "border-neutral-300"}`}
-                      onBlur={onBlur}
-                      onChangeText={(value) => onChange(value)}
-                      value={value}
-                      style={{
-                        padding: 12,
-                        fontSize: 14,
-                        height: 40,
-                        paddingEnd: 50,
-                      }}
-                    />
-                  )}
-                  name="newPassword"
-                  rules={{
-                    required: "Password is required!",
-                    minLength: {
-                      value: 8,
-                      message: "Password must be at least 8 characters",
-                    },
-                    pattern: {
-                      value:
-                        /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*(),.?":{}|<>]).{8,}$/,
-                      message:
-                        "Password must contain uppercase, lowercase, number, and special character",
-                    },
-                  }}
-                />
 
-                <TouchableOpacity
-                  style={styles.passwordIcon}
-                  onPress={() => togglePasswordVisibility("showNewPassword")}
-                >
-                  {passwordVisibility.showNewPassword ? (
-                    <Eye height={30} width={30} color={"#d4d4d4"} />
-                  ) : (
-                    <EyeClosed height={30} width={30} color={"#d4d4d4"} />
-                  )}
-                </TouchableOpacity>
-                {errors.newPassword && (
-                  <Text className="text-red-500 text-[12px] mt-1">
-                    {errors.newPassword.message?.toString()}
-                  </Text>
-                )}
-              </View>
+              <FormInputPassword
+                isPasswordStrengthVisible={false}
+                label="Password"
+                placeholder="*********"
+                name="password"
+                control={control}
+                isError={!!errors.newPassword}
+                errorMessage={errors.newPassword?.message?.toString()}
+                rules={rules}
+              />
+
               {/* password  */}
-              <View className="relative">
-                <Text style={styles.label}>Confirm Password</Text>
-                <Controller
-                  control={control}
-                  render={({ field: { onChange, onBlur, value } }) => (
-                    <TextInput
-                      placeholder="*********"
-                      secureTextEntry={!passwordVisibility.showConfirmPassword}
-                      className={`border    rounded-lg  ${errors.password ? "border-red-500" : "border-neutral-300"}`}
-                      onBlur={onBlur}
-                      onChangeText={(value) => onChange(value)}
-                      value={value}
-                      style={{
-                        padding: 12,
-                        fontSize: 14,
-                        height: 40,
-                        paddingEnd: 50,
-                      }}
-                    />
-                  )}
-                  name="confirmPassword"
-                  rules={{
-                    required: "Password is required!",
-                    minLength: {
-                      value: 8,
-                      message: "Password must be at least 8 characters",
-                    },
-                    pattern: {
-                      value:
-                        /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*(),.?":{}|<>]).{8,}$/,
-                      message:
-                        "Password must contain uppercase, lowercase, number, and special character",
-                    },
-                  }}
-                />
-
-                <TouchableOpacity
-                  style={styles.passwordIcon}
-                  onPress={() =>
-                    togglePasswordVisibility("showConfirmPassword")
-                  }
-                >
-                  {passwordVisibility.showConfirmPassword ? (
-                    <Eye height={30} width={30} color={"#d4d4d4"} />
-                  ) : (
-                    <EyeClosed height={30} width={30} color={"#d4d4d4"} />
-                  )}
-                </TouchableOpacity>
-                {errors.confirmPassword && (
-                  <Text className="text-red-500 text-[12px] mt-1">
-                    {errors.confirmPassword.message?.toString()}
-                  </Text>
-                )}
-              </View>
+              <FormInputPassword
+                isPasswordStrengthVisible={false}
+                label="Confirm Password"
+                placeholder="*********"
+                name="confirmPassword"
+                control={control}
+                isError={!!errors.confirmPassword}
+                errorMessage={errors.confirmPassword?.message?.toString()}
+                rules={{
+                  required: "Password is required",
+                  validate: (value: string) =>
+                    value === password || "Passwords do not match",
+                }}
+              />
             </View>
           </View>
+          <View style={styles.buttonContainer}>
+            <ReusableButton
+              onPress={handleSubmit(onSubmit)}
+              buttonText="Deactivate Account"
+              variant="danger"
+              height="large"
+              isLoading={isPendingChangeApi}
+              disabled={isPendingChangeApi}
+            />
+          </View>
         </ScrollView>
-        <View style={styles.buttonContainer}>
-          <ReusableButton
-            onPress={handleSubmit(onSubmit)}
-            buttonText="Deactivate Account"
-            variant="danger"
-          />
-        </View>
       </KeyboardAvoidingView>
     </SafeAreaView>
   );
@@ -253,42 +176,15 @@ const styles = StyleSheet.create({
   keyboardAvoid: {
     flex: 1,
   },
-  header: {
-    flexDirection: "row",
-    alignItems: "center",
-    height: 56,
-    paddingHorizontal: 0,
-    borderBottomWidth: 1,
-    borderBottomColor: "#E5E7EB",
-  },
-  backButton: {
-    padding: 8,
-  },
-  headerTitle: {
-    fontSize: 18,
-    fontWeight: "500",
-    marginLeft: 8,
-  },
+
   container: {
-    flexGrow: 1,
     backgroundColor: "white",
     justifyContent: "space-between",
   },
   paddingContainer: {
     padding: 16,
   },
-  label: {
-    fontSize: 14,
-    fontWeight: "500",
-    color: "#374151",
-    marginBottom: 8,
-  },
-  passwordIcon: {
-    position: "absolute",
-    top: 35,
-    zIndex: 40,
-    right: 12,
-  },
+
   title: {
     fontSize: 20,
     fontWeight: 700,
@@ -301,30 +197,14 @@ const styles = StyleSheet.create({
   },
 
   inputContainer: {
-    marginTop: 16,
+    marginTop: 32,
     display: "flex",
-    gap: 24,
+    gap: 16,
   },
 
   buttonContainer: {
-    paddingTop: 20,
-    paddingBottom: 4,
+    marginTop: 64,
+    paddingBottom: "8%",
     paddingHorizontal: 16,
-    borderTopWidth: 1,
-    borderBottomWidth: 1,
-    borderColor: "#D1D5DB",
-  },
-  dummyInput: {
-    backgroundColor: "white",
-    borderWidth: 1,
-    borderColor: "#E5E7EB",
-    borderRadius: 8,
-    padding: 12,
-    fontSize: 14,
-    color: "#1F2937",
-    height: 40,
-  },
-  labelContainer: {
-    flexDirection: "row",
   },
 });

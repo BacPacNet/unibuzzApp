@@ -53,7 +53,7 @@ const sections = [
       { id: "UniversityVerification", title: "University Verification" },
       { id: "username", title: "Change Username" },
       { id: "password", title: "Change Password" },
-      { id: "email", title: "Change Email" },
+      //   { id: "email", title: "Change Email" },
       { id: "deactivation", title: "Account Deactivation" },
     ],
   },
