@@ -1,9 +1,14 @@
+import BackHeader from "@/components/atoms/BackHeader";
 import { FormInput } from "@/components/atoms/FormInput";
+import { FormInputPassword } from "@/components/atoms/FormInputPassword";
+import FullScreenLoader from "@/components/atoms/FullScreenLoader";
 import ReusableButton from "@/components/atoms/ReusableButton";
 import { useHeader } from "@/context/HeaderProvider/Header";
+import { useChangeUserName } from "@/services/user";
+import { getUserProfileStore, getUserStore } from "@/storage/user";
 import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import { Eye, EyeClosed, NavArrowLeft } from "iconoir-react-native";
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import {
   KeyboardAvoidingView,
@@ -15,44 +20,69 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+import { AnimatedCircularProgress } from "react-native-circular-progress";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { Toast } from "react-native-toast-notifications";
 
 type Props = {};
 
 const UserNameChangeScreen = (props: Props) => {
   const { goBack } = useNavigation();
   const { changeHeaderShownStatus } = useHeader();
-  const [showPassword, setShowPassword] = useState(false);
+  const {
+    mutate,
+    error,
+    isPending: isPendingChangeApi,
+    isSuccess,
+  } = useChangeUserName();
+  const user = getUserStore();
+  const [progress, setProgress] = useState(0);
+  const [showLoader, setShowLoader] = useState(false);
   const {
     formState: { errors },
     control,
     handleSubmit,
+    reset,
   } = useForm();
 
-  useFocusEffect(
-    useCallback(() => {
-      changeHeaderShownStatus(false);
+  //   useFocusEffect(
+  //     useCallback(() => {
+  //       changeHeaderShownStatus(false);
 
-      return () => {
-        changeHeaderShownStatus(true);
-      };
-    }, []),
-  );
+  //       return () => {
+  //         changeHeaderShownStatus(true);
+  //       };
+  //     }, []),
+  //   );
 
   const onSubmit = (data: any) => {
-    console.log("data", data);
-    // mutate(data)
+    setShowLoader(true);
+    mutate(
+      {
+        userName: user?.userName || "",
+        newUserName: data.newUserName,
+        password: data.password,
+      },
+      {
+        onSuccess: () => {
+          reset();
+          setShowLoader(false);
+          Toast.show("Username changed successfully");
+        },
+        onError: () => {
+          setShowLoader(false);
+        },
+      },
+    );
   };
+
+  if (showLoader) {
+    return <FullScreenLoader message="Changing Username..." />;
+  }
 
   return (
     <SafeAreaView style={styles.containerMain}>
       {/* Header */}
-      <View style={styles.header}>
-        <TouchableOpacity onPress={() => goBack()} style={styles.backButton}>
-          <NavArrowLeft width={24} height={24} color="#000" />
-        </TouchableOpacity>
-        <Text style={styles.headerTitle}>Account</Text>
-      </View>
 
       <KeyboardAvoidingView
         behavior={Platform.OS === "ios" ? "padding" : "height"}
@@ -63,8 +93,8 @@ const UserNameChangeScreen = (props: Props) => {
           keyboardShouldPersistTaps="handled"
           showsVerticalScrollIndicator={false}
         >
+          <BackHeader label="Settings" onPress={() => goBack()} />
           <View style={styles.paddingContainer} className="flex   ">
-            {/* <Title>University Verification</Title> */}
             <Text style={styles.title}>Change Username</Text>
             <Text style={styles.desc}>
               Your username can be used to login and be identified by others.
@@ -78,12 +108,13 @@ const UserNameChangeScreen = (props: Props) => {
                 name="userName"
                 control={control}
                 isError={!!errors.userName}
+                disabled={true}
                 errorMessage={
                   errors.userName
                     ? errors.userName.message?.toString()
                     : "Please enter your username!"
                 }
-                rules={{ required: "Please enter your username." }}
+                currentValue={user?.userName}
               />
               <FormInput
                 label="New Username"
@@ -101,68 +132,32 @@ const UserNameChangeScreen = (props: Props) => {
               />
 
               {/* password  */}
-              <View className="relative">
-                <Text style={styles.label}>Password</Text>
-                <Controller
-                  control={control}
-                  render={({ field: { onChange, onBlur, value } }) => (
-                    <TextInput
-                      placeholder="*********"
-                      secureTextEntry={!showPassword}
-                      className={`border    rounded-lg  ${errors.password ? "border-red-500" : "border-neutral-300"}`}
-                      onBlur={onBlur}
-                      onChangeText={(value) => onChange(value)}
-                      value={value}
-                      style={{
-                        padding: 12,
-                        fontSize: 14,
-                        height: 40,
-                        paddingEnd: 50,
-                      }}
-                    />
-                  )}
+              <View>
+                <FormInputPassword
+                  isPasswordStrengthVisible={false}
+                  label="Password"
+                  placeholder="Password"
                   name="password"
-                  rules={{
-                    required: "Password is required!",
-                    minLength: {
-                      value: 8,
-                      message: "Password must be at least 8 characters",
-                    },
-                    pattern: {
-                      value:
-                        /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*(),.?":{}|<>]).{8,}$/,
-                      message:
-                        "Password must contain uppercase, lowercase, number, and special character",
-                    },
-                  }}
+                  control={control}
+                  isError={!!errors.password}
+                  errorMessage={errors.password?.message?.toString()}
+                  rules={{ required: "Password is required!" }}
                 />
-
-                <TouchableOpacity
-                  style={styles.passwordIcon}
-                  onPress={() => setShowPassword((prev) => !prev)}
-                >
-                  {showPassword ? (
-                    <Eye height={30} width={30} color={"#d4d4d4"} />
-                  ) : (
-                    <EyeClosed height={30} width={30} color={"#d4d4d4"} />
-                  )}
+                <TouchableOpacity>
+                  <Text style={styles.forgotPassword}>Forgot Password?</Text>
                 </TouchableOpacity>
-                {errors.password && (
-                  <Text className="text-red-500 text-[12px] mt-1">
-                    {errors.password.message?.toString()}
-                  </Text>
-                )}
               </View>
             </View>
           </View>
+          <View style={styles.buttonContainer}>
+            <ReusableButton
+              onPress={handleSubmit(onSubmit)}
+              buttonText="Change Username"
+              variant="primary"
+              height="large"
+            />
+          </View>
         </ScrollView>
-        <View style={styles.buttonContainer}>
-          <ReusableButton
-            onPress={handleSubmit(onSubmit)}
-            buttonText="Push Changes"
-            variant="primary"
-          />
-        </View>
       </KeyboardAvoidingView>
     </SafeAreaView>
   );
@@ -178,22 +173,7 @@ const styles = StyleSheet.create({
   keyboardAvoid: {
     flex: 1,
   },
-  header: {
-    flexDirection: "row",
-    alignItems: "center",
-    height: 56,
-    paddingHorizontal: 0,
-    borderBottomWidth: 1,
-    borderBottomColor: "#E5E7EB",
-  },
-  backButton: {
-    padding: 8,
-  },
-  headerTitle: {
-    fontSize: 18,
-    fontWeight: "500",
-    marginLeft: 8,
-  },
+
   container: {
     flexGrow: 1,
     backgroundColor: "white",
@@ -202,18 +182,7 @@ const styles = StyleSheet.create({
   paddingContainer: {
     padding: 16,
   },
-  label: {
-    fontSize: 14,
-    fontWeight: "500",
-    color: "#374151",
-    marginBottom: 8,
-  },
-  passwordIcon: {
-    position: "absolute",
-    top: 35,
-    zIndex: 40,
-    right: 12,
-  },
+
   title: {
     fontSize: 20,
     fontWeight: 700,
@@ -223,20 +192,23 @@ const styles = StyleSheet.create({
   desc: {
     fontSize: 14,
     fontWeight: 500,
+    marginTop: 8,
   },
+  forgotPassword: {
+    fontSize: 14,
+    fontWeight: 500,
 
+    color: "#6744FF",
+  },
   inputContainer: {
-    marginTop: 16,
+    marginTop: 32,
     display: "flex",
-    gap: 8,
+    gap: 16,
   },
 
   buttonContainer: {
-    paddingTop: 20,
-    paddingBottom: 4,
+    paddingTop: 64,
+    paddingBottom: "8%",
     paddingHorizontal: 16,
-    borderTopWidth: 1,
-    borderBottomWidth: 1,
-    borderColor: "#D1D5DB",
   },
 });

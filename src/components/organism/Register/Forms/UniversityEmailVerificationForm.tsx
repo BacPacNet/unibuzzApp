@@ -165,7 +165,7 @@ const FeatureList = () => {
         <View className="flex-row gap-2 items-center">
           <CheckCircleSolid color={"#6744FF"} height={24} width={24} />
           <Text className="text-xs text-neutral-600 ">
-            Can join private groups in university community
+            Join multiple university communities.
           </Text>
         </View>
 
@@ -173,7 +173,7 @@ const FeatureList = () => {
         <View className="flex-row gap-2 items-center">
           <CheckCircleSolid color={"#6744FF"} height={24} width={24} />
           <Text className="text-xs text-neutral-600 ">
-            Can join more than 1 university community
+            Create your own groups within your university network.
           </Text>
         </View>
 
@@ -181,7 +181,7 @@ const FeatureList = () => {
         <View className="flex-row gap-2 items-center">
           <CheckCircleSolid color={"#6744FF"} height={24} width={24} />
           <Text className="text-xs text-neutral-600 ">
-            Can create groups in university community
+            Get full access to private groups and exclusive discussions.
           </Text>
         </View>
       </View>

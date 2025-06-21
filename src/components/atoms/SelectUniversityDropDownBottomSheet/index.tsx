@@ -123,6 +123,7 @@ const SelectUniversityDropdownBottomSheet: React.FC<SelectDropdownProps> = ({
                         onPress={() => {
                           onChange(item.name);
                           setValue && setValue("universityId", item._id);
+                          setValue && setValue("logoUrl", item.logo);
                           setShow(false);
                         }}
                       >

@@ -15,6 +15,7 @@ interface FormInputProps {
   keyboardType?: "default" | "email-address" | "numeric" | "phone-pad";
   disabled?: boolean;
   isTextArea?: boolean;
+  currentValue?: string;
 }
 
 export function FormInput({
@@ -31,6 +32,7 @@ export function FormInput({
   keyboardType = "default",
   disabled = false,
   isTextArea = false,
+  currentValue,
 }: FormInputProps) {
   return (
     <View style={styles.container}>
@@ -52,9 +54,12 @@ export function FormInput({
               styles.input,
               isTextArea && styles.textArea,
               isError && styles.inputError,
+              disabled && styles.disabledLabel,
             ]}
             placeholder={placeholder}
-            value={value}
+            value={
+              currentValue && currentValue?.length > 0 ? currentValue : value
+            }
             onChangeText={onChange}
             secureTextEntry={secureTextEntry}
             keyboardType={keyboardType}
@@ -80,6 +85,9 @@ const styles = StyleSheet.create({
   labelContainer: {
     flexDirection: "row",
     marginBottom: 8,
+  },
+  disabledLabel: {
+    backgroundColor: "#F9FAFB",
   },
   label: {
     fontSize: 14,

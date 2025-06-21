@@ -41,6 +41,7 @@ export interface User {
   id: string;
   userVerifiedCommunities: verifiedInterface[];
   userUnVerifiedCommunities: unverifiedInterface[];
+  userName: string;
 }
 
 export interface UserProfile {

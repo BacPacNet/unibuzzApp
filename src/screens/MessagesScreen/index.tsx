@@ -26,7 +26,8 @@ interface Message {
 const Messages = ({ route }: any) => {
   const [currTab, setCurrTab] = useState("Inbox");
   const [selectedChat, setSelectedChat] = useState<any>(undefined);
-  const { selectedUserId } = route.params;
+  //   const { selectedUserId } = route.params;
+  const selectedUserId = route?.params?.selectedUserId ?? null;
   const {
     data: chatsData,
     isLoading: isChatLoading,

@@ -57,35 +57,8 @@ export const useAddUniversityEmail = (redirect: boolean = false) => {
   return useMutation({
     mutationFn: (data: any) => addUniversityEmail(data, cookieValue),
     onSuccess: (response: any, variables) => {
-      storeUserProfile(response.userProfile);
-      if (redirect) {
-        const community = response.userProfile.email.find(
-          (community: any) =>
-            community.UniversityName == variables.universityName,
-        );
-        if (community) {
-          queryClient.invalidateQueries({
-            queryKey: ["useGetSubscribedCommunties"],
-          });
-        }
-      }
-
-      if (
-        !response.user.status.isAlreadyJoined &&
-        response.user.status.isUniversityCommunity
-      ) {
-        storeUser(response.user.updatedUser);
-        return queryClient.invalidateQueries({
-          queryKey: ["useGetSubscribedCommunties"],
-        });
-      }
-
-      if (response.user.isAlreadyJoined) {
-        return Toast.show("Already Joined");
-      }
-      if (!response.user.isUniversityCommunity) {
-        return Toast.show("No Community");
-      }
+      storeUserProfile(response);
+      Toast.show("University Verification Complete");
     },
     onError: (res: any) => {
       return Toast.show(res.response.data.message);
