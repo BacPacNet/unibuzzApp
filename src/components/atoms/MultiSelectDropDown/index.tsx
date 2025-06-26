@@ -8,7 +8,7 @@ import {
 } from "react-native";
 import BouncyCheckbox from "react-native-bouncy-checkbox";
 import { FlatList } from "react-native-actions-sheet";
-import { Search } from "iconoir-react-native";
+import { CheckSquareSolid, Search } from "iconoir-react-native";
 interface MultiSelectDropdownProps {
   options: string[];
   onChange: (value: string[]) => void;
@@ -80,7 +80,12 @@ const MultiSelectDropdown = ({
         <Text style={styles.optionText}>{item}</Text>
         {multiSelect && (
           <View className="flex justify-center items-center">
-            <BouncyCheckbox
+              <View style={styles.checkboxBox}>
+        {isSelected && (
+          <CheckSquareSolid width={20} height={20} color="#6744FF" />
+        )}
+      </View>
+            {/* <BouncyCheckbox
               ref={bouncyCheckboxRef}
               size={25}
               fillColor="blue"
@@ -94,7 +99,7 @@ const MultiSelectDropdown = ({
               style={{ height: 24 }}
               bounceEffectIn={1}
               bounceEffectOut={1}
-            />
+            /> */}
           </View>
         )}
       </TouchableOpacity>
@@ -222,7 +227,7 @@ const styles = StyleSheet.create({
     fontWeight: 500,
   },
   optionSelected: {
-    backgroundColor: "#f0f0f0",
+    // backgroundColor: "#f0f0f0",
   },
   checkbox: {
     width: 16,
@@ -237,6 +242,17 @@ const styles = StyleSheet.create({
     width: 10,
     height: 10,
     backgroundColor: "#0066CC",
+  },
+
+  checkboxBox: {
+    width: 20,
+    height: 20,
+    borderRadius: 4,
+    borderWidth: 1.5,
+    borderColor: "#D1D5DB",
+    justifyContent: "center",
+    alignItems: "center",
+    marginRight: 8,
   },
 });
 

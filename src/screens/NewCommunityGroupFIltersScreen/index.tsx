@@ -1,12 +1,11 @@
+import BackHeader from "@/components/atoms/BackHeader";
 import CollapsibleMultiSelect from "@/components/atoms/CollapsibleMultiSelect";
 import ReusableButton from "@/components/atoms/ReusableButton";
 import { useCommunityFilterContext } from "@/context/CommunityFilterProvider/CommunityFilterProvider";
-import { useHeader } from "@/context/HeaderProvider/Header";
-import { GroupCategories, subCategories } from "@/types/CommunityFilter";
-
-import { useFocusEffect, useNavigation } from "@react-navigation/native";
-import { NavArrowLeft, Xmark } from "iconoir-react-native";
-import React, { useCallback, useEffect, useState } from "react";
+import {  subCategories } from "@/types/CommunityFilter";
+import {useNavigation } from "@react-navigation/native";
+import { Xmark } from "iconoir-react-native";
+import React, {  useEffect, useState } from "react";
 import {
   ScrollView,
   StyleSheet,
@@ -20,7 +19,6 @@ type Props = {};
 const NewCommunityGroupFilterScreen = (props: Props) => {
   const navigate = useNavigation();
 
-  const { changeHeaderShownStatus } = useHeader();
 
   const [selectedFilters, setSelectedFilters] = useState<
     Record<string, string[]>
@@ -69,15 +67,7 @@ const NewCommunityGroupFilterScreen = (props: Props) => {
     });
   };
 
-  useFocusEffect(
-    useCallback(() => {
-      changeHeaderShownStatus(false);
 
-      return () => {
-        changeHeaderShownStatus(true);
-      };
-    }, []),
-  );
 
   useEffect(() => {
     setSelectedFilters(createSelectedFilters);
@@ -92,17 +82,11 @@ const NewCommunityGroupFilterScreen = (props: Props) => {
   return (
     <SafeAreaView style={styles.container}>
       {/* Header */}
-      <View style={styles.header}>
-        <TouchableOpacity
-          onPress={() => navigate.goBack()}
-          style={styles.backButton}
-        >
-          <NavArrowLeft width={24} height={24} color="#000" />
-        </TouchableOpacity>
-        <Text style={styles.headerTitle}>Create Group</Text>
-      </View>
+
+
 
       <ScrollView style={styles.content}>
+        <BackHeader label="Create Group" />
         <CollapsibleMultiSelect
           title="Academic Focus"
           options={subCategories["Academic Focus"]}
@@ -167,7 +151,7 @@ const NewCommunityGroupFilterScreen = (props: Props) => {
         <View>
           {Object.keys(selectedFilters).length > 0 && (
             <View style={styles.selectedFiltersContainer}>
-              <Text style={styles.selectedFiltersTitle}>Selected Filters</Text>
+              <Text style={styles.selectedFiltersTitle}>Apply Categories</Text>
               <View style={styles.filtersRow}>
                 {Object.entries(selectedFilters).map(([category, filters]) =>
                   filters.map((filter) => (
@@ -177,7 +161,7 @@ const NewCommunityGroupFilterScreen = (props: Props) => {
                       onPress={() => handleSelect(category as any, filter)}
                     >
                       <Text style={styles.filterChipText}>{filter}</Text>
-                      <Xmark width={24} height={24} color="#000" />
+                      <Xmark width={24} height={24} color="#6744FF" />
                     </TouchableOpacity>
                   )),
                 )}
@@ -191,6 +175,7 @@ const NewCommunityGroupFilterScreen = (props: Props) => {
           onPress={() => handleClick()}
           buttonText="Apply Filter"
           variant="primary"
+          height="large"
         />
       </View>
     </SafeAreaView>

@@ -14,6 +14,7 @@ import { TouchableOpacity } from "react-native-gesture-handler";
 import { FilterList } from "iconoir-react-native";
 import CommunityGroupTabs from "@/components/organism/CommunityGroupTabs";
 import CommunityLogo from "@/components/atoms/LogoHolder";
+import { useNewCommunityGroupStatesContext } from "@/context/NewCommunityGroupStatesProvider/NewCommunityGroupStatesProvider";
 
 type NavigationProp = StackNavigationProp<RootStackParamList, "Timeline">;
 const UniversitySec = () => {
@@ -31,6 +32,8 @@ const UniversitySec = () => {
     useState<Community | null>();
   const [community, setCommunity] = useState<Community>();
   const [currTab, setCurrTab] = useState("All");
+  const { resetFilters } = useNewCommunityGroupStatesContext();
+
 
   const handleCommunityClick = (id: string) => {
     navigation.navigate("Community", { communityId: id });
@@ -38,6 +41,7 @@ const UniversitySec = () => {
   };
 
   const handleManageGroupNavigate = () => {
+    resetFilters()
     navigation.navigate("manageGroupStack", {
       screen: "SearchCommunityGroupScreen",
 

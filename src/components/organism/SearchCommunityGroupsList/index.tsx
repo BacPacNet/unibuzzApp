@@ -73,13 +73,7 @@ const SearchCommunityGroupList: React.FC<{
       renderItem={({ item }) => <CommunityHolder item={item} />}
       getItemLayout={(_, index) => ({ length: 80, offset: 80 * index, index })}
       removeClippedSubviews
-      //   refreshing={isUserProfilesLoading}
-      //   refreshControl={
-      //     <RefreshControl
-      //       refreshing={isUserProfilesLoading}
-      //       onRefresh={handleRefresh}
-      //     />
-      //   }
+
     />
   );
 };
@@ -91,12 +85,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    padding: 16,
     height: 86,
-    borderBottomWidth: 2,
-    borderBlockColor: "#D4D4D4",
-    borderLeftWidth: 0,
-    borderRightWidth: 0,
   },
   activeCommunity: {
     backgroundColor: "#f0f0f0",
@@ -118,7 +107,9 @@ const styles = StyleSheet.create({
     width: "80%",
   },
   communityName: {
-    fontSize: 14,
-    color: "#3A3B3C",
+    fontSize:14,
+    color:"#6B7280",
+    fontWeight:"500",
+    lineHeight:16
   },
 });

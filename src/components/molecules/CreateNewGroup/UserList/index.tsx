@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Image, Text, View } from "react-native";
+import { Image, Text, TouchableOpacity, View } from "react-native";
 import BouncyCheckbox from "react-native-bouncy-checkbox";
 import avatar from "@/assets/avatarPlaceholder.png";
 import { Users } from "@/types/connections";
@@ -33,7 +33,8 @@ export const NewGroupUserListItem = ({
   let bouncyCheckboxRef: any = null;
 
   return (
-    <View
+    <TouchableOpacity
+      onPress={handleClick}
       style={{ paddingHorizontal: 12 }}
       className="flex flex-row justify-between p-4 border-b border-neutral-200"
     >
@@ -50,7 +51,7 @@ export const NewGroupUserListItem = ({
 
         <View className="flex-1 flex-row items-center">
           <View className="flex-1">
-            <Text className="text-neutral-600 text-lg font-semibold">
+            <Text className="text-neutral-600 text-xs font-semibold">
               {item.firstName} {item.lastName}
             </Text>
             <View>
@@ -68,7 +69,7 @@ export const NewGroupUserListItem = ({
           </View>
 
           <View className="flex justify-center items-center">
-            <BouncyCheckbox
+            {/* <BouncyCheckbox
               ref={bouncyCheckboxRef}
               size={25}
               fillColor="#6647FF"
@@ -82,10 +83,10 @@ export const NewGroupUserListItem = ({
               style={{ height: 24 }}
               bounceEffectIn={1}
               bounceEffectOut={1}
-            />
+            /> */}
           </View>
         </View>
       </View>
-    </View>
+    </TouchableOpacity>
   );
 };

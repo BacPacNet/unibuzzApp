@@ -1,12 +1,12 @@
 export const getUniqueById = (arr: any[]) => {
-  const seen = new Map();
-  arr.forEach((item) => {
-    if (!seen.has(item.id)) {
-      seen.set(item.id, item);
-    }
-  });
-  return Array.from(seen.values());
-};
+    const seen = new Map()
+    arr.forEach((item) => {
+      if (!seen.has(item._id)) {
+        seen.set(item._id, item)
+      }
+    })
+    return Array.from(seen.values())
+  }
 
 export const filterData = (data: any[], selectedFilters: any) => {
   const { year: selectedYears, major: selectedMajors } = selectedFilters;
