@@ -7,12 +7,16 @@ import { UPLOAD_CONTEXT } from "@/types/uploads";
 import { ImageAsset } from "./useImageUpload";
 
 export const useGroupCreation = (communityId: string, communityData: any) => {
-  const { createSelectedFilters, setCreateSelectedFilters } = useCommunityFilterContext();
+  const { createSelectedFilters, setCreateSelectedFilters } =
+    useCommunityFilterContext();
   const { mutate: createGroup, isPending } = useCreateCommunityGroup();
   const { mutateAsync: uploadToS3 } = useUploadToS3();
   const { selectedUsersState } = useNewCommunityGroupStatesContext();
 
-  const uploadImage = async (imageAsset: ImageAsset, context: UPLOAD_CONTEXT) => {
+  const uploadImage = async (
+    imageAsset: ImageAsset,
+    context: UPLOAD_CONTEXT,
+  ) => {
     const uploadPayload = {
       files: [imageAsset],
       context,
@@ -21,9 +25,9 @@ export const useGroupCreation = (communityId: string, communityData: any) => {
   };
 
   const handleCreateGroup = async (
-    data: CreateCommunityGroupType, 
-    imageToUpload: ImageAsset | null, 
-    bannerToUpload: ImageAsset | null
+    data: CreateCommunityGroupType,
+    imageToUpload: ImageAsset | null,
+    bannerToUpload: ImageAsset | null,
   ) => {
     let logoImageData;
     let coverImageData;
@@ -59,4 +63,4 @@ export const useGroupCreation = (communityId: string, communityData: any) => {
     selectedUsersState,
     handleCreateGroup,
   };
-}; 
+};

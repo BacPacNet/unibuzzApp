@@ -4,7 +4,10 @@ import { FormInput } from "@/components/atoms/FormInput";
 import RadioInput from "@/components/atoms/RadioInput";
 import TextAreaWithWordCount from "@/components/atoms/TextAreaWIthWordCount";
 import SelectedChip from "@/components/molecules/CreateNewGroup/SelectedChip";
-import { GROUP_ACCESS_OPTIONS, GROUP_TYPE_OPTIONS } from "../../../../screens/NewCommunityGroupScreen/constants";
+import {
+  GROUP_ACCESS_OPTIONS,
+  GROUP_TYPE_OPTIONS,
+} from "../../../../screens/NewCommunityGroupScreen/constants";
 
 interface FormFieldsProps {
   control: any;
@@ -110,4 +113,4 @@ const styles = StyleSheet.create({
     alignContent: "center",
     gap: 2,
   },
-}); 
+});

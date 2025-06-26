@@ -7,36 +7,31 @@ import {
   TouchableOpacity,
   FlatList,
   StyleSheet,
-
 } from "react-native";
 
 interface SubscribedUniveristyBottomSheetProps {
   options: EmailType[];
   value: string[];
   err: boolean;
-  onSelect: (value: { name: string; id: string }) => void
+  onSelect: (value: { name: string; id: string }) => void;
 }
 
-const SubscribedUniveristyBottomSheet: React.FC<SubscribedUniveristyBottomSheetProps> = ({
-  options = [],
-  value = [],
-  err = false,
-  onSelect
-}) => {
+const SubscribedUniveristyBottomSheet: React.FC<
+  SubscribedUniveristyBottomSheetProps
+> = ({ options = [], value = [], err = false, onSelect }) => {
   const [selected, setSelected] = useState<string[]>(value);
 
   console.log(options);
   const handleSelect = (university: any) => {
-    onSelect({ name: university.UniversityName, id: university.communityId })
-    toggleSelect(university.UniversityName)
-  }
-
+    onSelect({ name: university.UniversityName, id: university.communityId });
+    toggleSelect(university.UniversityName);
+  };
 
   const toggleSelect = (item: string) => {
     setSelected((prevSelected) =>
       prevSelected.includes(item)
         ? prevSelected.filter((i) => i !== item)
-        : [...prevSelected, item]
+        : [...prevSelected, item],
     );
   };
 
@@ -45,9 +40,8 @@ const SubscribedUniveristyBottomSheet: React.FC<SubscribedUniveristyBottomSheetP
     return (
       <TouchableOpacity
         style={[styles.optionItem, isSelected && styles.optionSelected]}
-        onPress={() =>  handleSelect(item)}
+        onPress={() => handleSelect(item)}
       >
- 
         <CommunityLogo logoUrl={item.logo || ""} variant="small" />
         <Text style={styles.optionText}>{item.UniversityName}</Text>
       </TouchableOpacity>
@@ -56,7 +50,6 @@ const SubscribedUniveristyBottomSheet: React.FC<SubscribedUniveristyBottomSheetP
 
   return (
     <View style={styles.container}>
-
       <FlatList
         data={options}
         renderItem={renderItem}
@@ -68,7 +61,6 @@ const SubscribedUniveristyBottomSheet: React.FC<SubscribedUniveristyBottomSheetP
 };
 
 export default SubscribedUniveristyBottomSheet;
-
 
 const styles = StyleSheet.create({
   container: {

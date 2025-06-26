@@ -8,7 +8,7 @@ interface ImageUploadSectionProps {
   bannerToUpload: ImageAsset | null;
   previewProfileImage: string | null;
   previewBannerImage: string | null;
-  onImagePick: (type: 'profile' | 'banner') => void;
+  onImagePick: (type: "profile" | "banner") => void;
 }
 
 export const ImageUploadSection: React.FC<ImageUploadSectionProps> = ({
@@ -22,7 +22,7 @@ export const ImageUploadSection: React.FC<ImageUploadSectionProps> = ({
     {/* Profile Photo */}
     <View style={styles.photoSection}>
       <TouchableOpacity
-        onPress={() => onImagePick('profile')}
+        onPress={() => onImagePick("profile")}
         style={styles.photoUpload}
       >
         {(imageToUpload || previewProfileImage) && (
@@ -41,7 +41,7 @@ export const ImageUploadSection: React.FC<ImageUploadSectionProps> = ({
     <View style={styles.photoSection}>
       <View style={styles.profileImageContainer}>
         <TouchableOpacity
-          onPress={() => onImagePick('banner')}
+          onPress={() => onImagePick("banner")}
           style={styles.bannerUpload}
         >
           {(bannerToUpload || previewBannerImage) && (
@@ -92,4 +92,4 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
-}); 
+});

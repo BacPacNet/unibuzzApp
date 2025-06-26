@@ -22,4 +22,4 @@ export const GROUP_TYPE_OPTIONS = [
     value: "Official",
     details: "Require university approval",
   },
-]; 
+];

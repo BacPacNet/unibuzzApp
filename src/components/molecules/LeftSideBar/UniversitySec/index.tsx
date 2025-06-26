@@ -34,14 +34,13 @@ const UniversitySec = () => {
   const [currTab, setCurrTab] = useState("All");
   const { resetFilters } = useNewCommunityGroupStatesContext();
 
-
   const handleCommunityClick = (id: string) => {
     navigation.navigate("Community", { communityId: id });
     setCurrSelectedGroup(community);
   };
 
   const handleManageGroupNavigate = () => {
-    resetFilters()
+    resetFilters();
     navigation.navigate("manageGroupStack", {
       screen: "SearchCommunityGroupScreen",
 

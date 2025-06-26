@@ -3,7 +3,7 @@ import { useForm } from "react-hook-form";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import {
-    ActivityIndicator,
+  ActivityIndicator,
   KeyboardAvoidingView,
   Platform,
   ScrollView,
@@ -16,7 +16,6 @@ import { SafeAreaView } from "react-native-safe-area-context";
 // Components
 import BackHeader from "@/components/atoms/BackHeader";
 import ReusableButton from "@/components/atoms/ReusableButton";
-
 
 // Contexts
 import { useCommunityFilterContext } from "@/context/CommunityFilterProvider/CommunityFilterProvider";
@@ -58,7 +57,7 @@ const NewCommunityGroupScreen = () => {
     control,
     handleSubmit: handleGroupCreate,
     formState: { errors },
-setValue
+    setValue,
   } = useForm<CreateCommunityGroupType>({
     defaultValues: {
       communityGroupLogoUrl: null,
@@ -73,23 +72,35 @@ setValue
   });
 
   // Custom hooks
-  const { imageToUpload, bannerToUpload, previewProfileImage, previewBannerImage, handleImagePick } = useImageUpload();
-  const { createSelectedFilters, setCreateSelectedFilters, isPending, handleCreateGroup } = useGroupCreation(communityId, communityData);
-  const {  setSelectedUsersState,selectedUsersState,resetFilters } = useNewCommunityGroupStatesContext();
+  const {
+    imageToUpload,
+    bannerToUpload,
+    previewProfileImage,
+    previewBannerImage,
+    handleImagePick,
+  } = useImageUpload();
+  const {
+    createSelectedFilters,
+    setCreateSelectedFilters,
+    isPending,
+    handleCreateGroup,
+  } = useGroupCreation(communityId, communityData);
+  const { setSelectedUsersState, selectedUsersState, resetFilters } =
+    useNewCommunityGroupStatesContext();
 
   // Local state
   const [isProfileLoading, setIsProfileLoading] = useState(false);
   const [showFilterError, setShowFilterError] = useState(false);
-const [selectedUsersError, setSelectedUsersError] = useState(false);
+  const [selectedUsersError, setSelectedUsersError] = useState(false);
 
-const isFilterSelectionValid = (filters: Record<string, string[]>) => {
-  return Object.keys(filters).length > 0 && 
-         Object.values(filters).some(arr => arr.length > 0);
-};
+  const isFilterSelectionValid = (filters: Record<string, string[]>) => {
+    return (
+      Object.keys(filters).length > 0 &&
+      Object.values(filters).some((arr) => arr.length > 0)
+    );
+  };
 
-const isSelectedUsersEmpty = selectedUsersState.length === 0;
-
-
+  const isSelectedUsersEmpty = selectedUsersState.length === 0;
 
   // Navigation handlers
   const handleNavigateToFilterScreen = () => {
@@ -114,31 +125,27 @@ const isSelectedUsersEmpty = selectedUsersState.length === 0;
     }
 
     if (isSelectedUsersEmpty) {
-    
-        
       setSelectedUsersError(true);
       return;
     }
 
-  setSelectedUsersError(false);
+    setSelectedUsersError(false);
     setShowFilterError(false);
 
     setIsProfileLoading(true);
-    
-   
 
     try {
-      const { payload, createGroup, setCreateSelectedFilters } = await handleCreateGroup(data, imageToUpload, bannerToUpload);
-      
+      const { payload, createGroup, setCreateSelectedFilters } =
+        await handleCreateGroup(data, imageToUpload, bannerToUpload);
+
       createGroup(
         { communityId, data: payload },
         {
           onSuccess: () => {
             setCreateSelectedFilters([]);
-            resetFilters()
+            resetFilters();
             setIsProfileLoading(false);
-       
-           
+
             navigate.navigate("manageGroupStack", {
               screen: "SearchCommunityGroupScreen",
               params: { communityId, change: Date.now() },
@@ -151,28 +158,25 @@ const isSelectedUsersEmpty = selectedUsersState.length === 0;
       );
     } catch (error) {
       setIsProfileLoading(false);
-      console.error('Error creating group:', error);
+      console.error("Error creating group:", error);
     }
   };
 
-
-useEffect(() => {
-  if (showFilterError && isFilterSelectionValid(createSelectedFilters)) {
-    setShowFilterError(false);
-  }
-  if (selectedUsersError && !isSelectedUsersEmpty) {
-    setSelectedUsersError(false);
-  }
-}, [createSelectedFilters, showFilterError, selectedUsersError]);
-
-
+  useEffect(() => {
+    if (showFilterError && isFilterSelectionValid(createSelectedFilters)) {
+      setShowFilterError(false);
+    }
+    if (selectedUsersError && !isSelectedUsersEmpty) {
+      setSelectedUsersError(false);
+    }
+  }, [createSelectedFilters, showFilterError, selectedUsersError]);
 
   // Loading state
   if (isFetching) {
     return (
       <SafeAreaView style={styles.container}>
         <View style={styles.loadingContainer}>
-         <ActivityIndicator size="large" color="#0000ff" />
+          <ActivityIndicator size="large" color="#0000ff" />
         </View>
       </SafeAreaView>
     );
@@ -211,8 +215,10 @@ useEffect(() => {
                   height="large"
                 />
                 {showFilterError && (
-    <Text style={{ color: "red" }}>Group category is required</Text>
-    )}
+                  <Text style={{ color: "red" }}>
+                    Group category is required
+                  </Text>
+                )}
 
                 <View>
                   <View style={styles.flexRowContainer}>
@@ -225,9 +231,11 @@ useEffect(() => {
                     onPress={handleNavigateToUsersSelectScreen}
                     height="large"
                   />
-                      {selectedUsersError && (
-    <Text style={{ color: "red" }}>Group members are required</Text>
-    )}
+                  {selectedUsersError && (
+                    <Text style={{ color: "red" }}>
+                      Group members are required
+                    </Text>
+                  )}
                 </View>
               </View>
             </View>
@@ -260,8 +268,8 @@ const styles = StyleSheet.create({
   },
   loadingContainer: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
   },
   content: {
     padding: 16,

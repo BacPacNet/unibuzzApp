@@ -1,85 +1,77 @@
 import CollapsibleMultiSelect from "@/components/atoms/CollapsibleMultiSelect";
 import { useCommunityFilterContext } from "@/context/CommunityFilterProvider/CommunityFilterProvider";
-import {  subCategories } from "@/types/CommunityFilter";
+import { subCategories } from "@/types/CommunityFilter";
 import { useFocusEffect } from "@react-navigation/native";
 import { useCallback, useEffect, useState } from "react";
 import { View } from "react-native";
 import { ScrollView } from "react-native-actions-sheet";
 const SearchCommunityFilterBottomSheet = () => {
-    const {
-
-        selectedFiltersMain,
-    setSelectedFiltersMain
-   
-      } = useCommunityFilterContext();
-    const [selectedFilters, setSelectedFilters] = useState<
+  const { selectedFiltersMain, setSelectedFiltersMain } =
+    useCommunityFilterContext();
+  const [selectedFilters, setSelectedFilters] = useState<
     Record<string, string[]>
   >({});
 
-
-  
   useEffect(() => {
-if(Object.keys(selectedFilters)?.length >= 0){
-    setSelectedFiltersMain(selectedFilters);
-
-}
+    if (Object.keys(selectedFilters)?.length >= 0) {
+      setSelectedFiltersMain(selectedFilters);
+    }
   }, [selectedFilters]);
 
-  useFocusEffect(useCallback(()=>{
-    setSelectedFilters(selectedFiltersMain);
+  useFocusEffect(
+    useCallback(() => {
+      setSelectedFilters(selectedFiltersMain);
+    }, []),
+  );
 
-    
-  },[]))
+  const handleSelect = (category: string, option: string) => {
+    setSelectedFilters((prev: any) => {
+      const categoryFilters = prev[category] || [];
+      if (categoryFilters.includes(option)) {
+        const updatedFilters = categoryFilters.filter(
+          (item: any) => item !== option,
+        );
+        if (updatedFilters.length === 0) {
+          const { [category]: _, ...rest } = prev;
+          return rest;
+        }
+        return {
+          ...prev,
+          [category]: updatedFilters,
+        };
+      } else {
+        return {
+          ...prev,
+          [category]: [...categoryFilters, option],
+        };
+      }
+    });
+  };
 
-    const handleSelect = (category: string, option: string) => {
-        setSelectedFilters((prev: any) => {
-          const categoryFilters = prev[category] || [];
-          if (categoryFilters.includes(option)) {
-            const updatedFilters = categoryFilters.filter(
-              (item: any) => item !== option,
-            );
-            if (updatedFilters.length === 0) {
-              const { [category]: _, ...rest } = prev;
-              return rest;
-            }
-            return {
-              ...prev,
-              [category]: updatedFilters,
-            };
-          } else {
-            return {
-              ...prev,
-              [category]: [...categoryFilters, option],
-            };
-          }
-        });
-      };
+  const handleSelectAll = (category: string, allOptions: string[]) => {
+    setSelectedFilters((prev: any) => {
+      const currentFilters = prev[category] || [];
 
+      if (currentFilters.length === allOptions.length) {
+        const { [category]: _, ...rest } = prev;
+        return rest;
+      } else {
+        return {
+          ...prev,
+          [category]: allOptions,
+        };
+      }
+    });
+  };
 
-      const handleSelectAll = (category: string, allOptions: string[]) => {
-        setSelectedFilters((prev: any) => {
-          const currentFilters = prev[category] || [];
-    
-          if (currentFilters.length === allOptions.length) {
-            const { [category]: _, ...rest } = prev;
-            return rest;
-          } else {
-            return {
-              ...prev,
-              [category]: allOptions,
-            };
-          }
-        });
-      };
-
-    return (
-        <View>
-
-         <ScrollView
-          style={{
-            width: '100%',
-            flexShrink: 1,
-          }}>
+  return (
+    <View>
+      <ScrollView
+        style={{
+          width: "100%",
+          flexShrink: 1,
+        }}
+      >
         <CollapsibleMultiSelect
           title="Academic Focus"
           options={subCategories["Academic Focus"]}
@@ -140,10 +132,9 @@ if(Object.keys(selectedFilters)?.length >= 0){
             )
           }
         />
-        </ScrollView>
-        </View>
-    )
-}
+      </ScrollView>
+    </View>
+  );
+};
 
 export default SearchCommunityFilterBottomSheet;
-

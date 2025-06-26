@@ -1,10 +1,15 @@
 import { useNavigation, useRoute } from "@react-navigation/native";
 import React, { useEffect, useRef, useState } from "react";
-import { ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
-import { Filter, Search, SortUp } from "iconoir-react-native";
 import {
-  useGetFilteredSubscribedCommunities,
-} from "@/services/university-community";
+  ScrollView,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
+} from "react-native";
+import { Filter, Search, SortUp } from "iconoir-react-native";
+import { useGetFilteredSubscribedCommunities } from "@/services/university-community";
 import SearchCommunityGroupList from "@/components/organism/SearchCommunityGroupsList";
 import { RootStackParamList } from "@/types/navigation";
 import { StackNavigationProp } from "@react-navigation/stack";
@@ -15,7 +20,6 @@ import SearchCommunityFilterBottomSheet from "@/components/molecules/SearchCommu
 
 import PlusCircleButton from "@/components/atoms/PlusCircle";
 import SortCommunityBottomSheet from "@/components/molecules/SearchCommunity/SortCommunityBottomSheet";
-
 
 type NavigationProp = StackNavigationProp<
   RootStackParamList,
@@ -56,7 +60,6 @@ const SearchCommunityGroupScreen = () => {
     });
   };
 
-
   const handleNavigateToNewCommunityGroupScreen = () => {
     navigation.navigate("manageGroupStack", {
       screen: "NewCommunityGroupScreen",
@@ -94,82 +97,87 @@ const SearchCommunityGroupScreen = () => {
           />
         </View>
         <TouchableOpacity
-        onPress={() => filterBottomSheet.current?.show()}
+          onPress={() => filterBottomSheet.current?.show()}
           className="w-10 h-10 bg-secondary rounded-lg flex justify-center items-center border border-[#E9E8FF]"
         >
-          <Filter width={24} height={24} color={"#6744FF"} fill={"#6744FF"} strokeWidth={2} />
+          <Filter
+            width={24}
+            height={24}
+            color={"#6744FF"}
+            fill={"#6744FF"}
+            strokeWidth={2}
+          />
         </TouchableOpacity>
         <TouchableOpacity
           onPress={() => sortBottomSheet.current?.show()}
           className="w-10 h-10 bg-secondary rounded-lg flex justify-center items-center border border-[#E9E8FF]"
         >
-          <SortUp
-            width={24}
-            height={24}
-            color={"#6744FF"}
-            strokeWidth={2}
-          />
+          <SortUp width={24} height={24} color={"#6744FF"} strokeWidth={2} />
         </TouchableOpacity>
       </View>
-      <TouchableOpacity onPress={() => handleNavigateToNewCommunityGroupScreen()} style={styles.plusCircleContainer}>
-      <PlusCircleButton onPress={() => handleNavigateToNewCommunityGroupScreen()} />
-<Text style={styles.createGroupPlusText}>Create Group</Text>
+      <TouchableOpacity
+        onPress={() => handleNavigateToNewCommunityGroupScreen()}
+        style={styles.plusCircleContainer}
+      >
+        <PlusCircleButton
+          onPress={() => handleNavigateToNewCommunityGroupScreen()}
+        />
+        <Text style={styles.createGroupPlusText}>Create Group</Text>
       </TouchableOpacity>
-     <View style={styles.listContainer}>
-     <SearchCommunityGroupList
-        data={subscribedCommunities?.communityGroups}
-        isFetching={isPending}
-        handleNavigateToGroup={handleNavigateToGroup}
-      />
-     </View>
+      <View style={styles.listContainer}>
+        <SearchCommunityGroupList
+          data={subscribedCommunities?.communityGroups}
+          isFetching={isPending}
+          handleNavigateToGroup={handleNavigateToGroup}
+        />
+      </View>
 
+      <ActionSheet
+        useBottomSafeAreaPadding
+        ref={sortBottomSheet}
+        gestureEnabled={true}
+        safeAreaInsets={insets}
+        // snapPoints={[70, 100]}
+        containerStyle={styles.actionSheetContainer}
+      >
+        <SortCommunityBottomSheet
+          onSelect={(value: string) => setSort(value)}
+          initialValue={sort}
+        />
+      </ActionSheet>
 
-
-<ActionSheet
-          useBottomSafeAreaPadding
-          ref={sortBottomSheet}
-          gestureEnabled={true}
-          safeAreaInsets={insets}
-          // snapPoints={[70, 100]}
-          containerStyle={styles.actionSheetContainer}
-        >
-            <SortCommunityBottomSheet onSelect={(value:string)=>setSort(value)} initialValue={sort} />
-        </ActionSheet>
-
-<ActionSheet
-          useBottomSafeAreaPadding
-          ref={filterBottomSheet}
-          gestureEnabled={true}
-          safeAreaInsets={insets}
-          // snapPoints={[70, 100]}
-          containerStyle={styles.actionSheetContainer}
-        >
-
-          <SearchCommunityFilterBottomSheet/>
-        </ActionSheet>
+      <ActionSheet
+        useBottomSafeAreaPadding
+        ref={filterBottomSheet}
+        gestureEnabled={true}
+        safeAreaInsets={insets}
+        // snapPoints={[70, 100]}
+        containerStyle={styles.actionSheetContainer}
+      >
+        <SearchCommunityFilterBottomSheet />
+      </ActionSheet>
     </ScrollView>
   );
 };
 
 export default SearchCommunityGroupScreen;
 
-
 const styles = StyleSheet.create({
   plusCircleContainer: {
-   display: "flex",
-   flexDirection: "row",
-   alignItems: "center",
-   gap: 10,
-   marginHorizontal:16,
-   paddingVertical:16,
-   borderBottomWidth:1,
-   borderBottomColor:"#E5E7EB",
+    display: "flex",
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 10,
+    marginHorizontal: 16,
+    paddingVertical: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: "#E5E7EB",
   },
-  createGroupPlusText:{
-    fontSize:14,
-    color:"#6B7280",
-    fontWeight:"500",
-    lineHeight:16
+  createGroupPlusText: {
+    fontSize: 14,
+    color: "#6B7280",
+    fontWeight: "500",
+    lineHeight: 16,
   },
   listContainer: {
     paddingHorizontal: 16,

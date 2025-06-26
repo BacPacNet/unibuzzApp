@@ -26,14 +26,14 @@ const ManageGroups = () => {
         name="NewCommunityGroupFilterScreen"
         component={NewCommunityGroupFilterScreen}
       />
-        <Stack.Screen
-            name="EditCommunityGroupScreen"
-            component={EditCommunityGroupScreen}
-        />
-        <Stack.Screen
-            name="NewCommunityGroupUsersSelectScreen"
-            component={NewCommunityGroupUsersSelectScreen}
-        />
+      <Stack.Screen
+        name="EditCommunityGroupScreen"
+        component={EditCommunityGroupScreen}
+      />
+      <Stack.Screen
+        name="NewCommunityGroupUsersSelectScreen"
+        component={NewCommunityGroupUsersSelectScreen}
+      />
     </Stack.Navigator>
   );
 };

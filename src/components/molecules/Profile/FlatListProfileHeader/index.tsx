@@ -69,17 +69,14 @@ export const FlatListProfileHeaderPart = ({
   const { navigate } = useNavigation<NavigationProp>();
   const isStudent = role === userTypeEnum.Student;
 
-
-
-
-const handleNavigate = useCallback(
+  const handleNavigate = useCallback(
     (type: string) => {
       navigate("UsersScreen", {
         userId,
         type,
       });
     },
-    [navigate, userId]
+    [navigate, userId],
   );
 
   return (

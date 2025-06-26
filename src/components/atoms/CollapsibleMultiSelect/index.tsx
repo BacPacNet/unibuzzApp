@@ -86,9 +86,9 @@ const styles = StyleSheet.create({
     alignItems: "center",
     paddingVertical: 16,
     // paddingHorizontal: 16,
-    borderBottomWidth:1,
-    borderBottomColor:"#E5E7EB",
-    marginHorizontal:16
+    borderBottomWidth: 1,
+    borderBottomColor: "#E5E7EB",
+    marginHorizontal: 16,
   },
   checkboxContainer: {
     flexDirection: "row",
@@ -114,7 +114,7 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: "600",
     color: "#3A3B3C",
-    lineHeight:20
+    lineHeight: 20,
   },
   sectionContent: {
     paddingHorizontal: 16,

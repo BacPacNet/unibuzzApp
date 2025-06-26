@@ -13,14 +13,18 @@ export type ImageAsset = {
 export const useImageUpload = () => {
   const [imageToUpload, setImageToUpload] = useState<ImageAsset | null>(null);
   const [bannerToUpload, setBannerToUpload] = useState<ImageAsset | null>(null);
-  const [previewProfileImage, setPreviewProfileImage] = useState<string | null>(null);
-  const [previewBannerImage, setPreviewBannerImage] = useState<string | null>(null);
+  const [previewProfileImage, setPreviewProfileImage] = useState<string | null>(
+    null,
+  );
+  const [previewBannerImage, setPreviewBannerImage] = useState<string | null>(
+    null,
+  );
 
-  const handleImagePick = (type: 'profile' | 'banner') => {
+  const handleImagePick = (type: "profile" | "banner") => {
     launchImageLibrary({ mediaType: "photo" }, (response: any) => {
       if (!response.didCancel && !response.errorCode) {
         const imageObject = response.assets[0];
-        if (type === 'profile') {
+        if (type === "profile") {
           setImageToUpload(imageObject);
         } else {
           setBannerToUpload(imageObject);
@@ -36,4 +40,4 @@ export const useImageUpload = () => {
     previewBannerImage,
     handleImagePick,
   };
-}; 
+};

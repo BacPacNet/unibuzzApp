@@ -13,7 +13,6 @@ export interface User {
   occupation?: string;
   affiliation?: string;
   year?: string;
- 
 }
 
 export interface CommunityFilterContextType {
@@ -64,21 +63,34 @@ const defaultContextValue: CommunityFilterContextType = {
   setSelectedTypeState: () => {},
 };
 
-const NewCommunityGroupStatesContext = createContext<CommunityFilterContextType>(defaultContextValue);
+const NewCommunityGroupStatesContext =
+  createContext<CommunityFilterContextType>(defaultContextValue);
 
-export const useNewCommunityGroupStatesContext = () => useContext(NewCommunityGroupStatesContext);
+export const useNewCommunityGroupStatesContext = () =>
+  useContext(NewCommunityGroupStatesContext);
 
-export const NewCommunityGroupStatesProvider = ({ children }: { children: ReactNode }) => {
+export const NewCommunityGroupStatesProvider = ({
+  children,
+}: {
+  children: ReactNode;
+}) => {
   const [studentYearState, setStudentYearState] = useState<string[]>([]);
   const [majorState, setMajorState] = useState<string[]>([]);
   const [occupationState, setOccupationState] = useState<string[]>([]);
   const [affiliationState, setAffiliationState] = useState<string[]>([]);
-  const [communityState, setCommunityState] = useState<Community>({ name: "", id: "" });
+  const [communityState, setCommunityState] = useState<Community>({
+    name: "",
+    id: "",
+  });
   const [selectedUsersState, setSelectedUsersState] = useState<User[]>([]);
   const [individualUserState, setIndividualUserState] = useState<User | []>([]);
   const [filteredUsersState, setFilteredUsersState] = useState<User[]>([]);
-  const [filteredFacultyUsersState, setFilteredFacultyUsersState] = useState<User[]>([]);
-  const [selectedTypeState, setSelectedTypeState] = useState<"student" | "faculty" | null>(null);
+  const [filteredFacultyUsersState, setFilteredFacultyUsersState] = useState<
+    User[]
+  >([]);
+  const [selectedTypeState, setSelectedTypeState] = useState<
+    "student" | "faculty" | null
+  >(null);
   const resetFilters = () => {
     setStudentYearState([]);
     setMajorState([]);
@@ -114,7 +126,7 @@ export const NewCommunityGroupStatesProvider = ({ children }: { children: ReactN
         setFilteredFacultyUsersState,
         resetFilters,
         selectedTypeState,
-        setSelectedTypeState
+        setSelectedTypeState,
       }}
     >
       {children}

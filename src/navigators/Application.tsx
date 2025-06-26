@@ -397,7 +397,7 @@ function ApplicationNavigator() {
             <CommunityProvider>
               <CommunityFilterProvider>
                 <NewCommunityGroupStatesProvider>
-                <RightDrawerScreen />
+                  <RightDrawerScreen />
                 </NewCommunityGroupStatesProvider>
               </CommunityFilterProvider>
             </CommunityProvider>

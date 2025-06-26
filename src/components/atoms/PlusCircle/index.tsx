@@ -5,14 +5,14 @@ type Props = {
   onPress: () => void;
 };
 
-const PlusCircleButton = ({  onPress }: Props) => {
+const PlusCircleButton = ({ onPress }: Props) => {
   return (
     // <View style={styles.plusButtonContainer}>
-  
-        <TouchableOpacity onPress={onPress} style={styles.createButton}>
-          <Text style={styles.plusText}>+</Text>
-        </TouchableOpacity>
-   
+
+    <TouchableOpacity onPress={onPress} style={styles.createButton}>
+      <Text style={styles.plusText}>+</Text>
+    </TouchableOpacity>
+
     // </View>
   );
 };
@@ -20,11 +20,10 @@ const PlusCircleButton = ({  onPress }: Props) => {
 export default PlusCircleButton;
 
 const styles = StyleSheet.create({
-
-plusText: {
-  color: "white",
-  fontSize: 24,
-},
+  plusText: {
+    color: "white",
+    fontSize: 24,
+  },
   createButton: {
     backgroundColor: "#6744FF",
 

@@ -73,7 +73,6 @@ const SearchCommunityGroupList: React.FC<{
       renderItem={({ item }) => <CommunityHolder item={item} />}
       getItemLayout={(_, index) => ({ length: 80, offset: 80 * index, index })}
       removeClippedSubviews
-
     />
   );
 };
@@ -107,9 +106,9 @@ const styles = StyleSheet.create({
     width: "80%",
   },
   communityName: {
-    fontSize:14,
-    color:"#6B7280",
-    fontWeight:"500",
-    lineHeight:16
+    fontSize: 14,
+    color: "#6B7280",
+    fontWeight: "500",
+    lineHeight: 16,
   },
 });

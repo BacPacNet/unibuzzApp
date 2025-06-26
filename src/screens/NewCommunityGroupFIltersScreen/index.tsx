@@ -2,10 +2,10 @@ import BackHeader from "@/components/atoms/BackHeader";
 import CollapsibleMultiSelect from "@/components/atoms/CollapsibleMultiSelect";
 import ReusableButton from "@/components/atoms/ReusableButton";
 import { useCommunityFilterContext } from "@/context/CommunityFilterProvider/CommunityFilterProvider";
-import {  subCategories } from "@/types/CommunityFilter";
-import {useNavigation } from "@react-navigation/native";
+import { subCategories } from "@/types/CommunityFilter";
+import { useNavigation } from "@react-navigation/native";
 import { Xmark } from "iconoir-react-native";
-import React, {  useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   ScrollView,
   StyleSheet,
@@ -18,7 +18,6 @@ type Props = {};
 
 const NewCommunityGroupFilterScreen = (props: Props) => {
   const navigate = useNavigation();
-
 
   const [selectedFilters, setSelectedFilters] = useState<
     Record<string, string[]>
@@ -67,8 +66,6 @@ const NewCommunityGroupFilterScreen = (props: Props) => {
     });
   };
 
-
-
   useEffect(() => {
     setSelectedFilters(createSelectedFilters);
   }, []);
@@ -82,8 +79,6 @@ const NewCommunityGroupFilterScreen = (props: Props) => {
   return (
     <SafeAreaView style={styles.container}>
       {/* Header */}
-
-
 
       <ScrollView style={styles.content}>
         <BackHeader label="Create Group" />

@@ -8,7 +8,7 @@ import {
   ActivityIndicator,
   Share,
 } from "react-native";
-import Ava from "@/assets/avatar.svg"
+import Ava from "@/assets/avatar.svg";
 import { getUserProfileStore, getUserStore } from "@/storage/user";
 import {
   ChatBubble,
@@ -65,7 +65,9 @@ const ProfileCard = ({
   const userFollowingIDs =
     userProfile && userProfile?.following?.map((following) => following.userId);
   const { navigate } = useNavigation<NavigationProp>();
-  const { mutate: toggleFollow, isPending } = useToggleFollow(userFollowingIDs?.includes(userId as string) ? "Following" : "Followers");
+  const { mutate: toggleFollow, isPending } = useToggleFollow(
+    userFollowingIDs?.includes(userId as string) ? "Following" : "Followers",
+  );
   const { mutateAsync: mutateCreateUserChat, isPending: userChatPending } =
     useCreateUserChat();
 
@@ -182,18 +184,19 @@ const ProfileCard = ({
 
       <View style={styles.card}>
         <View style={styles.profilePicWrapper}>
-        {(isSideBar && !userProfile?.profile_dp?.imageUrl) || (!isSideBar && !avatarUrl) ? (
-  <Ava width={80} height={80} />
-) : (
-  <Image
-    source={
-      isSideBar
-        ? { uri: userProfile?.profile_dp?.imageUrl }
-        : { uri: avatarUrl }
-    }
-    style={styles.profilePic}
-  />
-)}
+          {(isSideBar && !userProfile?.profile_dp?.imageUrl) ||
+          (!isSideBar && !avatarUrl) ? (
+            <Ava width={80} height={80} />
+          ) : (
+            <Image
+              source={
+                isSideBar
+                  ? { uri: userProfile?.profile_dp?.imageUrl }
+                  : { uri: avatarUrl }
+              }
+              style={styles.profilePic}
+            />
+          )}
           {/* <Image
             source={
               isSideBar

@@ -80,11 +80,11 @@ const MultiSelectDropdown = ({
         <Text style={styles.optionText}>{item}</Text>
         {multiSelect && (
           <View className="flex justify-center items-center">
-              <View style={styles.checkboxBox}>
-        {isSelected && (
-          <CheckSquareSolid width={20} height={20} color="#6744FF" />
-        )}
-      </View>
+            <View style={styles.checkboxBox}>
+              {isSelected && (
+                <CheckSquareSolid width={20} height={20} color="#6744FF" />
+              )}
+            </View>
             {/* <BouncyCheckbox
               ref={bouncyCheckboxRef}
               size={25}

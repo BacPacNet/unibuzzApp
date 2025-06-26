@@ -73,20 +73,16 @@ export const useToggleFollow = (type: string) => {
     mutationFn: (id: string) => toggleFollow(id, cookieValue),
 
     onSuccess: (response: any, userId: string) => {
-
       updateUserProfileFollowing(response.following);
-     if(type == "Following"){
-      queryClient.invalidateQueries({
-        queryKey: ["getUserFollowing"],
-      });
-    }
-    else{
-      queryClient.invalidateQueries({
-        queryKey: ["getUserFollowers"],
-      });
-    }
- 
-      
+      if (type == "Following") {
+        queryClient.invalidateQueries({
+          queryKey: ["getUserFollowing"],
+        });
+      } else {
+        queryClient.invalidateQueries({
+          queryKey: ["getUserFollowers"],
+        });
+      }
     },
     onError: (res: any) => {
       console.log(res.response.data.message, "res");
@@ -132,7 +128,6 @@ export function useGetUserFollowing(
 ) {
   const cookieValue = getToken() as string;
   const debouncedSearchTerm = useDebounce(name, 1000);
-
 
   return useInfiniteQuery({
     queryKey: ["getUserFollowing", debouncedSearchTerm, userId],

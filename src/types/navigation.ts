@@ -45,7 +45,7 @@ export type RootStackParamList = {
   NewCommunityGroupScreen: any;
   EditCommunityGroupScreen: any;
   NewCommunityGroupFilterScreen: any;
-  NewCommunityGroupUsersSelectScreen:any
+  NewCommunityGroupUsersSelectScreen: any;
   NewGroupPost: any;
   //   University: {
 
