@@ -1,30 +1,28 @@
-import BackHeader from "@/components/atoms/BackHeader";
 import CollapsibleMultiSelect from "@/components/atoms/CollapsibleMultiSelect";
-import ReusableButton from "@/components/atoms/ReusableButton";
 import { useCommunityFilterContext } from "@/context/CommunityFilterProvider/CommunityFilterProvider";
 import { subCategories } from "@/types/CommunityFilter";
-import { useNavigation } from "@react-navigation/native";
-import { Xmark } from "iconoir-react-native";
-import React, { useEffect, useState } from "react";
-import {
-  ScrollView,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
-type Props = {};
-
-const NewCommunityGroupFilterScreen = (props: Props) => {
-  const navigate = useNavigation();
-
+import { useFocusEffect } from "@react-navigation/native";
+import { useCallback, useEffect, useState } from "react";
+import { View } from "react-native";
+import { ScrollView } from "react-native-actions-sheet";
+const SearchCommunityFilterBottomSheet = () => {
+  const { selectedFiltersMain, setSelectedFiltersMain } =
+    useCommunityFilterContext();
   const [selectedFilters, setSelectedFilters] = useState<
     Record<string, string[]>
   >({});
 
-  const { createSelectedFilters, setCreateSelectedFilters } =
-    useCommunityFilterContext();
+  useEffect(() => {
+    if (Object.keys(selectedFilters)?.length >= 0) {
+      setSelectedFiltersMain(selectedFilters);
+    }
+  }, [selectedFilters]);
+
+  useFocusEffect(
+    useCallback(() => {
+      setSelectedFilters(selectedFiltersMain);
+    }, []),
+  );
 
   const handleSelect = (category: string, option: string) => {
     setSelectedFilters((prev: any) => {
@@ -66,22 +64,14 @@ const NewCommunityGroupFilterScreen = (props: Props) => {
     });
   };
 
-  useEffect(() => {
-    setSelectedFilters(createSelectedFilters);
-  }, []);
-
-  const handleClick = () => {
-    setCreateSelectedFilters(selectedFilters);
-
-    navigate.goBack();
-  };
-
   return (
-    <SafeAreaView style={styles.container}>
-      {/* Header */}
-
-      <ScrollView style={styles.content}>
-        <BackHeader label="Create Group" />
+    <View>
+      <ScrollView
+        style={{
+          width: "100%",
+          flexShrink: 1,
+        }}
+      >
         <CollapsibleMultiSelect
           title="Academic Focus"
           options={subCategories["Academic Focus"]}
@@ -142,117 +132,9 @@ const NewCommunityGroupFilterScreen = (props: Props) => {
             )
           }
         />
-
-        <View>
-          {Object.keys(selectedFilters).length > 0 && (
-            <View style={styles.selectedFiltersContainer}>
-              <Text style={styles.selectedFiltersTitle}>Apply Categories</Text>
-              <View style={styles.filtersRow}>
-                {Object.entries(selectedFilters).map(([category, filters]) =>
-                  filters.map((filter) => (
-                    <TouchableOpacity
-                      key={filter}
-                      style={styles.filterChip}
-                      onPress={() => handleSelect(category as any, filter)}
-                    >
-                      <Text style={styles.filterChipText}>{filter}</Text>
-                      <Xmark width={24} height={24} color="#6744FF" />
-                    </TouchableOpacity>
-                  )),
-                )}
-              </View>
-            </View>
-          )}
-        </View>
       </ScrollView>
-      <View style={styles.ButtonContainer}>
-        <ReusableButton
-          onPress={() => handleClick()}
-          buttonText="Apply Filter"
-          variant="primary"
-          height="large"
-        />
-      </View>
-    </SafeAreaView>
+    </View>
   );
 };
 
-export default NewCommunityGroupFilterScreen;
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "white",
-  },
-  keyboardAvoid: {
-    flex: 1,
-  },
-  header: {
-    flexDirection: "row",
-    alignItems: "center",
-    height: 56,
-    paddingHorizontal: 16,
-    borderBottomWidth: 1,
-    borderBottomColor: "#E5E7EB",
-  },
-  backButton: {
-    padding: 8,
-  },
-  headerTitle: {
-    fontSize: 18,
-    fontWeight: "500",
-    marginLeft: 8,
-  },
-
-  content: {
-    flex: 1,
-  },
-  sectionHeader: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    paddingVertical: 16,
-    paddingHorizontal: 16,
-  },
-  selectedFiltersContainer: {
-    padding: 16,
-  },
-  selectedFiltersTitle: {
-    fontSize: 16,
-    color: "#666",
-    marginBottom: 12,
-  },
-  filtersRow: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-    gap: 8,
-  },
-  filterChip: {
-    flexDirection: "row",
-    alignItems: "center",
-
-    paddingHorizontal: 12,
-    borderRadius: 4,
-    borderWidth: 1,
-    borderColor: "#6744FF",
-    backgroundColor: "white",
-    marginRight: 8,
-
-    height: 28,
-  },
-  filterChipText: {
-    color: "#6744FF",
-    marginRight: 4,
-  },
-  ButtonContainer: {
-    padding: 10,
-    paddingBottom: 0,
-    borderTopWidth: 1,
-    borderBottomWidth: 1,
-    borderColor: "#E5E7EB",
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "center",
-    marginTop: 4,
-  },
-});
+export default SearchCommunityFilterBottomSheet;

@@ -69,7 +69,7 @@ const CommunityGroupTabs = ({
 
   return (
     <View>
-      <View style={styles.tabContainer}>
+      {/* <View style={styles.tabContainer}>
         <TouchableOpacity onPress={() => setCurrTab("Joined")}>
           <Text style={currTab === "Joined" ? styles.activeTab : styles.tab}>
             Joined
@@ -85,7 +85,7 @@ const CommunityGroupTabs = ({
             My Groups
           </Text>
         </TouchableOpacity>
-      </View>
+      </View> */}
 
       {renderCurrentTabContent()}
     </View>

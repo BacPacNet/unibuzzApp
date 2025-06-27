@@ -48,6 +48,7 @@ export interface CreateCommunityGroupType {
   occupation: [];
   affiliation: [];
   repostOption: string;
+  selectedFilters: [];
 }
 
 export interface CommunityGroupType {

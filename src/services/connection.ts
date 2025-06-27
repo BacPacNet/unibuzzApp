@@ -65,7 +65,7 @@ export async function toggleFollow(id: string, token: any) {
   return response;
 }
 
-export const useToggleFollow = () => {
+export const useToggleFollow = (type: string) => {
   const cookieValue = getToken() as string;
 
   const queryClient = useQueryClient();
@@ -73,38 +73,16 @@ export const useToggleFollow = () => {
     mutationFn: (id: string) => toggleFollow(id, cookieValue),
 
     onSuccess: (response: any, userId: string) => {
-      //  storeUserProfile(response);
       updateUserProfileFollowing(response.following);
-      //setUserfollowing(response.followed.following)
-      //  if (type == "Following") {
-      //    queryClient.invalidateQueries({ queryKey: ["getUserFollow"] });
-      //  }
-      //  else {
-
-      queryClient.setQueryData(
-        ["usersProfileForConnections"],
-        (userProfileConnection: UsersProfileForConnectionsResponse) => {
-          if (!userProfileConnection || !userProfileConnection.pages)
-            return userProfileConnection;
-          return {
-            ...userProfileConnection,
-            pages: userProfileConnection.pages.map((page: any) => ({
-              ...page,
-              users: page.users.map((user: any) =>
-                user._id === userId
-                  ? {
-                      ...user,
-                      isFollowing: !user.isFollowing,
-                    }
-                  : user,
-              ),
-            })),
-          };
-        },
-      );
-      queryClient.invalidateQueries({
-        queryKey: ["getUserFollowers"],
-      });
+      if (type == "Following") {
+        queryClient.invalidateQueries({
+          queryKey: ["getUserFollowing"],
+        });
+      } else {
+        queryClient.invalidateQueries({
+          queryKey: ["getUserFollowers"],
+        });
+      }
     },
     onError: (res: any) => {
       console.log(res.response.data.message, "res");

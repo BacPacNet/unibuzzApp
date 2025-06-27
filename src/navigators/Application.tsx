@@ -49,6 +49,8 @@ import SinglePost from "@/screens/SinglePost/SinglePost";
 import ForgetPasswordScreen from "@/screens/ForgetPasswordScreen/ForgetPasswordScreen";
 import { getTabIcons } from "@/constant/tabIcons";
 import { useGetUserNotificationTotalCount } from "@/services/notification";
+import UsersScreen from "@/screens/UsersScreen";
+import { NewCommunityGroupStatesProvider } from "@/context/NewCommunityGroupStatesProvider/NewCommunityGroupStatesProvider";
 
 const Stack = createStackNavigator<RootStackParamList>();
 const Tab = createBottomTabNavigator<RootStackParamList>();
@@ -210,6 +212,13 @@ function ApplicationNavigator() {
           options={{
             tabBarButton: () => null,
             // unmountOnBlur: true,
+          }}
+        />
+        <Tab.Screen
+          name="UsersScreen"
+          component={UsersScreen}
+          options={{
+            tabBarButton: () => null,
           }}
         />
       </Tab.Navigator>
@@ -387,7 +396,9 @@ function ApplicationNavigator() {
           <HeaderProvider>
             <CommunityProvider>
               <CommunityFilterProvider>
-                <RightDrawerScreen />
+                <NewCommunityGroupStatesProvider>
+                  <RightDrawerScreen />
+                </NewCommunityGroupStatesProvider>
               </CommunityFilterProvider>
             </CommunityProvider>
           </HeaderProvider>

@@ -282,7 +282,7 @@ const PostCard = memo(
           ref={commentBottomSheet}
           gestureEnabled={true}
           safeAreaInsets={insets}
-          // snapPoints={[70, 100]}
+          snapPoints={[70, 100]}
           containerStyle={{
             //  height: "100%",
             //  marginBottom: insets.bottom, // Keeps it above the home indicator

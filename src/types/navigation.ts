@@ -45,6 +45,7 @@ export type RootStackParamList = {
   NewCommunityGroupScreen: any;
   EditCommunityGroupScreen: any;
   NewCommunityGroupFilterScreen: any;
+  NewCommunityGroupUsersSelectScreen: any;
   NewGroupPost: any;
   //   University: {
 
@@ -56,6 +57,7 @@ export type RootStackParamList = {
   UserEmailChange: undefined;
   UserAccountDeactivation: undefined;
   SinglePost: any;
+  UsersScreen: any;
 };
 
 export type RootScreenProps<

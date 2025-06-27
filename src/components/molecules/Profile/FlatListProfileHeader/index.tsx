@@ -70,10 +70,10 @@ export const FlatListProfileHeaderPart = ({
   const isStudent = role === userTypeEnum.Student;
 
   const handleNavigate = useCallback(
-    (index: number) => {
-      navigate("Connection", {
-        screen: "YourConnections",
-        params: { index, userId },
+    (type: string) => {
+      navigate("UsersScreen", {
+        userId,
+        type,
       });
     },
     [navigate, userId],
@@ -126,7 +126,7 @@ export const FlatListProfileHeaderPart = ({
         </View>
         <View className="flex flex-row gap-4">
           <TouchableOpacity
-            onPress={() => handleNavigate(userData?.id == userId ? 1 : 0)}
+            onPress={() => handleNavigate("following")}
             style={styles.followButton}
           >
             <Text className="text-neutral-700 font-bold text-2xs">
@@ -134,7 +134,7 @@ export const FlatListProfileHeaderPart = ({
             </Text>
           </TouchableOpacity>
           <TouchableOpacity
-            onPress={() => handleNavigate(userData?.id == userId ? 2 : 1)}
+            onPress={() => handleNavigate("followers")}
             style={styles.followButton}
           >
             <Text className="text-neutral-700 font-bold text-2xs">

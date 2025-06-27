@@ -1,5 +1,5 @@
-import React, { useCallback, useState } from "react";
-import { ActivityIndicator, Image, Text, TextInput, View } from "react-native";
+import React, { useState } from "react";
+import { ActivityIndicator, Text, TextInput, View } from "react-native";
 import { FlatList } from "react-native-actions-sheet";
 
 import { useUsersProfileForConnections } from "@/services/users";
@@ -27,10 +27,15 @@ const SelectCommunityUsersBottomSheet = ({
     isFetching,
   } = useUsersProfileForConnections(searchInput, 10, true);
 
+  const selectedUserIds = selectedUsers.map((user) => user._id);
+
   const userProfiles =
     data?.pages
       .flatMap((page) => page.users)
-      .filter((user) => user._id !== userData?.id) || [];
+      .filter(
+        (user) =>
+          user._id !== userData?.id && !selectedUserIds.includes(user._id),
+      ) || [];
 
   const renderItem = ({ item }: { item: Users }) => {
     return (

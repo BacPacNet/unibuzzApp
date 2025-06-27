@@ -91,7 +91,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#9685FF",
   },
   label: {
-    fontSize: 28,
+    fontSize: 14,
     color: "#3A3B3C",
     fontWeight: "600",
   },
