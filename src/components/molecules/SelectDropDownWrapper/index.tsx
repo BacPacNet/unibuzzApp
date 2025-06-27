@@ -18,12 +18,14 @@ interface DropdownWrapperProps {
   children: ReactElement;
   renderDropdown: () => ReactNode;
   position?: "top" | "bottom" | "left" | "right";
+  extraLeft?: number;
 }
 
 const DropdownWrapper = ({
   children,
   renderDropdown,
   position = "bottom",
+  extraLeft = 0,
 }: DropdownWrapperProps) => {
   const triggerRef = useRef<TouchableOpacity>(null);
   const [show, setShow] = useState(false);
@@ -53,7 +55,7 @@ const DropdownWrapper = ({
             break;
           case "left":
             top = py;
-            left = px - 110 - GAP;
+            left = px - width - GAP - extraLeft;
             break;
           case "right":
             top = py;

@@ -1,30 +1,14 @@
-import { FormInput } from "@/components/atoms/FormInput";
-import MultiSelectDropdown from "@/components/atoms/MultiSelectDropDown";
-import RadioInput from "@/components/atoms/RadioInput";
+import BackHeader from "@/components/atoms/BackHeader";
 import ReusableButton from "@/components/atoms/ReusableButton";
-import { SelectUserProfileChips } from "@/components/atoms/SelectedUserProfileChips";
-import TextAreaWithWordCount from "@/components/atoms/TextAreaWIthWordCount";
-import SelectCommunityUsersBottomSheet from "@/components/molecules/CreateNewGroup/SelectCommunityUsersBottomSheet";
-import SelectedChip from "@/components/molecules/CreateNewGroup/SelectedChip";
-
+import { FormFields } from "@/components/molecules/CreateNewGroup/FormFields/FormFields";
+import { ImageUploadSection } from "@/components/molecules/CreateNewGroup/ImageUploadSection/ImageUploadSection";
 import { useCommunityFilterContext } from "@/context/CommunityFilterProvider/CommunityFilterProvider";
-import { useHeader } from "@/context/HeaderProvider/Header";
-import {
-  filterData,
-  filterFacultyData,
-  getUniqueById,
-} from "@/lib/communityGroup";
+import { useNewCommunityGroupStatesContext } from "@/context/NewCommunityGroupStatesProvider/NewCommunityGroupStatesProvider";
 import { useUpdateCommunityGroup } from "@/services/community-group";
 import { useGetCommunity } from "@/services/university-community";
 import { useUploadToS3 } from "@/services/upload";
-import { CommunityUsers } from "@/types/Community";
-import { CreateCommunityGroupType } from "@/types/CommunityGroup";
+import { CreateCommunityGroupType, status } from "@/types/CommunityGroup";
 import { RootStackParamList } from "@/types/navigation";
-import {
-  degreeAndMajors,
-  occupationAndDepartment,
-  value,
-} from "@/types/register";
 
 import { UPLOAD_CONTEXT } from "@/types/uploads";
 import {
@@ -33,11 +17,10 @@ import {
   useRoute,
 } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
-import { MediaImage, NavArrowLeft } from "iconoir-react-native";
-import React, { useCallback, useEffect, useRef, useState } from "react";
-import { Controller, useForm } from "react-hook-form";
+
+import React, { useCallback, useEffect, useState } from "react";
+import { useForm } from "react-hook-form";
 import {
-  Image,
   KeyboardAvoidingView,
   Platform,
   ScrollView,
@@ -46,7 +29,6 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import ActionSheet, { ActionSheetRef } from "react-native-actions-sheet";
 import { launchImageLibrary } from "react-native-image-picker";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Toast } from "react-native-toast-notifications";
@@ -67,24 +49,21 @@ type NavigationProp = StackNavigationProp<
 
 const EditCommunityGroupScreen = () => {
   const navigate = useNavigation<NavigationProp>();
-  const route = useRoute();
+  const route: any = useRoute();
 
-  const { communityId, communityGroups } = route.params as any;
-  const { changeHeaderShownStatus } = useHeader();
+  const communityId = route.params?.communityId ?? "";
+  const communityGroups = (route.params?.communityGroups as any) ?? "";
+  const groupStatus = (route.params?.groupStatus as any) ?? "";
   const { data: communityData, isLoading } = useGetCommunity(communityId);
   const { createSelectedFilters, setCreateSelectedFilters } =
     useCommunityFilterContext();
   const { mutateAsync: uploadToS3 } = useUploadToS3();
   const { mutate: mutateEditGroup, isPending } = useUpdateCommunityGroup();
-  const yearActionSheetRef = useRef<ActionSheetRef>(null);
-  const majorActionSheetRef = useRef<ActionSheetRef>(null);
-  const occupationActionSheetRef = useRef<ActionSheetRef>(null);
-  const affiliationActionSheetRef = useRef<ActionSheetRef>(null);
 
   const {
     watch,
     control,
-    handleSubmit: handleGroupCreate,
+    handleSubmit: handleGroupUpdate,
     formState: { errors },
     setValue,
     reset,
@@ -97,14 +76,16 @@ const EditCommunityGroupScreen = () => {
       communityGroupAccess: "",
       communityGroupType: "",
       selectedUsers: [],
+      selectedFilters: [],
     },
   });
-  const SelectedUsers = watch("selectedUsers") as unknown as CommunityUsers[];
-  const description = watch("description") || "";
-  const studentYear = watch("studentYear") || "";
-  const major = watch("major") || "";
-  const occupation = watch("occupation") || "";
-  const affiliation = watch("affiliation") || "";
+
+  const title = watch("title") || "";
+  const initialDescription = watch("description") || "";
+  const communityGroupAccess = watch("communityGroupAccess") || "";
+  const communityGroupType = watch("communityGroupType") || "";
+  const selectedUsers = watch("selectedUsers") || [];
+  const selectedFilters = watch("selectedFilters") || [];
 
   const [previewProfileImage, setPreviewProfileImage] = useState<string | null>(
     communityGroups?.communityGroupLogoUrl?.imageUrl,
@@ -115,25 +96,35 @@ const EditCommunityGroupScreen = () => {
   const [isProfileLoading, setIsProfileLoading] = useState(false);
   const [imageToUpload, setImageToUpload] = useState<ImageAsset | null>(null);
   const [bannerToUpload, setBannerToUpload] = useState<ImageAsset | null>(null);
-  const [searchInput, setSearchInput] = useState<string>("");
-  const [individualsUsers, setIndividualsUsers] = useState<any[]>([]);
-  const [filteredUsers, setFilterUsers] = useState<any>();
-  const [filteredFacultyUsers, setFilterFacultyUsers] = useState<any>();
-  const actionSheetRef = useRef<ActionSheetRef>(null);
 
+  const { selectedUsersState, resetFilters } =
+    useNewCommunityGroupStatesContext();
   useFocusEffect(
     useCallback(() => {
-      changeHeaderShownStatus(false);
-
-      setCreateSelectedFilters(communityGroups?.communityGroupCategory);
-
       return () => {
-        changeHeaderShownStatus(true);
-        setCreateSelectedFilters([]);
-        setIndividualsUsers([]);
+        resetFilters();
       };
-    }, []),
+    }, [communityGroups]),
   );
+
+  useEffect(() => {
+    setValue("title", communityGroups?.title ?? "");
+    setValue("description", communityGroups?.description);
+    setValue(
+      "communityGroupAccess",
+      communityGroups?.communityGroupAccess ?? "",
+    );
+    setValue("communityGroupType", communityGroups?.communityGroupType);
+    setValue("selectedUsers", communityGroups?.users ?? []);
+    setValue("selectedFilters", communityGroups?.communityGroupCategory);
+    setPreviewProfileImage(
+      communityGroups?.communityGroupLogoUrl?.imageUrl ?? "",
+    );
+    setPreviewBannerImage(
+      communityGroups?.communityGroupLogoCoverUrl?.imageUrl ?? "",
+    );
+    setCreateSelectedFilters(communityGroups?.communityGroupCategory);
+  }, [communityGroups]);
 
   const handleNavigateToFilterScreen = () => {
     navigate.navigate("manageGroupStack", {
@@ -149,18 +140,8 @@ const EditCommunityGroupScreen = () => {
       }
     });
   };
-  const handleBannerPick = async () => {
-    launchImageLibrary({ mediaType: "photo" }, (response: any) => {
-      if (!response.didCancel && !response.errorCode) {
-        const imageObject = response.assets[0];
-        setBannerToUpload(imageObject);
-      }
-    });
-  };
 
   const onSubmit = async (data: CreateCommunityGroupType) => {
-    // return console.log("data", data);
-
     if (Object.values(createSelectedFilters).flat()?.length < 1) {
       return Toast.show("At least one group category is required.");
     }
@@ -190,22 +171,13 @@ const EditCommunityGroupScreen = () => {
       communityGroupCategory: createSelectedFilters,
     };
 
-    const mergedUsers = [
-      ...individualsUsers,
-      ...SelectedUsers,
-      ...filteredUsers,
-      ...filteredFacultyUsers,
-    ];
-    const uniqueUsers = getUniqueById(mergedUsers);
     const payload = {
-      ...data,
+      title: title,
+      description: initialDescription,
+      communityGroupAccess: communityGroupAccess,
       ...communityGroupCategory,
-      selectedUsers: uniqueUsers,
-      communityGroupLogoUrl: logoImageData?.data[0],
-      communityGroupLogoCoverUrl: CoverImageData?.data[0],
-      //   universityAdminId: communityData?.adminId,
+      selectedUsers: selectedUsersState,
     };
-    // return console.log("pay", payload);
 
     mutateEditGroup(
       { communityId: communityGroups?._id, payload: payload },
@@ -219,64 +191,12 @@ const EditCommunityGroupScreen = () => {
             communityGroupId: communityGroups?._id,
           });
         },
+        onError: (error) => {
+          setIsProfileLoading(false);
+        },
       },
     );
   };
-
-  const removeUser = (userId: string) => {
-    setIndividualsUsers((prev: any[]) => prev.filter((u) => u._id !== userId));
-  };
-
-  useEffect(() => {
-    const allUsers = communityData?.users || [];
-    const allStudentUsers = allUsers.filter((user) => user.role == "student");
-
-    const filters = { year: studentYear, major: major };
-
-    const filtered = filterData(allStudentUsers, filters);
-
-    setFilterUsers(filtered);
-  }, [studentYear, major, communityData]);
-
-  useEffect(() => {
-    const allUsers = communityData?.users || [];
-    const allFacultyUsers = allUsers.filter((user) => user.role == "faculty");
-
-    const filters = { occupation: occupation, affiliation: affiliation };
-    const filtered = filterFacultyData(allFacultyUsers, filters);
-
-    setFilterFacultyUsers(filtered);
-  }, [occupation, affiliation]);
-
-  useEffect(() => {
-    if (communityGroups) {
-      const {
-        title,
-        description,
-        communityGroupAccess,
-        communityGroupType,
-        communityGroupCategory,
-        users,
-      } = communityGroups;
-      const defaultCommunityGroup = {
-        title: title,
-        description: description,
-        communityGroupAccess: communityGroupAccess,
-        communityGroupType: communityGroupType,
-
-        selectedUsers: [],
-        communityGroupLogoUrl: null,
-        communityGroupLogoCoverUrl: null,
-      };
-      // setSelectedFilters(communityGroupCategory)
-      setPreviewProfileImage(communityGroups?.communityGroupLogoUrl?.imageUrl);
-      setPreviewBannerImage(
-        communityGroups?.communityGroupLogoCoverUrl?.imageUrl,
-      );
-      setCreateSelectedFilters(communityGroupCategory);
-      reset(defaultCommunityGroup);
-    }
-  }, [communityGroups, reset]);
 
   const handleGOBack = () => {
     navigate.navigate("CommunityGroup", {
@@ -285,384 +205,75 @@ const EditCommunityGroupScreen = () => {
     });
   };
 
-  const handleRemove = (fieldName: any, itemToRemove: string) => {
-    const currentValue = (watch(fieldName) as string[]) || [];
-    const updatedValue = currentValue.filter((item) => item !== itemToRemove);
-    setValue(fieldName, updatedValue);
+  const handleNavigateToUsersSelectScreen = () => {
+    navigate.navigate("manageGroupStack", {
+      screen: "NewCommunityGroupUsersSelectScreen",
+    });
   };
 
   return (
     <SafeAreaView style={styles.container}>
       {/* Header */}
-      <View style={styles.header}>
-        <TouchableOpacity
-          onPress={() => handleGOBack()}
-          style={styles.backButton}
-        >
-          <NavArrowLeft width={24} height={24} color="#000" />
-        </TouchableOpacity>
-        <Text style={styles.headerTitle}>Edit Group</Text>
-      </View>
 
       <KeyboardAvoidingView
         behavior={Platform.OS === "ios" ? "padding" : "height"}
         style={styles.keyboardAvoid}
       >
         <ScrollView>
+          <BackHeader label=" Group" onPress={handleGOBack} />
           <View style={styles.content}>
             {/* Profile Photo */}
-            <View style={styles.photoSection}>
-              <Text style={styles.sectionTitle}>Profile Photo</Text>
-
-              <View style={styles.profileImageContainer}>
-                <TouchableOpacity
-                  onPress={() => handleImagePick()}
-                  style={styles.photoUpload}
-                >
-                  {imageToUpload ? (
-                    <Image
-                      source={{ uri: imageToUpload.uri }}
-                      className="w-full h-full rounded-full absolute"
-                    />
-                  ) : (
-                    previewProfileImage && (
-                      <Image
-                        source={{ uri: previewProfileImage }}
-                        className="w-full h-full rounded-full absolute"
-                      />
-                    )
-                  )}
-                  <MediaImage width={32} height={32} color="#9CA3AF" />
-                  <Text style={styles.photoUploadText}>Select Image</Text>
-                </TouchableOpacity>
-              </View>
-            </View>
-
-            {/* banner photo  */}
-            <View style={styles.photoSection}>
-              <Text style={styles.sectionTitle}>Banner Photo</Text>
-
-              <View style={styles.profileImageContainer}>
-                <TouchableOpacity
-                  onPress={() => handleBannerPick()}
-                  style={styles.bannerUpload}
-                >
-                  {bannerToUpload ? (
-                    <Image
-                      source={{ uri: bannerToUpload.uri }}
-                      className="w-full h-full  absolute"
-                    />
-                  ) : (
-                    previewBannerImage && (
-                      <Image
-                        source={{ uri: previewBannerImage }}
-                        className="w-full h-full  absolute"
-                      />
-                    )
-                  )}
-                  <MediaImage width={32} height={32} color="#9CA3AF" />
-                  <Text style={styles.photoUploadText}>Select Image</Text>
-                </TouchableOpacity>
-              </View>
-            </View>
-
-            {/* Group Name */}
-            <View style={styles.section}>
-              <Text style={styles.inputLabels}>Group Name</Text>
-
-              <FormInput
-                placeholder="Enter Group Name"
-                isLabelShown={false}
-                required
-                name="title"
-                control={control}
-                rules={{
-                  required: "This field is required",
-                }}
-                isError={!!errors.title}
-                errorMessage={errors.title?.message}
-              />
-            </View>
-            {/* Group Name */}
-            <View style={styles.section}>
-              <Text style={styles.inputLabels}>Group Description</Text>
-
-              <TextAreaWithWordCount
-                control={control}
-                name="description"
-                maxChars={160}
-              />
-            </View>
-            <View style={styles.section}>
-              <Text style={styles.inputLabels}>Group Access</Text>
-              <RadioInput
-                name="communityGroupAccess"
-                control={control}
-                options={[
-                  {
-                    label: "Public",
-                    value: "Public",
-                    details: "Anyone can join",
-                  },
-                  {
-                    label: "Private",
-                    value: "Private",
-                    details: "Permission to join required",
-                  },
-                ]}
-                required
-              />
-            </View>
-            {/* <View style={styles.section}>
-              <Text style={styles.inputLabels}>Group Type</Text>
-              <RadioInput
-                name="communityGroupType"
-                control={control}
-                options={[
-                  {
-                    label: "Casual",
-                    value: "Casual",
-                    details: "No approval required",
-                  },
-                  {
-                    label: "Official",
-                    value: "Official",
-                    details: "Require university approval",
-                  },
-                ]}
-                required
-              />
-            </View> */}
-            <View style={styles.section}>
-              <Text style={styles.inputLabels}>Group Category</Text>
-              {Object.values(createSelectedFilters).flat()?.length ? (
-                <SelectedChip
-                  selectedItem={[
-                    Object.values(createSelectedFilters)
-                      .flat()
-                      ?.length?.toString() + " Categories Selected",
-                  ]}
-                  onRemove={() => setCreateSelectedFilters([])}
-                />
-              ) : (
-                ""
-              )}
-
-              <ReusableButton
-                buttonText="Select Group Category"
-                variant="shade"
-                onPress={() => handleNavigateToFilterScreen()}
-              />
-            </View>
-            <View style={styles.section}>
-              <Text style={styles.inputLabels}>Add Members</Text>
-
-              <View>
-                {/* <SelectedUserChips
-                  selectedUsers={individualsUsers}
-                  onRemove={(id) => removeUser(id as string)}
-                /> */}
-                <SelectUserProfileChips
-                  individualsUsers={individualsUsers}
-                  onRemove={(id) => removeUser(id as string)}
-                />
-
-                <ReusableButton
-                  onPress={() => actionSheetRef.current?.show()}
-                  buttonText="Add Individuals"
-                  variant="shade"
-                />
-              </View>
-            </View>
-
-            <View style={styles.section}>
-              <Text style={styles.inputLabels}>Students</Text>
-              <View style={styles.selectedChipContainer}>
-                <SelectedChip
-                  selectedItem={studentYear}
-                  //   onRemove={(id) => console.log(id as string)}
-                  onRemove={(year) => handleRemove("studentYear", year)}
-                  variant="border"
-                />
-                <SelectedChip
-                  selectedItem={major}
-                  onRemove={(Major) => handleRemove("major", Major)}
-                />
-              </View>
-
-              <ReusableButton
-                onPress={() => yearActionSheetRef.current?.show()}
-                buttonText="Add Year"
-                variant="shade"
-              />
-              <View>
-                <ReusableButton
-                  onPress={() => majorActionSheetRef.current?.show()}
-                  buttonText="Add Major"
-                  variant="shade"
-                />
-              </View>
-            </View>
-
-            <View style={styles.section}>
-              <Text style={styles.inputLabels}>Faculty</Text>
-              <View style={styles.selectedChipContainer}>
-                <SelectedChip
-                  selectedItem={occupation}
-                  onRemove={(occupation) =>
-                    handleRemove("occupation", occupation)
-                  }
-                  variant="border"
-                />
-                <SelectedChip
-                  selectedItem={affiliation}
-                  onRemove={(affiliation) =>
-                    handleRemove("affiliation", affiliation)
-                  }
-                />
-              </View>
-              <ReusableButton
-                onPress={() => occupationActionSheetRef.current?.show()}
-                buttonText="Add Occupation"
-                variant="shade"
-              />
-
-              <ReusableButton
-                onPress={() => affiliationActionSheetRef.current?.show()}
-                buttonText="Add Affiliation"
-                variant="shade"
-              />
-            </View>
-            <ReusableButton
-              //   onPress={handleSubmit(onSubmit)}
-              disabled={isPending}
-              onPress={handleGroupCreate(onSubmit)}
-              buttonText="Update Group"
-              variant="primary"
-              isLoading={isProfileLoading || isPending}
+            <ImageUploadSection
+              imageToUpload={imageToUpload}
+              bannerToUpload={bannerToUpload}
+              previewProfileImage={previewProfileImage}
+              previewBannerImage={previewBannerImage}
+              onImagePick={handleImagePick}
             />
+
+            <FormFields
+              control={control}
+              errors={errors}
+              createSelectedFilters={createSelectedFilters}
+              setCreateSelectedFilters={setCreateSelectedFilters}
+              isPending={groupStatus === status.pending}
+              groupType={communityGroups?.communityGroupType}
+            />
+            <View style={styles.section}>
+              <View style={styles.buttonContainer}>
+                <ReusableButton
+                  buttonText="Select Group Category"
+                  variant="shade"
+                  onPress={handleNavigateToFilterScreen}
+                  height="large"
+                />
+
+                <View>
+                  <View style={styles.flexRowContainer}>
+                    <Text style={styles.inputLabels}>Add Members</Text>
+                  </View>
+                  <ReusableButton
+                    buttonText="Select People"
+                    variant="shade"
+                    onPress={handleNavigateToUsersSelectScreen}
+                    height="large"
+                  />
+                </View>
+              </View>
+            </View>
+
+            <View style={styles.submitButtonContainer}>
+              <ReusableButton
+                onPress={handleGroupUpdate(onSubmit)}
+                buttonText="Update Group"
+                variant="primary"
+                isLoading={isProfileLoading || isPending}
+                height="large"
+              />
+            </View>
           </View>
         </ScrollView>
       </KeyboardAvoidingView>
-
-      <ActionSheet
-        ref={actionSheetRef}
-        gestureEnabled={true}
-        snapPoints={[70, 100]}
-        onClose={() => setSearchInput("")}
-      >
-        <SelectCommunityUsersBottomSheet
-          setSelectedUsers={setIndividualsUsers}
-          selectedUsers={individualsUsers}
-        />
-      </ActionSheet>
-
-      <ActionSheet
-        ref={yearActionSheetRef}
-        gestureEnabled={true}
-        // snapPoints={[70, 100]}
-
-        onClose={() => setSearchInput("")}
-      >
-        <Controller
-          name="studentYear"
-          control={control}
-          render={({ field }) => (
-            <MultiSelectDropdown
-              options={Object.keys(degreeAndMajors)}
-              value={field.value || []}
-              onChange={field.onChange}
-              placeholder="Select Year"
-              label="Year (Students)"
-              err={false}
-              //   filteredCount={filteredYearCount}
-              multiSelect={false}
-            />
-          )}
-        />
-      </ActionSheet>
-      <ActionSheet
-        ref={majorActionSheetRef}
-        gestureEnabled={true}
-        // snapPoints={[70, 100]}
-        onClose={() => setSearchInput("")}
-        containerStyle={{
-          height: "100%",
-        }}
-      >
-        <Controller
-          name="major"
-          control={control}
-          render={({ field }) => (
-            <MultiSelectDropdown
-              options={value}
-              value={field.value || []}
-              onChange={field.onChange}
-              placeholder="Add By Major"
-              label="Major (Students)"
-              err={false}
-              search={true}
-              //   filteredCount={filteredMajorsCount}
-              parentCategory={studentYear}
-            />
-          )}
-        />
-      </ActionSheet>
-
-      <ActionSheet
-        ref={occupationActionSheetRef}
-        gestureEnabled={true}
-        // snapPoints={[70, 100]}
-        onClose={() => setSearchInput("")}
-        containerStyle={{
-          height: "100%",
-        }}
-      >
-        <Controller
-          name="occupation"
-          control={control}
-          render={({ field }) => (
-            <MultiSelectDropdown
-              options={Object.keys(occupationAndDepartment)}
-              value={field.value || []}
-              onChange={field.onChange}
-              placeholder="Add By Major"
-              label="Occupation (Faculty)"
-              err={false}
-              search={true}
-              multiSelect={false}
-              //   filteredCount={filteredOccupationCount}
-            />
-          )}
-        />
-      </ActionSheet>
-      <ActionSheet
-        ref={affiliationActionSheetRef}
-        gestureEnabled={true}
-        // snapPoints={[70, 100]}
-        onClose={() => setSearchInput("")}
-        containerStyle={{
-          height: "100%",
-        }}
-      >
-        <Controller
-          name="affiliation"
-          control={control}
-          render={({ field }) => (
-            <MultiSelectDropdown
-              options={value}
-              value={field.value || []}
-              onChange={field.onChange}
-              placeholder="Add By Major"
-              label="Affiliation/Department (Faculty)"
-              err={false}
-              search={true}
-              //   filteredCount={filteredAffiliationCount}
-              parentCategory={occupation}
-            />
-          )}
-        />
-      </ActionSheet>
     </SafeAreaView>
   );
 };
@@ -677,100 +288,35 @@ const styles = StyleSheet.create({
   keyboardAvoid: {
     flex: 1,
   },
-  header: {
-    flexDirection: "row",
+  loadingContainer: {
+    flex: 1,
+    justifyContent: "center",
     alignItems: "center",
-    height: 56,
-    paddingHorizontal: 16,
-    borderBottomWidth: 1,
-    borderBottomColor: "#E5E7EB",
   },
-  backButton: {
-    padding: 8,
-  },
-  headerTitle: {
-    fontSize: 18,
-    fontWeight: "500",
-    marginLeft: 8,
-  },
-
   content: {
     padding: 16,
   },
   section: {
-    marginBottom: 32,
+    marginBottom: 12,
   },
-  photoSection: {
-    alignItems: "flex-start",
-    marginBottom: 32,
-  },
-  sectionTitle: {
-    fontSize: 20,
-    fontWeight: "500",
-    marginBottom: 16,
-    color: "#1F2937",
-  },
-  profileImageContainer: {
-    display: "flex",
-    alignItems: "center",
-    width: "100%",
-  },
-  photoUpload: {
-    width: 160,
-    height: 160,
-    borderRadius: 200,
-    borderWidth: 2,
-    borderColor: "#9685FF",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  photoUploadText: {
-    fontSize: 14,
-    color: "#9CA3AF",
-    marginTop: 8,
-  },
-
-  bannerUpload: {
-    width: "100%",
-    height: 160,
-    borderRadius: 12,
-    borderWidth: 2,
-    borderColor: "#9685FF",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-
   inputLabels: {
-    fontSize: 20,
+    fontSize: 14,
     fontWeight: "500",
-    marginBottom: 4,
     color: "#1F2937",
+    marginBottom: 16,
   },
-  selectedChipContainer: {
+
+  flexRowContainer: {
+    flexDirection: "row",
+    alignContent: "center",
+    gap: 2,
+  },
+  buttonContainer: {
     display: "flex",
-    flexDirection: "row",
-    alignItems: "center",
-    flexWrap: "wrap",
+    justifyContent: "center",
+    gap: 32,
   },
-
-  filterChip: {
-    flexDirection: "row",
-    alignItems: "center",
-    alignSelf: "flex-start",
-
-    paddingHorizontal: 12,
-    borderRadius: 4,
-    borderWidth: 1,
-    borderColor: "#6744FF",
-    backgroundColor: "#6647FF",
-    marginRight: 8,
-
-    height: 28,
-    width: "auto",
-    marginVertical: 8,
-  },
-  filterChipText: {
-    color: "white",
-    marginRight: 4,
+  submitButtonContainer: {
+    marginTop: 32,
   },
 });

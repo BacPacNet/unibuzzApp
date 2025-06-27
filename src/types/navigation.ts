@@ -58,6 +58,7 @@ export type RootStackParamList = {
   UserAccountDeactivation: undefined;
   SinglePost: any;
   UsersScreen: any;
+  MembersScreen: any;
 };
 
 export type RootScreenProps<

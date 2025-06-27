@@ -8,12 +8,15 @@ import {
   GROUP_ACCESS_OPTIONS,
   GROUP_TYPE_OPTIONS,
 } from "../../../../screens/NewCommunityGroupScreen/constants";
+import { WarningCircleSolid } from "iconoir-react-native";
 
 interface FormFieldsProps {
   control: any;
   errors: any;
   createSelectedFilters: any;
   setCreateSelectedFilters: (filters: any) => void;
+  isPending?: boolean;
+  groupType?: string;
 }
 
 export const FormFields: React.FC<FormFieldsProps> = ({
@@ -21,6 +24,8 @@ export const FormFields: React.FC<FormFieldsProps> = ({
   errors,
   createSelectedFilters,
   setCreateSelectedFilters,
+  isPending,
+  groupType,
 }) => (
   <>
     <View style={styles.section}>
@@ -68,13 +73,34 @@ export const FormFields: React.FC<FormFieldsProps> = ({
       <View style={styles.flexRowContainer}>
         <Text style={styles.inputLabels}>Group Type</Text>
         <Text style={styles.required}>*</Text>
+        {isPending && (
+          <WarningCircleSolid width={20} height={20} color="#F59E0B" />
+        )}
       </View>
-      <RadioInput
+      {isPending && (
+        <Text style={styles.warningText}>
+          Your Official Group request is pending. Your Casual Group will convert
+          after university admin accepts the request.
+        </Text>
+      )}
+      {groupType === "casual" ? (
+        <View style={styles.container}>
+          <Text style={styles.title}>Casual</Text>
+          <Text style={styles.subtitle}>No approval required</Text>
+        </View>
+      ) : (
+        <View style={styles.container}>
+          <Text style={styles.title}>Official</Text>
+          <Text style={styles.subtitle}>Require university approval</Text>
+        </View>
+      )}
+
+      {/* <RadioInput
         name="communityGroupType"
         control={control}
         options={GROUP_TYPE_OPTIONS}
         required
-      />
+      /> */}
     </View>
 
     <View style={styles.section}>
@@ -108,9 +134,26 @@ const styles = StyleSheet.create({
     marginBottom: 16,
     fontSize: 12,
   },
+  warningText: {
+    fontSize: 12,
+    color: "#D97706",
+  },
   flexRowContainer: {
     flexDirection: "row",
     alignContent: "center",
     gap: 2,
+  },
+  container: {
+    marginVertical: 16,
+  },
+  title: {
+    fontSize: 14,
+    fontWeight: "500",
+    color: "#18191A",
+  },
+  subtitle: {
+    fontSize: 12,
+    fontWeight: "400",
+    color: "#9CA3AF",
   },
 });

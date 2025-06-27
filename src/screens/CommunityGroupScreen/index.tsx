@@ -99,6 +99,7 @@ const CommunityGroupScreen = ({ route }: any) => {
     communityGroups?.communityGroupType === CommunityGroupTypeEnum.OFFICIAL;
   const isGroupPrivate =
     communityGroups?.communityGroupAccess === CommunityGroupVisibility.PRIVATE;
+
   const isUserVerifiedForCommunity = useMemo(() => {
     return (
       userProfileData?.email?.some(
@@ -201,6 +202,14 @@ const CommunityGroupScreen = ({ route }: any) => {
     }
   };
 
+  const leaveCommunityGroupFunction = () => {
+    leaveCommunityGroup(communityGroupId, {
+      onSuccess: () => {
+        setIsUserJoinedCommunityGroup(false);
+      },
+    });
+  };
+
   const hideBottomBar = () => {
     membersBottomSheet.current?.hide();
   };
@@ -208,9 +217,19 @@ const CommunityGroupScreen = ({ route }: any) => {
   const handleNavigateToEditCommunityGroupScreen = () => {
     hideBottomBar();
     setModalVisible(false);
+    return console.log(
+      "communityId",
+      communityId,
+      "communityGroups",
+      communityGroups,
+    );
+
     navigation.navigate("manageGroupStack", {
       screen: "EditCommunityGroupScreen",
-      params: { communityId: communityId, communityGroups: communityGroups },
+      params: {
+        communityId: communityId._id,
+        communityGroups: communityGroups,
+      },
     });
   };
 
@@ -221,6 +240,7 @@ const CommunityGroupScreen = ({ route }: any) => {
         logoSrc={logoSrc}
         isGroupOfficial={isGroupOfficial}
         isGroupPrivate={isGroupPrivate}
+        groupStatus={communityGroups?.status as string}
         isUserJoinedCommunityGroup={isUserJoinedCommunityGroup}
         isGroupAdmin={isGroupAdmin}
         isUserVerifiedForCommunity={isUserVerifiedForCommunity}
@@ -237,6 +257,8 @@ const CommunityGroupScreen = ({ route }: any) => {
         communityLogoUrl={
           communityGroups?.communityId?.communityLogoUrl.imageUrl || ""
         }
+        adminId={communityGroups?.adminUserId.toString() || ""}
+        leaveCommunityGroup={leaveCommunityGroupFunction}
       />
       {error && (
         <View

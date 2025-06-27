@@ -14,12 +14,12 @@ export const GROUP_ACCESS_OPTIONS = [
 export const GROUP_TYPE_OPTIONS = [
   {
     label: "Casual",
-    value: "Casual",
+    value: "casual",
     details: "No approval required",
   },
   {
     label: "Official",
-    value: "Official",
+    value: "official",
     details: "Require university approval",
   },
 ];

@@ -2,7 +2,7 @@ import EditCommunityGroupScreen from "@/screens/EditCommunityGroupScreen";
 import NewCommunityGroupFilterScreen from "@/screens/NewCommunityGroupFIltersScreen";
 import NewCommunityGroupScreen from "@/screens/NewCommunityGroupScreen";
 import NewCommunityGroupUsersSelectScreen from "@/screens/NewCommunityGroupUsersSelectScreen";
-import SearchCommunityGroupFilterScreen from "@/screens/SearchCommunityGroupFilterScreen";
+
 import SearchCommunityGroupScreen from "@/screens/SearchCommunityGroupsScreen";
 import { createStackNavigator } from "@react-navigation/stack";
 
@@ -14,10 +14,7 @@ const ManageGroups = () => {
         name="SearchCommunityGroupScreen"
         component={SearchCommunityGroupScreen}
       />
-      <Stack.Screen
-        name="SearchCommunityGroupFilterScreen"
-        component={SearchCommunityGroupFilterScreen}
-      />
+
       <Stack.Screen
         name="NewCommunityGroupScreen"
         component={NewCommunityGroupScreen}

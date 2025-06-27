@@ -51,6 +51,7 @@ import { getTabIcons } from "@/constant/tabIcons";
 import { useGetUserNotificationTotalCount } from "@/services/notification";
 import UsersScreen from "@/screens/UsersScreen";
 import { NewCommunityGroupStatesProvider } from "@/context/NewCommunityGroupStatesProvider/NewCommunityGroupStatesProvider";
+import MembersScreen from "@/screens/MembersScreen";
 
 const Stack = createStackNavigator<RootStackParamList>();
 const Tab = createBottomTabNavigator<RootStackParamList>();
@@ -217,6 +218,13 @@ function ApplicationNavigator() {
         <Tab.Screen
           name="UsersScreen"
           component={UsersScreen}
+          options={{
+            tabBarButton: () => null,
+          }}
+        />
+        <Tab.Screen
+          name="MembersScreen"
+          component={MembersScreen}
           options={{
             tabBarButton: () => null,
           }}
