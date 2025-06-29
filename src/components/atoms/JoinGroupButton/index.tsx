@@ -24,7 +24,7 @@ const JoinGroupButton: React.FC<Props> = ({
         <ReusableButton
           buttonText="Verified Users Only"
           variant="secondary"
-          containerStyle="opacity-60 mt-2"
+          containerStyle="opacity-60 "
           disabled
           size="w-1/2"
         />
@@ -40,8 +40,9 @@ const JoinGroupButton: React.FC<Props> = ({
         disabled={userStatus === status.pending}
         // isLoading={userStatus === status.pending}
         variant="primary"
-        size="w-1/2"
-        containerStyle="mt-2"
+        size={130}
+        height="small"
+        containerStyle=""
       />
     );
   }
@@ -54,8 +55,8 @@ const JoinGroupButton: React.FC<Props> = ({
       isLoading={isPending}
       disabled={isPending}
       variant="primary"
-      size="w-1/2"
-      containerStyle="mt-2"
+      size={95}
+      containerStyle=""
     />
   );
 };

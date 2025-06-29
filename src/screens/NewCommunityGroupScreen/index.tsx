@@ -91,7 +91,6 @@ const NewCommunityGroupScreen = () => {
   // Local state
   const [isProfileLoading, setIsProfileLoading] = useState(false);
   const [showFilterError, setShowFilterError] = useState(false);
-  const [selectedUsersError, setSelectedUsersError] = useState(false);
 
   const isFilterSelectionValid = (filters: Record<string, string[]>) => {
     return (
@@ -124,12 +123,6 @@ const NewCommunityGroupScreen = () => {
       return;
     }
 
-    if (isSelectedUsersEmpty) {
-      setSelectedUsersError(true);
-      return;
-    }
-
-    setSelectedUsersError(false);
     setShowFilterError(false);
 
     setIsProfileLoading(true);
@@ -166,10 +159,7 @@ const NewCommunityGroupScreen = () => {
     if (showFilterError && isFilterSelectionValid(createSelectedFilters)) {
       setShowFilterError(false);
     }
-    if (selectedUsersError && !isSelectedUsersEmpty) {
-      setSelectedUsersError(false);
-    }
-  }, [createSelectedFilters, showFilterError, selectedUsersError]);
+  }, [createSelectedFilters, showFilterError]);
 
   // Loading state
   if (isFetching) {
@@ -223,7 +213,6 @@ const NewCommunityGroupScreen = () => {
                 <View>
                   <View style={styles.flexRowContainer}>
                     <Text style={styles.inputLabels}>Add Members</Text>
-                    <Text style={styles.required}>*</Text>
                   </View>
                   <ReusableButton
                     buttonText="Select People"
@@ -231,11 +220,6 @@ const NewCommunityGroupScreen = () => {
                     onPress={handleNavigateToUsersSelectScreen}
                     height="large"
                   />
-                  {selectedUsersError && (
-                    <Text style={{ color: "red" }}>
-                      Group members are required
-                    </Text>
-                  )}
                 </View>
               </View>
             </View>
@@ -281,12 +265,9 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: "500",
     color: "#1F2937",
-  },
-  required: {
-    color: "#EF4444",
     marginBottom: 16,
-    fontSize: 12,
   },
+
   flexRowContainer: {
     flexDirection: "row",
     alignContent: "center",

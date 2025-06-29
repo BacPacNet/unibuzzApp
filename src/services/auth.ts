@@ -205,6 +205,9 @@ export const useHandleUniversityEmailVerificationGenerate = () => {
   return useMutation({
     mutationFn: (data: { email: string }) =>
       universityEmailVerificationCodeGenerate(data),
+    onError: (error: any) => {
+      Toast.show(error.response.data.message || MESSAGES.SOMETHING_WENT_WRONG);
+    },
   });
 };
 // university email otp generate end
