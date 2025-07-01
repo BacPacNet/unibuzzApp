@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 
 import { CheckSquareSolid, NavArrowDown } from "iconoir-react-native";
 import DummyButton from "@/components/atoms/DummyButton";
+import { Toast } from "react-native-toast-notifications";
 
 type Props = {
   selectedType: "student" | "faculty" | null;
@@ -25,11 +26,22 @@ const RoleSelectorWithFields: React.FC<Props> = ({
   facultyFields,
   disabled,
 }) => {
+  const handlePress = (type: "student" | "faculty" | null) => {
+    if (disabled) {
+      return Toast.show("Select a university first", {
+        type: "warning",
+        placement: "top",
+      });
+    }
+    setSelectedType(selectedType === type ? null : type);
+  };
+
   const renderCheckbox = (label: string, type: "student" | "faculty") => (
     <TouchableOpacity
-      disabled={disabled}
+      //   disabled={disabled}
       style={styles.checkboxRow}
-      onPress={() => setSelectedType(selectedType === type ? null : type)}
+      //   onPress={() =>  setSelectedType(selectedType === type ? null : type)}
+      onPress={() => handlePress(type)}
     >
       <View style={styles.checkboxBox}>
         {selectedType === type && (

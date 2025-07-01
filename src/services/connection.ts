@@ -122,15 +122,15 @@ export function useGetUserMutuals(
 
 export function useGetUserFollowing(
   name: string,
+  userId: string,
   limit: number,
   enabled: boolean,
-  userId: string,
 ) {
   const cookieValue = getToken() as string;
   const debouncedSearchTerm = useDebounce(name, 1000);
 
   return useInfiniteQuery({
-    queryKey: ["getUserFollowing", debouncedSearchTerm, userId],
+    queryKey: ["getUserFollowing", debouncedSearchTerm],
     queryFn: ({ pageParam = 1 }) =>
       getUserFollowing(
         cookieValue,
@@ -152,15 +152,15 @@ export function useGetUserFollowing(
 
 export function useGetUserFollowers(
   name: string,
+  userId: string,
   limit: number,
   enabled: boolean,
-  userId: string,
 ) {
   const cookieValue = getToken() as string;
   const debouncedSearchTerm = useDebounce(name, 1000);
 
   return useInfiniteQuery({
-    queryKey: ["getUserFollowers", debouncedSearchTerm, userId],
+    queryKey: ["getUserFollower", debouncedSearchTerm],
     queryFn: ({ pageParam = 1 }) =>
       getUserFollowers(
         cookieValue,

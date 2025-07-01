@@ -19,8 +19,11 @@ export default function Tabs({ tabs, activeIndex = 0, onChange }: TabsProps) {
   const [selectedTab, setSelectedTab] = useState(activeIndex);
 
   return (
-    <>
-      <View className="flex-row border-b border-neutral-300">
+    <View>
+      <View
+        style={{ marginHorizontal: 16 }}
+        className="flex-row border-b border-neutral-300"
+      >
         {tabs.map((tab, index) => (
           <Pressable
             key={index}
@@ -32,10 +35,10 @@ export default function Tabs({ tabs, activeIndex = 0, onChange }: TabsProps) {
               selectedTab === index ? "border-b-2 border-primary-500" : ""
             }`}
           >
-            {tab.icon}
-            <Bell fill={"#6B7280"} fontSize={18} />
+            {/* {tab.icon}
+            <Bell fill={"#6B7280"} fontSize={18} /> */}
             <Text
-              className={` text-neutral-500 text-md font-bold ${selectedTab === index ? "text-primary-500 " : ""}`}
+              className={` text-neutral-500 text-xs font-bold ${selectedTab === index ? "text-primary-500 " : ""}`}
             >
               {tab.label}
             </Text>
@@ -50,7 +53,7 @@ export default function Tabs({ tabs, activeIndex = 0, onChange }: TabsProps) {
           </Pressable>
         ))}
       </View>
-      {tabs[selectedTab].content}
-    </>
+      {tabs[selectedTab]?.content}
+    </View>
   );
 }

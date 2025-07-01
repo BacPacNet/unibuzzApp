@@ -8,7 +8,7 @@ import {
   ActivityIndicator,
 } from "react-native";
 import UsersScreenUserCardItem from "@/components/molecules/UsersScreenUserCards";
-import { useCallback, useMemo, useState } from "react";
+import { useMemo } from "react";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { RootStackParamList } from "@/types/navigation";
 import {
@@ -38,9 +38,9 @@ const UsersScreen = ({ route }: any) => {
     hasNextPage: hasFollowingNextPage,
   } = useGetUserFollowing(
     "",
+    userId,
     10,
     listType.following.toString() == type,
-    userId,
   );
 
   const {
@@ -51,9 +51,9 @@ const UsersScreen = ({ route }: any) => {
     hasNextPage: hasFollowersNextPage,
   } = useGetUserFollowers(
     "",
+    userId,
     10,
     listType.following.toString() == type,
-    userId,
   );
 
   const userFollow = useMemo(() => {
