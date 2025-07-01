@@ -84,6 +84,8 @@ export enum UserPostType {
   ONLY_ME = "ONLY_ME",
 }
 
+export const defaultBottomSheetSnapPoints = [50, 100];
+
 export interface PostInputData {
   content: string;
   imageUrl?: Array<{

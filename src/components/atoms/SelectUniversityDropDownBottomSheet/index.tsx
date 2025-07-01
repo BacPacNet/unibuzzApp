@@ -4,16 +4,19 @@ import {
   Text,
   TextInput,
   TouchableOpacity,
-  FlatList,
-  Image,
   ActivityIndicator,
-  Modal,
   StyleSheet,
 } from "react-native";
 import { Controller } from "react-hook-form";
 import { NavArrowDown, NavArrowUp, Xmark } from "iconoir-react-native";
 import { useUniversitySearch } from "@/services/universitySearch";
 import CommunityLogo from "../LogoHolder";
+import ActionSheet, {
+  ActionSheetRef,
+  FlatList,
+} from "react-native-actions-sheet";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { defaultBottomSheetSnapPoints } from "@/types/constant";
 
 interface SelectDropdownProps {
   control: any;
@@ -41,6 +44,8 @@ const SelectUniversityDropdownBottomSheet: React.FC<SelectDropdownProps> = ({
   const [show, setShow] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const searchRef = useRef<TextInput>(null);
+  const actionSheetRef = useRef<ActionSheetRef>(null);
+  const insets = useSafeAreaInsets();
 
   const { data: universitiesData, isFetching } = useUniversitySearch(
     show,
@@ -62,7 +67,10 @@ const SelectUniversityDropdownBottomSheet: React.FC<SelectDropdownProps> = ({
             {/* Dropdown Toggle */}
             <TouchableOpacity
               style={[styles.selectButton, error && styles.selectButtonError]}
-              onPress={() => setShow(!show)}
+              //   onPress={() => setShow(!show)}
+              onPress={() => {
+                actionSheetRef.current?.show(), setShow(true);
+              }}
             >
               <Text style={[styles.selectText, !value && styles.placeholder]}>
                 {value || placeholder}
@@ -86,64 +94,68 @@ const SelectUniversityDropdownBottomSheet: React.FC<SelectDropdownProps> = ({
             {error && <Text style={styles.errorText}>{error.message}</Text>}
 
             {/* Dropdown Menu */}
-            <Modal
-              visible={show}
-              transparent
-              animationType="slide"
-              onRequestClose={() => setShow(false)}
+
+            <ActionSheet
+              useBottomSafeAreaPadding
+              ref={actionSheetRef}
+              gestureEnabled={true}
+              safeAreaInsets={insets}
+              snapPoints={defaultBottomSheetSnapPoints}
+              onClose={() => setShow(false)}
             >
-              <TouchableOpacity
+              {/* <TouchableOpacity
                 style={styles.modalOverlay}
                 activeOpacity={1}
                 onPress={() => setShow(false)}
+              > */}
+              <TouchableOpacity
+                style={styles.modalContent}
+                activeOpacity={1}
+                onPress={(e) => e.stopPropagation()}
               >
-                <TouchableOpacity
-                  style={styles.modalContent}
-                  activeOpacity={1}
-                  onPress={(e) => e.stopPropagation()}
-                >
-                  <View style={styles.modalHeader}>
-                    {/* <Text style={styles.modalTitle}>Select University</Text> */}
-                    {search && (
-                      <TextInput
-                        style={styles.searchInput}
-                        placeholder="Search..."
-                        onChangeText={setSearchTerm}
-                        value={searchTerm}
-                        ref={searchRef}
-                      />
-                    )}
-                  </View>
-                  <FlatList
-                    data={universities}
-                    keyExtractor={(item) => item._id}
-                    renderItem={({ item }) => (
-                      <TouchableOpacity
-                        style={styles.optionItem}
-                        onPress={() => {
-                          onChange(item.name);
-                          setValue && setValue("universityId", item._id);
-                          setValue && setValue("logoUrl", item.logo);
-                          setShow(false);
-                        }}
-                      >
-                        <CommunityLogo logoUrl={item?.logo} variant="small" />
-                        <Text style={styles.optionText}>{item?.name}</Text>
-                      </TouchableOpacity>
-                    )}
-                    ListEmptyComponent={
-                      <View style={styles.emptyList}>
-                        {isFetching ? (
-                          <ActivityIndicator />
-                        ) : (
-                          <Text>No University Found</Text>
-                        )}
-                      </View>
-                    }
-                  />
-                </TouchableOpacity>
+                <View style={styles.modalHeader}>
+                  {/* <Text style={styles.modalTitle}>Select University</Text> */}
+                  {search && (
+                    <TextInput
+                      style={styles.searchInput}
+                      placeholder="Search..."
+                      onChangeText={setSearchTerm}
+                      value={searchTerm}
+                      ref={searchRef}
+                    />
+                  )}
+                </View>
+                <FlatList
+                  data={universities}
+                  keyExtractor={(item) => item._id}
+                  renderItem={({ item }) => (
+                    <TouchableOpacity
+                      style={styles.optionItem}
+                      onPress={() => {
+                        onChange(item.name);
+                        setValue && setValue("universityId", item._id);
+                        setValue && setValue("communityId", item.communityId);
+                        setValue && setValue("logoUrl", item.logo);
+                        actionSheetRef.current?.hide();
+                      }}
+                    >
+                      <CommunityLogo logoUrl={item?.logo} variant="small" />
+                      <Text style={styles.optionText}>{item?.name}</Text>
+                    </TouchableOpacity>
+                  )}
+                  ListEmptyComponent={
+                    <View style={styles.emptyList}>
+                      {isFetching ? (
+                        <ActivityIndicator />
+                      ) : (
+                        <Text>No University Found</Text>
+                      )}
+                    </View>
+                  }
+                />
               </TouchableOpacity>
-            </Modal>
+              {/* </TouchableOpacity> */}
+            </ActionSheet>
           </>
         )}
       />
@@ -198,8 +210,6 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
     borderTopLeftRadius: 16,
     borderTopRightRadius: 16,
-    maxHeight: "80%",
-    minHeight: 550,
     paddingHorizontal: 8,
   },
   modalHeader: {
@@ -221,7 +231,8 @@ const styles = StyleSheet.create({
   optionItem: {
     flexDirection: "row",
     alignItems: "center",
-    padding: 16,
+    paddingVertical: 16,
+    marginHorizontal: 16,
     borderBottomWidth: 1,
     borderBottomColor: "#E5E7EB",
     gap: 4,

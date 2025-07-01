@@ -15,8 +15,9 @@ export type RootStackParamList = {
   };
   ProfileEdit: undefined;
   Home: undefined;
-  Connections: undefined;
+  Connections: any;
   Connection: any;
+  ConnectionsFilter: any;
   Messages: any;
   Notifications: undefined;
   AIAssistant: undefined;

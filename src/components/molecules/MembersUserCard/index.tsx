@@ -1,4 +1,4 @@
-import { View, Text, Image, StyleSheet } from "react-native";
+import { View, Text, Image, StyleSheet, TouchableOpacity } from "react-native";
 import React, { memo, useEffect, useRef, useState } from "react";
 import Avatar from "@/assets/avatar.svg";
 import ReusableButton from "@/components/atoms/ReusableButton";
@@ -128,7 +128,10 @@ const MembersUserCard = ({
         )}
       </View>
 
-      <View style={styles.infoContainer}>
+      <TouchableOpacity
+        onPress={() => handleNavigate(_id)}
+        style={styles.infoContainer}
+      >
         <View style={styles.nameContainer}>
           <Text
             style={styles.name}
@@ -139,20 +142,16 @@ const MembersUserCard = ({
         </View>
 
         <View style={styles.metaRow}>
-          {isStudent && study_year && (
-            <Text style={styles.metaText}>{study_year} Yr.</Text>
-          )}
-
-          {!isStudent && occupation && (
-            <Text style={styles.metaText}>{occupation}</Text>
-          )}
+          {study_year && <Text style={styles.metaText}>{study_year}</Text>}
         </View>
-
-        {isStudent && major && <Text style={styles.metaText}>{major}</Text>}
-        {!isStudent && affiliation && (
-          <Text style={styles.metaText}>{affiliation}</Text>
+        {!isStudent && occupation && (
+          <Text style={styles.metaText}>{occupation}</Text>
         )}
-      </View>
+        {isStudent && major && <Text style={styles.metaText}>{major}</Text>}
+        {/* {!isStudent && affiliation && (
+          <Text style={styles.metaText}>{affiliation}</Text>
+        )} */}
+      </TouchableOpacity>
 
       <View className="flex justify-end w-max">{renderCTA}</View>
       <ActionSheet
