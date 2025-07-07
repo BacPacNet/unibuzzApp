@@ -157,9 +157,9 @@ export const NotificationMessage = ({ data }: NotificationMessageProps) => {
 
 const styles = StyleSheet.create({
   text: {
-    fontSize: 14,
-    fontFamily: "System",
-    color: "#111827",
+    fontSize: 12,
+
+    color: "#3A3B3C",
   },
   bold: {
     fontWeight: "bold",

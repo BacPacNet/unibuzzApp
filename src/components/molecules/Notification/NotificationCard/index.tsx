@@ -148,6 +148,7 @@ const NotificationCard = ({ data }: Props) => {
 
       <View style={styles.body}>
         <NotificationMessage data={data} />
+
         <NotificationActions data={data} />
       </View>
     </TouchableOpacity>
@@ -157,20 +158,22 @@ const NotificationCard = ({ data }: Props) => {
 const styles = StyleSheet.create({
   container: {
     paddingVertical: 16,
-    paddingHorizontal: 24,
-    borderBottomWidth: 2,
-    borderBottomColor: "#E5E5E5",
+    paddingHorizontal: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: "#E5E7EB",
   },
   read: {
     backgroundColor: "#FFFFFF",
   },
   unread: {
-    backgroundColor: "#F8FAFC",
+    backgroundColor: "#F3F2FF",
   },
   header: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
+    flex: 1,
+    marginRight: 16,
   },
   time: {
     fontSize: 10,

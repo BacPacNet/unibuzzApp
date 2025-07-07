@@ -48,12 +48,16 @@ const UserChats = ({
 
   const RenderChats = () => {
     if (currTabb === "Inbox") {
-        const filteredChats = chats?.filter(
-            (item: Chat) =>
-              item.users.find((user) => user?.userId._id.toString() === userData?.id && user?.isRequestAccepted) ||
-              item.isRequestAccepted ||
-              item.groupAdmin.toString() === userData?.id
-          )
+      const filteredChats = chats?.filter(
+        (item: Chat) =>
+          item.users.find(
+            (user) =>
+              user?.userId._id.toString() === userData?.id &&
+              user?.isRequestAccepted,
+          ) ||
+          item.isRequestAccepted ||
+          item.groupAdmin.toString() === userData?.id,
+      );
       if (isChatLoading) {
         return (
           <View className="flex-1 justify-center items-center">
@@ -98,11 +102,16 @@ const UserChats = ({
         </TouchableOpacity>
       ));
     } else if (currTabb === "Requests") {
-        const filteredChats = chats?.filter((item: Chat) =>
-            item.isGroupChat
-              ? item.users.some((user) => user.userId._id.toString() === userData?.id && !user.isRequestAccepted)
-              : !item.isRequestAccepted && item.groupAdmin.toString() !== userData?.id
-          )
+      const filteredChats = chats?.filter((item: Chat) =>
+        item.isGroupChat
+          ? item.users.some(
+              (user) =>
+                user.userId._id.toString() === userData?.id &&
+                !user.isRequestAccepted,
+            )
+          : !item.isRequestAccepted &&
+            item.groupAdmin.toString() !== userData?.id,
+      );
       if (filteredChats.length === 0) {
         return (
           <Text className="text-neutral-500 text-center py-8">
@@ -155,11 +164,16 @@ const UserChats = ({
           />
         </View>
         <TouchableOpacity
-           onPress={() => navigation.navigate("NewChatScreen")}
-            className="w-10 ps-2 h-10 bg-secondary rounded-lg flex justify-center items-center"
-          >
-            <MailOutSolid width={28} height={28} color={"#6744FF"} strokeWidth={2} />
-          </TouchableOpacity>
+          onPress={() => navigation.navigate("NewChatScreen")}
+          className="w-10 ps-2 h-10 bg-secondary rounded-lg flex justify-center items-center"
+        >
+          <MailOutSolid
+            width={28}
+            height={28}
+            color={"#6744FF"}
+            strokeWidth={2}
+          />
+        </TouchableOpacity>
       </View>
 
       <ScrollView

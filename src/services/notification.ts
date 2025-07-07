@@ -65,30 +65,30 @@ export function useGetUserNotificationTotalCount() {
   return { ...state, error: errorMessage };
 }
 
-
-
 export async function getMessageNotificationTotalCount(token: string) {
-    const response: { messageTotalCount: string } = await client(`/chat/notification-count`, {
+  const response: { messageTotalCount: string } = await client(
+    `/chat/notification-count`,
+    {
       headers: { Authorization: `Bearer ${token}` },
-    })
-    return response
-  }
+    },
+  );
+  return response;
+}
 export function useGetUserUnreadMessagesTotalCount() {
-    const cookieValue = getToken() as string;
-    const state = useQuery({
-      queryKey: ['getMessageNotificationTotalCount'],
-      queryFn: () => getMessageNotificationTotalCount(cookieValue),
-      enabled: !!cookieValue,
-    })
-  
-    let errorMessage = null
-    if (axios.isAxiosError(state.error) && state.error.response) {
-      errorMessage = state.error.response.data
-    }
-  
-    return { ...state, error: errorMessage }
+  const cookieValue = getToken() as string;
+  const state = useQuery({
+    queryKey: ["getMessageNotificationTotalCount"],
+    queryFn: () => getMessageNotificationTotalCount(cookieValue),
+    enabled: !!cookieValue,
+  });
+
+  let errorMessage = null;
+  if (axios.isAxiosError(state.error) && state.error.response) {
+    errorMessage = state.error.response.data;
   }
 
+  return { ...state, error: errorMessage };
+}
 
 export async function JoinCommunityGroup(
   data: { groupId: string; id: string },

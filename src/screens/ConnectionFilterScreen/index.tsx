@@ -51,7 +51,6 @@ const ConnectionsFilter = () => {
   const occupationActionSheetRef = useRef<ActionSheetRef>(null);
   const affiliationActionSheetRef = useRef<ActionSheetRef>(null);
 
-
   const [selectedType, setSelectedType] = useState<
     "student" | "faculty" | null
   >(null);

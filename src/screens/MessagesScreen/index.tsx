@@ -41,13 +41,11 @@ const Messages = ({ route }: any) => {
   const userName = selectedChat?.users?.find(
     (item: any) => item?.userId._id !== userData?.id,
   );
-  const [searchByNameText, setSearchByNameText] = useState('')
+  const [searchByNameText, setSearchByNameText] = useState("");
   const navigation = useNavigation();
   const { socket } = useSocket();
   const queryClient = useQueryClient();
 
-
-  
   useEffect(() => {
     if (!selectedChat) {
       navigation.setOptions({
@@ -58,37 +56,53 @@ const Messages = ({ route }: any) => {
 
   const totalUnreadMessages = chats?.reduce((sum, item) => {
     if (item.isGroupChat) {
-      const isUserInGroup = item.users.some((user) => user.userId._id === userData?.id && user.isRequestAccepted)
+      const isUserInGroup = item.users.some(
+        (user) => user.userId._id === userData?.id && user.isRequestAccepted,
+      );
 
-      return isUserInGroup ? sum + item.unreadMessagesCount : sum
+      return isUserInGroup ? sum + item.unreadMessagesCount : sum;
     } else {
-      return item.isRequestAccepted ? sum + item.unreadMessagesCount : sum
+      return item.isRequestAccepted ? sum + item.unreadMessagesCount : sum;
     }
-  }, 0)
+  }, 0);
 
   const totalUnreadNotAcceptedMessages = chats?.reduce((sum, item) => {
     const shouldInclude = item.isGroupChat
-      ? item.users.some((user) => user.userId._id.toString() === userData?.id && !user.isRequestAccepted)
-      : !item.isRequestAccepted && item.groupAdmin.toString() !== userData?.id
+      ? item.users.some(
+          (user) =>
+            user.userId._id.toString() === userData?.id &&
+            !user.isRequestAccepted,
+        )
+      : !item.isRequestAccepted && item.groupAdmin.toString() !== userData?.id;
 
-    return shouldInclude ? sum + item.unreadMessagesCount : sum
-  }, 0)
+    return shouldInclude ? sum + item.unreadMessagesCount : sum;
+  }, 0);
 
-  const filteredChats = useFilteredChats(chats, searchByNameText, userData?.id as string)
+  const filteredChats = useFilteredChats(
+    chats,
+    searchByNameText,
+    userData?.id as string,
+  );
 
   const updateMessageSeen = () => {
-    const isRead = selectedChat?.latestMessage?.readByUsers?.includes(userData?.id || '')
+    const isRead = selectedChat?.latestMessage?.readByUsers?.includes(
+      userData?.id || "",
+    );
 
     if (!isRead && isRead !== undefined && selectedChat) {
-      updateIsSeen({ chatId: selectedChat?._id, messageId: selectedChat?.latestMessage?._id, data: { readByUserId: userData?.id } })
+      updateIsSeen({
+        chatId: selectedChat?._id,
+        messageId: selectedChat?.latestMessage?._id,
+        data: { readByUserId: userData?.id },
+      });
       //   refetchMessageNotification()
     }
-  }
+  };
 
   useEffect(() => {
-    if (!selectedChat?.latestMessage) return
-    updateMessageSeen()
-  }, [selectedChat?.latestMessage])
+    if (!selectedChat?.latestMessage) return;
+    updateMessageSeen();
+  }, [selectedChat?.latestMessage]);
 
   const handleNewMessage = (newMessage: Message) => {
     const { _id: chatMessageId, chat } = newMessage;
@@ -307,7 +321,6 @@ const Messages = ({ route }: any) => {
     }
   };
 
-
   const renderChat = () => {
     if (selectedChat) {
       return (
@@ -333,7 +346,9 @@ const Messages = ({ route }: any) => {
             description={selectedChat?.groupDescription}
             setAcceptedId={selectedChat._id}
             setCurrTab={setCurrTab}
-            isBlockedByYou={selectedChat?.blockedBy?.some((id:string) => id.toString() == userData?.id)}
+            isBlockedByYou={selectedChat?.blockedBy?.some(
+              (id: string) => id.toString() == userData?.id,
+            )}
             communitySelected={selectedChat?.community as CommunityChat}
           />
           <UserMessages

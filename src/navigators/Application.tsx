@@ -48,7 +48,10 @@ import SettingsStack from "./SettingsStack";
 import SinglePost from "@/screens/SinglePost/SinglePost";
 import ForgetPasswordScreen from "@/screens/ForgetPasswordScreen/ForgetPasswordScreen";
 import { getTabIcons } from "@/constant/tabIcons";
-import { useGetUserNotificationTotalCount, useGetUserUnreadMessagesTotalCount } from "@/services/notification";
+import {
+  useGetUserNotificationTotalCount,
+  useGetUserUnreadMessagesTotalCount,
+} from "@/services/notification";
 import UsersScreen from "@/screens/UsersScreen";
 import { NewCommunityGroupStatesProvider } from "@/context/NewCommunityGroupStatesProvider/NewCommunityGroupStatesProvider";
 import MembersScreen from "@/screens/MembersScreen";
@@ -105,11 +108,15 @@ function ApplicationNavigator() {
   function TabsGroup() {
     const { data: unreadNotificationCount } =
       useGetUserNotificationTotalCount();
-      const { data: userUnreadMessagesCount } = useGetUserUnreadMessagesTotalCount()
-
+    const { data: userUnreadMessagesCount } =
+      useGetUserUnreadMessagesTotalCount();
 
     const tabIcons = useMemo(
-      () => getTabIcons(unreadNotificationCount || 0, Number(userUnreadMessagesCount?.messageTotalCount) || 0),
+      () =>
+        getTabIcons(
+          unreadNotificationCount || 0,
+          Number(userUnreadMessagesCount?.messageTotalCount) || 0,
+        ),
       [unreadNotificationCount, userUnreadMessagesCount],
     );
     return (

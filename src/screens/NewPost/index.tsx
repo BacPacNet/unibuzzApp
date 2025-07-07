@@ -143,8 +143,6 @@ const NewPost = ({ navigation }: any) => {
   );
 
   const handleFilePick = async () => {
-
-    
     try {
       const res = await DocumentPicker.pick({
         type: [
@@ -167,7 +165,6 @@ const NewPost = ({ navigation }: any) => {
         Toast.show(validationResult.message);
         return;
       }
-    
 
       const totalFiles = res.length + images.length;
 

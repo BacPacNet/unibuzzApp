@@ -18,6 +18,7 @@ interface ReusableButtonProps {
     | "border"
     | "border_primary"
     | "danger"
+    | "danger_outline"
     | "shade";
   containerStyle?: string;
   textStyle?: string;
@@ -25,6 +26,7 @@ interface ReusableButtonProps {
   size?: "w-full" | "w-1/2" | "small" | number;
   isRounded?: boolean;
   height?: "small" | "medium" | "large";
+  textSize?: "text-sm" | "text-2xs";
 }
 
 const ReusableButton: React.FC<ReusableButtonProps> = ({
@@ -40,6 +42,7 @@ const ReusableButton: React.FC<ReusableButtonProps> = ({
   isRounded = true,
   height = "small",
   buttonContent,
+  textSize = "",
 }) => {
   const variantClasses = {
     primary: "bg-primary-500 text-white",
@@ -47,6 +50,7 @@ const ReusableButton: React.FC<ReusableButtonProps> = ({
     border: "border border-neutral-200 text-neutral-800 bg-white",
     border_primary: "border border-primary text-primary",
     danger: "bg-red-500 text-white",
+    danger_outline: "border border-[#FEE2E2]  bg-[#FEF2F2]",
     shade:
       "bg-secondary border border-[#E9E8FF] text-primary-500 drop-shadow-sm",
   };
@@ -57,6 +61,7 @@ const ReusableButton: React.FC<ReusableButtonProps> = ({
     border: "text-neutral-700 ",
     border_primary: "text-primary",
     danger: "text-white",
+    danger_outline: "text-[#EF4444]",
     shade: "text-primary-500 ",
   };
 
@@ -97,7 +102,9 @@ const ReusableButton: React.FC<ReusableButtonProps> = ({
       ) : buttonContent ? (
         <>{buttonContent}</>
       ) : (
-        <Text className={`text-center font-medium ${textColorClass}`}>
+        <Text
+          className={`text-center font-medium  ${textSize} ${textColorClass}`}
+        >
           {buttonText}
         </Text>
       )}

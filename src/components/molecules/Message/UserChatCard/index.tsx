@@ -64,26 +64,20 @@ const UserChatCard = ({
               resizeMode="cover"
             />
           )}
-
-         
         </View>
-     
+
         <View className=" flex-1 flex-row items-center ">
           {/* Name and Last Message */}
           <View className=" flex-1 ">
             <View className="flex-row items-center gap-2 ">
-            <Text
-              className={`text-neutral-700 text-2xs font-semibold`}
-            >
-              {isGroupChat ? groupName : userName[0]?.userId?.firstName}
-            </Text>
-            <Text className="text-neutral-500 text-2xs text-center">
-          
-              {date?.length ? formatRelativeTime(new Date(date)) : ''}
-            </Text>
+              <Text className={`text-neutral-700 text-2xs font-semibold`}>
+                {isGroupChat ? groupName : userName[0]?.userId?.firstName}
+              </Text>
+              <Text className="text-neutral-500 text-2xs text-center">
+                {date?.length ? formatRelativeTime(new Date(date)) : ""}
+              </Text>
             </View>
-         
-            
+
             <View className="">
               <Text
                 className={`text-neutral-500 text-3xs  ${
@@ -92,11 +86,15 @@ const UserChatCard = ({
                 numberOfLines={2} // Adjust to limit the number of lines for lastMessage
                 ellipsizeMode="tail" // Truncates text with "..." if it overflows
               >
-                 {lastMessage === undefined ? (
-                  'Start a chat'
-                ) : lastMessage === '' ? (
+                {lastMessage === undefined ? (
+                  "Start a chat"
+                ) : lastMessage === "" ? (
                   <>
-                    <Attachment width={16} height={16} className="text-neutral-500 text-sm" />
+                    <Attachment
+                      width={16}
+                      height={16}
+                      className="text-neutral-500 text-sm"
+                    />
                     sent an attachment
                   </>
                 ) : (
@@ -109,7 +107,6 @@ const UserChatCard = ({
           {/* Timestamp */}
 
           <View className="flex justify-center items-center">
-           
             {unRead > 0 ? (
               <View
                 style={{ right: -8 }}
@@ -122,7 +119,6 @@ const UserChatCard = ({
             ) : (
               ""
             )}
-
           </View>
         </View>
       </View>

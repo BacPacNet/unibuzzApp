@@ -1,122 +1,122 @@
-import DummyButton from "@/components/atoms/DummyButton"
-import MultiSelectDropdown from "@/components/atoms/MultiSelectDropDown"
-import ReusableButton from "@/components/atoms/ReusableButton"
-import { SelectUserProfileChips } from "@/components/atoms/SelectedUserProfileChips"
-import SelectCommunityUsersBottomSheet from "@/components/molecules/CreateNewGroup/SelectCommunityUsersBottomSheet"
-import SubscribedUniveristyBottomSheet from "@/components/molecules/SearchCommunity/SubscribedUniveristyBottomSheet"
-import RoleSelectorWithFields from "@/components/molecules/SearchCommunity/UserSelectionFields"
-import { filterData, filterFacultyData } from "@/lib/communityGroup"
-import { useCommunityUsers } from "@/services/community"
-import { getUserProfileStore } from "@/storage/user"
-import { degreeAndMajors, occupationAndDepartment, value } from "@/types/register"
-import { NavArrowDown, Search } from "iconoir-react-native"
+import DummyButton from "@/components/atoms/DummyButton";
+import MultiSelectDropdown from "@/components/atoms/MultiSelectDropDown";
+import ReusableButton from "@/components/atoms/ReusableButton";
+import { SelectUserProfileChips } from "@/components/atoms/SelectedUserProfileChips";
+import SelectCommunityUsersBottomSheet from "@/components/molecules/CreateNewGroup/SelectCommunityUsersBottomSheet";
+import SubscribedUniveristyBottomSheet from "@/components/molecules/SearchCommunity/SubscribedUniveristyBottomSheet";
+import RoleSelectorWithFields from "@/components/molecules/SearchCommunity/UserSelectionFields";
+import { filterData, filterFacultyData } from "@/lib/communityGroup";
+import { useCommunityUsers } from "@/services/community";
+import { getUserProfileStore } from "@/storage/user";
+import {
+  degreeAndMajors,
+  occupationAndDepartment,
+  value,
+} from "@/types/register";
+import { NavArrowDown, Search } from "iconoir-react-native";
 
-import { forwardRef, useEffect, useImperativeHandle, useRef, useState } from "react"
-import { Controller, useForm } from "react-hook-form"
-import { StyleSheet, Text, View } from "react-native"
-import ActionSheet, { ActionSheetRef } from "react-native-actions-sheet"
+import {
+  forwardRef,
+  useEffect,
+  useImperativeHandle,
+  useRef,
+  useState,
+} from "react";
+import { Controller, useForm } from "react-hook-form";
+import { StyleSheet, Text, View } from "react-native";
+import ActionSheet, { ActionSheetRef } from "react-native-actions-sheet";
 
 const MessageNewGroupFormContainer = forwardRef((props, ref) => {
-    const {
-        register: GroupRegister,
-        watch,
-        control,
+  const {
+    register: GroupRegister,
+    watch,
+    control,
 
-        setValue,
-        getValues,
-      } = useForm<any>({
-        defaultValues: {
-          studentYear: [],
-          major: [],
-          occupation: [],
-          affiliation: [],
-          community: { name: "", id: "" },
-          selectedUsers: [],
-        },
-      });
+    setValue,
+    getValues,
+  } = useForm<any>({
+    defaultValues: {
+      studentYear: [],
+      major: [],
+      occupation: [],
+      affiliation: [],
+      community: { name: "", id: "" },
+      selectedUsers: [],
+    },
+  });
 
-    
+  const studentYear = watch("studentYear") || "";
+  const major = watch("major") || "";
+  const occupation = watch("occupation") || "";
+  const affiliation = watch("affiliation") || "";
+  const community = watch("community");
 
-      const studentYear = watch("studentYear") || "";
-      const major = watch("major") || "";
-      const occupation = watch("occupation") || "";
-      const affiliation = watch("affiliation") || "";
-      const community = watch("community");
- 
-      const userProiledata = getUserProfileStore();
+  const userProiledata = getUserProfileStore();
 
-      const [searchInput, setSearchInput] = useState<string>("");
-      const [showbulk, setShowBulk] = useState(false);
-      const [selectedType, setSelectedType] = useState<
-        "student" | "faculty" | null
-      >(null);
-    const [individualsUsers, setIndividualsUsers] = useState<any[]>([]);
-    const [filteredUsers, setFilterUsers] = useState<any[]>([]);
-    const [filteredFacultyUsers, setFilterFacultyUsers] = useState<any[]>([]);
-    const actionSheetRef = useRef<ActionSheetRef>(null);
-    const yearActionSheetRef = useRef<ActionSheetRef>(null);
-    const majorActionSheetRef = useRef<ActionSheetRef>(null);
-    const occupationActionSheetRef = useRef<ActionSheetRef>(null);
-    const affiliationActionSheetRef = useRef<ActionSheetRef>(null);
-    const universityActionSheetRef = useRef<ActionSheetRef>(null);
+  const [searchInput, setSearchInput] = useState<string>("");
+  const [showbulk, setShowBulk] = useState(false);
+  const [selectedType, setSelectedType] = useState<
+    "student" | "faculty" | null
+  >(null);
+  const [individualsUsers, setIndividualsUsers] = useState<any[]>([]);
+  const [filteredUsers, setFilterUsers] = useState<any[]>([]);
+  const [filteredFacultyUsers, setFilterFacultyUsers] = useState<any[]>([]);
+  const actionSheetRef = useRef<ActionSheetRef>(null);
+  const yearActionSheetRef = useRef<ActionSheetRef>(null);
+  const majorActionSheetRef = useRef<ActionSheetRef>(null);
+  const occupationActionSheetRef = useRef<ActionSheetRef>(null);
+  const affiliationActionSheetRef = useRef<ActionSheetRef>(null);
+  const universityActionSheetRef = useRef<ActionSheetRef>(null);
 
+  const { data: communityUsersData } = useCommunityUsers(community.id);
+  const communityUsers =
+    communityUsersData?.pages
+      .flatMap((page) => page.data)
+      .filter((user) => user.users_id !== userProiledata?.users_id) || [];
 
+  useImperativeHandle(ref, () => ({
+    getFormValues: getValues,
+    getFilteredFacultyUsers: () => filteredFacultyUsers,
+    getFilteredUsers: () => filteredUsers,
+    getIndividualsUsers: () => individualsUsers,
+  }));
 
-    const { data: communityUsersData } = useCommunityUsers(community.id)
-    const communityUsers = communityUsersData?.pages.flatMap((page) => page.data).filter((user) => user.users_id !== userProiledata?.users_id) || []
+  const handleRemove = (fieldName: any, itemToRemove: string) => {
+    const currentValue = (watch(fieldName) as string[]) || [];
+    const updatedValue = currentValue.filter((item) => item !== itemToRemove);
+    setValue(fieldName, updatedValue);
+  };
 
+  const removeUser = (userId: string) => {
+    setIndividualsUsers((prev: any[]) => prev.filter((u) => u._id !== userId));
+  };
 
-    useImperativeHandle(ref, () => ({
-        getFormValues: getValues,
-        getFilteredFacultyUsers: () => filteredFacultyUsers,
-        getFilteredUsers: () => filteredUsers,
-        getIndividualsUsers: () => individualsUsers,
-   
-      }));
+  const handleAddUsers = () => {
+    setShowBulk(true);
+  };
 
+  useEffect(() => {
+    const allUsers = communityUsers || [];
 
-    const handleRemove = (fieldName: any, itemToRemove: string) => {
-        const currentValue = (watch(fieldName) as string[]) || [];
-        const updatedValue = currentValue.filter((item) => item !== itemToRemove);
-        setValue(fieldName, updatedValue);
-      };
-    
-      const removeUser = (userId: string) => {
-        setIndividualsUsers((prev: any[]) => prev.filter((u) => u._id !== userId));
-      };
+    const filters = { year: studentYear, major: major };
 
-      const handleAddUsers = () => {
-        setShowBulk(true);
-      };
+    const filtered = filterData(allUsers, filters);
 
-      useEffect(() => {
-        const allUsers = communityUsers || []
+    setFilterUsers(filtered);
+  }, [studentYear, major]);
 
-    
-        const filters = { year: studentYear, major: major }
+  useEffect(() => {
+    const allUsers = communityUsers || [];
 
-        const filtered = filterData(allUsers, filters)
-       
-        setFilterUsers(filtered)
-      }, [studentYear, major])
-    
-      useEffect(() => {
-        const allUsers = communityUsers || []
+    const filters = { occupation: occupation, affiliation: affiliation };
+    const filtered = filterFacultyData(allUsers, filters);
 
-    
-        const filters = { occupation: occupation, affiliation: affiliation }
-        const filtered = filterFacultyData(allUsers, filters)
-    
-    
-        setFilterFacultyUsers(filtered)
- 
-    
+    setFilterFacultyUsers(filtered);
+  }, [occupation, affiliation]);
 
-      }, [occupation, affiliation])
-
-    return (
-        <View>
-            <View style={styles.paddingContainer}>
+  return (
+    <View>
+      <View style={styles.paddingContainer}>
         <Text style={styles.inputLabels}>Individuals</Text>
 
         <View style={styles.individualsContainer}>
@@ -212,8 +212,6 @@ const MessageNewGroupFormContainer = forwardRef((props, ref) => {
         ) : (
           <View></View>
         )}
-
-     
       </View>
 
       <ActionSheet
@@ -342,139 +340,137 @@ const MessageNewGroupFormContainer = forwardRef((props, ref) => {
           )}
         />
       </ActionSheet>
+    </View>
+  );
+});
 
-        </View>
-    )
-})
-
-export default MessageNewGroupFormContainer
+export default MessageNewGroupFormContainer;
 
 const styles = StyleSheet.create({
-    container: {
-      flex: 1,
-      backgroundColor: "white",
-    },
-    paddingContainer: {
+  container: {
+    flex: 1,
+    backgroundColor: "white",
+  },
+  paddingContainer: {
     //   paddingHorizontal: 16,
-      marginTop: 32,
-    },
-    keyboardAvoid: {
-      flex: 1,
-    },
-    header: {
-      flexDirection: "row",
-      alignItems: "center",
-      height: 56,
-      paddingHorizontal: 16,
-      borderBottomWidth: 1,
-      borderBottomColor: "#E5E7EB",
-    },
-    backButton: {
-      padding: 8,
-    },
-    headerTitle: {
-      fontSize: 18,
-      fontWeight: "500",
-      marginLeft: 8,
-    },
-  
-    content: {
-      padding: 16,
-    },
-    section: {
-      marginBottom: 12,
-    },
-    photoSection: {
-      alignItems: "flex-start",
-      marginBottom: 32,
-    },
-    sectionTitle: {
-      fontSize: 20,
-      fontWeight: "500",
-      marginBottom: 16,
-      color: "#1F2937",
-    },
-    profileImageContainer: {
-      display: "flex",
-      alignItems: "center",
-      width: "100%",
-    },
-    photoUpload: {
-      width: 160,
-      height: 160,
-      borderRadius: 200,
-      borderWidth: 2,
-      borderColor: "#9685FF",
-      alignItems: "center",
-      justifyContent: "center",
-    },
-    photoUploadText: {
-      fontSize: 14,
-      color: "#9CA3AF",
-      marginTop: 8,
-    },
-  
-    bannerUpload: {
-      width: "100%",
-      height: 160,
-      borderRadius: 12,
-      borderWidth: 2,
-      borderColor: "#9685FF",
-      alignItems: "center",
-      justifyContent: "center",
-    },
-  
-    inputLabels: {
-      fontSize: 20,
-      fontWeight: "500",
-      marginBottom: 4,
-      color: "#1F2937",
-    },
-    selectedChipContainer: {
-      display: "flex",
-      flexDirection: "row",
-      alignItems: "center",
-      flexWrap: "wrap",
-    },
-    filterChip: {
-      flexDirection: "row",
-      alignItems: "center",
-      alignSelf: "flex-start",
-  
-      paddingHorizontal: 12,
-      borderRadius: 4,
-      borderWidth: 1,
-      borderColor: "#6744FF",
-      backgroundColor: "#6647FF",
-      marginRight: 8,
-  
-      height: 28,
-      width: "auto",
-      marginVertical: 8,
-    },
-    filterChipText: {
-      color: "white",
-      marginRight: 4,
-    },
-    individualsContainer: {
-      display: "flex",
-      marginBottom: 16,
-      gap: 16,
-    },
-    bulkContainer: {
-      display: "flex",
-      flexDirection: "column",
-      gap: 16,
-      marginTop: 32,
-    },
-    addUsersContainer: {
-      marginTop: 32,
-      paddingTop: 32,
-      borderTopWidth: 1,
-      borderTopColor: "#E5E7EB",
-    },
-    actionSheetContainer: {
-      height: "100%",
-    },
-  });
-  
+    marginTop: 32,
+  },
+  keyboardAvoid: {
+    flex: 1,
+  },
+  header: {
+    flexDirection: "row",
+    alignItems: "center",
+    height: 56,
+    paddingHorizontal: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: "#E5E7EB",
+  },
+  backButton: {
+    padding: 8,
+  },
+  headerTitle: {
+    fontSize: 18,
+    fontWeight: "500",
+    marginLeft: 8,
+  },
+
+  content: {
+    padding: 16,
+  },
+  section: {
+    marginBottom: 12,
+  },
+  photoSection: {
+    alignItems: "flex-start",
+    marginBottom: 32,
+  },
+  sectionTitle: {
+    fontSize: 20,
+    fontWeight: "500",
+    marginBottom: 16,
+    color: "#1F2937",
+  },
+  profileImageContainer: {
+    display: "flex",
+    alignItems: "center",
+    width: "100%",
+  },
+  photoUpload: {
+    width: 160,
+    height: 160,
+    borderRadius: 200,
+    borderWidth: 2,
+    borderColor: "#9685FF",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  photoUploadText: {
+    fontSize: 14,
+    color: "#9CA3AF",
+    marginTop: 8,
+  },
+
+  bannerUpload: {
+    width: "100%",
+    height: 160,
+    borderRadius: 12,
+    borderWidth: 2,
+    borderColor: "#9685FF",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+
+  inputLabels: {
+    fontSize: 20,
+    fontWeight: "500",
+    marginBottom: 4,
+    color: "#1F2937",
+  },
+  selectedChipContainer: {
+    display: "flex",
+    flexDirection: "row",
+    alignItems: "center",
+    flexWrap: "wrap",
+  },
+  filterChip: {
+    flexDirection: "row",
+    alignItems: "center",
+    alignSelf: "flex-start",
+
+    paddingHorizontal: 12,
+    borderRadius: 4,
+    borderWidth: 1,
+    borderColor: "#6744FF",
+    backgroundColor: "#6647FF",
+    marginRight: 8,
+
+    height: 28,
+    width: "auto",
+    marginVertical: 8,
+  },
+  filterChipText: {
+    color: "white",
+    marginRight: 4,
+  },
+  individualsContainer: {
+    display: "flex",
+    marginBottom: 16,
+    gap: 16,
+  },
+  bulkContainer: {
+    display: "flex",
+    flexDirection: "column",
+    gap: 16,
+    marginTop: 32,
+  },
+  addUsersContainer: {
+    marginTop: 32,
+    paddingTop: 32,
+    borderTopWidth: 1,
+    borderTopColor: "#E5E7EB",
+  },
+  actionSheetContainer: {
+    height: "100%",
+  },
+});

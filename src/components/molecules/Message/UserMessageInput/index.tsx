@@ -53,33 +53,26 @@ const UserMessageInput = ({
   const inputRef = useRef(null);
   const [text, setText] = useState("");
   const [images, setImages] = useState<ImageAsset[]>([]);
-  const [files, setFiles] = useState<FileWithId[]>([])
-  
+  const [files, setFiles] = useState<FileWithId[]>([]);
+
   const { mutateAsync: uploadToS3 } = useUploadToS3();
-  const [isImageUploading, setIsImageUploading] = useState(false)
+  const [isImageUploading, setIsImageUploading] = useState(false);
   const { mutate: createNewMessage, isPending } = useCreateChatMessage();
   const queryClient = useQueryClient();
   const { socket } = useSocket();
-
 
   const handleTextChange = (text: string) => {
     setText(text);
     setChanged(text);
   };
 
+  const handleNewMessage = async (message: string) => {
+    if (!message.trim() && !files?.length && !images?.length) return;
 
-
-
-
-
-
-const handleNewMessage = async (message: string) => {
-    if (!message.trim() && !files?.length && !images?.length) return
-
-    setIsImageUploading(true)
+    setIsImageUploading(true);
 
     try {
-      let mediaData = null
+      let mediaData = null;
 
       if (images?.length || files?.length) {
         const mergedFiles = [
@@ -96,31 +89,28 @@ const handleNewMessage = async (message: string) => {
         ];
 
         const uploadPayload = {
-            files: mergedFiles,
-            context: UPLOAD_CONTEXT.TIMELINE,
-          };
-          const uploadResponse = await uploadToS3(uploadPayload);
-          if (uploadResponse.success) {
-            mediaData = uploadResponse.data
-          }
+          files: mergedFiles,
+          context: UPLOAD_CONTEXT.TIMELINE,
+        };
+        const uploadResponse = await uploadToS3(uploadPayload);
+        if (uploadResponse.success) {
+          mediaData = uploadResponse.data;
         }
-     
-      
-      
+      }
 
       const messagePayload = {
         content: message.trim(),
         chatId,
         UserProfileId: userProfileId,
         ...(mediaData && { media: mediaData }),
-      }
+      };
 
       createNewMessage(messagePayload, {
         onSuccess: (newMessage) => {
-          const chatId = newMessage.chat
-          const chats = queryClient.getQueryData(['userChats'])
+          const chatId = newMessage.chat;
+          const chats = queryClient.getQueryData(["userChats"]);
 
-          if (!Array.isArray(chats)) return
+          if (!Array.isArray(chats)) return;
 
           const updatedChats = chats.map((chat) => {
             if (chat._id === chatId._id) {
@@ -128,65 +118,80 @@ const handleNewMessage = async (message: string) => {
                 ...chat,
                 latestMessage: newMessage,
                 latestMessageTime: new Date(newMessage.createdAt).getTime(),
-              }
+              };
             }
-            return chat
-          })
+            return chat;
+          });
 
           updatedChats.sort((a, b) => {
-            const aTime = a.latestMessageTime > 0 ? a.latestMessageTime : new Date(a.createdAt || 0).getTime()
+            const aTime =
+              a.latestMessageTime > 0
+                ? a.latestMessageTime
+                : new Date(a.createdAt || 0).getTime();
 
-            const bTime = b.latestMessageTime > 0 ? b.latestMessageTime : new Date(b.createdAt || 0).getTime()
+            const bTime =
+              b.latestMessageTime > 0
+                ? b.latestMessageTime
+                : new Date(b.createdAt || 0).getTime();
 
-            return bTime - aTime
-          })
+            return bTime - aTime;
+          });
 
-          queryClient.setQueryData(['userChats'], updatedChats)
+          queryClient.setQueryData(["userChats"], updatedChats);
           //  chat end
 
-          queryClient.setQueryData(['chatMessages', chatId._id], (oldMessages: LatestMessage[] = []) => {
-            if (!oldMessages.length) return [newMessage]
-            const lastMsg = oldMessages[oldMessages.length - 1]
+          queryClient.setQueryData(
+            ["chatMessages", chatId._id],
+            (oldMessages: LatestMessage[] = []) => {
+              if (!oldMessages.length) return [newMessage];
+              const lastMsg = oldMessages[oldMessages.length - 1];
 
-            const isDuplicate = oldMessages.findIndex((msg) => msg._id === newMessage._id)
+              const isDuplicate = oldMessages.findIndex(
+                (msg) => msg._id === newMessage._id,
+              );
 
-            if (isDuplicate !== -1) {
-              const updated = [...oldMessages]
-              updated[isDuplicate] = newMessage
-              return updated
-            }
-
-            const isSameSender = lastMsg.sender.id === newMessage.sender.id
-            const isRecent = new Date(newMessage.createdAt).getTime() - new Date(lastMsg.createdAt).getTime() < 60000
-            const noMedia = !lastMsg.media?.length && !newMessage.media?.length
-
-            if (isSameSender && isRecent && noMedia) {
-              const merged = {
-                ...lastMsg,
-                content: `${lastMsg.content}\n${newMessage.content}`,
-                createdAt: newMessage.createdAt,
+              if (isDuplicate !== -1) {
+                const updated = [...oldMessages];
+                updated[isDuplicate] = newMessage;
+                return updated;
               }
-              return [...oldMessages.slice(0, -1), merged]
-            }
 
-            return [...oldMessages, newMessage]
-          })
-          socket?.emit(SocketEnums.SEND_MESSAGE, newMessage)
+              const isSameSender = lastMsg.sender.id === newMessage.sender.id;
+              const isRecent =
+                new Date(newMessage.createdAt).getTime() -
+                  new Date(lastMsg.createdAt).getTime() <
+                60000;
+              const noMedia =
+                !lastMsg.media?.length && !newMessage.media?.length;
+
+              if (isSameSender && isRecent && noMedia) {
+                const merged = {
+                  ...lastMsg,
+                  content: `${lastMsg.content}\n${newMessage.content}`,
+                  createdAt: newMessage.createdAt,
+                };
+                return [...oldMessages.slice(0, -1), merged];
+              }
+
+              return [...oldMessages, newMessage];
+            },
+          );
+          socket?.emit(SocketEnums.SEND_MESSAGE, newMessage);
         },
-      })
+      });
       setText("");
-        setChanged("");
-        setImages([]);
+      setChanged("");
+      setImages([]);
     } catch (err) {
-      console.error('Message send failed:', err)
+      console.error("Message send failed:", err);
     } finally {
-      setIsImageUploading(false)
-      setFiles([])
+      setIsImageUploading(false);
+      setFiles([]);
     }
-  }
+  };
 
   const handleImagePick = useCallback(() => {
-    setImages([])
+    setImages([]);
     launchImageLibrary(
       { mediaType: "photo", selectionLimit: 0 },
       (response: any) => {
@@ -196,28 +201,27 @@ const handleNewMessage = async (message: string) => {
             size: asset.fileSize,
             type: asset.type,
           }));
-        
+
           const validationResult = validateUploadedFiles(imagesLib);
 
           if (!validationResult.isValid) {
             Toast.show(validationResult.message);
             return;
           }
-         
-          const totalFiles = files.length  + imagesLib.length;
-          
-          
+
+          const totalFiles = files.length + imagesLib.length;
+
           if (totalFiles > 4) {
             Toast.show("You can upload a maximum of 4 files.");
             return;
           }
-      
+
           setImages((prevImages) => [...prevImages, ...response.assets]);
         }
       },
     );
   }, []);
-  
+
   const handleImageRemove = useCallback(
     (identifier: number | string, isImage: boolean) => {
       if (isImage) {
@@ -228,7 +232,6 @@ const handleNewMessage = async (message: string) => {
     },
     [],
   );
-
 
   const handleFilePick = async () => {
     try {
@@ -270,10 +273,9 @@ const handleNewMessage = async (message: string) => {
     }
   };
 
-
   const handleSubmit = async () => {
-    console.log("images.length",images.length);
-    
+    console.log("images.length", images.length);
+
     if (!text.trim() && images.length === 0 && files.length === 0) {
       return;
     }
@@ -285,43 +287,45 @@ const handleNewMessage = async (message: string) => {
       behavior={Platform.OS === "ios" ? "padding" : "height"}
       className=" bg-white rounded-2xl w-full  "
     >
-      <ScrollView style={{height: "auto",marginBottom:50}} className=" rounded-lg  relative ">
-      <FlatList
-        data={images}
-        horizontal
-        keyExtractor={(item, index) => index.toString()}
-        renderItem={({ item, index }) => (
-          <View className="relative m-2 ">
-            <Image source={{ uri: item.uri }} className="w-24 h-24 rounded" />
+      <ScrollView
+        style={{ height: "auto", marginBottom: 50 }}
+        className=" rounded-lg  relative "
+      >
+        <FlatList
+          data={images}
+          horizontal
+          keyExtractor={(item, index) => index.toString()}
+          renderItem={({ item, index }) => (
+            <View className="relative m-2 ">
+              <Image source={{ uri: item.uri }} className="w-24 h-24 rounded" />
 
-            <TouchableOpacity
-              onPress={() => handleImageRemove(index, true)}
-              className="absolute top-1 right-1 bg-red-500 p-1 rounded-full"
-            >
-              <Text className="text-white text-xs">X</Text>
-            </TouchableOpacity>
-          </View>
-        )}
-      />
-      <FlatList
-        data={files}
-    
-        keyExtractor={(item, index) => index.toString()}
-        renderItem={({ item, index }) => (
-          <View className="relative m-2 border border-neutral-200 flex flex-row items-center justify-between">
-          <Text className="text-xs p-2  text-center" numberOfLines={2}>
-                  {item.name || "Document"}
-                </Text>
+              <TouchableOpacity
+                onPress={() => handleImageRemove(index, true)}
+                className="absolute top-1 right-1 bg-red-500 p-1 rounded-full"
+              >
+                <Text className="text-white text-xs">X</Text>
+              </TouchableOpacity>
+            </View>
+          )}
+        />
+        <FlatList
+          data={files}
+          keyExtractor={(item, index) => index.toString()}
+          renderItem={({ item, index }) => (
+            <View className="relative m-2 border border-neutral-200 flex flex-row items-center justify-between">
+              <Text className="text-xs p-2  text-center" numberOfLines={2}>
+                {item.name || "Document"}
+              </Text>
 
-            <TouchableOpacity
-              onPress={() => handleImageRemove(item.name || "", false)}
-              className="  p-1 rounded-full "
-            >
+              <TouchableOpacity
+                onPress={() => handleImageRemove(item.name || "", false)}
+                className="  p-1 rounded-full "
+              >
                 <Xmark height={20} width={20} />
-            </TouchableOpacity>
-          </View>
-        )}
-      />
+              </TouchableOpacity>
+            </View>
+          )}
+        />
         <TextInput
           ref={inputRef}
           value={text}
@@ -332,41 +336,35 @@ const handleNewMessage = async (message: string) => {
             fontSize: 16,
             paddingHorizontal: 8,
             height: "auto",
-
-       
           }}
           className="text-base p-1"
         />
-
-      
       </ScrollView>
 
-      <View style={{position:"absolute",bottom:0,width:"100%"}} className="flex-row justify-between items-center px-2 ">
-          <View className="flex-row gap-4">
- 
-
-     
-
-            <TouchableOpacity onPress={handleImagePick}>
-              <MediaImage height={20} width={20} color={"#a3a3a3"} />
-            </TouchableOpacity>
-            <TouchableOpacity onPress={handleFilePick}>
-              <PagePlus height={20} width={20} color={"#a3a3a3"} />
-            </TouchableOpacity>
-          </View>
-          <TouchableOpacity
-            onPress={handleSubmit}
-            disabled={isPending || isImageUploading}
-
-            className="bg-primary-500 w-8 h-8  flex items-center justify-center rounded-full mb-2 disabled:opacity-50"
-          >
-            {
-                isImageUploading || isPending ? <ActivityIndicator size="small" color="white" /> :
-                <SendSolid height={18} width={18} color={"white"} />
-            }
-          
+      <View
+        style={{ position: "absolute", bottom: 0, width: "100%" }}
+        className="flex-row justify-between items-center px-2 "
+      >
+        <View className="flex-row gap-4">
+          <TouchableOpacity onPress={handleImagePick}>
+            <MediaImage height={20} width={20} color={"#a3a3a3"} />
+          </TouchableOpacity>
+          <TouchableOpacity onPress={handleFilePick}>
+            <PagePlus height={20} width={20} color={"#a3a3a3"} />
           </TouchableOpacity>
         </View>
+        <TouchableOpacity
+          onPress={handleSubmit}
+          disabled={isPending || isImageUploading}
+          className="bg-primary-500 w-8 h-8  flex items-center justify-center rounded-full mb-2 disabled:opacity-50"
+        >
+          {isImageUploading || isPending ? (
+            <ActivityIndicator size="small" color="white" />
+          ) : (
+            <SendSolid height={18} width={18} color={"white"} />
+          )}
+        </TouchableOpacity>
+      </View>
     </KeyboardAvoidingView>
   );
 };

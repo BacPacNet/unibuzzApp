@@ -3,7 +3,13 @@ import relativeTime from "dayjs/plugin/relativeTime";
 import "dayjs/locale/en";
 import customParseFormat from "dayjs/plugin/customParseFormat";
 import advancedFormat from "dayjs/plugin/advancedFormat";
-import { differenceInDays, differenceInHours, differenceInMinutes, isValid, parse } from "date-fns";
+import {
+  differenceInDays,
+  differenceInHours,
+  differenceInMinutes,
+  isValid,
+  parse,
+} from "date-fns";
 import { getUserProfileStore } from "@/storage/user";
 
 dayjs.extend(relativeTime);
@@ -78,22 +84,22 @@ export const validateUploadedFiles = (
 };
 
 export const formatRelativeTime = (date: Date | string): string => {
-    const givenDate = typeof date === 'string' ? new Date(date) : date
-  
-    const minutesDiff = differenceInMinutes(new Date(), givenDate)
-    if (minutesDiff < 60) return `${minutesDiff}m`
-  
-    const hoursDiff = differenceInHours(new Date(), givenDate)
-    if (hoursDiff < 24) return `${hoursDiff}h`
-  
-    const daysDiff = differenceInDays(new Date(), givenDate)
-    return `${daysDiff}d`
-  }
-  
-  export const truncateStringTo = (str: string, num: number): string => {
-    if (str.length <= num) return str
-    return str.slice(0, num) + '...'
-  }
+  const givenDate = typeof date === "string" ? new Date(date) : date;
+
+  const minutesDiff = differenceInMinutes(new Date(), givenDate);
+  if (minutesDiff < 60) return `${minutesDiff}m`;
+
+  const hoursDiff = differenceInHours(new Date(), givenDate);
+  if (hoursDiff < 24) return `${hoursDiff}h`;
+
+  const daysDiff = differenceInDays(new Date(), givenDate);
+  return `${daysDiff}d`;
+};
+
+export const truncateStringTo = (str: string, num: number): string => {
+  if (str.length <= num) return str;
+  return str.slice(0, num) + "...";
+};
 
 export const imageMimeTypes = [
   "image/jpeg",
