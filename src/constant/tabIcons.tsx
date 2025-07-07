@@ -76,11 +76,12 @@ import { Text, View } from "react-native";
 
 export const getTabIcons = (
   unreadCount: number = 0,
+  unreadMessagesCount: number = 0,
 ): Record<
   | "Home"
   | "Example"
   | "Connection"
-  | "Messages"
+  | "MessagesStack"
   | "Notifications"
   | "AIAssistant",
   (focused: boolean) => JSX.Element
@@ -108,12 +109,33 @@ export const getTabIcons = (
         fill={focused ? "#6744FF" : "#6B7280"}
       />
     ),
-    Messages: (focused: boolean) => (
+    MessagesStack: (focused: boolean) => (
+      <View style={{ position: "relative" }}>  
       <MailSolid
         height={28}
         width={28}
         color={focused ? "#6744FF" : "#6B7280"}
       />
+      {unreadMessagesCount && Number(unreadMessagesCount) > 0 ? (
+        <View
+        style={{
+          position: "absolute",
+          top: -4,
+          right: -8,
+          backgroundColor: "red",
+          borderRadius: 8,
+          paddingHorizontal: 4,
+          minWidth: 16,
+          alignItems: "center",
+          justifyContent: "center",
+        }}
+      >
+        <Text style={{ color: "white", fontSize: 10, fontWeight: "bold" }}>
+          {String(unreadMessagesCount)}
+        </Text>
+      </View>
+      ) : null}
+      </View>
     ),
     Notifications: (focused: boolean) => (
       <View style={{ position: "relative" }}>

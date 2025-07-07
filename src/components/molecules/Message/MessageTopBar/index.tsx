@@ -28,7 +28,7 @@ const MessageTopBar = ({
           className={`flex flex-row items-center ${currTab == "Inbox" && "border-b border-primary-500"} w-1/2 px-4 py-4 `}
         >
           <View className="flex flex-row items-center gap-2 justify-center w-full">
-            <MailSolid height={24} width={24} />
+            {/* <MailSolid height={24} width={24} /> */}
             <Text
               className={`text-sm text-center   font-medium ${currTab === "Inbox" ? "text-primary-500 font-semibold" : "text-neutral-500"}`}
             >
@@ -52,7 +52,7 @@ const MessageTopBar = ({
           className={`flex flex-row items-center  ${currTab == "Requests" && "border-b border-primary-500"} w-1/2 px-4 py-4 `}
         >
           <View className="flex flex-row items-center justify-center gap-2 w-full">
-            <MultiBubbleSolid height={24} width={24} />
+            {/* <MultiBubbleSolid height={24} width={24} /> */}
             <Text
               className={`text-sm text-center font-medium ${currTab === "Requests" ? "text-primary-500" : "text-neutral-500"}`}
             >
