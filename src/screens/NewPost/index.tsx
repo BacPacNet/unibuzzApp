@@ -143,6 +143,8 @@ const NewPost = ({ navigation }: any) => {
   );
 
   const handleFilePick = async () => {
+
+    
     try {
       const res = await DocumentPicker.pick({
         type: [
@@ -165,8 +167,10 @@ const NewPost = ({ navigation }: any) => {
         Toast.show(validationResult.message);
         return;
       }
+    
 
-      const totalFiles = files.length + images.length;
+      const totalFiles = res.length + images.length;
+
       if (totalFiles > 4) {
         Toast.show("You can upload a maximum of 4 files.");
         return;

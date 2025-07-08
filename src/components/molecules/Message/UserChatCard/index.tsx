@@ -1,8 +1,10 @@
 import React from "react";
-import { View, Text, Image, TouchableOpacity } from "react-native";
+import { View, Text, Image } from "react-native";
 import avatar from "../../../../assets/avatar.png";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
+import { Attachment } from "iconoir-react-native";
+import { formatRelativeTime } from "@/utils";
 dayjs.extend(relativeTime);
 
 type User = {
@@ -48,8 +50,8 @@ const UserChatCard = ({
             <Image
               source={avatar}
               style={{
-                width: 40,
-                height: 40,
+                width: 48,
+                height: 48,
                 resizeMode: "contain",
                 marginRight: 4,
               }}
@@ -63,38 +65,43 @@ const UserChatCard = ({
             />
           )}
 
-          {userName?.some((item) => item?.isOnline) ? (
-            <View
-              style={{ right: -8 }}
-              className="bg-success-500 w-4 h-4 rounded-full absolute bottom-0  border-2 border-white"
-            ></View>
-          ) : (
-            <View
-              style={{ right: -8 }}
-              className="bg-neutral-300 w-4 h-4 rounded-full absolute bottom-0  border-2 border-white"
-            ></View>
-          )}
+         
         </View>
-
+     
         <View className=" flex-1 flex-row items-center ">
           {/* Name and Last Message */}
           <View className=" flex-1 ">
+            <View className="flex-row items-center gap-2 ">
             <Text
-              className={`text-neutral-600 text-lg ${
-                unRead > 0 ? "font-semibold" : "font-medium"
-              }`}
+              className={`text-neutral-700 text-2xs font-semibold`}
             >
               {isGroupChat ? groupName : userName[0]?.userId?.firstName}
             </Text>
+            <Text className="text-neutral-500 text-2xs text-center">
+          
+              {date?.length ? formatRelativeTime(new Date(date)) : ''}
+            </Text>
+            </View>
+         
+            
             <View className="">
               <Text
-                className={`text-neutral-500 text-md  ${
+                className={`text-neutral-500 text-3xs  ${
                   unRead > 0 ? "font-semibold" : "font-medium"
                 }`}
                 numberOfLines={2} // Adjust to limit the number of lines for lastMessage
                 ellipsizeMode="tail" // Truncates text with "..." if it overflows
               >
-                {lastMessage}
+                 {lastMessage === undefined ? (
+                  'Start a chat'
+                ) : lastMessage === '' ? (
+                  <>
+                    <Attachment width={16} height={16} className="text-neutral-500 text-sm" />
+                    sent an attachment
+                  </>
+                ) : (
+                  lastMessage
+                )}
               </Text>
             </View>
           </View>
@@ -102,9 +109,7 @@ const UserChatCard = ({
           {/* Timestamp */}
 
           <View className="flex justify-center items-center">
-            <Text className="text-neutral-400 text-md flex-1 text-center">
-              {date && dayjs(date).fromNow()}
-            </Text>
+           
             {unRead > 0 ? (
               <View
                 style={{ right: -8 }}
@@ -117,6 +122,7 @@ const UserChatCard = ({
             ) : (
               ""
             )}
+
           </View>
         </View>
       </View>

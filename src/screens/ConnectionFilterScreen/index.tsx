@@ -50,7 +50,7 @@ const ConnectionsFilter = () => {
   const majorActionSheetRef = useRef<ActionSheetRef>(null);
   const occupationActionSheetRef = useRef<ActionSheetRef>(null);
   const affiliationActionSheetRef = useRef<ActionSheetRef>(null);
-  const universityActionSheetRef = useRef<ActionSheetRef>(null);
+
 
   const [selectedType, setSelectedType] = useState<
     "student" | "faculty" | null

@@ -2,7 +2,6 @@ import { View, ActivityIndicator } from "react-native";
 import React, { useEffect, useMemo, useState } from "react";
 import MessageTopBar from "@/components/molecules/Message/MessageTopBar";
 import UserChats from "@/components/molecules/Message/UserChats";
-import { ChatsArray } from "@/types/ChatType";
 import { useGetUserChats, useUpdateMessageIsSeen } from "@/services/Messages";
 import MessageUserStickyBar from "@/components/molecules/Message/MessageUserStickyBar";
 import { getUserStore } from "@/storage/user";
@@ -13,6 +12,8 @@ import { useNavigation } from "@react-navigation/native";
 import { useSocket } from "@/context/SocketProvider/SocketProvider";
 import { SocketConnectionEnums, SocketEnums } from "@/types/SocketType";
 import { useQueryClient } from "@tanstack/react-query";
+import { useFilteredChats } from "@/hooks/useFilteredChats";
+import { ChatsArray, CommunityChat } from "@/types/constant";
 
 interface Message {
   _id: string;
@@ -26,7 +27,6 @@ interface Message {
 const Messages = ({ route }: any) => {
   const [currTab, setCurrTab] = useState("Inbox");
   const [selectedChat, setSelectedChat] = useState<any>(undefined);
-  //   const { selectedUserId } = route.params;
   const selectedUserId = route?.params?.selectedUserId ?? null;
   const {
     data: chatsData,
@@ -41,11 +41,13 @@ const Messages = ({ route }: any) => {
   const userName = selectedChat?.users?.find(
     (item: any) => item?.userId._id !== userData?.id,
   );
-
+  const [searchByNameText, setSearchByNameText] = useState('')
   const navigation = useNavigation();
   const { socket } = useSocket();
   const queryClient = useQueryClient();
 
+
+  
   useEffect(() => {
     if (!selectedChat) {
       navigation.setOptions({
@@ -54,46 +56,39 @@ const Messages = ({ route }: any) => {
     }
   }, [navigation, selectedChat]);
 
-  const unreadChatsCount = chats?.filter((item) => {
+  const totalUnreadMessages = chats?.reduce((sum, item) => {
     if (item.isGroupChat) {
-      return (
-        item.unreadMessagesCount > 0 &&
-        item.users.some(
-          (user) => user.userId._id == userData?.id && user.isRequestAccepted,
-        )
-      );
+      const isUserInGroup = item.users.some((user) => user.userId._id === userData?.id && user.isRequestAccepted)
+
+      return isUserInGroup ? sum + item.unreadMessagesCount : sum
     } else {
-      return item.unreadMessagesCount > 0 && item.isRequestAccepted;
+      return item.isRequestAccepted ? sum + item.unreadMessagesCount : sum
     }
-  }).length;
-  const unreadNotAcceptedChatsCount = chats?.filter((item) => {
-    if (item.isGroupChat) {
-      return (
-        item.unreadMessagesCount > 0 &&
-        item.users.some((user) => !user.isRequestAccepted)
-      );
-    } else {
-      return item.unreadMessagesCount > 0 && !item.isRequestAccepted;
-    }
-  }).length;
+  }, 0)
+
+  const totalUnreadNotAcceptedMessages = chats?.reduce((sum, item) => {
+    const shouldInclude = item.isGroupChat
+      ? item.users.some((user) => user.userId._id.toString() === userData?.id && !user.isRequestAccepted)
+      : !item.isRequestAccepted && item.groupAdmin.toString() !== userData?.id
+
+    return shouldInclude ? sum + item.unreadMessagesCount : sum
+  }, 0)
+
+  const filteredChats = useFilteredChats(chats, searchByNameText, userData?.id as string)
 
   const updateMessageSeen = () => {
-    const isRead = selectedChat?.latestMessage?.readByUsers?.includes(
-      userData?.id || "",
-    );
+    const isRead = selectedChat?.latestMessage?.readByUsers?.includes(userData?.id || '')
 
     if (!isRead && isRead !== undefined && selectedChat) {
-      updateIsSeen({
-        chatId: selectedChat?._id,
-        messageId: selectedChat?.latestMessage?._id,
-        data: { readByUserId: userData?.id },
-      });
+      updateIsSeen({ chatId: selectedChat?._id, messageId: selectedChat?.latestMessage?._id, data: { readByUserId: userData?.id } })
+      //   refetchMessageNotification()
     }
-  };
+  }
 
   useEffect(() => {
-    updateMessageSeen();
-  }, [selectedChat]);
+    if (!selectedChat?.latestMessage) return
+    updateMessageSeen()
+  }, [selectedChat?.latestMessage])
 
   const handleNewMessage = (newMessage: Message) => {
     const { _id: chatMessageId, chat } = newMessage;
@@ -276,7 +271,7 @@ const Messages = ({ route }: any) => {
             selectedChat={selectedChat}
             currTabb={currTab}
             setIsRequest={setIsRequest}
-            chats={chats}
+            chats={filteredChats}
             isChatLoading={isChatLoading}
             setCurrTab={setCurrTab}
           />
@@ -289,7 +284,7 @@ const Messages = ({ route }: any) => {
             selectedChat={selectedChat}
             currTabb={currTab}
             setIsRequest={setIsRequest}
-            chats={chats}
+            chats={filteredChats}
             isChatLoading={isChatLoading}
             setCurrTab={setCurrTab}
           />
@@ -312,6 +307,7 @@ const Messages = ({ route }: any) => {
     }
   };
 
+
   const renderChat = () => {
     if (selectedChat) {
       return (
@@ -326,6 +322,7 @@ const Messages = ({ route }: any) => {
             users={selectedChat?.users}
             yourID={userData?.id || ""}
             isGroupChat={selectedChat?.isGroupChat}
+            groupAdmin={selectedChat?.groupAdmin}
             isRequestNotAccepted={currTab == "Requests"}
             chatId={selectedChat?._id}
             profileCover={
@@ -336,6 +333,8 @@ const Messages = ({ route }: any) => {
             description={selectedChat?.groupDescription}
             setAcceptedId={selectedChat._id}
             setCurrTab={setCurrTab}
+            isBlockedByYou={selectedChat?.blockedBy?.some((id:string) => id.toString() == userData?.id)}
+            communitySelected={selectedChat?.community as CommunityChat}
           />
           <UserMessages
             chatId={selectedChat._id}
@@ -366,8 +365,8 @@ const Messages = ({ route }: any) => {
           currTab={currTab}
           setCurrTab={setCurrTab}
           setSelectedChat={setSelectedChat}
-          unreadChatsCount={unreadChatsCount || 0}
-          unreadNotAcceptedChatsCount={unreadNotAcceptedChatsCount || 0}
+          unreadChatsCount={totalUnreadMessages || 0}
+          unreadNotAcceptedChatsCount={totalUnreadNotAcceptedMessages || 0}
         />
       )}
 

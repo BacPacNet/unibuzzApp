@@ -55,18 +55,20 @@ export type Message = {
 export type messages = Message[];
 
 export type LatestMessage = {
-  chat: string;
-  content: string;
-  createdAt: string;
-  media: media[];
-  readByUsers: string[];
-  sender: string;
-  senderProfile: string;
-  updatedAt: string;
-  _id: string;
-  __v: number;
-};
-
+    chat: string
+    content: string
+    createdAt: string
+    media: media[]
+    readByUsers: string[]
+    sender: {
+      id: string
+    }
+    senderProfile: string
+    updatedAt: string
+    _id: string
+    __v: number
+  }
+  
 export type Chat = {
   chatName: string;
   createdAt: string;

@@ -16,6 +16,9 @@ import UserMessageInput from "../Message/UserMessageInput";
 import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import ImageGallery from "../ImageGrid";
 import { useHeader } from "@/context/HeaderProvider/Header";
+import { format } from "date-fns";
+import { formatRelativeTime } from "@/utils";
+import ImageGridLayout from "../ImageGridLayout";
 dayjs.extend(relativeTime);
 
 type User = {
@@ -83,14 +86,17 @@ const UserCard = ({
           <Text className="text-[18px] font-semibold text-neutral-900">
             {name}
           </Text>
-          {/* {date && (
-            <Text className="text-md text-gray-500">
-              {dayjs(date).fromNow()}
-            </Text>
-          )} */}
+     
+          {
+            date && (
+              <Text className="text-xs text-gray-500">
+                {formatRelativeTime(new Date(date))}
+        
+              </Text>
+            )
+          }
         </View>
-        <Text className="text-lg text-gray-800">{content}</Text>
-
+        <Text className="text-xs text-gray-800">{content}</Text>
         <ImageGallery images={media} imageCount={media?.length} />
       </View>
     </View>
@@ -107,20 +113,22 @@ const UserMessages = ({
   const { data: chatMessages, isFetching } = useGetUserMessages(chatId);
 
   const queryClient = useQueryClient();
-  let previousDate = "";
+
   const userData = getUserStore();
   const userProfileData = getUserProfileStore();
   const navigation = useNavigation();
   const { changeHeaderShownStatus } = useHeader();
   const scrollViewRef = useRef<ScrollView>(null);
   const [changed, setChanged] = useState("");
-
+  let previousDate: any = ''
   useEffect(() => {
     if (scrollViewRef.current) {
       scrollViewRef.current.scrollToEnd({ animated: false });
     }
   }, [chatMessages, changed]);
 
+
+  
   useEffect(() => {
     navigation.setOptions({ tabBarStyle: { display: "none" } });
   }, [navigation]);
@@ -143,21 +151,21 @@ const UserMessages = ({
     );
 
   return (
-    <View className="flex-1">
+    <View className="flex-1 justify-between h-full">
       <ScrollView
-        className="flex-1 px-4"
+       
+        className="flex-1 px-4  h-full"
         ref={scrollViewRef}
         onContentSizeChange={() =>
           scrollViewRef.current?.scrollToEnd({ animated: true })
         }
       >
         {chatMessages?.map((item: any, idx: any) => {
-          const currentDate = dayjs(item.createdAt).format("MMMM D, YYYY");
-          const shouldShowDateDivider = !dayjs(item.createdAt).isSame(
-            previousDate,
-            "day",
-          );
-          previousDate = item.createdAt;
+        
+
+            const currentDate = format(new Date(item?.createdAt), 'd MMMM h:mm a')
+        const shouldShowDateDivider = !dayjs(item.createdAt).isSame(previousDate, 'day')
+        previousDate = dayjs(item.createdAt)
 
           return (
             <Fragment key={idx}>

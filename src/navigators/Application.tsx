@@ -48,10 +48,11 @@ import SettingsStack from "./SettingsStack";
 import SinglePost from "@/screens/SinglePost/SinglePost";
 import ForgetPasswordScreen from "@/screens/ForgetPasswordScreen/ForgetPasswordScreen";
 import { getTabIcons } from "@/constant/tabIcons";
-import { useGetUserNotificationTotalCount } from "@/services/notification";
+import { useGetUserNotificationTotalCount, useGetUserUnreadMessagesTotalCount } from "@/services/notification";
 import UsersScreen from "@/screens/UsersScreen";
 import { NewCommunityGroupStatesProvider } from "@/context/NewCommunityGroupStatesProvider/NewCommunityGroupStatesProvider";
 import MembersScreen from "@/screens/MembersScreen";
+import MessageStack from "./MessageStack";
 
 const Stack = createStackNavigator<RootStackParamList>();
 const Tab = createBottomTabNavigator<RootStackParamList>();
@@ -90,7 +91,7 @@ function ApplicationNavigator() {
     "Home",
     "Example",
     "Connection",
-    "Messages",
+    "MessagesStack",
     "Notifications",
     "AIAssistant",
   ] as const;
@@ -104,10 +105,12 @@ function ApplicationNavigator() {
   function TabsGroup() {
     const { data: unreadNotificationCount } =
       useGetUserNotificationTotalCount();
+      const { data: userUnreadMessagesCount } = useGetUserUnreadMessagesTotalCount()
+
 
     const tabIcons = useMemo(
-      () => getTabIcons(unreadNotificationCount || 0),
-      [unreadNotificationCount],
+      () => getTabIcons(unreadNotificationCount || 0, Number(userUnreadMessagesCount?.messageTotalCount) || 0),
+      [unreadNotificationCount, userUnreadMessagesCount],
     );
     return (
       <Tab.Navigator
@@ -148,7 +151,8 @@ function ApplicationNavigator() {
             },
           })}
         />
-        <Tab.Screen name="Messages" component={Messages} />
+        {/* <Tab.Screen name="Messages" component={Messages} /> */}
+        <Tab.Screen name="MessagesStack" component={MessageStack} />
         <Tab.Screen name="Notifications" component={Notifications} />
         <Tab.Screen name="AIAssistant" component={AI_Assistant} />
         <Tab.Screen
@@ -306,8 +310,8 @@ function ApplicationNavigator() {
             //shadowOpacity: 0.1,
             //shadowRadius: 4,
             //transform: [{ translateY: headerTranslateY }],
-            borderBottomWidth: 1,
-            borderBottomColor: "#E5E7EB",
+            // borderBottomWidth: 1,
+            // borderBottomColor: "#E5E7EB",
             //height: headerHeight,
           },
           drawerStyle: {

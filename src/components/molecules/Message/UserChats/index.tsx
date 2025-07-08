@@ -8,13 +8,12 @@ import {
   TextInput,
   RefreshControl,
 } from "react-native";
-
 import { Chat } from "@/types/ChatType";
 import { getUserStore } from "@/storage/user";
 import UserChatCard from "../UserChatCard";
-import { Search } from "iconoir-react-native";
-import ReusableButton from "@/components/atoms/ReusableButton";
+import { MailOutSolid, Search } from "iconoir-react-native";
 import { useQueryClient } from "@tanstack/react-query";
+import { useNavigation } from "@react-navigation/native";
 
 interface Props {
   setSelectedChat: (value: Chat | undefined) => void;
@@ -34,6 +33,7 @@ const UserChats = ({
   setCurrTab,
 }: Props) => {
   const userData = getUserStore();
+  const navigation = useNavigation<any>();
   const handleClick = (item: Chat) => {
     setSelectedChat(item);
   };
@@ -48,18 +48,12 @@ const UserChats = ({
 
   const RenderChats = () => {
     if (currTabb === "Inbox") {
-      const filteredChats = chats?.filter(
-        (item: Chat) =>
-          (item.users.find(
-            (user) =>
-              user?.userId._id.toString() === userData?.id &&
-              user?.isRequestAccepted,
-          ) ||
-            item.isRequestAccepted ||
-            item.groupAdmin.toString() === userData?.id) &&
-          (!item.isGroupChat ? item.latestMessage : true),
-      );
-
+        const filteredChats = chats?.filter(
+            (item: Chat) =>
+              item.users.find((user) => user?.userId._id.toString() === userData?.id && user?.isRequestAccepted) ||
+              item.isRequestAccepted ||
+              item.groupAdmin.toString() === userData?.id
+          )
       if (isChatLoading) {
         return (
           <View className="flex-1 justify-center items-center">
@@ -104,17 +98,11 @@ const UserChats = ({
         </TouchableOpacity>
       ));
     } else if (currTabb === "Requests") {
-      const filteredChats = chats?.filter((item: Chat) =>
-        item.isGroupChat
-          ? item.users.some(
-              (user) =>
-                user.userId._id.toString() === userData?.id &&
-                !user.isRequestAccepted,
-            )
-          : !item.isRequestAccepted &&
-            item.groupAdmin.toString() !== userData?.id,
-      );
-
+        const filteredChats = chats?.filter((item: Chat) =>
+            item.isGroupChat
+              ? item.users.some((user) => user.userId._id.toString() === userData?.id && !user.isRequestAccepted)
+              : !item.isRequestAccepted && item.groupAdmin.toString() !== userData?.id
+          )
       if (filteredChats.length === 0) {
         return (
           <Text className="text-neutral-500 text-center py-8">
@@ -153,25 +141,25 @@ const UserChats = ({
 
   return (
     <View className="relative h-full flex-1">
-      <View className="p-4 border-b border-neutral-200">
-        <ReusableButton
-          onPress={() => setCurrTab("Single")}
-          buttonText="Start a Chat"
-          variant="primary"
-          textStyle="text-white"
-        />
-        <View className="relative ">
+      <View className="p-4  flex flex-row gap-2 ">
+        <View className="relative flex-1">
           <TextInput
             placeholder="Search Messages"
-            className="border border-neutral-200 p-2  rounded-lg"
+            className="border border-neutral-200 p-2  rounded-lg h-10"
             style={{ paddingEnd: 40 }}
           />
           <Search
-            style={{ position: "absolute", top: 10, right: 8 }}
-            height={24}
-            width={24}
+            style={{ position: "absolute", top: 8, right: 8 }}
+            height={20}
+            width={20}
           />
         </View>
+        <TouchableOpacity
+           onPress={() => navigation.navigate("NewChatScreen")}
+            className="w-10 ps-2 h-10 bg-secondary rounded-lg flex justify-center items-center"
+          >
+            <MailOutSolid width={28} height={28} color={"#6744FF"} strokeWidth={2} />
+          </TouchableOpacity>
       </View>
 
       <ScrollView

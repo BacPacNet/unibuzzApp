@@ -1,3 +1,4 @@
+import { getMimeTypeFromUrl, imageMimeTypes } from "@/utils";
 import React, { useState } from "react";
 import { View, Text, TouchableOpacity, Image, StyleSheet } from "react-native";
 import ImageViewing from "react-native-image-viewing";
@@ -9,8 +10,13 @@ const ImageGallery = ({
   images: any;
   imageCount: number;
 }) => {
+
+    const imageItems = images?.filter((item: any) => imageMimeTypes.includes(getMimeTypeFromUrl(item.imageUrl))) || []
+  const fileItems = images?.filter((item: any) => !imageMimeTypes.includes(getMimeTypeFromUrl(item.imageUrl))) || []
+
   const [isOpen, setIsOpen] = useState(false);
   const [photoIndex, setPhotoIndex] = useState(0);
+
 
   const handleImageClick = (index: number) => {
     setPhotoIndex(index);
@@ -50,7 +56,7 @@ const ImageGallery = ({
           width: "100%",
         }}
       >
-        {images?.slice(0, 4).map((src: any, index: number) => (
+        {imageItems?.slice(0, 4).map((src: any, index: number) => (
           <TouchableOpacity
             key={index}
             onPress={() => handleImageClick(index)}
@@ -69,6 +75,16 @@ const ImageGallery = ({
             )}
           </TouchableOpacity>
         ))}
+      </View>
+
+      <View className="flex gap-2">
+        {
+          fileItems.map((item: any, index: number) => (
+            <View key={index}>
+              <Text>{decodeURI(item.imageUrl.split('/').pop() || 'Unknown File')}</Text>
+            </View>
+          ))
+        }
       </View>
     </View>
   );

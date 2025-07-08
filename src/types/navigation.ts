@@ -19,9 +19,13 @@ export type RootStackParamList = {
   Connection: any;
   ConnectionsFilter: any;
   Messages: any;
+  MessagesStack:any
+  NewChatScreen:any
+  EditChatScreen:any
+  ChatMembersScreen:any
   Notifications: undefined;
   AIAssistant: undefined;
-  Discover: undefined;
+  Discover: any;
   DiscoverStack: any;
   University: {
     data: any;
