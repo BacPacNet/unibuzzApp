@@ -110,31 +110,31 @@ export const getTabIcons = (
       />
     ),
     MessagesStack: (focused: boolean) => (
-      <View style={{ position: "relative" }}>  
-      <MailSolid
-        height={28}
-        width={28}
-        color={focused ? "#6744FF" : "#6B7280"}
-      />
-      {unreadMessagesCount && Number(unreadMessagesCount) > 0 ? (
-        <View
-        style={{
-          position: "absolute",
-          top: -4,
-          right: -8,
-          backgroundColor: "red",
-          borderRadius: 8,
-          paddingHorizontal: 4,
-          minWidth: 16,
-          alignItems: "center",
-          justifyContent: "center",
-        }}
-      >
-        <Text style={{ color: "white", fontSize: 10, fontWeight: "bold" }}>
-          {String(unreadMessagesCount)}
-        </Text>
-      </View>
-      ) : null}
+      <View style={{ position: "relative" }}>
+        <MailSolid
+          height={28}
+          width={28}
+          color={focused ? "#6744FF" : "#6B7280"}
+        />
+        {unreadMessagesCount && Number(unreadMessagesCount) > 0 ? (
+          <View
+            style={{
+              position: "absolute",
+              top: -4,
+              right: -8,
+              backgroundColor: "red",
+              borderRadius: 8,
+              paddingHorizontal: 4,
+              minWidth: 16,
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            <Text style={{ color: "white", fontSize: 10, fontWeight: "bold" }}>
+              {String(unreadMessagesCount)}
+            </Text>
+          </View>
+        ) : null}
       </View>
     ),
     Notifications: (focused: boolean) => (

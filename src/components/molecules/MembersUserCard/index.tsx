@@ -47,16 +47,15 @@ const MembersUserCard = ({
   isViewerAdmin,
   isGroupAdmin,
   handleRemoveClick,
-  isChat=false,
-  isRemoving=false,
-  disabled=false,
+  isChat = false,
+  isRemoving = false,
+  disabled = false,
 }: Props) => {
   const navigate = useNavigation() as any;
   const { mutateAsync: toggleFollow } = useToggleFollow("Following");
   const [isFollowingState, setIsFollowingState] = useState(isFollowing);
   const [isProcessing, setIsProcessing] = useState(false);
   const membersBottomSheet = useRef<ActionSheetRef>(null);
-
 
   const insets = useSafeAreaInsets();
   const handleFollowClick = async (id: string) => {
@@ -104,16 +103,17 @@ const MembersUserCard = ({
         height="medium"
         size={100}
       />
-    ) : isChat && !isGroupAdmin ?   <ReusableButton
-    onPress={() => handleRemoveClick?.(_id)}
-    variant="border"
-    buttonText="Remove"
-    height="medium"
-    size={100}
-    disabled={disabled}
-    isLoading={isRemoving}
-    
-  /> : isChat && isGroupAdmin ? null : (
+    ) : isChat && !isGroupAdmin ? (
+      <ReusableButton
+        onPress={() => handleRemoveClick?.(_id)}
+        variant="border"
+        buttonText="Remove"
+        height="medium"
+        size={100}
+        disabled={disabled}
+        isLoading={isRemoving}
+      />
+    ) : isChat && isGroupAdmin ? null : (
       <ReusableButton
         variant="primary"
         buttonContent={

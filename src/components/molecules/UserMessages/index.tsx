@@ -86,15 +86,12 @@ const UserCard = ({
           <Text className="text-[18px] font-semibold text-neutral-900">
             {name}
           </Text>
-     
-          {
-            date && (
-              <Text className="text-xs text-gray-500">
-                {formatRelativeTime(new Date(date))}
-        
-              </Text>
-            )
-          }
+
+          {date && (
+            <Text className="text-xs text-gray-500">
+              {formatRelativeTime(new Date(date))}
+            </Text>
+          )}
         </View>
         <Text className="text-xs text-gray-800">{content}</Text>
         <ImageGallery images={media} imageCount={media?.length} />
@@ -120,15 +117,13 @@ const UserMessages = ({
   const { changeHeaderShownStatus } = useHeader();
   const scrollViewRef = useRef<ScrollView>(null);
   const [changed, setChanged] = useState("");
-  let previousDate: any = ''
+  let previousDate: any = "";
   useEffect(() => {
     if (scrollViewRef.current) {
       scrollViewRef.current.scrollToEnd({ animated: false });
     }
   }, [chatMessages, changed]);
 
-
-  
   useEffect(() => {
     navigation.setOptions({ tabBarStyle: { display: "none" } });
   }, [navigation]);
@@ -153,7 +148,6 @@ const UserMessages = ({
   return (
     <View className="flex-1 justify-between h-full">
       <ScrollView
-       
         className="flex-1 px-4  h-full"
         ref={scrollViewRef}
         onContentSizeChange={() =>
@@ -161,11 +155,15 @@ const UserMessages = ({
         }
       >
         {chatMessages?.map((item: any, idx: any) => {
-        
-
-            const currentDate = format(new Date(item?.createdAt), 'd MMMM h:mm a')
-        const shouldShowDateDivider = !dayjs(item.createdAt).isSame(previousDate, 'day')
-        previousDate = dayjs(item.createdAt)
+          const currentDate = format(
+            new Date(item?.createdAt),
+            "d MMMM h:mm a",
+          );
+          const shouldShowDateDivider = !dayjs(item.createdAt).isSame(
+            previousDate,
+            "day",
+          );
+          previousDate = dayjs(item.createdAt);
 
           return (
             <Fragment key={idx}>

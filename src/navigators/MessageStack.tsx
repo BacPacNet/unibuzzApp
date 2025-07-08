@@ -6,7 +6,6 @@ import Messages from "@/screens/MessagesScreen";
 import EditChatScreen from "@/screens/EditChatScreen";
 import ChatMembersScreen from "@/screens/ChatMembersScreen";
 
-
 const MessageStack = () => {
   const Stack = createStackNavigator();
   const { variant } = useTheme();

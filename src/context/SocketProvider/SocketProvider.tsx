@@ -6,7 +6,10 @@ import {
   useNavigationState,
 } from "@react-navigation/native";
 import { getUserStore } from "@/storage/user";
-import { useGetUserNotificationTotalCount, useGetUserUnreadMessagesTotalCount } from "@/services/notification";
+import {
+  useGetUserNotificationTotalCount,
+  useGetUserUnreadMessagesTotalCount,
+} from "@/services/notification";
 import { NEXT_PUBLIC_SOCKET_URL, NEXT_PUBLIC_SOCKET_URL_IOS } from "@env";
 
 type SocketContextType = {
@@ -36,7 +39,8 @@ export const SocketProvider: React.FC<{ children: React.ReactNode }> = ({
 
   const { refetch: unreadNotificationCount } =
     useGetUserNotificationTotalCount();
-    const { refetch: userUnreadMessagesCount } = useGetUserUnreadMessagesTotalCount()
+  const { refetch: userUnreadMessagesCount } =
+    useGetUserUnreadMessagesTotalCount();
 
   const navigationRef = useNavigationContainerRef();
   const routeNames = useNavigationState((state) => state?.routeNames || []);

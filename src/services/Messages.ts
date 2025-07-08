@@ -1,4 +1,4 @@
-import {  messages } from "@/types/ChatType";
+import { messages } from "@/types/ChatType";
 import { client } from "./api-client";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
@@ -138,7 +138,8 @@ export const useUpdateMessageIsSeen = () => {
   const cookieValue = getToken();
   const queryClient = useQueryClient();
   const chatData: ChatsArray = queryClient.getQueryData(["userChats"]) || [];
-  const { refetch: refetchMessageNotification } = useGetUserUnreadMessagesTotalCount()
+  const { refetch: refetchMessageNotification } =
+    useGetUserUnreadMessagesTotalCount();
   return useMutation({
     mutationFn: ({
       chatId,
@@ -167,7 +168,7 @@ export const useUpdateMessageIsSeen = () => {
         );
         queryClient.setQueryData(["userChats"], updatedChatData);
       }
-      refetchMessageNotification()
+      refetchMessageNotification();
       //   queryClient.invalidateQueries({ queryKey: ["message_notification"] });
     },
     onError: (error: any) => {
@@ -236,25 +237,37 @@ export async function toggleMessageBlock(
   return response;
 }
 
-export const useToggleBlockMessages = (userToBlockID: string, isBlockedByYou: boolean) => {
-    const cookieValue = getToken() as string;
-    const queryClient = useQueryClient()
-    return useMutation({
-      mutationFn: (data: any) => toggleMessageBlock(cookieValue, data, userToBlockID),
-      onSuccess: () => {
-        queryClient.invalidateQueries({ queryKey: ['userChats'] })
-        if (isBlockedByYou) {
-            Toast.show('you have un-blocked the user',{placement:'top',type:'success'})
-        } else {
-            Toast.show('you have blocked the user',{placement:'top',type:'danger'})
-        }
-      },
-      onError: (res: any) => {
-      
-        Toast.show(res.response.data.message,{placement:'top',type:'warning'})
-      },
-    })
-  }
+export const useToggleBlockMessages = (
+  userToBlockID: string,
+  isBlockedByYou: boolean,
+) => {
+  const cookieValue = getToken() as string;
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (data: any) =>
+      toggleMessageBlock(cookieValue, data, userToBlockID),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["userChats"] });
+      if (isBlockedByYou) {
+        Toast.show("you have un-blocked the user", {
+          placement: "top",
+          type: "success",
+        });
+      } else {
+        Toast.show("you have blocked the user", {
+          placement: "top",
+          type: "danger",
+        });
+      }
+    },
+    onError: (res: any) => {
+      Toast.show(res.response.data.message, {
+        placement: "top",
+        type: "warning",
+      });
+    },
+  });
+};
 
 export async function createGroupChat(token: any, data: any) {
   const response = await client(`/chat/group`, {
@@ -280,66 +293,89 @@ export const useCreateGroupChat = () => {
   });
 };
 
-
-
-export async function removeGroupMember(token: string, chatId: string, data: any) {
-    const response = await client(`/chat/group/${chatId}`, { headers: { Authorization: `Bearer ${token}` }, method: 'PUT', data })
-    return response
-  }
+export async function removeGroupMember(
+  token: string,
+  chatId: string,
+  data: any,
+) {
+  const response = await client(`/chat/group/${chatId}`, {
+    headers: { Authorization: `Bearer ${token}` },
+    method: "PUT",
+    data,
+  });
+  return response;
+}
 export const useRemoveGroupChatMember = (chatId: string) => {
-    const cookieValue = getToken() as string
-    const queryClient = useQueryClient()
-    return useMutation({
-      mutationFn: (data: any) => removeGroupMember(cookieValue, chatId, data),
-      onSuccess: () => {
-        queryClient.invalidateQueries({ queryKey: ['userChats'] })
-        //   console.log('data', res)
-      },
-      onError: (res: any) => {
-       
-        Toast.show(res.response?.data.message || "Something went wrong");
-      },
-    })
-  }
+  const cookieValue = getToken() as string;
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (data: any) => removeGroupMember(cookieValue, chatId, data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["userChats"] });
+      //   console.log('data', res)
+    },
+    onError: (res: any) => {
+      Toast.show(res.response?.data.message || "Something went wrong");
+    },
+  });
+};
 
+export async function leaveGroup(token: string, chatId: any) {
+  const response = await client(`/chat/leave-group/${chatId}`, {
+    headers: { Authorization: `Bearer ${token}` },
+    method: "PUT",
+  });
+  return response;
+}
 
-  export async function leaveGroup(token: string, chatId: any) {
-    const response = await client(`/chat/leave-group/${chatId}`, { headers: { Authorization: `Bearer ${token}` }, method: 'PUT' })
-    return response
-  }
+export const useLeaveGroup = (chatId: string) => {
+  const cookieValue = getToken() as string;
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: () => leaveGroup(cookieValue, chatId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["userChats"] });
+      Toast.show("You left the group");
+    },
+    onError: (res: any) => {
+      //   console.log(res.response.data.message, 'res')
+      Toast.show(res.response.data.message, {
+        placement: "top",
+        type: "warning",
+      });
+    },
+  });
+};
 
-  export const useLeaveGroup = (chatId: string) => {
-    const cookieValue = getToken() as string
-    const queryClient = useQueryClient()
-    return useMutation({
-      mutationFn: () => leaveGroup(cookieValue, chatId),
-      onSuccess: () => {
-        queryClient.invalidateQueries({ queryKey: ['userChats'] })
-        Toast.show('You left the group')
-      },
-      onError: (res: any) => {
-        //   console.log(res.response.data.message, 'res')
-        Toast.show(res.response.data.message,{placement:'top',type:'warning'})
-      },
-    })
-  }
-
-
-  export async function editGroupMember(token: string, chatId: string, data: any) {
-    const response = await client(`/chat/edit-group/${chatId}`, { headers: { Authorization: `Bearer ${token}` }, method: 'PUT', data })
-    return response
-  }
-  export const useEditGroupChat = (chatId: string) => {
-    const cookieValue = getToken() as string
-    const queryClient = useQueryClient()
-    return useMutation({
-      mutationFn: (data: any) => editGroupMember(cookieValue, chatId, data),
-      onSuccess: () => {
-        queryClient.invalidateQueries({ queryKey: ['userChats'] })
-        Toast.show('Changes Applied Successfully',{placement:'top',type:'success'})
-      },
-      onError: (res: any) => {
-        Toast.show(res.response.data.message,{placement:'top',type:'warning'})
-      },
-    })
-  }
+export async function editGroupMember(
+  token: string,
+  chatId: string,
+  data: any,
+) {
+  const response = await client(`/chat/edit-group/${chatId}`, {
+    headers: { Authorization: `Bearer ${token}` },
+    method: "PUT",
+    data,
+  });
+  return response;
+}
+export const useEditGroupChat = (chatId: string) => {
+  const cookieValue = getToken() as string;
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (data: any) => editGroupMember(cookieValue, chatId, data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["userChats"] });
+      Toast.show("Changes Applied Successfully", {
+        placement: "top",
+        type: "success",
+      });
+    },
+    onError: (res: any) => {
+      Toast.show(res.response.data.message, {
+        placement: "top",
+        type: "warning",
+      });
+    },
+  });
+};

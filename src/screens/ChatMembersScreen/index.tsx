@@ -9,28 +9,31 @@ import { getUserProfileStore } from "@/storage/user";
 import { useRemoveGroupChatMember } from "@/services/Messages";
 import { useState } from "react";
 
-
-
-type NavigationProp = StackNavigationProp<RootStackParamList, "ChatMembersScreen">;
+type NavigationProp = StackNavigationProp<
+  RootStackParamList,
+  "ChatMembersScreen"
+>;
 
 const ChatMembersScreen = ({ route }: any) => {
   const navigate = useNavigation<NavigationProp>();
-const users = route?.params?.users ?? []
-const chatId = route?.params?.chatId ?? ""
-const [removing, setRemoving] = useState('')
-const [usersList, setUsersList] = useState(users || [])
+  const users = route?.params?.users ?? [];
+  const chatId = route?.params?.chatId ?? "";
+  const [removing, setRemoving] = useState("");
+  const [usersList, setUsersList] = useState(users || []);
 
-const userProfileData = getUserProfileStore()
-const { mutateAsync, isPending } = useRemoveGroupChatMember(chatId)
-const handleRemoveUser = async (userIdToRemove: string) => {
-  setRemoving(userIdToRemove)
-  const res: any = await mutateAsync({ userToToggleId: userIdToRemove })
-  if (res?.id) {
-    const newUserList = usersList.filter((user: any) => user.userId._id !== res?.id)
-    setUsersList(newUserList)
-  }
-  setRemoving('')
-}
+  const userProfileData = getUserProfileStore();
+  const { mutateAsync, isPending } = useRemoveGroupChatMember(chatId);
+  const handleRemoveUser = async (userIdToRemove: string) => {
+    setRemoving(userIdToRemove);
+    const res: any = await mutateAsync({ userToToggleId: userIdToRemove });
+    if (res?.id) {
+      const newUserList = usersList.filter(
+        (user: any) => user.userId._id !== res?.id,
+      );
+      setUsersList(newUserList);
+    }
+    setRemoving("");
+  };
   const handleBack = () => {
     // navigate.navigate("CommunityGroup", {
     //   communityId: communityId._id,
@@ -55,11 +58,10 @@ const handleRemoveUser = async (userIdToRemove: string) => {
               isSelfProfile={false}
               isViewerAdmin={false}
               isGroupAdmin={userProfileData?.users_id === item.userId._id}
-              currentUserId={ ""}
+              currentUserId={""}
               role={item.userId.role}
-                isChat={true}
+              isChat={true}
               profile_dp_imageUrl={item.userId.profileDp}
-
               study_year={item.userId.studyYear || ""}
               isRemoving={removing === item.userId._id}
               disabled={isPending}

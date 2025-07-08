@@ -20,9 +20,9 @@ export enum UPLOAD_CONTEXT {
 }
 
 export type FileWithId = {
-    uri: string;
-    name?: string | null;
-    size?: number | null;
-  
-    type?: string | null;
-  };
+  uri: string;
+  name?: string | null;
+  size?: number | null;
+
+  type?: string | null;
+};

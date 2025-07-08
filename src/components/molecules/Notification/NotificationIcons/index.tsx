@@ -7,7 +7,7 @@ type NotificationIconProps = {
 };
 
 export const NotificationIcon = ({ type }: NotificationIconProps) => {
-  const iconProps = { width: 28, height: 28, color: "#9685FF" };
+  const iconProps = { width: 24, height: 24, color: "#9685FF" };
 
   switch (type) {
     case notificationRoleAccess.FOLLOW:

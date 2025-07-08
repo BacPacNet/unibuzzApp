@@ -58,22 +58,22 @@ const MessageUserStickyBar = ({
   groupAdmin,
   setCurrTab,
   isBlockedByYou,
-  communitySelected
+  communitySelected,
 }: Props) => {
   const userName =
     users?.flat().filter((item) => item.userId._id !== yourID) || [];
   const [showDropDown, setShowDropDown] = useState(false);
   const { mutate: acceptRequest } = useAcceptRequest();
   const { mutate: acceptGroupRequest } = useAcceptGroupRequest();
-  const { mutate: toggleBlockMessage } = useToggleBlockMessages(userName[0]?.userId?._id, isBlockedByYou)
-  const { mutate: leaveGroup } = useLeaveGroup(chatId)
- 
- 
+  const { mutate: toggleBlockMessage } = useToggleBlockMessages(
+    userName[0]?.userId?._id,
+    isBlockedByYou,
+  );
+  const { mutate: leaveGroup } = useLeaveGroup(chatId);
 
   const bottomSheet = useRef<ActionSheetRef>(null);
   const navigation = useNavigation<NavigationProp>();
   const insets = useSafeAreaInsets();
-
 
   const handleMoveToInbox = () => {
     if (isGroupChat) {
@@ -88,34 +88,29 @@ const MessageUserStickyBar = ({
     setSelectedChat(undefined);
   };
 
-
-
   const navigateToMembers = () => {
     navigation.navigate("MessagesStack", {
       screen: "ChatMembersScreen",
       params: {
         users,
-        chatId
+        chatId,
       },
     });
-
   };
   const navigateToEditGroup = () => {
-
-    
     navigation.navigate("MessagesStack", {
       screen: "EditChatScreen",
       params: {
         chatId,
-        groupLogo:profileCover || '',
-        groupCurrentName:name,
-        communitySelected:communitySelected
+        groupLogo: profileCover || "",
+        groupCurrentName: name,
+        communitySelected: communitySelected,
       },
     });
-  }
+  };
 
   return (
-    <View  className=" fixed w-full top-0 z-10 flex flex-row justify-between border-b border-neutral-200 bg-white py-4 px-4">
+    <View className=" fixed w-full top-0 z-10 flex flex-row justify-between border-b border-neutral-200 bg-white py-4 px-4">
       <View className="flex flex-row items-center gap-2">
         <TouchableOpacity onPress={handleBack}>
           {/* <IoIosArrowBack className="w-8 h-8 text-[#6744FF]" /> */}
@@ -136,15 +131,16 @@ const MessageUserStickyBar = ({
             }`}
           />
         </View>
-
       </View>
       <View className="flex flex-row gap-4 items-center">
         <View className="relative">
-          <TouchableOpacity style={{backgroundColor: "#F3F2FF"}} className=" rounded-full p-2" onPress={() => bottomSheet.current?.show()}>
+          <TouchableOpacity
+            style={{ backgroundColor: "#F3F2FF" }}
+            className=" rounded-full p-2"
+            onPress={() => bottomSheet.current?.show()}
+          >
             <MoreHoriz height={24} width={24} color="#6744FF" />
           </TouchableOpacity>
-
-
         </View>
       </View>
 
@@ -154,9 +150,16 @@ const MessageUserStickyBar = ({
         gestureEnabled={true}
         safeAreaInsets={insets}
         snapPoints={[100]}
-        
       >
-       <MessageUserOptions handleToggleBlockMessage={() => toggleBlockMessage({ chatId })} isBlockedByYou={isBlockedByYou} isGroupChat={isGroupChat}   handleLeaveGroup={leaveGroup}  navigateToEditGroup={ navigateToEditGroup}  isAdmin={groupAdmin == yourID} handleNavigate={navigateToMembers} />
+        <MessageUserOptions
+          handleToggleBlockMessage={() => toggleBlockMessage({ chatId })}
+          isBlockedByYou={isBlockedByYou}
+          isGroupChat={isGroupChat}
+          handleLeaveGroup={leaveGroup}
+          navigateToEditGroup={navigateToEditGroup}
+          isAdmin={groupAdmin == yourID}
+          handleNavigate={navigateToMembers}
+        />
       </ActionSheet>
     </View>
   );

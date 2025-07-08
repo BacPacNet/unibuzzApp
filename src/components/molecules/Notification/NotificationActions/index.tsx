@@ -70,8 +70,10 @@ export const NotificationActions = ({ data }: NotificationActionsProps) => {
           <ReusableButton
             buttonText="Accept Request"
             variant="primary"
-            size="w-1/2"
+            size={116}
             onPress={handleAcceptInvite}
+            height="small"
+            textSize="text-2xs"
           />
         );
       } else if (data?.status === notificationStatus.accepted) {
@@ -101,16 +103,21 @@ export const NotificationActions = ({ data }: NotificationActionsProps) => {
           <View style={styles.buttonContainer}>
             <ReusableButton
               buttonText="Accept Request"
-              variant="primary"
-              size="w-1/2"
+              variant="border_primary"
+              size={116}
               onPress={() => handleChangeGroupStatus("accepted")}
+              height="small"
+              textSize="text-2xs"
+              containerStyle="bg-white"
             />
 
             <ReusableButton
               buttonText="Reject Request"
-              variant="danger"
-              size="w-1/2"
+              variant="danger_outline"
+              size={111}
               onPress={() => handleChangeGroupStatus("rejected")}
+              height="small"
+              textSize="text-2xs"
             />
           </View>
         );
@@ -118,7 +125,7 @@ export const NotificationActions = ({ data }: NotificationActionsProps) => {
     }
 
     default:
-      return <Text></Text>;
+      return null;
   }
 };
 
