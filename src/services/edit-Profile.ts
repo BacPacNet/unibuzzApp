@@ -25,15 +25,16 @@ export const useEditProfile = () => {
     mutationFn: (data: any) =>
       editProfile(data, userProfileData?._id || "", cookieValue),
     onSuccess: async (response: any) => {
-      console.log("response", response);
-
       storeUserProfile(response.data);
-      Toast.show("Profile Updated");
+      Toast.show("Profile Updated", { type: "success", placement: "top" });
 
       queryClient.invalidateQueries({ queryKey: ["getRefetchUserData"] });
     },
     onError: (res: any) => {
-      Toast.show(res.response?.data.message || "Something went wrong");
+      Toast.show(res.response?.data.message || "Something went wrong", {
+        type: "danger",
+        placement: "top",
+      });
     },
   });
 };
@@ -48,20 +49,22 @@ const addUniversityEmail = async (data: any, token: string) => {
 };
 
 export const useAddUniversityEmail = (redirect: boolean = false) => {
-  // const setUserProfileData = useUniStore((state) => state.setUserProfileData)
-  // const { setUserData, setUserProfileData } = useUniStore()
-
   const cookieValue = getToken() as string;
-  const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: (data: any) => addUniversityEmail(data, cookieValue),
     onSuccess: (response: any, variables) => {
       storeUserProfile(response);
-      Toast.show("University Verification Complete");
+      Toast.show("University Verification Complete", {
+        type: "success",
+        placement: "top",
+      });
     },
     onError: (res: any) => {
-      return Toast.show(res.response.data.message);
+      return Toast.show(res.response.data.message, {
+        type: "danger",
+        placement: "top",
+      });
     },
   });
 };

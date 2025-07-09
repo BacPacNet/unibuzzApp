@@ -10,9 +10,7 @@ export type RootStackParamList = {
   Timeline: undefined;
   NewPost: undefined;
   ProfileStack: any;
-  Profile: {
-    userId: string;
-  };
+  Profile: any;
   ProfileEdit: undefined;
   Home: undefined;
   Connections: any;
@@ -64,6 +62,8 @@ export type RootStackParamList = {
   SinglePost: any;
   UsersScreen: any;
   MembersScreen: any;
+  InfoStackScreen: any;
+  AboutUs: undefined;
 };
 
 export type RootScreenProps<

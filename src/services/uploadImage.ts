@@ -77,8 +77,6 @@ export async function uploadNewImage(img: {
 
   formData.append("upload_preset", presetKey);
 
-  console.log("Cloud Name:", cloudName, "Form Data:", formData);
-
   try {
     const res: AxiosResponse<CloudinaryResponse, any> = await axios.post(
       `https://api.cloudinary.com/v1_1/${cloudName}/image/upload`,

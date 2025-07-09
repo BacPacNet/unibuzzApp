@@ -1,23 +1,43 @@
 import React from "react";
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
-import { InfoCircle, MessageText } from "iconoir-react-native";
+import { ElectronicsChip, InfoCircle, MessageText } from "iconoir-react-native";
+import { useNavigation } from "@react-navigation/native";
+import { RootStackParamList } from "@/types/navigation";
+import { StackNavigationProp } from "@react-navigation/stack";
 
 const menuItems = [
   {
-    title: "Help Center",
-    icon: <InfoCircle width={22} height={22} color="#555" />,
+    title: "Report Bug",
+    icon: <ElectronicsChip width={22} height={22} color="#555" />,
+    screen: "BugReportScreen",
   },
   {
     title: "Feedback",
     icon: <MessageText width={22} height={22} color="#555" />,
+    screen: "FeedBackScreen",
   },
 ];
 
-const SidebarMenuSectionTwo = () => {
+const SidebarMenuSectionTwo = ({
+  closeDrawer,
+}: {
+  closeDrawer: () => void;
+}) => {
+  const navigation = useNavigation<StackNavigationProp<RootStackParamList>>();
+
+  const handleClick = (screen: string) => {
+    if (!screen) return;
+    navigation.navigate("InfoStackScreen", { screen });
+    closeDrawer();
+  };
   return (
     <View style={styles.container}>
       {menuItems.map((item, index) => (
-        <TouchableOpacity key={index} style={styles.menuItem}>
+        <TouchableOpacity
+          onPress={() => handleClick(item.screen)}
+          key={index}
+          style={styles.menuItem}
+        >
           {item.icon}
           <Text style={styles.menuText}>{item.title}</Text>
         </TouchableOpacity>
