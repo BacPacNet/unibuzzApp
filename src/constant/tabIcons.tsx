@@ -78,12 +78,7 @@ export const getTabIcons = (
   unreadCount: number = 0,
   unreadMessagesCount: number = 0,
 ): Record<
-  | "Home"
-  | "Example"
-  | "Connection"
-  | "MessagesStack"
-  | "Notifications"
-  | "AIAssistant",
+  "Home" | "Example" | "Connection" | "Messages" | "Notifications" | "BuzzBot",
   (focused: boolean) => JSX.Element
 > =>
   ({
@@ -109,7 +104,7 @@ export const getTabIcons = (
         fill={focused ? "#6744FF" : "#6B7280"}
       />
     ),
-    MessagesStack: (focused: boolean) => (
+    Messages: (focused: boolean) => (
       <View style={{ position: "relative" }}>
         <MailSolid
           height={28}
@@ -165,7 +160,7 @@ export const getTabIcons = (
         ) : null}
       </View>
     ),
-    AIAssistant: (focused: boolean) => (
+    BuzzBot: (focused: boolean) => (
       <Spark height={28} width={28} color={focused ? "#6744FF" : "black"} />
     ),
   }) satisfies Record<string, (focused: boolean) => JSX.Element>;

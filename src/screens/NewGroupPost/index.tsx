@@ -323,7 +323,7 @@ export default NewGroupPost;
 
 const styles = StyleSheet.create({
   editorHeight: {
-    minHeight: 100,
+    flex: 1,
     paddingHorizontal: 8,
   },
 });

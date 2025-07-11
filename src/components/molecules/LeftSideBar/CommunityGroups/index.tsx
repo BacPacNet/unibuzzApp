@@ -24,8 +24,6 @@ function CommunityGroupAll({
   isCommunityGroupsLoading,
   communityLogo,
 }: Props) {
-  const [showGroupTill, setShowGroupTill] = useState(5);
-
   if (isCommunityGroupsLoading || communityGroups == undefined)
     return <ActivityIndicator />;
   if (communityGroups?.length === 0)
@@ -37,7 +35,7 @@ function CommunityGroupAll({
 
   return (
     <>
-      {communityGroups?.slice(0, showGroupTill).map((item: any) => (
+      {communityGroups?.map((item: any) => (
         <GroupSelectors
           key={item._id}
           currSelectedGroup={currSelectedGroup}
@@ -47,14 +45,6 @@ function CommunityGroupAll({
           communityLogo={communityLogo}
         />
       ))}
-      {communityGroups?.length > showGroupTill && (
-        <TouchableOpacity
-          onPress={() => setShowGroupTill(showGroupTill + 5)}
-          className="flex items-center justify-center p-4"
-        >
-          <Text>Load More</Text>
-        </TouchableOpacity>
-      )}
     </>
   );
 }

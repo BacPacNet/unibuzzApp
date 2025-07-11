@@ -122,14 +122,14 @@ const MessageUserStickyBar = ({
             style={{ width: 48, height: 48, borderRadius: 100 }}
             className="w-12 h-12"
           />
-          <View
+          {/* <View
             style={{ right: -3 }}
             className={`absolute bottom-0 w-4 h-4 rounded-full border-2 border-white ${
               userName?.some((item) => item?.isOnline)
                 ? "bg-success-500"
                 : "bg-neutral-300"
             }`}
-          />
+          /> */}
         </View>
       </View>
       <View className="flex flex-row gap-4 items-center">

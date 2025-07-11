@@ -22,7 +22,7 @@ export type RootStackParamList = {
   EditChatScreen: any;
   ChatMembersScreen: any;
   Notifications: undefined;
-  AIAssistant: undefined;
+  BuzzBot: undefined;
   Discover: any;
   DiscoverStack: any;
   University: {

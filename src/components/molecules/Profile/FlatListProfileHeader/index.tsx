@@ -27,7 +27,7 @@ type Props = {
 
   userId: string;
   bio?: string;
-  logos?: string[];
+  logos?: string;
 
   following?: any[];
   followers?: any[];
@@ -107,7 +107,7 @@ export const FlatListProfileHeaderPart = ({
         ) : null}
 
         <View style={styles.innerContainer}>
-          <CommunityLogo logoUrl={logos?.[0] || ""} variant="small" />
+          <CommunityLogo logoUrl={logos || ""} variant="small" />
           <View style={styles.textContainer}>
             <Text
               style={[styles.communityName]}
