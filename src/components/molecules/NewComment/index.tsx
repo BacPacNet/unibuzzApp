@@ -8,10 +8,9 @@ import {
   useEditorBridge,
 } from "@10play/tentap-editor";
 
-import { MediaImage, NavArrowLeft, PagePlus } from "iconoir-react-native";
+import { MediaImage } from "iconoir-react-native";
 import React, { useCallback, useState } from "react";
 import {
-  ActivityIndicator,
   KeyboardAvoidingView,
   Platform,
   SafeAreaView,
@@ -222,17 +221,6 @@ const NewComment = ({
         style={{ paddingBottom: 16 }}
         className="  flex flex-row gap-4 items-center justify-between border-b border-neutral-300 "
       >
-        {/* <View className=" flex flex-row gap-4 items-center">
-          <TouchableOpacity onPress={() => handleBack()}>
-            <NavArrowLeft height={24} width={24} />
-          </TouchableOpacity>
-          <Text>
-            {level
-              ? `Replying to ${commentData.name}`
-              : `Commenting on ${postAuthorName} post`}
-          </Text>
-        </View> */}
-
         <BackHeader
           label={postAuthorName + " post"}
           onPress={() => handleBack()}
@@ -242,17 +230,6 @@ const NewComment = ({
           style={{ marginTop: 16 }}
           className="flex flex-row items-center gap-4"
         >
-          {/* <TouchableOpacity
-            onPress={() => handleComment()}
-            className="bg-primary-500 px-4 py-2 rounded-lg"
-            // disabled={isPending || isPostCreating}
-          >
-            {isPostCreating ? (
-              <ActivityIndicator color={"white"} />
-            ) : (
-              <Text className={`text-center font-bold text-white`}>Post</Text>
-            )}
-          </TouchableOpacity> */}
           <ReusableButton
             variant="primary"
             size={58}
@@ -317,7 +294,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 8,
   },
   editorHeight: {
-    minHeight: 100,
+    flex: 1,
     paddingHorizontal: 8,
   },
 });

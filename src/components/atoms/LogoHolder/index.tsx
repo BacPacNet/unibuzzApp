@@ -22,7 +22,7 @@ const CommunityLogo = ({
         variant === "small" ? styles.smallWrapper : styles.defaultWrapper,
       ]}
     >
-      {logoSrc ? (
+      {logoSrc?.length > 0 ? (
         <Image
           source={{ uri: logoSrc }}
           style={[
@@ -77,9 +77,7 @@ const styles = StyleSheet.create({
     padding: 3,
     borderRadius: 200,
   },
-  communityImage: {
-    resizeMode: "contain",
-  },
+  communityImage: {},
   defaultImage: {
     width: 40,
     height: 40,

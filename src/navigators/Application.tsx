@@ -96,9 +96,9 @@ function ApplicationNavigator() {
     "Home",
     "Example",
     "Connection",
-    "MessagesStack",
+    "Messages",
     "Notifications",
-    "AIAssistant",
+    "BuzzBot",
   ] as const;
 
   type TabName = (typeof knownTabNames)[number];
@@ -132,12 +132,28 @@ function ApplicationNavigator() {
           },
           tabBarActiveTintColor: "#6744FF",
           tabBarInactiveTintColor: "black",
+
           tabBarStyle: {
             backgroundColor: "white",
+            height: 80,
+            display: "flex",
+            flexDirection: "row",
+            alignItems: "center",
+            justifyContent: "space-between",
+            paddingHorizontal: 16,
+
+            borderTopWidth: 1,
           },
           tabBarLabelStyle: {
             fontSize: 12,
             fontWeight: "500",
+            marginTop: 4,
+          },
+          tabBarIconStyle: {
+            height: 28,
+          },
+          tabBarItemStyle: {
+            height: 46,
           },
           headerShown: false,
           tabBarHideOnKeyboard: true,
@@ -161,9 +177,9 @@ function ApplicationNavigator() {
           })}
         />
         {/* <Tab.Screen name="Messages" component={Messages} /> */}
-        <Tab.Screen name="MessagesStack" component={MessageStack} />
+        <Tab.Screen name="Messages" component={MessageStack} />
         <Tab.Screen name="Notifications" component={Notifications} />
-        <Tab.Screen name="AIAssistant" component={AI_Assistant} />
+        <Tab.Screen name="BuzzBot" component={AI_Assistant} />
         <Tab.Screen
           name="DiscoverStack"
           component={DiscoverStack}
