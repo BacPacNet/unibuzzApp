@@ -13,9 +13,11 @@ import { MediaImage, NavArrowLeft, PagePlus } from "iconoir-react-native";
 import React, { useCallback, useState } from "react";
 import {
   ActivityIndicator,
+  Image,
   KeyboardAvoidingView,
   Platform,
   SafeAreaView,
+  ScrollView,
   Text,
   TouchableOpacity,
   View,
@@ -103,6 +105,13 @@ const NewPost = ({ navigation }: any) => {
     [setPostAccessType, setShowPostType],
   );
 
+  const handleInsertImage = (uri: string) => {
+    if (editor?.setImage) {
+      editor.setImage(uri);
+    } else {
+      console.warn("setImage is not available on the editor bridge.");
+    }
+  };
   const handleImagePick = useCallback(() => {
     launchImageLibrary(
       { mediaType: "photo", selectionLimit: 0 },
@@ -126,6 +135,9 @@ const NewPost = ({ navigation }: any) => {
             return;
           }
           setImages((prevImages) => [...prevImages, ...response.assets]);
+          console.log(response.assets[0]);
+
+          handleInsertImage(response.assets[0].uri);
         }
       },
     );
@@ -278,13 +290,13 @@ const NewPost = ({ navigation }: any) => {
               <PagePlus height={20} width={20} color={"#a3a3a3"} />
             </TouchableOpacity>
           </View>
-
           <MediaPreviewList
             files={[...images, ...files]}
             onRemove={(index: any, isImage: boolean) =>
               handleImageRemove(index, isImage)
             }
           />
+
           <Toolbar editor={editor} />
         </KeyboardAvoidingView>
       </SafeAreaView>

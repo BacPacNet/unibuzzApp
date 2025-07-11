@@ -13,9 +13,10 @@ import { SafeAreaView } from "react-native-safe-area-context";
 type Props = {
   navigation: any;
   handleClick: (route: string) => void;
+  closeDrawer: () => void;
 };
 
-const RightSideSidebar = ({ navigation, handleClick }: Props) => {
+const RightSideSidebar = ({ navigation, handleClick, closeDrawer }: Props) => {
   const userProfile = getUserProfileStore();
 
   const isStudent = userProfile?.role === userTypeEnum.Student;
@@ -29,11 +30,11 @@ const RightSideSidebar = ({ navigation, handleClick }: Props) => {
           handleClick={handleClick}
         />
 
-        <SidebarMenuSectionTwo />
+        <SidebarMenuSectionTwo closeDrawer={closeDrawer} />
 
         <SidebarMenuSectionThree />
 
-        <SidebarMenuSectionFour />
+        <SidebarMenuSectionFour closeDrawer={closeDrawer} />
         <View className="flex items-center justify-center">
           <Text className="">Unibuzz Networks © 2024 </Text>
         </View>

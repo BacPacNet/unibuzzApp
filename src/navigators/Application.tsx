@@ -56,6 +56,8 @@ import UsersScreen from "@/screens/UsersScreen";
 import { NewCommunityGroupStatesProvider } from "@/context/NewCommunityGroupStatesProvider/NewCommunityGroupStatesProvider";
 import MembersScreen from "@/screens/MembersScreen";
 import MessageStack from "./MessageStack";
+import InfoStack from "./InfoStack";
+import AboutUs from "@/screens/AboutUs";
 
 const Stack = createStackNavigator<RootStackParamList>();
 const Tab = createBottomTabNavigator<RootStackParamList>();
@@ -240,6 +242,20 @@ function ApplicationNavigator() {
             tabBarButton: () => null,
           }}
         />
+        <Tab.Screen
+          name="InfoStackScreen"
+          component={InfoStack}
+          options={{
+            tabBarButton: () => null,
+          }}
+        />
+        <Tab.Screen
+          name="AboutUs"
+          component={AboutUs}
+          options={{
+            tabBarButton: () => null,
+          }}
+        />
       </Tab.Navigator>
     );
   }
@@ -249,6 +265,9 @@ function ApplicationNavigator() {
   }
 
   function UserProfileDrawerContent({ navigation, setRightDrawerOpen }: any) {
+    const closeDrawer = () => {
+      setRightDrawerOpen(false);
+    };
     const handleClick = (route: string) => {
       if (route == "Profile") {
         navigation.navigate("ProfileStack", {
@@ -269,7 +288,11 @@ function ApplicationNavigator() {
       }
     };
     return (
-      <RightSideSidebar navigation={navigation} handleClick={handleClick} />
+      <RightSideSidebar
+        navigation={navigation}
+        handleClick={handleClick}
+        closeDrawer={closeDrawer}
+      />
     );
   }
 
@@ -333,7 +356,7 @@ function ApplicationNavigator() {
                 <Menu height={24} width={24} color={"#6744FF"} />
               </Pressable>
 
-              <Logo style={{ width: 80, height: 32, resizeMode: "contain" }} />
+              <Logo style={{ width: 80, height: 32 }} />
               {/*<Image
                 source={require("../assets/UnibuzzFullLogo.png")}
                 style={{ width: 80, height: 32, resizeMode: "contain" }}

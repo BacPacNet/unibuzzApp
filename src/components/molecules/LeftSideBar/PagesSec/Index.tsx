@@ -27,6 +27,8 @@ const LeftSideBarPagesSection = () => {
       });
     } else if (route == "Community") {
       navigation.navigate("Timeline");
+    } else if (route == "About Us") {
+      navigation.navigate("AboutUs");
     }
   };
   return (
