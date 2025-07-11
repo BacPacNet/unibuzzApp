@@ -84,6 +84,10 @@ export enum UserPostType {
   MUTUAL = "MUTUAL",
   ONLY_ME = "ONLY_ME",
 }
+export enum Sortby {
+  ASC = "asc",
+  DESC = "desc",
+}
 
 export const defaultBottomSheetSnapPoints = [50, 100];
 

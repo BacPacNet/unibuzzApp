@@ -7,6 +7,7 @@ import {
 import { client } from "./api-client";
 import { Toast } from "react-native-toast-notifications";
 import { getUserStore } from "@/storage/user";
+import { Sortby } from "@/types/constant";
 
 export async function deleteCommunityPost(postId: string, token: string) {
   const response = await client(`/communityPost/${postId}`, {
@@ -24,9 +25,16 @@ export const useDeleteCommunityPost = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["communityGroupsPost"] });
       queryClient.invalidateQueries({ queryKey: ["timelinePosts"] });
+      Toast.show("Post deleted successfully", {
+        type: "success",
+        placement: "top",
+      });
     },
     onError: (res: any) => {
-      Toast.show(res.response?.data.message || "Something went wrong");
+      Toast.show(res.response?.data.message || "Something went wrong", {
+        type: "danger",
+        placement: "top",
+      });
     },
   });
 };
@@ -36,9 +44,10 @@ export async function getCommunityPostComments(
   token: any,
   page: number,
   limit: number,
+  sortby: Sortby,
 ) {
   const response: any = await client(
-    `/communitypostcomment/${postId}?page=${page}&limit=${limit}`,
+    `/communitypostcomment/${postId}?page=${page}&limit=${limit}&sortBy=${sortby}`,
     { headers: { Authorization: `Bearer ${token}` } },
   );
   return response;
@@ -48,6 +57,7 @@ export function useGetCommunityPostComments(
   postId: string,
   isCommunity: boolean,
   limit: number,
+  sortby: Sortby,
 ) {
   {
     const cookieValue = getToken();
@@ -55,7 +65,7 @@ export function useGetCommunityPostComments(
     return useInfiniteQuery({
       queryKey: ["communityPostComments"],
       queryFn: ({ pageParam = 1 }) =>
-        getCommunityPostComments(postId, cookieValue, pageParam, limit),
+        getCommunityPostComments(postId, cookieValue, pageParam, limit, sortby),
       getNextPageParam: (lastPage) => {
         if (lastPage.currentPage < lastPage.totalPages) {
           return lastPage.currentPage + 1;
@@ -249,9 +259,10 @@ export const useCreateGroupPostComment = () => {
 export async function LikeUnilikeGroupPostCommnet(
   communityGroupPostCommentId: string,
   token: any,
+  sortby: Sortby,
 ) {
   const response = await client(
-    `/communitypostcomment/likeUnlike/${communityGroupPostCommentId}`,
+    `/communitypostcomment/likeUnlike/${communityGroupPostCommentId}?sortBy=${sortby}`,
     {
       method: "PUT",
       headers: { Authorization: `Bearer ${token}` },
@@ -263,6 +274,7 @@ export async function LikeUnilikeGroupPostCommnet(
 export const useLikeUnlikeGroupPostComment = (
   showInitial: boolean,
   postId: string,
+  sortby: Sortby,
 ) => {
   const cookieValue = getToken();
   const queryClient = useQueryClient();
@@ -274,7 +286,12 @@ export const useLikeUnlikeGroupPostComment = (
     }: {
       communityGroupPostCommentId: string;
       level: string;
-    }) => LikeUnilikeGroupPostCommnet(communityGroupPostCommentId, cookieValue),
+    }) =>
+      LikeUnilikeGroupPostCommnet(
+        communityGroupPostCommentId,
+        cookieValue,
+        sortby,
+      ),
     onSuccess: (_, variables) => {
       const { communityGroupPostCommentId, level } = variables;
       const currUserComments = queryClient.getQueryData<{

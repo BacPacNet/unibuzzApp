@@ -15,6 +15,7 @@ import {
   KeyboardAvoidingView,
   Platform,
   SafeAreaView,
+  StyleSheet,
   Text,
   TouchableOpacity,
   View,
@@ -38,6 +39,8 @@ import {
   useCreateUserPostComment,
   useCreateUserPostCommentReply,
 } from "@/services/timeline";
+import BackHeader from "@/components/atoms/BackHeader";
+import ReusableButton from "@/components/atoms/ReusableButton";
 
 type ImageAsset = {
   uri: string;
@@ -122,7 +125,7 @@ const NewComment = ({
 
   const handleImagePick = useCallback(() => {
     launchImageLibrary(
-      { mediaType: "photo", selectionLimit: 0 },
+      { mediaType: "photo", selectionLimit: 1 },
       (response: any) => {
         if (response.assets && response.assets.length > 0) {
           const images = response.assets.map((asset: any) => ({
@@ -215,8 +218,11 @@ const NewComment = ({
 
   return (
     <View className="flex-1 bg-white relative">
-      <View className="  flex flex-row gap-4 items-center justify-between border-b border-neutral-300 p-3">
-        <View className=" flex flex-row gap-4 items-center">
+      <View
+        style={{ paddingBottom: 16 }}
+        className="  flex flex-row gap-4 items-center justify-between border-b border-neutral-300 "
+      >
+        {/* <View className=" flex flex-row gap-4 items-center">
           <TouchableOpacity onPress={() => handleBack()}>
             <NavArrowLeft height={24} width={24} />
           </TouchableOpacity>
@@ -225,9 +231,18 @@ const NewComment = ({
               ? `Replying to ${commentData.name}`
               : `Commenting on ${postAuthorName} post`}
           </Text>
-        </View>
-        <View className="flex flex-row items-center gap-4">
-          <TouchableOpacity
+        </View> */}
+
+        <BackHeader
+          label={postAuthorName + " post"}
+          onPress={() => handleBack()}
+          isLeftPadding={false}
+        />
+        <View
+          style={{ marginTop: 16 }}
+          className="flex flex-row items-center gap-4"
+        >
+          {/* <TouchableOpacity
             onPress={() => handleComment()}
             className="bg-primary-500 px-4 py-2 rounded-lg"
             // disabled={isPending || isPostCreating}
@@ -237,13 +252,43 @@ const NewComment = ({
             ) : (
               <Text className={`text-center font-bold text-white`}>Post</Text>
             )}
-          </TouchableOpacity>
+          </TouchableOpacity> */}
+          <ReusableButton
+            variant="primary"
+            size={58}
+            height="small"
+            buttonText="Post"
+            onPress={handleComment}
+            isLoading={isPostCreating}
+          />
         </View>
       </View>
-      <SafeAreaView
-        style={{ flex: 1, paddingBottom: images.length ? 120 : 20 }}
-      >
-        <RichText editor={editor} />
+      <SafeAreaView style={{ flex: 1, paddingBottom: 80 }}>
+        <Text
+          style={styles.padingHorizontal}
+          className="text-sm text-primary-500  "
+        >
+          {level
+            ? `Replying to ${commentData.name}`
+            : `Commenting on ${postAuthorName} post`}
+        </Text>
+
+        {images.length > 0 && (
+          <View style={{ height: 100 }}>
+            <MediaPreviewList
+              files={[...images, ...files]}
+              onRemove={(index: any, isImage: boolean) =>
+                handleImageRemove(index, isImage)
+              }
+            />
+          </View>
+        )}
+
+        <View style={styles.editorHeight}>
+          <RichText editor={editor} />
+        </View>
+
+        {/* <RichText  editor={editor} /> */}
         <KeyboardAvoidingView
           behavior={Platform.OS === "ios" ? "padding" : "height"}
           style={{
@@ -252,18 +297,12 @@ const NewComment = ({
             bottom: 0,
           }}
         >
-          <View className="flex flex-row gap-2 items-center">
+          <View className="flex flex-row gap-2 items-center border-t border-neutral-300 p-2">
             <TouchableOpacity onPress={handleImagePick}>
               <MediaImage height={20} width={20} color={"#a3a3a3"} />
             </TouchableOpacity>
           </View>
 
-          <MediaPreviewList
-            files={[...images, ...files]}
-            onRemove={(index: any, isImage: boolean) =>
-              handleImageRemove(index, isImage)
-            }
-          />
           <Toolbar editor={editor} />
         </KeyboardAvoidingView>
       </SafeAreaView>
@@ -272,3 +311,13 @@ const NewComment = ({
 };
 
 export default NewComment;
+
+const styles = StyleSheet.create({
+  padingHorizontal: {
+    paddingHorizontal: 8,
+  },
+  editorHeight: {
+    minHeight: 100,
+    paddingHorizontal: 8,
+  },
+});

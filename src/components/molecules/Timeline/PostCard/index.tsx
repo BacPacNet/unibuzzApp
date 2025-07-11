@@ -38,6 +38,7 @@ import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { RootStackParamList } from "@/types/navigation";
 import { RenderCreatedAt } from "@/components/atoms/CreatedAt";
+import { defaultBottomSheetSnapPoints } from "@/types/constant";
 
 type ScreenNavigationProp = StackNavigationProp<RootStackParamList, "Home">;
 
@@ -191,6 +192,7 @@ const PostCard = memo(
               : data?.user?._id == userData?.id
           }
           postAdminId={data?.user?._id}
+          handleDeletePost={handleDeletePost}
         />
         {Number(data?.content?.length) > 1 && data?.content ? (
           <View className="px-4">
@@ -263,39 +265,20 @@ const PostCard = memo(
           </TouchableOpacity>
         </View>
 
-        <PostActionModal
-          modalVisible={visible}
-          setModalVisible={setVisible}
-          isAdmin={
-            isSinglePost
-              ? data?.user_id == userData?.id
-              : data?.user?._id == userData?.id
-          }
-          onDelete={handleDeletePost}
-          postID={data?._id}
-          //   type={data?.community?._id ? PostType.Community : PostType.Timeline}
-          type={resolvedPostType}
-          isSinglePost={isSinglePost}
-        />
         <ActionSheet
           useBottomSafeAreaPadding
           ref={commentBottomSheet}
           gestureEnabled={true}
           safeAreaInsets={insets}
-          snapPoints={[70, 100]}
+          snapPoints={defaultBottomSheetSnapPoints}
           containerStyle={{
-            //  height: "100%",
-            //  marginBottom: insets.bottom, // Keeps it above the home indicator
             paddingTop: 10,
-            //  borderTopLeftRadius: 20,
-            //  borderTopRightRadius: 20,
           }}
         >
           <CommentBottomSheet
             postId={data?._id}
             type={resolvedPostType}
             width={width}
-            // adminID={data?.user?._id}
             adminID={isSinglePost ? data?.user_id : data?.user?._id}
             level={data?.level}
             hideBottomBar={hideBottomBar}

@@ -9,23 +9,18 @@ import {
   useEditorBridge,
 } from "@10play/tentap-editor";
 import { useFocusEffect } from "@react-navigation/native";
-import { MediaImage, NavArrowLeft, PagePlus } from "iconoir-react-native";
+import { MediaImage, PagePlus } from "iconoir-react-native";
 import React, { useCallback, useState } from "react";
 import {
-  ActivityIndicator,
-  Image,
   KeyboardAvoidingView,
   Platform,
   SafeAreaView,
-  ScrollView,
-  Text,
+  StyleSheet,
   TouchableOpacity,
   View,
 } from "react-native";
 import { launchImageLibrary } from "react-native-image-picker";
 import DocumentPicker from "react-native-document-picker";
-
-import { replaceImage } from "@/services/uploadImage";
 import { UserPostType } from "@/types/postType";
 import { PostInputData } from "@/types/constant";
 import { UPLOAD_CONTEXT } from "@/types/uploads";
@@ -33,6 +28,9 @@ import { useUploadToS3 } from "@/services/upload";
 import { validateUploadedFiles } from "@/utils";
 import { Toast } from "react-native-toast-notifications";
 import MediaPreviewList from "@/components/molecules/MediaPreview";
+import { useHeader } from "@/context/HeaderProvider/Header";
+import BackHeader from "@/components/atoms/BackHeader";
+import ReusableButton from "@/components/atoms/ReusableButton";
 
 type ImageAsset = {
   uri: string;
@@ -76,6 +74,7 @@ const NewPost = ({ navigation }: any) => {
   );
   const [isPostCreating, setIsPostCreating] = useState(false);
   const [showPostType, setShowPostType] = useState(false);
+  const { changeHeaderShownStatus } = useHeader();
 
   useFocusEffect(
     useCallback(() => {
@@ -97,21 +96,6 @@ const NewPost = ({ navigation }: any) => {
     }, [navigation]),
   );
 
-  const handlePostVisibilityTypeChange = useCallback(
-    (type: UserPostType) => {
-      setPostAccessType(type);
-      setShowPostType(false);
-    },
-    [setPostAccessType, setShowPostType],
-  );
-
-  const handleInsertImage = (uri: string) => {
-    if (editor?.setImage) {
-      editor.setImage(uri);
-    } else {
-      console.warn("setImage is not available on the editor bridge.");
-    }
-  };
   const handleImagePick = useCallback(() => {
     launchImageLibrary(
       { mediaType: "photo", selectionLimit: 0 },
@@ -135,9 +119,6 @@ const NewPost = ({ navigation }: any) => {
             return;
           }
           setImages((prevImages) => [...prevImages, ...response.assets]);
-          console.log(response.assets[0]);
-
-          handleInsertImage(response.assets[0].uri);
         }
       },
     );
@@ -248,32 +229,58 @@ const NewPost = ({ navigation }: any) => {
     setIsPostCreating(false);
   };
 
+  useFocusEffect(
+    useCallback(() => {
+      changeHeaderShownStatus(false);
+
+      return () => {
+        changeHeaderShownStatus(true);
+      };
+    }, []),
+  );
+
   return (
     <View className="flex-1 bg-white relative">
-      <View className="  flex flex-row gap-4 items-center justify-between border-b border-neutral-300 p-3">
-        <View className=" flex flex-row gap-4 items-center">
-          <TouchableOpacity onPress={() => navigation.goBack()}>
-            <NavArrowLeft height={24} width={24} />
-          </TouchableOpacity>
-        </View>
-        <View className="flex flex-row items-center gap-4">
-          <TouchableOpacity
-            onPress={() => handlePostCreate()}
-            className="bg-primary-500 px-4 py-2 rounded-lg"
-            disabled={isPending || isPostCreating}
-          >
-            {isPending || isPostCreating ? (
-              <ActivityIndicator color={"white"} />
-            ) : (
-              <Text className={`text-center font-bold text-white`}>Post</Text>
-            )}
-          </TouchableOpacity>
+      <View
+        style={{ paddingBottom: 16 }}
+        className="  flex flex-row gap-4 items-center justify-between border-b border-neutral-300"
+      >
+        <BackHeader
+          label="New Post"
+          onPress={() => navigation.goBack()}
+          isLeftPadding={false}
+        />
+
+        <View
+          style={{ marginTop: 16 }}
+          className="flex flex-row items-center gap-4 px-4"
+        >
+          <ReusableButton
+            variant="primary"
+            size={58}
+            height="small"
+            buttonText="Post"
+            onPress={handlePostCreate}
+            isLoading={isPending || isPostCreating}
+          />
         </View>
       </View>
-      <SafeAreaView
-        style={{ flex: 1, paddingBottom: images.length ? 120 : 20 }}
-      >
-        <RichText editor={editor} />
+      <SafeAreaView style={{ flex: 1, paddingBottom: 80 }}>
+        {(images.length > 0 || files.length > 0) && (
+          <View style={{ height: 100 }}>
+            <MediaPreviewList
+              files={[...images, ...files]}
+              onRemove={(index: any, isImage: boolean) =>
+                handleImageRemove(index, isImage)
+              }
+            />
+          </View>
+        )}
+
+        <View style={styles.editorHeight}>
+          <RichText focusable={true} editor={editor} />
+        </View>
+
         <KeyboardAvoidingView
           behavior={Platform.OS === "ios" ? "padding" : "height"}
           style={{
@@ -282,7 +289,7 @@ const NewPost = ({ navigation }: any) => {
             bottom: 0,
           }}
         >
-          <View className="flex flex-row gap-2 items-center">
+          <View className="flex flex-row gap-2 items-center border-t border-neutral-300 p-2">
             <TouchableOpacity onPress={handleImagePick}>
               <MediaImage height={20} width={20} color={"#a3a3a3"} />
             </TouchableOpacity>
@@ -290,12 +297,6 @@ const NewPost = ({ navigation }: any) => {
               <PagePlus height={20} width={20} color={"#a3a3a3"} />
             </TouchableOpacity>
           </View>
-          <MediaPreviewList
-            files={[...images, ...files]}
-            onRemove={(index: any, isImage: boolean) =>
-              handleImageRemove(index, isImage)
-            }
-          />
 
           <Toolbar editor={editor} />
         </KeyboardAvoidingView>
@@ -305,3 +306,10 @@ const NewPost = ({ navigation }: any) => {
 };
 
 export default NewPost;
+
+const styles = StyleSheet.create({
+  editorHeight: {
+    minHeight: 100,
+    paddingHorizontal: 8,
+  },
+});
