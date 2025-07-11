@@ -9,7 +9,8 @@ import {
 import SecImage from "@/assets/AboutUs/OnboardingSVG.svg";
 import ThirdImage from "@/assets/AboutUs/ThirdOnboardingSVG.svg";
 import FourthImage from "@/assets/AboutUs/fourthSvg.svg";
-import LandingImage from "@/assets/AboutUs/landing-mobile.svg";
+import LandingImage from "@/assets/AboutUs/LandingSVG.svg";
+import LandingImagePNG from "@/assets/AboutUs/LandingSVGPNG.png";
 import { Discord, MessageText } from "iconoir-react-native";
 import ReusableButton from "@/components/atoms/ReusableButton";
 
@@ -56,7 +57,12 @@ const AboutUs = () => {
     >
       <View style={styles.sectionContainer}>
         <View style={styles.landingImageContainer}>
-          <LandingImage width={"100%"} height={356} />
+          {/* <LandingImage width={"100%"} height={356} /> */}
+          <Image
+            source={LandingImagePNG}
+            style={styles.titleImage}
+            resizeMode="cover"
+          />
         </View>
         <Text style={styles.title}>Welcome to Unibuzz!</Text>
         <Text style={styles.description}>
@@ -140,7 +146,7 @@ const AboutUs = () => {
 
         <View style={styles.teamContainer}>
           {team.map((item, index) => (
-            <View style={styles.teamItem}>
+            <View key={index} style={styles.teamItem}>
               <Image source={{ uri: item.image }} style={styles.teamImage} />
               <Text style={styles.teamName}>{item.name}</Text>
               <Text style={styles.teamRole}>{item.role}</Text>
@@ -204,6 +210,10 @@ const styles = StyleSheet.create({
     flexGrow: 1,
   },
   landingImageContainer: {
+    width: "100%",
+    height: 356,
+  },
+  titleImage: {
     width: "100%",
     height: 356,
   },

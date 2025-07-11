@@ -7,6 +7,8 @@ import { RootStackParamList } from "@/types/navigation";
 import { StackNavigationProp } from "@react-navigation/stack";
 import PostOption from "@/assets/icons/postOption";
 import { userTypeEnum } from "@/storage/register";
+import DropdownWrapper from "../../SelectDropDownWrapper";
+import PostCardOption from "../PostCardOption";
 type Props = {
   name: string;
   year: string;
@@ -27,6 +29,7 @@ type Props = {
   occupation?: string;
   affiliation?: string;
   isPostVerified?: boolean;
+  handleDeletePost: () => void;
 };
 
 type NavigationProp = StackNavigationProp<RootStackParamList, "Timeline">;
@@ -48,6 +51,8 @@ const PostCardUserDetails = ({
   occupation,
   role,
   isPostVerified,
+  isAdmin,
+  handleDeletePost,
 }: Props) => {
   const navigate = useNavigation<NavigationProp>();
 
@@ -107,12 +112,25 @@ const PostCardUserDetails = ({
         </View>
       </TouchableOpacity>
 
-      <TouchableOpacity
-        className="absolute right-4 top-1"
-        onPress={() => setVisible(!visible)}
+      <DropdownWrapper
+        position="left"
+        extraLeft={100}
+        renderDropdown={() => (
+          <PostCardOption
+            handleDeletePost={handleDeletePost}
+            isAdmin={isAdmin}
+            postId={postId}
+            type={type}
+          />
+        )}
       >
-        <PostOption />
-      </TouchableOpacity>
+        <TouchableOpacity
+          className="absolute right-4 top-1"
+          // onPress={() => setVisible(!visible)}
+        >
+          <PostOption />
+        </TouchableOpacity>
+      </DropdownWrapper>
     </View>
   );
 };

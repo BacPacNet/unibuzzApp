@@ -26,6 +26,10 @@ import { useNavigation } from "@react-navigation/native";
 
 import NewComment from "../../NewComment";
 import ReusableButton from "@/components/atoms/ReusableButton";
+import { MessageTextSolid, NavArrowDown } from "iconoir-react-native";
+import DropdownWrapper from "../../SelectDropDownWrapper";
+import CommentSortDropDownMenu from "../CommentSortDropDownMenu";
+import { Sortby } from "@/types/constant";
 
 type Props = {
   postId: string;
@@ -55,7 +59,8 @@ const CommentBottomSheet = ({
   const [showReply, setShowReply] = useState(false);
   const [replyingTo, setReplyingTo] = useState<any>(null);
   const [showTotalReply, setShowTotalReply] = useState(4);
-
+  const [selectedOption, setSelectedOption] = useState<string>("Most Recent");
+  const [selectedSortValue, setSelectedSortValue] = useState(Sortby.DESC);
   const [isModalVisible, setModalVisible] = useState(false);
 
   const navigate = useNavigation<any>();
@@ -66,11 +71,18 @@ const CommentBottomSheet = ({
     isFetchingNextPage,
     hasNextPage,
     isFetching,
-  } = useGetUserPostComments(postId, type == PostType.Timeline, 5);
+    refetch: refetchUserPostComment,
+  } = useGetUserPostComments(
+    postId,
+    type == PostType.Timeline,
+    5,
+    selectedSortValue,
+  );
 
   const { mutate: likeUserPostComment } = useLikeUnlikeUserPostComment(
     showInitial,
     postId,
+    selectedSortValue,
   );
 
   // community
@@ -80,11 +92,18 @@ const CommentBottomSheet = ({
     isFetchingNextPage: communityCommentsIsFetchingNextPage,
     hasNextPage: communityCommentsHasNextPage,
     isFetching: communityCommentsIsFetching,
-  } = useGetCommunityPostComments(postId, type == PostType.Community, 5);
+    refetch: refetchCommunityPostComment,
+  } = useGetCommunityPostComments(
+    postId,
+    type == PostType.Community,
+    5,
+    selectedSortValue,
+  );
 
   const { mutate: likeGroupPostComment } = useLikeUnlikeGroupPostComment(
     showInitial,
     postId,
+    selectedSortValue,
   );
 
   const userCommentsData =
@@ -121,8 +140,19 @@ const CommentBottomSheet = ({
     );
   }
 
+  const handleSelect = (option: { value: string; label: string }) => {
+    setSelectedOption(option.label);
+
+    setSelectedSortValue(option.value as Sortby);
+    if (type === PostType.Timeline) {
+      refetchUserPostComment();
+    } else {
+      refetchCommunityPostComment();
+    }
+  };
+
   return (
-    <SafeAreaView style={{ minHeight: 400 }}>
+    <SafeAreaView>
       <View style={styles.fullHeight}>
         <View>
           <FlatList
@@ -145,7 +175,46 @@ const CommentBottomSheet = ({
                     <Text className="text-white text-md">See All</Text>
                   </TouchableOpacity>
                 </View>
-              ) : null
+              ) : (
+                <View style={styles.commentHeader}>
+                  <View>
+                    <DropdownWrapper
+                      position="bottom"
+                      extraBottom={-70}
+                      renderDropdown={() => (
+                        <CommentSortDropDownMenu handleSelect={handleSelect} />
+                      )}
+                    >
+                      <TouchableOpacity style={styles.dropDown}>
+                        <View>
+                          <Text>{selectedOption}</Text>
+                        </View>
+
+                        <NavArrowDown
+                          height={20}
+                          width={20}
+                          color={"#6744FF"}
+                        />
+                      </TouchableOpacity>
+                    </DropdownWrapper>
+                  </View>
+                  <ReusableButton
+                    onPress={() => {
+                      setReplyingTo(null), setModalVisible(true);
+                    }}
+                    buttonContent={
+                      <View className="flex flex-row items-center gap-2">
+                        <MessageTextSolid width={16} height={16} color="#fff" />
+                        <Text className="text-white">Comment</Text>
+                      </View>
+                    }
+                    variant="primary"
+                    size={108}
+                    height="small"
+                    containerStyle="mt-2 "
+                  />
+                </View>
+              )
             }
             renderItem={({ item }) => (
               <UserComment
@@ -201,17 +270,7 @@ const CommentBottomSheet = ({
           />
         </View>
       </View>
-      <View style={styles.buttonContainer}>
-        <ReusableButton
-          onPress={() => {
-            setReplyingTo(null), setModalVisible(true);
-          }}
-          buttonText="Add Comment"
-          variant="primary"
-          size="w-full "
-          containerStyle="mt-2 "
-        />
-      </View>
+
       <Modal
         visible={isModalVisible}
         animationType="slide"
@@ -255,12 +314,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
-  centered: {
-    width: "100%",
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-  },
+
   commentContainer: {
     bottom: 0,
     marginBottom: 6,
@@ -272,36 +326,14 @@ const styles = StyleSheet.create({
     borderColor: "#d4d4d4",
     paddingLeft: 10,
   },
-  replyingToContainer: {
-    position: "absolute",
-    top: -12,
-    left: 10,
+  commentHeader: {
+    display: "flex",
     flexDirection: "row",
     justifyContent: "space-between",
-    width: 160,
-    zIndex: 20,
-  },
-  closeIcon: {
-    backgroundColor: "#f5f5f5",
-    padding: 5,
-  },
-  mediaIcon: {
-    marginStart: 16,
-    position: "absolute",
-    left: -24,
-  },
-  sendButton: {
-    backgroundColor: "#6744FF",
-    position: "absolute",
-    zIndex: 100,
-    right: 0,
-    height: 40,
-    width: 40,
-    display: "flex",
     alignItems: "center",
-    justifyContent: "center",
-    borderRadius: 300,
+    padding: 16,
   },
+
   richText: {
     marginRight: 40,
     paddingLeft: 20,
@@ -321,5 +353,16 @@ const styles = StyleSheet.create({
     padding: 10,
     borderTopWidth: 1,
     borderColor: "#ccc",
+  },
+
+  dropDown: {
+    display: "flex",
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
+    padding: 8,
+    borderWidth: 1,
+    borderColor: "#ccc",
+    borderRadius: 8,
   },
 });

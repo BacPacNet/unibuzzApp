@@ -8,14 +8,13 @@ import {
   useEditorBridge,
 } from "@10play/tentap-editor";
 import { useFocusEffect, useRoute } from "@react-navigation/native";
-import { MediaImage, NavArrowLeft, PagePlus } from "iconoir-react-native";
+import { MediaImage, PagePlus } from "iconoir-react-native";
 import React, { useCallback, useState } from "react";
 import {
-  ActivityIndicator,
   KeyboardAvoidingView,
   Platform,
   SafeAreaView,
-  Text,
+  StyleSheet,
   TouchableOpacity,
   View,
 } from "react-native";
@@ -33,6 +32,8 @@ import { useUploadToS3 } from "@/services/upload";
 import { validateUploadedFiles } from "@/utils";
 import DocumentPicker from "react-native-document-picker";
 import MediaPreviewList from "@/components/molecules/MediaPreview";
+import BackHeader from "@/components/atoms/BackHeader";
+import ReusableButton from "@/components/atoms/ReusableButton";
 
 type ImageAsset = {
   uri: string;
@@ -253,30 +254,47 @@ const NewGroupPost = ({ navigation }: any) => {
 
   return (
     <View className="flex-1 bg-white relative">
-      <View className="  flex flex-row gap-4 items-center justify-between border-b border-neutral-300 p-3">
-        <View className=" flex flex-row gap-4 items-center">
-          <TouchableOpacity onPress={() => handleBack()}>
-            <NavArrowLeft height={24} width={24} />
-          </TouchableOpacity>
-        </View>
-        <View className="flex flex-row items-center gap-4">
-          <TouchableOpacity
-            onPress={() => handlePostCreate()}
-            className="bg-primary-500 px-4 py-2 rounded-lg"
+      <View
+        style={{ paddingBottom: 16 }}
+        className="  flex flex-row gap-4 items-center justify-between border-b border-neutral-300"
+      >
+        <BackHeader
+          label="New Post"
+          onPress={() => handleBack()}
+          isLeftPadding={false}
+        />
+
+        <View
+          style={{ marginTop: 16 }}
+          className="flex flex-row items-center gap-4 px-4"
+        >
+          <ReusableButton
+            variant="primary"
+            size={58}
+            height="small"
+            buttonText="Post"
+            onPress={handlePostCreate}
             disabled={isPending || isPostCreating}
-          >
-            {isPending || isPostCreating ? (
-              <ActivityIndicator color={"white"} />
-            ) : (
-              <Text className={`text-center font-bold text-white`}>Post</Text>
-            )}
-          </TouchableOpacity>
+            isLoading={isPending || isPostCreating}
+          />
         </View>
       </View>
       <SafeAreaView
         style={{ flex: 1, paddingBottom: images.length ? 120 : 20 }}
       >
-        <RichText editor={editor} />
+        {(images.length > 0 || files.length > 0) && (
+          <View style={{ height: 100 }}>
+            <MediaPreviewList
+              files={[...images, ...files]}
+              onRemove={(index: any, isImage: boolean) =>
+                handleImageRemove(index, isImage)
+              }
+            />
+          </View>
+        )}
+        <View style={styles.editorHeight}>
+          <RichText editor={editor} />
+        </View>
         <KeyboardAvoidingView
           behavior={Platform.OS === "ios" ? "padding" : "height"}
           style={{
@@ -285,7 +303,7 @@ const NewGroupPost = ({ navigation }: any) => {
             bottom: 0,
           }}
         >
-          <View className="flex flex-row gap-2 items-center">
+          <View className="flex flex-row gap-2 items-center border-t border-neutral-300 p-2">
             <TouchableOpacity onPress={handleImagePick}>
               <MediaImage height={20} width={20} color={"#a3a3a3"} />
             </TouchableOpacity>
@@ -294,12 +312,6 @@ const NewGroupPost = ({ navigation }: any) => {
             </TouchableOpacity>
           </View>
 
-          <MediaPreviewList
-            files={[...images, ...files]}
-            onRemove={(index: any, isImage: boolean) =>
-              handleImageRemove(index, isImage)
-            }
-          />
           <Toolbar editor={editor} />
         </KeyboardAvoidingView>
       </SafeAreaView>
@@ -308,3 +320,10 @@ const NewGroupPost = ({ navigation }: any) => {
 };
 
 export default NewGroupPost;
+
+const styles = StyleSheet.create({
+  editorHeight: {
+    minHeight: 100,
+    paddingHorizontal: 8,
+  },
+});

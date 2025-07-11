@@ -6,13 +6,18 @@ import { NavArrowLeft } from "iconoir-react-native";
 type BackHeaderProps = {
   label?: string;
   onPress?: () => void;
+  isLeftPadding?: boolean;
 };
 
-const BackHeader: React.FC<BackHeaderProps> = ({ label = "Back", onPress }) => {
+const BackHeader: React.FC<BackHeaderProps> = ({
+  label = "Back",
+  onPress,
+  isLeftPadding = true,
+}) => {
   const navigation = useNavigation();
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, isLeftPadding && styles.paddingLeft]}>
       <TouchableOpacity
         style={styles.button}
         onPress={onPress || (() => navigation.goBack())}
@@ -30,6 +35,8 @@ const styles = StyleSheet.create({
     alignItems: "center",
     height: 32,
     marginTop: 16,
+  },
+  paddingLeft: {
     paddingLeft: 16,
   },
   button: {

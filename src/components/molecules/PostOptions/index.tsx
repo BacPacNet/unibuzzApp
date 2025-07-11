@@ -46,12 +46,13 @@ const PostActionModal = ({
   };
 
   return (
-    <Modal
-      visible={modalVisible}
-      transparent
-      animationType="slide"
-      onRequestClose={() => setModalVisible(false)}
-    >
+    // <Modal
+    //   visible={modalVisible}
+    //   transparent
+    //   animationType="slide"
+    //   onRequestClose={() => setModalVisible(false)}
+    // >
+    <View>
       <TouchableOpacity
         style={styles.overlay}
         activeOpacity={1}
@@ -65,7 +66,7 @@ const PostActionModal = ({
           {!isSinglePost && (
             <View style={styles.item}>
               <TouchableOpacity style={styles.button} onPress={openPost}>
-                <OpenInBrowser width={20} height={20} color="#6647FF" />
+                <OpenInBrowser width={20} height={20} color="#3A3B3C" />
                 <Text style={styles.text}>Open Post</Text>
               </TouchableOpacity>
             </View>
@@ -89,7 +90,7 @@ const PostActionModal = ({
           )}
         </TouchableOpacity>
       </TouchableOpacity>
-    </Modal>
+    </View>
   );
 };
 
@@ -120,7 +121,7 @@ const styles = StyleSheet.create({
   },
   text: {
     fontSize: 12,
-    color: "#1f2937",
+    color: "#3A3B3C",
     fontWeight: "500",
   },
 });

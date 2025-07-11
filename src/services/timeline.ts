@@ -7,7 +7,7 @@ import {
 import { client } from "./api-client";
 import { Toast } from "react-native-toast-notifications";
 
-import { PostCommentData } from "@/types/constant";
+import { PostCommentData, Sortby } from "@/types/constant";
 import { getUserStore } from "@/storage/user";
 
 export async function getAllTimelinePosts(
@@ -84,9 +84,16 @@ export const useDeleteUserPost = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["userPosts"] });
       queryClient.invalidateQueries({ queryKey: ["timelinePosts"] });
+      Toast.show("Post deleted successfully", {
+        type: "success",
+        placement: "top",
+      });
     },
     onError: (error: any) => {
-      Toast.show(error.response?.data.message || "Something went wrong");
+      Toast.show(error.response?.data.message || "Something went wrong", {
+        type: "danger",
+        placement: "top",
+      });
     },
   });
 };
@@ -98,9 +105,10 @@ export async function getUserPostComments(
   token: string,
   page: number,
   limit: number,
+  sortby: Sortby,
 ) {
   const response: any = await client(
-    `/userpostcomment/${postId}?page=${page}&limit=${limit}`,
+    `/userpostcomment/${postId}?page=${page}&limit=${limit}&sortBy=${sortby}`,
     { headers: { Authorization: `Bearer ${token}` } },
   );
   return response;
@@ -110,6 +118,7 @@ export function useGetUserPostComments(
   postId: string,
   isTimeline: boolean,
   limit: number,
+  sortby: Sortby,
 ) {
   {
     const cookieValue = getToken() as string;
@@ -117,7 +126,7 @@ export function useGetUserPostComments(
     return useInfiniteQuery({
       queryKey: ["userPostComments"],
       queryFn: ({ pageParam = 1 }) =>
-        getUserPostComments(postId, cookieValue, pageParam, limit),
+        getUserPostComments(postId, cookieValue, pageParam, limit, sortby),
       getNextPageParam: (lastPage) => {
         if (lastPage.currentPage < lastPage.totalPages) {
           return lastPage.currentPage + 1;
@@ -298,9 +307,10 @@ export const useCreateUserPostComment = () => {
 export async function LikeUnlikeUserPostComment(
   UserPostCommentId: string,
   token: string,
+  sortby: Sortby,
 ) {
   const response = await client(
-    `/userpostcomment/likeUnlike/${UserPostCommentId}`,
+    `/userpostcomment/likeUnlike/${UserPostCommentId}?sortBy=${sortby}`,
     {
       method: "PUT",
       headers: { Authorization: `Bearer ${token}` },
@@ -312,6 +322,7 @@ export async function LikeUnlikeUserPostComment(
 export const useLikeUnlikeUserPostComment = (
   showInitial: boolean,
   postId: string,
+  sortby: Sortby,
 ) => {
   const cookieValue = getToken() as string;
   const userData = getUserStore();
@@ -323,7 +334,7 @@ export const useLikeUnlikeUserPostComment = (
     }: {
       userPostCommentId: string;
       level: string;
-    }) => LikeUnlikeUserPostComment(userPostCommentId, cookieValue),
+    }) => LikeUnlikeUserPostComment(userPostCommentId, cookieValue, sortby),
     onSuccess: (_, variables) => {
       const { userPostCommentId, level } = variables;
       const currUserComments = queryClient.getQueryData<{
