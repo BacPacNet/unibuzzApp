@@ -12,6 +12,8 @@ export enum UserPostType {
 
 export type PostCardType = {
   data: {
+    isPostVerified?: boolean;
+
     user: {
       firstName: string;
       lastName: string;
@@ -33,6 +35,7 @@ export type PostCardType = {
     content?: string;
     level: string;
     userProfile: {
+      isCommunityAdmin?: boolean;
       university_name: string;
       study_year: string;
       degree: string;

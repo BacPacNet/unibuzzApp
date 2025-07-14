@@ -21,11 +21,23 @@ export enum ForgetPasswordStep {
   ResetPassword,
   Success,
 }
-function ForgetPasswordScreen() {
+function ForgetPasswordScreen({ route }: any) {
   const navigation = useNavigation<ForgetPasswordScreenNavigationProp>();
+  const backTo = route.params?.backTo || "";
+
   const [currStage, setCurrStage] = useState<ForgetPasswordStep>(
     ForgetPasswordStep.EmailCheck,
   );
+
+  const handleBack = () => {
+    if (backTo) {
+      navigation.navigate("SettingsStack", {
+        screen: backTo,
+      });
+    } else {
+      navigation.navigate("LoginScreen");
+    }
+  };
 
   return (
     <KeyboardAvoidingView
@@ -37,6 +49,7 @@ function ForgetPasswordScreen() {
           <SetResetPassword
             navigation={navigation}
             setCurrStage={setCurrStage}
+            handleBack={handleBack}
           />
         ) : currStage === ForgetPasswordStep.OtpCheck ? (
           <ForgetPasswordOtpCheck
@@ -47,6 +60,8 @@ function ForgetPasswordScreen() {
           <ForgetPasswordEmailCheck
             navigation={navigation}
             setCurrStage={setCurrStage}
+            handleBack={handleBack}
+            isFromSettings={backTo !== ""}
           />
         )}
       </View>

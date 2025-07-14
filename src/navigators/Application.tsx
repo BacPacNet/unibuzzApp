@@ -140,8 +140,8 @@ function ApplicationNavigator() {
             flexDirection: "row",
             alignItems: "center",
             justifyContent: "space-between",
-            paddingHorizontal: 16,
-
+            paddingHorizontal: 0,
+            gap: 8,
             borderTopWidth: 1,
           },
           tabBarLabelStyle: {
@@ -268,6 +268,13 @@ function ApplicationNavigator() {
         <Tab.Screen
           name="AboutUs"
           component={AboutUs}
+          options={{
+            tabBarButton: () => null,
+          }}
+        />
+        <Tab.Screen
+          name="ForgetPassword"
+          component={ForgetPasswordScreen}
           options={{
             tabBarButton: () => null,
           }}
@@ -447,9 +454,6 @@ function ApplicationNavigator() {
   return (
     <NavigationContainer theme={navigationTheme}>
       <AuthGuard>
-        {/* <StackGroup/> */}
-        {/* <TabsGroup/> */}
-        {/* <DrawerGroup/> */}
         <SocketProvider>
           <HeaderProvider>
             <CommunityProvider>
@@ -464,19 +468,16 @@ function ApplicationNavigator() {
       </AuthGuard>
       <UnauthenticatedGuard>
         <Stack.Navigator key={variant} screenOptions={{ headerShown: false }}>
-          {/* {isAppFirstLaunched && (
-            <Stack.Screen
-              name="OnboardingScreen"
-              component={OnboardingScreen}
-            />
-          )} */}
           <Stack.Screen name="OnboardingScreen" component={OnboardingScreen} />
           <Stack.Screen name="LoginScreen" component={LoginScreen} />
+
+          <Stack.Screen name="RegisterScreen" component={RegisterScreen} />
+
+          {/* can be accessed by anyone */}
           <Stack.Screen
             name="ForgetPassword"
             component={ForgetPasswordScreen}
           />
-          <Stack.Screen name="RegisterScreen" component={RegisterScreen} />
         </Stack.Navigator>
       </UnauthenticatedGuard>
     </NavigationContainer>

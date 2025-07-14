@@ -17,6 +17,7 @@ interface FormFieldsProps {
   setCreateSelectedFilters: (filters: any) => void;
   isPending?: boolean;
   groupType?: string;
+  isNewGroup?: boolean;
 }
 
 export const FormFields: React.FC<FormFieldsProps> = ({
@@ -26,6 +27,7 @@ export const FormFields: React.FC<FormFieldsProps> = ({
   setCreateSelectedFilters,
   isPending,
   groupType,
+  isNewGroup = false,
 }) => (
   <>
     <View style={styles.section}>
@@ -83,7 +85,16 @@ export const FormFields: React.FC<FormFieldsProps> = ({
           after university admin accepts the request.
         </Text>
       )}
-      {groupType === "casual" ? (
+
+      {isNewGroup && (
+        <RadioInput
+          name="communityGroupType"
+          control={control}
+          options={GROUP_TYPE_OPTIONS}
+          required
+        />
+      )}
+      {isNewGroup ? null : groupType === "casual" ? (
         <View style={styles.container}>
           <Text style={styles.title}>Casual</Text>
           <Text style={styles.subtitle}>No approval required</Text>
@@ -94,13 +105,6 @@ export const FormFields: React.FC<FormFieldsProps> = ({
           <Text style={styles.subtitle}>Require university approval</Text>
         </View>
       )}
-
-      {/* <RadioInput
-        name="communityGroupType"
-        control={control}
-        options={GROUP_TYPE_OPTIONS}
-        required
-      /> */}
     </View>
 
     <View style={styles.section}>

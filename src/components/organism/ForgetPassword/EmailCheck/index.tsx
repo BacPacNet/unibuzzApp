@@ -12,12 +12,15 @@ import Title from "@/components/atoms/Title";
 interface Props {
   navigation: any;
   setCurrStage: (value: ForgetPasswordStep) => void;
+  handleBack: () => void;
+  isFromSettings: boolean;
 }
 
 const ForgetPasswordEmailCheck: React.FC<Props> = ({
   navigation,
-
+  handleBack,
   setCurrStage,
+  isFromSettings,
 }) => {
   const {
     control,
@@ -33,7 +36,7 @@ const ForgetPasswordEmailCheck: React.FC<Props> = ({
   });
 
   const email = watch("email");
-
+  console.log("isFromSettings", isFromSettings);
   const { setResetPasswordEmail } = useUserPasswordReset();
 
   const {
@@ -107,8 +110,8 @@ const ForgetPasswordEmailCheck: React.FC<Props> = ({
           height="large"
         />
         <ReusableButton
-          onPress={() => navigation.navigate("LoginScreen")}
-          buttonText="Back to Login"
+          onPress={handleBack}
+          buttonText={isFromSettings ? "Back to Settings" : "Back to Login"}
           variant="border"
           height="large"
         />

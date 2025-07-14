@@ -208,6 +208,11 @@ const EditCommunityGroupScreen = () => {
   const handleNavigateToUsersSelectScreen = () => {
     navigate.navigate("manageGroupStack", {
       screen: "NewCommunityGroupUsersSelectScreen",
+      params: {
+        universityName: communityData?.name,
+        communityId: communityId,
+        isEditGroup: true,
+      },
     });
   };
 
