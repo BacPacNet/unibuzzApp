@@ -26,7 +26,10 @@ import {
 import { useNewCommunityGroupStatesContext } from "@/context/NewCommunityGroupStatesProvider/NewCommunityGroupStatesProvider";
 import { useNavigation } from "@react-navigation/native";
 
-const NewCommunityGroupUsersSelectScreen = () => {
+const NewCommunityGroupUsersSelectScreen = ({ route }: any) => {
+  const universityName = route?.params?.universityName || "";
+  const communityId = route?.params?.communityId || "";
+  const isEditGroup = route?.params?.isEditGroup || false;
   const navigate = useNavigation();
   const {
     register: GroupRegister,
@@ -41,7 +44,8 @@ const NewCommunityGroupUsersSelectScreen = () => {
       major: [],
       occupation: [],
       affiliation: [],
-      community: { name: "", id: "" },
+      //   community: { name: "", id: "" },
+      community: { name: universityName, id: communityId },
       selectedUsers: [],
     },
   });
@@ -135,7 +139,7 @@ const NewCommunityGroupUsersSelectScreen = () => {
 
     const filters = { year: studentYear, major: major };
 
-    const filtered = filterData(allStudentUsers, filters);
+    const filtered = filterData(allStudentUsers as any, filters);
 
     setFilterUsers(filtered);
   }, [studentYear, major, communityData]);
@@ -145,7 +149,7 @@ const NewCommunityGroupUsersSelectScreen = () => {
     const allFacultyUsers = allUsers.filter((user) => user.role == "faculty");
 
     const filters = { occupation: occupation, affiliation: affiliation };
-    const filtered = filterFacultyData(allFacultyUsers, filters);
+    const filtered = filterFacultyData(allFacultyUsers as any, filters);
 
     setFilterFacultyUsers(filtered);
   }, [occupation, affiliation]);
@@ -156,7 +160,12 @@ const NewCommunityGroupUsersSelectScreen = () => {
     setValue("major", majorState);
     setValue("occupation", occupationState);
     setValue("affiliation", affiliationState);
-    setValue("community", communityState);
+
+    if (communityState?.id) {
+      setValue("community", communityState);
+    } else {
+      setValue("community", { name: universityName, id: communityId });
+    }
     setIndividualsUsers(individualUserState as any);
     setFilterUsers(filteredUsersState);
     setFilterFacultyUsers(filteredFacultyUsersState);
@@ -165,7 +174,7 @@ const NewCommunityGroupUsersSelectScreen = () => {
 
   return (
     <ScrollView style={styles.container}>
-      <BackHeader label="Create Group" />
+      <BackHeader label={isEditGroup ? "Edit Group" : "Create Group"} />
       <View style={styles.paddingContainer}>
         <Text style={styles.inputLabels}>Individuals</Text>
 
@@ -192,13 +201,14 @@ const NewCommunityGroupUsersSelectScreen = () => {
           <View style={styles.bulkContainer}>
             <DummyButton
               label="University"
-              onPress={() => universityActionSheetRef.current?.show()}
+              //   onPress={() => universityActionSheetRef.current?.show()}
               toShowCross={!!community.name}
-              text={
-                community.name
-                  ? community.name
-                  : "If you are a student choose your current year"
-              }
+              //   text={
+              //     community.name
+              //       ? community.name
+              //       : "If you are a student choose your current year"
+              //   }
+              text={universityName}
               icon={<NavArrowDown width={20} height={20} />}
             />
             <RoleSelectorWithFields

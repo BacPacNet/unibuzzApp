@@ -5,29 +5,29 @@ import FullScreenLoader from "@/components/atoms/FullScreenLoader";
 import ReusableButton from "@/components/atoms/ReusableButton";
 import { useHeader } from "@/context/HeaderProvider/Header";
 import { useChangeUserName } from "@/services/user";
-import { getUserProfileStore, getUserStore } from "@/storage/user";
-import { useFocusEffect, useNavigation } from "@react-navigation/native";
-import { Eye, EyeClosed, NavArrowLeft } from "iconoir-react-native";
-import React, { useCallback, useEffect, useState } from "react";
-import { Controller, useForm } from "react-hook-form";
+import { getUserStore } from "@/storage/user";
+import { RootStackParamList } from "@/types/navigation";
+import { useNavigation } from "@react-navigation/native";
+import { StackNavigationProp } from "@react-navigation/stack";
+import React, { useState } from "react";
+import { useForm } from "react-hook-form";
 import {
   KeyboardAvoidingView,
   Platform,
   ScrollView,
   StyleSheet,
   Text,
-  TextInput,
   TouchableOpacity,
   View,
 } from "react-native";
-import { AnimatedCircularProgress } from "react-native-circular-progress";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Toast } from "react-native-toast-notifications";
 
 type Props = {};
 
+type NavigationProp = StackNavigationProp<RootStackParamList, "Settings">;
 const UserNameChangeScreen = (props: Props) => {
-  const { goBack } = useNavigation();
+  const { goBack, navigate } = useNavigation<NavigationProp>();
   const { changeHeaderShownStatus } = useHeader();
   const {
     mutate,
@@ -36,7 +36,6 @@ const UserNameChangeScreen = (props: Props) => {
     isSuccess,
   } = useChangeUserName();
   const user = getUserStore();
-  const [progress, setProgress] = useState(0);
   const [showLoader, setShowLoader] = useState(false);
   const {
     formState: { errors },
@@ -143,7 +142,13 @@ const UserNameChangeScreen = (props: Props) => {
                   errorMessage={errors.password?.message?.toString()}
                   rules={{ required: "Password is required!" }}
                 />
-                <TouchableOpacity>
+                <TouchableOpacity
+                  onPress={() =>
+                    navigate("ForgetPassword", {
+                      backTo: "UserNameChangeScreen",
+                    })
+                  }
+                >
                   <Text style={styles.forgotPassword}>Forgot Password?</Text>
                 </TouchableOpacity>
               </View>

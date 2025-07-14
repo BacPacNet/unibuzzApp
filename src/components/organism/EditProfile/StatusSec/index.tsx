@@ -58,16 +58,6 @@ const StatusOptions: React.FC<StatusOptionsProps> = ({
           />
 
           <SelectInputWithSearch
-            label="Degree"
-            placeholder="If you are a student choose your degree "
-            options={Object.keys(degreeAndMajors)}
-            name="degree"
-            control={control}
-            required
-            rules={{ required: "Degree is required!" }}
-          />
-
-          <SelectInputWithSearch
             label="Major"
             placeholder="If you are a student choose your Major "
             options={value}

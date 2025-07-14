@@ -11,11 +11,13 @@ interface SetPasswordFormProps {
   navigation: any;
 
   setCurrStage: (value: ForgetPasswordStep) => void;
+  handleBack: () => void;
 }
 
 const SetResetPassword: React.FC<SetPasswordFormProps> = ({
   navigation,
   setCurrStage,
+  handleBack,
 }) => {
   const {
     register,
@@ -127,7 +129,7 @@ const SetResetPassword: React.FC<SetPasswordFormProps> = ({
           height="large"
         />
         <ReusableButton
-          onPress={() => navigation.navigate("LoginScreen" as any)}
+          onPress={handleBack}
           buttonText="Sign In"
           variant="border"
           height="large"

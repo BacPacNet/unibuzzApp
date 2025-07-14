@@ -88,6 +88,8 @@ const NewCommunityGroupScreen = () => {
   const { setSelectedUsersState, selectedUsersState, resetFilters } =
     useNewCommunityGroupStatesContext();
 
+  console.log("data", communityId);
+
   // Local state
   const [isProfileLoading, setIsProfileLoading] = useState(false);
   const [showFilterError, setShowFilterError] = useState(false);
@@ -111,6 +113,10 @@ const NewCommunityGroupScreen = () => {
   const handleNavigateToUsersSelectScreen = () => {
     navigate.navigate("manageGroupStack", {
       screen: "NewCommunityGroupUsersSelectScreen",
+      params: {
+        universityName: communityData?.name,
+        communityId: communityId,
+      },
     });
   };
 
@@ -194,6 +200,7 @@ const NewCommunityGroupScreen = () => {
               errors={errors}
               createSelectedFilters={createSelectedFilters}
               setCreateSelectedFilters={setCreateSelectedFilters}
+              isNewGroup={true}
             />
 
             <View style={styles.section}>

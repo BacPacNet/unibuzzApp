@@ -5,7 +5,9 @@ import FullScreenLoader from "@/components/atoms/FullScreenLoader";
 import ReusableButton from "@/components/atoms/ReusableButton";
 import { useHeader } from "@/context/HeaderProvider/Header";
 import { useChangeUserPassword } from "@/services/user";
+import { RootStackParamList } from "@/types/navigation";
 import { useFocusEffect, useNavigation } from "@react-navigation/native";
+import { StackNavigationProp } from "@react-navigation/stack";
 import { Eye, EyeClosed, NavArrowLeft } from "iconoir-react-native";
 import React, { useCallback, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
@@ -34,9 +36,10 @@ const rules = {
       "Password must contain uppercase, lowercase, number, and special character",
   },
 };
+type NavigationProp = StackNavigationProp<RootStackParamList, "Settings">;
 
 const UserPasswordChangeScreen = () => {
-  const { goBack } = useNavigation();
+  const { goBack, navigate } = useNavigation<NavigationProp>();
   const { changeHeaderShownStatus } = useHeader();
   const {
     mutate,
@@ -121,7 +124,13 @@ const UserPasswordChangeScreen = () => {
                   errorMessage={errors.currentPassword?.message?.toString()}
                   rules={rules}
                 />
-                <TouchableOpacity>
+                <TouchableOpacity
+                  onPress={() =>
+                    navigate("ForgetPassword", {
+                      backTo: "ChangePasswordScreen",
+                    })
+                  }
+                >
                   <Text style={styles.forgotPassword}>Forgot Password?</Text>
                 </TouchableOpacity>
               </View>

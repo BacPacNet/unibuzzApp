@@ -9,6 +9,7 @@ import PostOption from "@/assets/icons/postOption";
 import { userTypeEnum } from "@/storage/register";
 import DropdownWrapper from "../../SelectDropDownWrapper";
 import PostCardOption from "../PostCardOption";
+import { BadgeCheck, Balcony, CheckCircleSolid } from "iconoir-react-native";
 type Props = {
   name: string;
   year: string;
@@ -29,6 +30,7 @@ type Props = {
   occupation?: string;
   affiliation?: string;
   isPostVerified?: boolean;
+  isCommunityAdmin?: boolean;
   handleDeletePost: () => void;
 };
 
@@ -53,6 +55,7 @@ const PostCardUserDetails = ({
   isPostVerified,
   isAdmin,
   handleDeletePost,
+  isCommunityAdmin,
 }: Props) => {
   const navigate = useNavigation<NavigationProp>();
 
@@ -96,10 +99,22 @@ const PostCardUserDetails = ({
         />
 
         <View>
-          <View>
-            <Text className="font-semibold text-neutral-900 text-sm">
+          <View className="flex flex-row gap-2 items-center">
+            <Text className="font-semibold text-neutral-900 text-sm ">
               {name}
             </Text>
+            {isCommunityAdmin ? (
+              <Balcony color="#6744FF" width={14} height={14} />
+            ) : (
+              isPostVerified && (
+                <BadgeCheck
+                  color="white"
+                  fill="#6744FF"
+                  width={14}
+                  height={14}
+                />
+              )
+            )}
           </View>
           <View>
             <Text style={styles.fontSize} className="text-neutral-500 ">
