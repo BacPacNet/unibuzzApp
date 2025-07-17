@@ -27,7 +27,10 @@ import { RootStackParamList } from "@/types/navigation";
 import { StackNavigationProp } from "@react-navigation/stack";
 import CreatePostButton from "@/components/atoms/CreatePostButton";
 import CommunityLogo from "@/components/atoms/LogoHolder";
-
+import { AxiosError } from "axios";
+import EmptyStateCard from "@/components/molecules/EmptyStateCard";
+import NotMember from "@/assets/placeHolder/joinGroup.svg";
+import NoUniversityPost from "@/assets/placeHolder/noUniversityPost.svg";
 type NavigationProp = StackNavigationProp<RootStackParamList, "Community">;
 
 const CommunityScreen = ({ route }: any) => {
@@ -35,12 +38,12 @@ const CommunityScreen = ({ route }: any) => {
   const { communityId } = route.params;
   const { setCurrentCommunityId } = useCommunityContext();
   const userData = getUserStore();
+
   const { data: communityData, isFetching } = useGetCommunity(communityId);
   const { mutate: joinCommunity, isPending: isJoinLoading } =
     useJoinCommunity();
   const { mutate: leaveCommunity, isPending: isLeaveLoading } =
     useLeaveCommunity();
-
   const {
     data: communityGroupPost,
     fetchNextPage: communityPostNextpage,
@@ -50,8 +53,8 @@ const CommunityScreen = ({ route }: any) => {
     dataUpdatedAt,
     isLoading,
   } = useGetCommunityPost(communityId, true, 10);
-  const [communityDatas, setCommunityDatas] = useState<any>([]);
 
+  const [communityDatas, setCommunityDatas] = useState<any>([]);
   const [isUserJoinedCommunity, setIsUserJoinedCommunity] = useState<
     boolean | null
   >(null);
@@ -59,9 +62,7 @@ const CommunityScreen = ({ route }: any) => {
     communityData?.communityCoverUrl?.imageUrl,
   );
   const [ImageSrcErr, setImageSrcErr] = useState(false);
-
   const [refreshing, setRefreshing] = React.useState(false);
-
   const queryClient = useQueryClient();
 
   useFocusEffect(
@@ -140,23 +141,6 @@ const CommunityScreen = ({ route }: any) => {
 
         <View style={styles.content}>
           <View style={styles.titleContainer}>
-            {/* <View style={styles.imageWrapper}>
-              {logoSrc?.length && !logoSrcErr ? (
-                <Image
-                  source={{ uri: communityData?.communityLogoUrl?.imageUrl }}
-                  style={styles.communityImage}
-                  onError={() => setLogoSrc("")}
-                />
-              ) : (
-                <View style={styles.universityPlaceHolder}>
-                  <UniversityLogoPlaceHolder
-                    width={20}
-                    height={20}
-                    style={styles.communityImage}
-                  />
-                </View>
-              )}
-            </View> */}
             <CommunityLogo
               logoUrl={communityData?.communityLogoUrl?.imageUrl || ""}
             />
@@ -184,14 +168,6 @@ const CommunityScreen = ({ route }: any) => {
       </View>
     );
   };
-
-  //   if (isFetching) {
-  //     return (
-  //       <View className="flex-1 bg-white flex justify-center items-center">
-  //         <ActivityIndicator />
-  //       </View>
-  //     );
-  //   }
 
   return (
     <SafeAreaView className="bg-white flex-1">
@@ -240,10 +216,15 @@ const CommunityScreen = ({ route }: any) => {
         ListHeaderComponent={
           <>
             <FlatListCommunityHeaderSec />
+
             {!isUserJoinedCommunity && (
-              <View style={{ padding: 16, alignItems: "center" }}>
-                <Text>You need to join the community to see posts.</Text>
-              </View>
+              <EmptyStateCard
+                imageWidth={320}
+                imageHeight={171}
+                SvgComponent={NotMember}
+                title="Join University Community"
+                description="Join this community to access its groups and connect with fellow university members"
+              />
             )}
           </>
         }
@@ -254,7 +235,15 @@ const CommunityScreen = ({ route }: any) => {
             </View>
           ) : (
             <View className="flex-1 justify-center items-center">
-              <Text>{isUserJoinedCommunity && "No Result Found"}</Text>
+              {isUserJoinedCommunity && (
+                <EmptyStateCard
+                  imageWidth={320}
+                  imageHeight={171}
+                  SvgComponent={NoUniversityPost}
+                  title="No Posts from University."
+                  description="Your university admins will share important updates here when the time comes. Stay tuned!"
+                />
+              )}
             </View>
           )
         }
@@ -278,16 +267,17 @@ const styles = StyleSheet.create({
     height: 200,
   },
   content: {
-    padding: 15,
+    padding: 16,
   },
   titleContainer: {
     display: "flex",
     flexDirection: "row",
     alignItems: "center",
     gap: 8,
+    marginBottom: 16,
   },
   title: {
-    fontSize: 16,
+    fontSize: 14,
     fontWeight: "bold",
     color: "#3A3B3C",
     width: "60%",
@@ -299,15 +289,11 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
   description: {
-    fontSize: 12,
+    fontSize: 14,
     color: "#6B7280",
-    marginVertical: 8,
+    marginVertical: 16,
   },
-  members: {
-    fontWeight: "bold",
-    color: "#6744FF",
-    fontSize: 12,
-  },
+
   button: {
     borderWidth: 2,
     borderColor: "#E5E7EB",
@@ -324,36 +310,6 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
 
-  communityImagePlaceHolder: {
-    width: 46,
-    height: 46,
-    borderRadius: 200,
-
-    overflow: "hidden",
-  },
-
-  imageWrapper: {
-    padding: 4,
-    backgroundColor: "#fff",
-    borderRadius: 24,
-    ...Platform.select({
-      ios: {
-        shadowColor: "#000",
-        shadowOffset: { width: 0, height: 0 },
-        shadowOpacity: 0.25,
-        shadowRadius: 6,
-      },
-      android: {
-        elevation: 6,
-      },
-    }),
-  },
-  communityImage: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    resizeMode: "contain",
-  },
   universityPlaceHolder: {
     width: 40,
     height: 40,

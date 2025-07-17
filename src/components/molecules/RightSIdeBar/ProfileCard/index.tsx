@@ -186,7 +186,7 @@ const ProfileCard = ({
         <View style={styles.profilePicWrapper}>
           {(isSideBar && !userProfile?.profile_dp?.imageUrl) ||
           (!isSideBar && !avatarUrl) ? (
-            <Ava width={80} height={80} />
+            <Ava width={48} height={48} />
           ) : (
             <Image
               source={
@@ -242,8 +242,8 @@ const styles = StyleSheet.create({
     padding: 3,
   },
   profilePic: {
-    width: 80,
-    height: 80,
+    width: 48,
+    height: 48,
     borderRadius: 200,
   },
   info: {
@@ -254,7 +254,7 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
   },
   name: {
-    fontSize: 16,
+    fontSize: 12,
     fontWeight: "semibold",
     color: "#3A3B3C",
   },
@@ -285,7 +285,7 @@ const styles = StyleSheet.create({
   },
   year: {
     color: "#6B7280",
-    fontSize: 14,
+    fontSize: 10,
   },
 
   editButton: {

@@ -15,6 +15,7 @@ import MessageUserOptions from "../MessageUserOptions";
 import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { RootStackParamList } from "@/types/navigation";
+import ReusableButton from "@/components/atoms/ReusableButton";
 
 type Props = {
   setSelectedChat: (value: any) => void;
@@ -89,23 +90,18 @@ const MessageUserStickyBar = ({
   };
 
   const navigateToMembers = () => {
-    navigation.navigate("MessagesStack", {
-      screen: "ChatMembersScreen",
-      params: {
-        users,
-        chatId,
-      },
+    navigation.navigate("ChatMembersScreen", {
+      users,
+      chatId,
     });
   };
+
   const navigateToEditGroup = () => {
-    navigation.navigate("MessagesStack", {
-      screen: "EditChatScreen",
-      params: {
-        chatId,
-        groupLogo: profileCover || "",
-        groupCurrentName: name,
-        communitySelected: communitySelected,
-      },
+    navigation.navigate("EditChatScreen", {
+      chatId,
+      groupLogo: profileCover || "",
+      groupCurrentName: name,
+      communitySelected: communitySelected,
     });
   };
 
@@ -133,6 +129,17 @@ const MessageUserStickyBar = ({
         </View>
       </View>
       <View className="flex flex-row gap-4 items-center">
+        {isRequestNotAccepted && (
+          <ReusableButton
+            buttonText="Move to inbox"
+            onPress={handleMoveToInbox}
+            variant="shade"
+            size={113}
+            height="small"
+            isRounded={false}
+          />
+        )}
+
         <View className="relative">
           <TouchableOpacity
             style={{ backgroundColor: "#F3F2FF" }}

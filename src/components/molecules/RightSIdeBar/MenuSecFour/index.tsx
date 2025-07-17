@@ -1,10 +1,18 @@
 import React from "react";
-import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
+import {
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  Linking,
+} from "react-native";
 import {
   Group,
   OpenBook,
   PrivacyPolicy,
   PresentationSolid,
+  Linkedin,
+  Instagram,
 } from "iconoir-react-native";
 import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
@@ -32,9 +40,14 @@ const menuItems = [
     screen: "UserGuidelines",
   },
   {
-    title: "Business Services",
-    icon: <PresentationSolid width={22} height={22} color="#555" />,
-    screen: "BusinessServices",
+    title: "LinkedIn",
+    icon: <Linkedin width={22} height={22} color="#555" />,
+    screen: "LinkedIn",
+  },
+  {
+    title: "Instagram",
+    icon: <Instagram width={22} height={22} color="#555" />,
+    screen: "Instagram",
   },
 ];
 
@@ -47,7 +60,13 @@ const SidebarMenuSectionFour = ({
 
   const handleClick = (screen: string) => {
     if (!screen) return;
-    navigation.navigate("InfoStackScreen", { screen });
+    if (screen === "LinkedIn") {
+      Linking.openURL("https://www.linkedin.com/company/unibuzznetworks/");
+    } else if (screen === "Instagram") {
+      Linking.openURL("https://www.instagram.com/uni.buzz/#");
+    } else {
+      navigation.navigate("InfoStackScreen", { screen });
+    }
     closeDrawer();
   };
   return (

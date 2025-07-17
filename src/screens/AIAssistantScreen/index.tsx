@@ -90,11 +90,7 @@ const AI_Assistant = () => {
             onChangeText={(text) => handleTextChange(text)}
             placeholder="Type a message"
             multiline
-            style={{
-              fontSize: 16,
-              paddingHorizontal: 8,
-              height: "auto",
-            }}
+            style={styles.input}
             className="text-base p-1"
           />
           <TouchableOpacity className="absolute bottom-0 right-4 bg-primary-500 w-8 h-8  flex items-center justify-center rounded-full mb-2 disabled:opacity-50">
@@ -136,5 +132,12 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
 
     paddingTop: 16,
+  },
+
+  input: {
+    fontSize: 16,
+    paddingHorizontal: 8,
+    height: "auto",
+    color: "#3A3B3C",
   },
 });

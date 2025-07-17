@@ -33,6 +33,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 0,
   },
   text: {
-    color: "#a3a3a3",
+    color: "#6B7280",
+    fontSize: 12,
   },
 });

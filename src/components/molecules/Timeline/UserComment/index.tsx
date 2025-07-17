@@ -19,6 +19,7 @@ import { useDeleteCommunityPostComment } from "@/services/communityPost";
 
 import { RenderCreatedAt } from "@/components/atoms/CreatedAt";
 import { userTypeEnum } from "@/types/register";
+import UserCard from "../UserCard";
 
 const UserComment = ({
   item,
@@ -61,60 +62,43 @@ const UserComment = ({
   return (
     <View style={styles.container}>
       <View className="flex flex-row justify-between   ">
-        <View className="flex-1 flex-row items-center gap-4 justify-center">
-          <View className=" ">
-            <Image
-              source={
-                item?.commenterProfileId?.profile_dp?.imageUrl
-                  ? { uri: item?.commenterProfileId?.profile_dp?.imageUrl }
-                  : avatar
-              }
-              style={styles.profileImage}
-              className=" rounded-full"
-              resizeMode="cover"
-            />
-          </View>
-
-          <View className=" flex-1 flex-row items-center ">
-            <TouchableOpacity
-              onPress={() => handleNavigate(item?.commenterId?._id)}
-              className=" flex-1 "
-            >
-              <Text
-                className="text-neutral-600 text-sm
-                 font-semibold"
-              >
-                {item?.commenterId?.firstName} {item?.commenterId?.lastName}
-              </Text>
-              <View className="flex">
-                <Text style={styles.userDetails}>
-                  {isStudent
-                    ? item?.commenterProfileId?.study_year
-                    : item?.commenterProfileId?.occupation}
-                </Text>
-                <Text style={styles.userDetails}>
-                  {isStudent
-                    ? item?.commenterProfileId?.major
-                    : item?.commenterProfileId?.affiliation}
-                </Text>
-              </View>
-            </TouchableOpacity>
-
-            <View className="flex justify-center items-center ">
-              <TouchableOpacity style={styles.moreButton}>
-                <MoreHoriz height={24} width={24} />
-              </TouchableOpacity>
-            </View>
-          </View>
-        </View>
+        <UserCard
+          userId={item?.commenterId?._id}
+          firstName={item?.commenterId?.firstName}
+          lastName={item?.commenterId?.lastName}
+          imageUrl={item?.commenterProfileId?.profile_dp?.imageUrl}
+          isStudent={isStudent}
+          studyYear={item?.commenterProfileId?.study_year}
+          major={item?.commenterProfileId?.major}
+          occupation={item?.commenterProfileId?.occupation}
+          affiliation={item?.commenterProfileId?.affiliation}
+          onNavigate={handleNavigate}
+          toShowOption={userData?.id === item?.commenterId?._id}
+          handleDelete={handleDelete}
+        />
       </View>
       {/* comment  */}
       <View>
         <RenderHTML
           contentWidth={width}
           source={{ html: item?.content }}
-          tagsStyles={{ body: { color: "black" } }}
+          tagsStyles={{
+            p: {
+              marginTop: 0,
+              marginBottom: 0,
+              paddingTop: 0,
+              paddingBottom: 0,
+            },
+            body: { color: "black" },
+          }}
           ignoredDomTags={["label", "input"]}
+          defaultTextProps={{
+            style: {
+              color: "#3A3B3C",
+              fontSize: 14,
+              fontWeight: "500",
+            },
+          }}
         />
       </View>
       <ImageGallery
@@ -129,9 +113,10 @@ const UserComment = ({
           {item?.level == 0 && (
             <TouchableOpacity
               onPress={() => handleReplyTo(item)}
-              className="flex flex-row gap-2 items-center"
+              className="flex flex-row gap-1 items-center"
             >
-              <Reply height={24} width={24} />
+              <Text style={styles.commentIconText}>Reply</Text>
+              <Reply height={16} width={16} />
             </TouchableOpacity>
           )}
 
@@ -139,39 +124,39 @@ const UserComment = ({
             onPress={() =>
               likePostCommentHandler(item._id, item.level.toString())
             }
-            className="flex flex-row gap-2 items-center"
+            className="flex flex-row gap-1 items-center"
           >
+            <Text style={styles.commentIconText}>
+              {item?.likeCount?.length}
+            </Text>
             <ThumbsUp
-              height={24}
-              width={24}
+              height={16}
+              width={16}
               color={
                 item?.likeCount?.some(
                   (like: any) => like.userId === userData?.id,
                 )
                   ? "#6647FF"
-                  : "black"
+                  : "#6B7280"
               }
             />
-            <Text>{item?.likeCount?.length}</Text>
           </TouchableOpacity>
-          <TouchableOpacity
-            // onPress={() => commentBottomSheet.current?.show()}
-            className="flex flex-row gap-2 items-center"
-            onPress={() => setShowReply(showReply.length ? "" : item._id)}
-          >
-            <ChatBubbleEmpty height={24} width={24} />
-            <Text>{item.totalCount || item?.replies?.length}</Text>
-          </TouchableOpacity>
-          {userData?.id === item?.commenterId?._id && (
+
+          {item?.level == 0 && (
             <TouchableOpacity
-              onPress={handleDelete}
-              className="flex flex-row gap-2 items-center"
+              // onPress={() => commentBottomSheet.current?.show()}
+              className="flex flex-row gap-1 items-center"
+              onPress={() => setShowReply(showReply.length ? "" : item._id)}
             >
-              <BinMinusIn height={24} width={24} />
+              <Text style={styles.commentIconText}>
+                {item.totalCount || item?.replies?.length}
+              </Text>
+              <ChatBubbleEmpty height={16} width={16} />
             </TouchableOpacity>
           )}
-          <TouchableOpacity className="flex flex-row gap-2 items-center">
-            <ShareAndroid height={24} width={24} />
+
+          <TouchableOpacity className="flex flex-row gap-1 items-center">
+            <ShareAndroid height={16} width={16} />
           </TouchableOpacity>
         </View>
       </View>
@@ -214,7 +199,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
     paddingVertical: 16,
     display: "flex",
-    gap: 10,
+    gap: 16,
   },
   header: {
     flexDirection: "row",
@@ -228,8 +213,8 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   profileImage: {
-    width: 52,
-    height: 52,
+    width: 48,
+    height: 48,
     borderRadius: 26,
   },
   userInfo: {
@@ -280,5 +265,9 @@ const styles = StyleSheet.create({
   showMoreText: {
     color: "#6647FF",
     fontSize: 14,
+  },
+  commentIconText: {
+    fontSize: 12,
+    color: "#6B7280",
   },
 });

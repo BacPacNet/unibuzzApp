@@ -1,23 +1,22 @@
 import {
   View,
   Text,
-  TextInput,
   TouchableOpacity,
   KeyboardAvoidingView,
   Platform,
   StyleSheet,
 } from "react-native";
 
-import { Controller, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { useState } from "react";
 import { LoginForm } from "@/models/auth";
 import { useHandleLogin } from "@/services/auth";
 import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { RootStackParamList } from "@/types/navigation";
-import { Eye, EyeClosed } from "iconoir-react-native";
 import ReusableButton from "@/components/atoms/ReusableButton";
 import { FormInput } from "@/components/atoms/FormInput";
+import { FormInputPassword } from "@/components/atoms/FormInputPassword";
 
 type LoginScreenNavigationProp = StackNavigationProp<
   RootStackParamList,
@@ -81,43 +80,20 @@ function LoginScreen() {
               />
 
               <View style={styles.passwordContainer}>
-                <Text style={styles.passwordLabel}>Password</Text>
-                <View style={styles.inputContainer}>
-                  <Controller
-                    control={control}
-                    render={({ field: { onChange, onBlur, value } }) => (
-                      <TextInput
-                        placeholder="*********"
-                        secureTextEntry={!showPassword}
-                        className={`border rounded-lg  ${loginErrors.password ? "border-red-500" : "border-neutral-300"}`}
-                        onBlur={onBlur}
-                        onChangeText={(value) => onChange(value)}
-                        value={value}
-                        style={styles.textInput}
-                      />
-                    )}
-                    name="password"
-                    rules={{
-                      required: "Password is required!",
-                    }}
-                  />
+                <FormInputPassword
+                  label="Password"
+                  placeholder="*********"
+                  name="password"
+                  control={control}
+                  rules={{
+                    required: "Password is required!",
+                  }}
+                  isInfoVisible={false}
+                  isPasswordStrengthVisible={false}
+                  isError={!!loginErrors.password}
+                  errorMessage={loginErrors.password?.message?.toString()}
+                />
 
-                  <TouchableOpacity
-                    style={styles.eyeIcon}
-                    onPress={() => setShowPassword((prev) => !prev)}
-                  >
-                    {showPassword ? (
-                      <Eye height={30} width={30} color={"#d4d4d4"} />
-                    ) : (
-                      <EyeClosed height={30} width={30} color={"#d4d4d4"} />
-                    )}
-                  </TouchableOpacity>
-                </View>
-                {loginErrors.password && (
-                  <Text className="text-2xs text-red-500 mt-1">
-                    {loginErrors.password.message}
-                  </Text>
-                )}
                 <TouchableOpacity
                   onPress={() => navigation.navigate("ForgetPassword")}
                   style={styles.forgotPasswordContainer}
@@ -181,31 +157,11 @@ const styles = StyleSheet.create({
   passwordContainer: {
     marginBottom: 16,
   },
-  passwordLabel: {
-    fontWeight: "500",
-    color: "#171717",
-    marginBottom: 8,
-    fontSize: 14,
-  },
-  inputContainer: {
-    position: "relative",
-  },
-  textInput: {
-    padding: 12,
-    fontSize: 14,
-    height: 40,
-  },
-  eyeIcon: {
-    position: "absolute",
-    right: 8,
-    top: 4,
-  },
+
   forgotPasswordContainer: {
-    marginTop: 4,
     marginBottom: 16,
   },
   forgotPasswordText: {
-    marginTop: 16,
     fontSize: 12,
     color: "#6744FF",
   },

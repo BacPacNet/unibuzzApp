@@ -187,13 +187,15 @@ const CommentBottomSheet = ({
                     >
                       <TouchableOpacity style={styles.dropDown}>
                         <View>
-                          <Text>{selectedOption}</Text>
+                          <Text style={styles.dropDownText}>
+                            {selectedOption}
+                          </Text>
                         </View>
 
                         <NavArrowDown
                           height={20}
                           width={20}
-                          color={"#6744FF"}
+                          color={"#242526"}
                         />
                       </TouchableOpacity>
                     </DropdownWrapper>
@@ -286,6 +288,7 @@ const CommentBottomSheet = ({
           level={replyingTo?.commentId?.length ? true : false}
           commentData={replyingTo}
           postAuthorName={postAuthorName || ""}
+          setShowReply={setShowReply}
         />
       </Modal>
     </SafeAreaView>
@@ -364,5 +367,10 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: "#ccc",
     borderRadius: 8,
+  },
+  dropDownText: {
+    fontSize: 12,
+    fontWeight: "500",
+    color: "#3A3B3C",
   },
 });

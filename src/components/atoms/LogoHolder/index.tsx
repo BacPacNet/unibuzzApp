@@ -7,7 +7,7 @@ const CommunityLogo = ({
   variant = "default",
 }: {
   logoUrl: string;
-  variant?: "small" | "default";
+  variant?: "small" | "extraSmall" | "default";
 }) => {
   const [logoSrc, setLogoSrc] = useState(logoUrl);
 
@@ -19,7 +19,11 @@ const CommunityLogo = ({
     <View
       style={[
         styles.imageWrapper,
-        variant === "small" ? styles.smallWrapper : styles.defaultWrapper,
+        variant === "small"
+          ? styles.smallWrapper
+          : variant === "extraSmall"
+            ? styles.extraSmallWrapper
+            : styles.defaultWrapper,
       ]}
     >
       {logoSrc?.length > 0 ? (
@@ -27,7 +31,11 @@ const CommunityLogo = ({
           source={{ uri: logoSrc }}
           style={[
             styles.communityImage,
-            variant === "small" ? styles.smallImage : styles.defaultImage,
+            variant === "small"
+              ? styles.smallImage
+              : variant === "extraSmall"
+                ? styles.extraSmallImage
+                : styles.defaultImage,
           ]}
           onError={() => setLogoSrc("")}
         />
@@ -45,7 +53,11 @@ const CommunityLogo = ({
             height={variant === "small" ? 16 : 20}
             style={[
               styles.communityImage,
-              variant === "small" ? styles.smallImage : styles.defaultImage,
+              variant === "small"
+                ? styles.smallImage
+                : variant === "extraSmall"
+                  ? styles.extraSmallImage
+                  : styles.defaultImage,
             ]}
           />
         </View>
@@ -73,6 +85,10 @@ const styles = StyleSheet.create({
     padding: 4,
     borderRadius: 200,
   },
+  extraSmallWrapper: {
+    padding: 2,
+    borderRadius: 200,
+  },
   smallWrapper: {
     padding: 3,
     borderRadius: 200,
@@ -86,6 +102,11 @@ const styles = StyleSheet.create({
   smallImage: {
     width: 32,
     height: 32,
+    borderRadius: 200,
+  },
+  extraSmallImage: {
+    width: 16,
+    height: 16,
     borderRadius: 200,
   },
   universityPlaceHolder: {

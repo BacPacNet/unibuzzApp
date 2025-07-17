@@ -152,8 +152,8 @@ const FlatListCommunityHeader: React.FC<Props> = ({
                   ) : (
                     <View style={styles.universityPlaceHolder}>
                       <UniversityLogoPlaceHolder
-                        width={20}
-                        height={20}
+                        width={40}
+                        height={40}
                         style={styles.communityImage}
                       />
                     </View>
@@ -286,13 +286,13 @@ const styles = StyleSheet.create({
   },
 
   content: {
-    padding: 15,
+    padding: 16,
   },
   titleContainer: {
     display: "flex",
     flexDirection: "row",
     alignItems: "center",
-    gap: 8,
+    gap: 12,
   },
   PrimaryContainer: {
     display: "flex",
@@ -316,25 +316,16 @@ const styles = StyleSheet.create({
   },
 
   description: {
-    fontSize: 12,
+    marginVertical: 16,
+    fontSize: 14,
     color: "#6B7280",
-    marginVertical: 8,
   },
   members: {
     fontWeight: "bold",
     color: "#6744FF",
     fontSize: 12,
   },
-  button: {
-    borderWidth: 2,
-    borderColor: "#E5E7EB",
-    padding: 10,
-    alignItems: "center",
-    borderRadius: 8,
-    marginTop: 10,
-    height: 40,
-    width: 163,
-  },
+
   deActive: {
     backgroundColor: "white",
   },
@@ -343,14 +334,6 @@ const styles = StyleSheet.create({
     backgroundColor: "#6744FF",
     fontSize: 14,
     fontWeight: "bold",
-  },
-  buttonText: {
-    color: "#333",
-    fontSize: 14,
-    fontWeight: "bold",
-  },
-  buttonTextActive: {
-    color: "white",
   },
 
   communityImagePlaceHolder: {
@@ -368,7 +351,7 @@ const styles = StyleSheet.create({
   imageWrapper: {
     padding: 4,
     backgroundColor: "#fff",
-    borderRadius: 24,
+    borderRadius: 240,
     ...Platform.select({
       ios: {
         shadowColor: "#000",
@@ -397,9 +380,9 @@ const styles = StyleSheet.create({
     right: 1,
   },
   communityImage: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
+    width: 48,
+    height: 48,
+    borderRadius: 280,
     resizeMode: "cover",
   },
 
@@ -433,8 +416,8 @@ const styles = StyleSheet.create({
   },
 
   universityPlaceHolder: {
-    width: 40,
-    height: 40,
+    width: 48,
+    height: 48,
     display: "flex",
     justifyContent: "center",
     alignItems: "center",

@@ -50,7 +50,7 @@ const Profile = ({ route }: ProfileProps) => {
     affiliation,
     occupation,
     role,
-    display_email,
+    displayEmail,
   } = profile || {};
 
   const onRefresh = useCallback(() => {
@@ -109,7 +109,7 @@ const Profile = ({ route }: ProfileProps) => {
             major={major}
             affiliation={affiliation}
             occupation={occupation}
-            email={display_email}
+            email={displayEmail}
             phone_number={phone_number}
             city={city}
             dob={dob}

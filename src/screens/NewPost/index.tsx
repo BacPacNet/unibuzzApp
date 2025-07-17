@@ -245,12 +245,12 @@ const NewPost = ({ navigation }: any) => {
         style={{ paddingBottom: 16 }}
         className="  flex flex-row gap-4 items-center justify-between border-b border-neutral-300"
       >
+        a
         <BackHeader
           label="New Post"
           onPress={() => navigation.goBack()}
           isLeftPadding={false}
         />
-
         <View
           style={{ marginTop: 16 }}
           className="flex flex-row items-center gap-4 px-4"
