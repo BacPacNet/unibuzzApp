@@ -108,20 +108,21 @@ const UniversitySec = () => {
       />
 
       <View className="mt-4">
-        <Text style={styles.headerText}>University Groups</Text>
         <View style={styles.communityImageContainer}>
+          <Text style={styles.groupHeaderText}>Groups</Text>
+
           <CommunityLogo
             logoUrl={community?.communityLogoUrl?.imageUrl as string}
+            variant="extraSmall"
           />
-
-          <TouchableOpacity
-            onPress={() => handleManageGroupNavigate()}
-            style={styles.communityMangeButton}
-          >
-            <FilterList width={22} height={22} color="#6744FF" />
-            <Text className="text-neutral-800">Manage Groups</Text>
-          </TouchableOpacity>
         </View>
+        <TouchableOpacity
+          onPress={() => handleManageGroupNavigate()}
+          style={styles.communityMangeButton}
+        >
+          <FilterList width={22} height={22} color="#6744FF" />
+          <Text className="text-neutral-800">Manage Groups</Text>
+        </TouchableOpacity>
 
         {/* <CommunityGroupAll
           key={joinedSubscribedCommunitiesGroup}
@@ -163,13 +164,19 @@ const styles = StyleSheet.create({
   },
 
   headerText: {
-    fontSize: 12,
+    fontSize: 14,
     color: "#6B7280",
     padding: 16,
     paddingTop: 9,
     fontWeight: 700,
   },
+  groupHeaderText: {
+    fontSize: 14,
+    color: "#6B7280",
+    paddingStart: 16,
 
+    fontWeight: 700,
+  },
   UpgradeText: {
     fontSize: 14,
     color: "#6744FF",
@@ -207,18 +214,22 @@ const styles = StyleSheet.create({
     display: "flex",
     flexDirection: "row",
     alignItems: "center",
-    gap: 30,
-    padding: 16,
+    gap: 8,
+    marginBottom: 16,
   },
   communityMangeButton: {
     display: "flex",
     flexDirection: "row",
-    justifyContent: "space-between",
+    justifyContent: "center",
+    alignSelf: "flex-start",
     // padding: 16,
     borderColor: "#D1D5DB",
     borderWidth: 1,
     padding: 8,
     borderRadius: 10,
     gap: 4,
+    width: 236,
+    marginBottom: 32,
+    marginStart: 16,
   },
 });

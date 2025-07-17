@@ -11,9 +11,14 @@ import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { RootStackParamList } from "@/types/navigation";
 import CreatePostButton from "@/components/atoms/CreatePostButton";
+import OnboardingPlaceholder from "@/components/molecules/OnboardingPlaceHolder";
+import EmptyStateCard from "@/components/molecules/EmptyStateCard";
+import QuiteHere from "@/assets/placeHolder/quiteHere.svg";
+import { getUserProfileStore } from "@/storage/user";
 
 type NavigationProp = StackNavigationProp<RootStackParamList, "Timeline">;
 const Timeline = () => {
+  const userProfileData = getUserProfileStore();
   const [refreshing, setRefreshing] = React.useState(false);
   const navigation = useNavigation<NavigationProp>();
   const {
@@ -87,7 +92,18 @@ const Timeline = () => {
             </View>
           ) : (
             <View className="flex-1 justify-center items-center">
-              <Text>No Result Found</Text>
+              {userProfileData?.email?.length &&
+              userProfileData?.email?.length > 0 ? (
+                <EmptyStateCard
+                  imageWidth={226}
+                  imageHeight={158}
+                  SvgComponent={QuiteHere}
+                  title="It’s a little quiet in here..."
+                  description="Join your university community to connect and see posts from fellow students in your timeline."
+                />
+              ) : (
+                <OnboardingPlaceholder />
+              )}
             </View>
           )
         }

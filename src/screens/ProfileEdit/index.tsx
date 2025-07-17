@@ -80,7 +80,7 @@ export default function ProfileEdit() {
       const userDefault = {
         firstName: firstName || "",
         lastName: lastName || "",
-        display_email: profile?.display_email || "",
+        displayEmail: profile?.displayEmail || "",
         gender: gender || "",
         affiliation: profile.affiliation || "",
         bio: profile.bio || "",
@@ -316,13 +316,13 @@ export default function ProfileEdit() {
               <FormInput
                 label="Email"
                 placeholder="Enter an email you would like to show others"
-                name="display_email"
+                name="displayEmail"
                 control={control}
                 keyboardType="email-address"
-                isError={!!errors.display_email}
+                isError={!!errors.displayEmail}
                 errorMessage={
-                  errors.display_email
-                    ? errors.display_email.message?.toString()
+                  errors.displayEmail
+                    ? errors.displayEmail.message?.toString()
                     : "email  is required"
                 }
               />

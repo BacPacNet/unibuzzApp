@@ -71,6 +71,7 @@ type Props = {
   };
   postAuthorName: string;
   showInitial: boolean;
+  setShowReply: (value: boolean) => void;
 };
 
 const NewComment = ({
@@ -82,6 +83,7 @@ const NewComment = ({
   commentData,
   postAuthorName,
   showInitial,
+  setShowReply,
 }: Props) => {
   const userProfileData = getUserProfileStore();
   const [images, setImages] = useState<ImageAsset[]>([]);
@@ -192,7 +194,9 @@ const NewComment = ({
       if (level) {
         payload.level = 0;
         payload.commentId = commentData?.commentId;
-        await CreateUserPostCommentReply(payload);
+        const res = await CreateUserPostCommentReply(payload);
+
+        setShowReply(res?.commentReply?._id);
       } else {
         await mutateUserPostComment(payload);
       }
@@ -201,7 +205,8 @@ const NewComment = ({
         payload.level = 0;
 
         payload.commentId = commentData?.commentId;
-        await CreateGroupPostCommentReply(payload);
+        const res = await CreateGroupPostCommentReply(payload);
+        setShowReply(res?.commentReply?._id);
       } else {
         payload.adminId = adminID;
         await mutateGroupPostComment(payload);
@@ -228,7 +233,7 @@ const NewComment = ({
         />
         <View
           style={{ marginTop: 16 }}
-          className="flex flex-row items-center gap-4"
+          className="flex flex-row items-center gap-4 px-4"
         >
           <ReusableButton
             variant="primary"

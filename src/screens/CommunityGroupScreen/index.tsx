@@ -12,8 +12,6 @@ import {
   FlatList,
   RefreshControl,
   StyleSheet,
-  Text,
-  TouchableOpacity,
   View,
 } from "react-native";
 import { useGetCommunityGroupPost } from "@/services/university-community";
@@ -42,6 +40,10 @@ import CommunityGroupActionModal from "@/components/molecules/CommunityGroup/Com
 import FlatListCommunityHeader from "@/components/molecules/CommunityGroup/CommunityGroupHeaderFlatList";
 import { Refresh } from "@/components/atoms/RefreshSpinner";
 import CreatePostButton from "@/components/atoms/CreatePostButton";
+import { AxiosError } from "axios";
+import EmptyStateCard from "@/components/molecules/EmptyStateCard";
+import NotMember from "@/assets/placeHolder/notMember.svg";
+import NoPostFromGroup from "@/assets/placeHolder/NoPostFromGroup.svg";
 
 type NavigationProp = StackNavigationProp<RootStackParamList, "CommunityGroup">;
 
@@ -217,12 +219,12 @@ const CommunityGroupScreen = ({ route }: any) => {
   const handleNavigateToEditCommunityGroupScreen = () => {
     hideBottomBar();
     setModalVisible(false);
-    return console.log(
-      "communityId",
-      communityId,
-      "communityGroups",
-      communityGroups,
-    );
+    // return console.log(
+    //   "communityId",
+    //   communityId,
+    //   "communityGroups",
+    //   communityGroups,
+    // );
 
     navigation.navigate("manageGroupStack", {
       screen: "EditCommunityGroupScreen",
@@ -260,20 +262,15 @@ const CommunityGroupScreen = ({ route }: any) => {
         adminId={communityGroups?.adminUserId.toString() || ""}
         leaveCommunityGroup={leaveCommunityGroupFunction}
       />
-      {error && (
-        <View
-          style={{
-            padding: 10,
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-          }}
-        >
-          <Text style={{ color: "red" }}>
-            {(error as any)?.response?.data?.message || "Something went wrong"}
-          </Text>
-        </View>
-      )}
+      {error && (error as AxiosError).response?.status === 401 ? (
+        <EmptyStateCard
+          imageWidth={126}
+          imageHeight={158}
+          SvgComponent={NotMember}
+          title="You are not a member of this group"
+          description="This group is for members only. Become a member to access exclusive content and discussions."
+        />
+      ) : null}
     </View>
   );
 
@@ -330,12 +327,14 @@ const CommunityGroupScreen = ({ route }: any) => {
               <View className="flex-1 justify-center items-center">
                 <ActivityIndicator size="large" color="#7367f0" />
               </View>
-            ) : error ? (
-              <View></View>
-            ) : (
-              <View className="flex-1 justify-center items-center">
-                <Text>No Result Found</Text>
-              </View>
+            ) : error ? null : (
+              <EmptyStateCard
+                imageWidth={226}
+                imageHeight={158}
+                SvgComponent={NoPostFromGroup}
+                title="No Posts from Group."
+                description="No posts in this group yet. Once members start sharing, you’ll see them here."
+              />
             )
           }
         />

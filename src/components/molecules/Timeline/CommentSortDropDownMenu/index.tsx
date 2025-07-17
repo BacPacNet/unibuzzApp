@@ -24,7 +24,10 @@ const CommentSortDropDownMenu: React.FC<{
           handleSelect({ value: Sortby.ASC, label: "Oldest First" })
         }
       >
-        <Text className="text-neutral-700"> Oldest First</Text>
+        <Text className="text-neutral-700 font-medium text-2xs">
+          {" "}
+          Oldest First
+        </Text>
       </TouchableOpacity>
     </View>
   );

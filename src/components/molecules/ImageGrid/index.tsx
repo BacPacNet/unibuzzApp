@@ -84,8 +84,11 @@ const ImageGallery = ({
 
       <View className="flex gap-2">
         {fileItems.map((item: any, index: number) => (
-          <View key={index}>
-            <Text>
+          <View
+            key={index}
+            className="border border-neutral-200 rounded-lg p-2 mt-1"
+          >
+            <Text lineBreakMode="clip" style={styles.fileText}>
               {decodeURI(item.imageUrl.split("/").pop() || "Unknown File")}
             </Text>
           </View>
@@ -119,6 +122,12 @@ const styles = StyleSheet.create({
   extraImagesText: {
     color: "#555",
     fontSize: 16,
+    fontWeight: "bold",
+  },
+
+  fileText: {
+    color: "#3A3B3C",
+    fontSize: 12,
     fontWeight: "bold",
   },
 });

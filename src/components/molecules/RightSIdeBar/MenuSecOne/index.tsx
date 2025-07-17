@@ -5,10 +5,10 @@ import { User, Settings, CubeScanSolid } from "iconoir-react-native";
 const menuItems = [
   { title: "Profile", icon: <User width={22} height={22} color="#555" /> },
   { title: "Settings", icon: <Settings width={22} height={22} color="#555" /> },
-  {
-    title: "Upgrades",
-    icon: <CubeScanSolid width={22} height={22} color="#555" />,
-  },
+  //   {
+  //     title: "Upgrades",
+  //     icon: <CubeScanSolid width={22} height={22} color="#555" />,
+  //   },
 ];
 
 const SidebarMenuSectionOne = ({ navigation, handleClick }: any) => {

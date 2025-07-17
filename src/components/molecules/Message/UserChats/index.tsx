@@ -154,7 +154,8 @@ const UserChats = ({
         <View className="relative flex-1">
           <TextInput
             placeholder="Search Messages"
-            className="border border-neutral-200 p-2  rounded-lg h-10"
+            placeholderTextColor={"#6B7280"}
+            className="border border-neutral-200 p-2 text-neutral-500  rounded-lg h-10"
             style={{ paddingEnd: 40 }}
           />
           <Search

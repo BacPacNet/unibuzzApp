@@ -1,11 +1,4 @@
-import React, {
-  memo,
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
+import React, { memo, useCallback, useMemo, useRef, useState } from "react";
 import {
   Share,
   Text,
@@ -16,8 +9,6 @@ import {
 import PostCardUserDetails from "../PostCardUserDetails";
 import ImageGridLayout from "../../ImageGridLayout";
 import { ChatBubbleEmpty, ShareAndroid, ThumbsUp } from "iconoir-react-native";
-import dayjs from "dayjs";
-
 import RenderHtml from "react-native-render-html";
 import ActionSheet, { ActionSheetRef } from "react-native-actions-sheet";
 import CommentBottomSheet from "../CommentBottomSheet";

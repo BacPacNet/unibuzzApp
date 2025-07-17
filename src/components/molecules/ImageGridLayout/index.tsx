@@ -154,7 +154,11 @@ const ImageGridLayout = ({ imagesData }: Props) => {
               }}
             >
               <Page width={24} height={24} style={{ marginRight: 8 }} />
-              <Text numberOfLines={1} style={{ flex: 1 }}>
+              <Text
+                className="text-neutral-500"
+                numberOfLines={1}
+                style={{ flex: 1 }}
+              >
                 {decodeURIComponent(
                   item.imageUrl.split("/").pop() || "Unknown File",
                 )}

@@ -86,12 +86,12 @@ const UserCard = ({
           <Text className="text-xs font-semibold text-neutral-600">{name}</Text>
 
           {date && (
-            <Text className="text-xs text-gray-500">
+            <Text className="text-xs text-neutral-400">
               {formatRelativeTime(new Date(date))}
             </Text>
           )}
         </View>
-        <Text className="text-xs text-gray-700">{content}</Text>
+        <Text className="text-xs text-neutral-700">{content}</Text>
         <ImageGallery images={media} imageCount={media?.length} />
       </View>
     </View>
@@ -167,7 +167,7 @@ const UserMessages = ({
             <Fragment key={idx}>
               {shouldShowDateDivider && (
                 <View className="my-4">
-                  <Text className="text-center text-gray-500">
+                  <Text className="text-center text-neutral-500">
                     {currentDate}
                   </Text>
                 </View>

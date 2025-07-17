@@ -148,13 +148,14 @@ const styles = StyleSheet.create({
   },
 
   Attactcontainer: {},
-  label: { fontSize: 16 },
+  label: { fontSize: 14, fontWeight: "500", color: "#3A3B3C", marginBottom: 8 },
   button: {
     borderWidth: 1,
     borderColor: "#E5E7EB",
     paddingVertical: 10,
     paddingHorizontal: 16,
-    borderRadius: 4,
+    borderRadius: 8,
+    height: 40,
   },
   buttonText: { fontSize: 16 },
   image: {

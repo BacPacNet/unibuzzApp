@@ -82,7 +82,7 @@ const UniversityVerificationInfo = ({
                 />
                 <View className="flex flex-row items-center justify-start gap-2">
                   <CommunityLogo logoUrl={item?.logo} variant="small" />
-                  <Text className="text-sm text-gray-500">
+                  <Text className="text-xs text-neutral-700 font-medium">
                     {item?.UniversityName}
                   </Text>
                   <Badge width={12} height={12} style={styles.badge} />
