@@ -4,6 +4,7 @@ import { FormFields } from "@/components/molecules/CreateNewGroup/FormFields/For
 import { ImageUploadSection } from "@/components/molecules/CreateNewGroup/ImageUploadSection/ImageUploadSection";
 import { useCommunityFilterContext } from "@/context/CommunityFilterProvider/CommunityFilterProvider";
 import { useNewCommunityGroupStatesContext } from "@/context/NewCommunityGroupStatesProvider/NewCommunityGroupStatesProvider";
+import useCustomBackHandler from "@/hooks/useCustomBackHandler";
 import { useUpdateCommunityGroup } from "@/services/community-group";
 import { useGetCommunity } from "@/services/university-community";
 import { useUploadToS3 } from "@/services/upload";
@@ -204,7 +205,7 @@ const EditCommunityGroupScreen = () => {
       communityGroupId: communityGroups?._id,
     });
   };
-
+  useCustomBackHandler(handleGOBack);
   const handleNavigateToUsersSelectScreen = () => {
     navigate.navigate("manageGroupStack", {
       screen: "NewCommunityGroupUsersSelectScreen",
@@ -215,6 +216,7 @@ const EditCommunityGroupScreen = () => {
       },
     });
   };
+
 
   return (
     <SafeAreaView style={styles.container}>

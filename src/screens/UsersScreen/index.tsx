@@ -16,6 +16,7 @@ import {
   useGetUserFollowing,
 } from "@/services/connection";
 import { getUserProfileStore } from "@/storage/user";
+import useCustomBackHandler from "@/hooks/useCustomBackHandler";
 
 type NavigationProp = StackNavigationProp<RootStackParamList, "UsersScreen">;
 
@@ -104,7 +105,8 @@ const UsersScreen = ({ route }: any) => {
       params: { userId: userId },
     });
   };
-
+  useCustomBackHandler(handleBack);
+  
   const isLoading =
     listType.following.toString() == type
       ? isFollowingLoading

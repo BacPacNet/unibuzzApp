@@ -245,7 +245,7 @@ const NewPost = ({ navigation }: any) => {
         style={{ paddingBottom: 16 }}
         className="  flex flex-row gap-4 items-center justify-between border-b border-neutral-300"
       >
-        a
+        
         <BackHeader
           label="New Post"
           onPress={() => navigation.goBack()}

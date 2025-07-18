@@ -88,7 +88,6 @@ const NewCommunityGroupScreen = () => {
   const { setSelectedUsersState, selectedUsersState, resetFilters } =
     useNewCommunityGroupStatesContext();
 
-  console.log("data", communityId);
 
   // Local state
   const [isProfileLoading, setIsProfileLoading] = useState(false);

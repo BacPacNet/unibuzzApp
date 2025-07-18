@@ -1,11 +1,22 @@
 import PostCard from "@/components/molecules/Timeline/PostCard";
+import { screenName } from "@/constant/screenName";
 import { useGetPost } from "@/services/university-community";
 import React from "react";
 import { ActivityIndicator, StyleSheet, Text, View } from "react-native";
+import { useNavigation } from "@react-navigation/native";
+
+import useCustomBackHandler from "@/hooks/useCustomBackHandler";
+import { StackNavigationProp } from "@react-navigation/stack";
+import { RootStackParamList } from "@/types/navigation";
+
+
+type NavigationProp = StackNavigationProp<RootStackParamList, "SinglePost">;
+
 
 const SinglePost = ({ route }: any) => {
+    const navigation = useNavigation<NavigationProp>();
   const { postID, type, commentId } = route.params;
-
+  const from  = route?.params?.from || "";
   const { data, isFetching, isPending, isError, isLoading } = useGetPost(
     postID,
     type,
@@ -14,6 +25,16 @@ const SinglePost = ({ route }: any) => {
 
   const item = data?.post;
   const comment = data?.comment;
+
+  const handleBack = () => {
+    if(from === screenName.notifications){
+      navigation.navigate("Notifications");
+    }else{
+      navigation.goBack();
+    }
+  };
+  useCustomBackHandler(handleBack);
+
 
   if (isError) {
     return (

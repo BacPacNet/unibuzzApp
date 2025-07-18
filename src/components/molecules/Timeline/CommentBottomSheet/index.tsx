@@ -302,7 +302,7 @@ const styles = StyleSheet.create({
     display: "flex",
     justifyContent: "space-between",
     minHeight: 400,
-    marginBottom: 80,
+   
   },
   loaderContainer: {
     flex: 1,
@@ -337,15 +337,7 @@ const styles = StyleSheet.create({
     padding: 16,
   },
 
-  richText: {
-    marginRight: 40,
-    paddingLeft: 20,
-  },
-  keyboardAvoidingView: {
-    position: "absolute",
-    width: "100%",
-    bottom: 0,
-  },
+
 
   buttonContainer: {
     position: "absolute",

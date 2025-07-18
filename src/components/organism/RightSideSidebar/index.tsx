@@ -22,7 +22,7 @@ const RightSideSidebar = ({ navigation, handleClick, closeDrawer }: Props) => {
   const isStudent = userProfile?.role === userTypeEnum.Student;
 
   return (
-    <SafeAreaView>
+    <SafeAreaView >
       <ScrollView>
         <ProfileCard toShow={false} isSideBar={true} isStudent={isStudent} />
         <SidebarMenuSectionOne

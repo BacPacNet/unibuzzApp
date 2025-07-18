@@ -107,7 +107,7 @@ const UniversitySec = () => {
         isGroup={!!currentCommunityGroupId}
       />
 
-      <View className="mt-4">
+      <View  className="mt-4">
         <View style={styles.communityImageContainer}>
           <Text style={styles.groupHeaderText}>Groups</Text>
 
@@ -173,9 +173,8 @@ const styles = StyleSheet.create({
   groupHeaderText: {
     fontSize: 14,
     color: "#6B7280",
-    paddingStart: 16,
-
     fontWeight: 700,
+   
   },
   UpgradeText: {
     fontSize: 14,
@@ -216,6 +215,11 @@ const styles = StyleSheet.create({
     alignItems: "center",
     gap: 8,
     marginBottom: 16,
+    borderTopColor: "#E5E7EB",
+    borderTopWidth: 1,
+    marginHorizontal:16,
+    paddingTop:16
+  
   },
   communityMangeButton: {
     display: "flex",
@@ -231,5 +235,8 @@ const styles = StyleSheet.create({
     width: 236,
     marginBottom: 32,
     marginStart: 16,
+  },
+  borderBottom: {
+ 
   },
 });
