@@ -12,6 +12,7 @@ import { NotificationActions } from "../NotificationActions";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { RootStackParamList } from "@/types/navigation";
 import { useNavigation } from "@react-navigation/native";
+import { screenName } from "@/constant/screenName";
 
 interface likedBy {
   totalCount: number;
@@ -73,29 +74,33 @@ const NotificationCard = ({ data }: Props) => {
       case notificationRoleAccess.FOLLOW:
         return navigation.navigate("ProfileStack", {
           screen: "Profile",
-          params: { userId: data.sender_id?._id },
+          params: { userId: data.sender_id?._id,from:screenName.notifications },
         });
       case notificationRoleAccess.COMMENT:
         return navigation.navigate("SinglePost", {
           postID: data.userPostId,
           type: "Timeline",
           commentId: data?.commentedBy.newFiveUsers[0].postCommentId,
+          from:screenName.notifications
         });
       case notificationRoleAccess.COMMUNITY_COMMENT:
         return navigation.navigate("SinglePost", {
           postID: data.communityPostId,
           type: "Community",
           commentId: data?.commentedBy.newFiveUsers[0].communityPostCommentId,
+          from:screenName.notifications
         });
       case notificationRoleAccess.REACTED_TO_POST:
         return navigation.navigate("SinglePost", {
           postID: data.userPostId,
           type: "Timeline",
+          from:screenName.notifications
         });
       case notificationRoleAccess.REACTED_TO_COMMUNITY_POST:
         return navigation.navigate("SinglePost", {
           postID: data.communityPostId,
           type: "Community",
+          from:screenName.notifications
         });
       case notificationRoleAccess.PRIVATE_GROUP_REQUEST:
       case notificationRoleAccess.ACCEPTED_OFFICIAL_GROUP_REQUEST:
@@ -107,6 +112,7 @@ const NotificationCard = ({ data }: Props) => {
         return navigation.navigate("CommunityGroup", {
           communityId: data.communityGroupId?.communityId,
           communityGroupId: data.communityGroupId?._id,
+          from:screenName.notifications
         });
       default:
         break;
@@ -118,6 +124,7 @@ const NotificationCard = ({ data }: Props) => {
       postID: data.communityPostId,
       type: "Community",
       commentId: user?.communityPostCommentId,
+      from:screenName.notifications
     });
   };
 
@@ -126,6 +133,7 @@ const NotificationCard = ({ data }: Props) => {
       postID: data.userPostId,
       type: "Timeline",
       commentId: user?.postCommentId,
+      from:screenName.notifications
     });
   };
 

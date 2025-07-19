@@ -368,7 +368,7 @@ function ApplicationNavigator() {
             //height: headerHeight,
           },
           drawerStyle: {
-            width: "80%",
+            width: 284,
           },
 
           headerLeft: () => (
@@ -436,6 +436,10 @@ function ApplicationNavigator() {
         onOpen={() => setRightDrawerOpen(true)}
         onClose={() => setRightDrawerOpen(false)}
         drawerPosition="right"
+        drawerStyle={{
+          width: 284,
+         
+        }}
         renderDrawerContent={() => (
           <UserProfileDrawerContent
             navigation={useNavigation()}

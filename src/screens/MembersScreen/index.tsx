@@ -9,6 +9,7 @@ import { getUserProfileStore } from "@/storage/user";
 import MembersUserCard from "@/components/molecules/MembersUserCard";
 import { CommunityGroupUsers } from "@/types/CommunityGroup";
 import { useRemoveUserFromCommunityGroup } from "@/services/community-group";
+import useCustomBackHandler from "@/hooks/useCustomBackHandler";
 
 type NavigationProp = StackNavigationProp<RootStackParamList, "MembersScreen">;
 
@@ -56,6 +57,8 @@ const MembersScreen = ({ route }: any) => {
     });
   };
 
+
+  useCustomBackHandler(handleBack);
   return (
     <View style={styles.container}>
       <BackHeader label="Community" onPress={() => handleBack()} />

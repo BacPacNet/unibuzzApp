@@ -3,6 +3,7 @@ import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { Community } from "@/types/Community";
 import UniversityLogoPlaceHolder from "@/assets/unibuzz_rounded.svg";
+import OfficailLogoPlaceHolder from "@/assets/community/official-logo.svg";
 import React from "react";
 import {
   View,
@@ -79,18 +80,14 @@ const GroupSelectors = ({
           )}
           {isGroupOfficial && (
             <View style={styles.badgeWrapper}>
-              {communityLogo?.length ? (
-                <Image
-                  source={{ uri: communityLogo }}
-                  style={styles.badgeImage}
-                />
-              ) : (
-                <UniversityLogoPlaceHolder
+             
+              
+                <OfficailLogoPlaceHolder
                   width={12}
                   height={12}
                   style={styles.badgeImage}
                 />
-              )}
+           
             </View>
           )}
         </View>

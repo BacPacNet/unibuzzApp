@@ -8,9 +8,19 @@ import { FlatListProfileHeaderPart } from "@/components/molecules/Profile/FlatLi
 import { LoadingState } from "@/components/atoms/LoadingState";
 import { styles } from "./styles";
 import { ProfileProps } from "./types";
+import { screenName } from "@/constant/screenName";
+import { useNavigation } from "@react-navigation/native";
+import { StackNavigationProp } from "@react-navigation/stack";
+import { RootStackParamList } from "@/types/navigation";
+import useCustomBackHandler from "@/hooks/useCustomBackHandler";
+
+
+type NavigationProp = StackNavigationProp<RootStackParamList, "SinglePost">;
 
 const Profile = ({ route }: ProfileProps) => {
+    const navigation = useNavigation<NavigationProp>();
   const { userId } = route.params;
+  const from  = route?.params?.from || "";
   const userData = getUserStore();
   const queryClient = useQueryClient();
   const [refreshing, setRefreshing] = useState(false);
@@ -59,6 +69,17 @@ const Profile = ({ route }: ProfileProps) => {
     setRefreshing(false);
   }, [queryClient, userId]);
 
+
+  const handleBack = () => {
+    if(from === screenName.notifications){
+      navigation.navigate("Notifications");
+    }else{
+      navigation.goBack();
+    }
+  };
+  useCustomBackHandler(handleBack);
+
+  
   const handleScroll = (event: any) => {
     const contentOffsetY = event.nativeEvent.contentOffset.y;
     setLastOffset(contentOffsetY);
@@ -85,6 +106,8 @@ const Profile = ({ route }: ProfileProps) => {
       </View>
     );
   };
+
+
 
   return (
     <View style={styles.container}>

@@ -44,12 +44,15 @@ import { AxiosError } from "axios";
 import EmptyStateCard from "@/components/molecules/EmptyStateCard";
 import NotMember from "@/assets/placeHolder/notMember.svg";
 import NoPostFromGroup from "@/assets/placeHolder/NoPostFromGroup.svg";
+import { screenName } from "@/constant/screenName";
+import useCustomBackHandler from "@/hooks/useCustomBackHandler";
 
 type NavigationProp = StackNavigationProp<RootStackParamList, "CommunityGroup">;
 
 const CommunityGroupScreen = ({ route }: any) => {
   const navigation = useNavigation<NavigationProp>();
   const { communityId, communityGroupId } = route.params;
+  const from  = route?.params?.from || "";
   const { setCurrentCommunityId } = useCommunityContext();
   const userData = getUserStore();
   const userProfileData = getUserProfileStore();
@@ -219,12 +222,6 @@ const CommunityGroupScreen = ({ route }: any) => {
   const handleNavigateToEditCommunityGroupScreen = () => {
     hideBottomBar();
     setModalVisible(false);
-    // return console.log(
-    //   "communityId",
-    //   communityId,
-    //   "communityGroups",
-    //   communityGroups,
-    // );
 
     navigation.navigate("manageGroupStack", {
       screen: "EditCommunityGroupScreen",
@@ -235,6 +232,16 @@ const CommunityGroupScreen = ({ route }: any) => {
     });
   };
 
+  const handleBack = () => {
+    if(from === screenName.notifications){
+      navigation.navigate("Notifications");
+    }else{
+      navigation.goBack();
+    }
+  };
+  useCustomBackHandler(handleBack);
+
+  
   const FlatListHeaderWithError = () => (
     <View>
       <FlatListCommunityHeader

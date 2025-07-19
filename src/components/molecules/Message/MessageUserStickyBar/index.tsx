@@ -16,6 +16,7 @@ import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { RootStackParamList } from "@/types/navigation";
 import ReusableButton from "@/components/atoms/ReusableButton";
+import useCustomBackHandler from "@/hooks/useCustomBackHandler";
 
 type Props = {
   setSelectedChat: (value: any) => void;
@@ -88,6 +89,8 @@ const MessageUserStickyBar = ({
   const handleBack = () => {
     setSelectedChat(undefined);
   };
+
+  useCustomBackHandler(handleBack);
 
   const navigateToMembers = () => {
     navigation.navigate("ChatMembersScreen", {

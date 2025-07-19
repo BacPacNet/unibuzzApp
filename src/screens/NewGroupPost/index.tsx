@@ -34,6 +34,7 @@ import DocumentPicker from "react-native-document-picker";
 import MediaPreviewList from "@/components/molecules/MediaPreview";
 import BackHeader from "@/components/atoms/BackHeader";
 import ReusableButton from "@/components/atoms/ReusableButton";
+import useCustomBackHandler from "@/hooks/useCustomBackHandler";
 
 type ImageAsset = {
   uri: string;
@@ -251,7 +252,9 @@ const NewGroupPost = ({ navigation }: any) => {
       navigation.navigate("Community", { communityId: communityId });
     }
   };
+  useCustomBackHandler(handleBack);
 
+  
   return (
     <View className="flex-1 bg-white relative">
       <View
@@ -280,7 +283,7 @@ const NewGroupPost = ({ navigation }: any) => {
         </View>
       </View>
       <SafeAreaView
-        style={{ flex: 1, paddingBottom: images.length ? 120 : 20 }}
+        style={{ flex: 1, paddingBottom: 80}}
       >
         {(images.length > 0 || files.length > 0) && (
           <View style={{ height: 100 }}>
