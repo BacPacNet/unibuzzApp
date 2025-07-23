@@ -57,30 +57,30 @@ const sections = [
       { id: "deactivation", title: "Account Deactivation" },
     ],
   },
-  {
-    id: "privacy",
-    title: "Privacy",
-    items: [
-      { id: "visibility", title: "Profile Visibility" },
-      { id: "tagging", title: "Tagging Permissions" },
-    ],
-  },
-  {
-    id: "security",
-    title: "Security",
-    items: [
-      { id: "2fa", title: "Two Factor Authentication" },
-      { id: "devices", title: "Connected Devices" },
-    ],
-  },
-  {
-    id: "preferences",
-    title: "Preferences",
-    items: [
-      { id: "language", title: "Language" },
-      { id: "theme", title: "Display/Theme" },
-    ],
-  },
+  //   {
+  //     id: "privacy",
+  //     title: "Privacy",
+  //     items: [
+  //       { id: "visibility", title: "Profile Visibility" },
+  //       { id: "tagging", title: "Tagging Permissions" },
+  //     ],
+  //   },
+  //   {
+  //     id: "security",
+  //     title: "Security",
+  //     items: [
+  //       { id: "2fa", title: "Two Factor Authentication" },
+  //       { id: "devices", title: "Connected Devices" },
+  //     ],
+  //   },
+  //   {
+  //     id: "preferences",
+  //     title: "Preferences",
+  //     items: [
+  //       { id: "language", title: "Language" },
+  //       { id: "theme", title: "Display/Theme" },
+  //     ],
+  //   },
 ];
 
 type NavigationProp = StackNavigationProp<RootStackParamList, "Settings">;
@@ -103,13 +103,7 @@ const SettingsScreen = () => {
   };
 
   const handleMenuItemPress = (sectionId: string, itemId: string) => {
-    console.log(`Pressed ${itemId} in ${sectionId} section`);
     routeChange(itemId);
-    // navigation.navigate("UniversityVerification");
-
-    // navigation.navigate("SettingsStack", {
-    //     screen: itemId,
-    //   });
   };
 
   return (

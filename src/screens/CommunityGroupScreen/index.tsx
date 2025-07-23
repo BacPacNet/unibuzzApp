@@ -52,7 +52,7 @@ type NavigationProp = StackNavigationProp<RootStackParamList, "CommunityGroup">;
 const CommunityGroupScreen = ({ route }: any) => {
   const navigation = useNavigation<NavigationProp>();
   const { communityId, communityGroupId } = route.params;
-  const from  = route?.params?.from || "";
+  const from = route?.params?.from || "";
   const { setCurrentCommunityId } = useCommunityContext();
   const userData = getUserStore();
   const userProfileData = getUserProfileStore();
@@ -233,15 +233,14 @@ const CommunityGroupScreen = ({ route }: any) => {
   };
 
   const handleBack = () => {
-    if(from === screenName.notifications){
+    if (from === screenName.notifications) {
       navigation.navigate("Notifications");
-    }else{
+    } else {
       navigation.goBack();
     }
   };
   useCustomBackHandler(handleBack);
 
-  
   const FlatListHeaderWithError = () => (
     <View>
       <FlatListCommunityHeader

@@ -106,7 +106,7 @@ const UsersScreen = ({ route }: any) => {
     });
   };
   useCustomBackHandler(handleBack);
-  
+
   const isLoading =
     listType.following.toString() == type
       ? isFollowingLoading

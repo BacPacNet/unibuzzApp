@@ -14,12 +14,14 @@ import { getToken } from "./storage/token";
 import { SafeScreen } from "./components/template";
 import AuthProvider from "./context/AuthProvider/AuthProvider";
 import { UserPasswordResetProvider } from "./context/UserPasswordResetProvider/UserPasswordResetProvider";
+import { useFirebaseMessaging } from "./hooks/useFirebaseMessaging";
 
 export const queryClient = new QueryClient();
 
 export const storage = new MMKV();
 
 function App() {
+  // useFirebaseMessaging();
   return (
     <QueryClientProvider client={queryClient}>
       <ThemeProvider storage={storage}>

@@ -438,7 +438,6 @@ function ApplicationNavigator() {
         drawerPosition="right"
         drawerStyle={{
           width: 284,
-         
         }}
         renderDrawerContent={() => (
           <UserProfileDrawerContent

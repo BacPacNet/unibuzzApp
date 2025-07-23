@@ -13,13 +13,13 @@ export default function useCustomBackHandler(onBackPress: () => void) {
     useCallback(() => {
       const handler = () => {
         onBackPress();
-        return true; 
+        return true;
       };
 
       BackHandler.addEventListener("hardwareBackPress", handler);
 
       return () =>
         BackHandler.removeEventListener("hardwareBackPress", handler);
-    }, [onBackPress])
+    }, [onBackPress]),
   );
 }

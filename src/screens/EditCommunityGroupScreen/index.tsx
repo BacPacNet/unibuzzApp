@@ -217,7 +217,6 @@ const EditCommunityGroupScreen = () => {
     });
   };
 
-
   return (
     <SafeAreaView style={styles.container}>
       {/* Header */}
