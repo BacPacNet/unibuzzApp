@@ -1,6 +1,6 @@
 import { Controller } from "react-hook-form";
 import { Text, TextInput, View, StyleSheet, PixelRatio } from "react-native";
-import { scale, verticalScale, moderateScale } from "react-native-size-matters";
+
 
 interface FormInputProps {
   label?: string;
