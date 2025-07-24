@@ -75,7 +75,11 @@ const ProfileCard = ({
     const createChatResponse: any = await mutateCreateUserChat({
       userId: userId,
     });
-    navigate("Messages", { selectedUserId: createChatResponse._id });
+
+    navigate("Messages", {
+      screen: "Messages",
+      params: { selectedUserId: createChatResponse._id },
+    });
   };
 
   const first =
