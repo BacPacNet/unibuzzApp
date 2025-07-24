@@ -14,13 +14,12 @@ import { StackNavigationProp } from "@react-navigation/stack";
 import { RootStackParamList } from "@/types/navigation";
 import useCustomBackHandler from "@/hooks/useCustomBackHandler";
 
-
 type NavigationProp = StackNavigationProp<RootStackParamList, "SinglePost">;
 
 const Profile = ({ route }: ProfileProps) => {
-    const navigation = useNavigation<NavigationProp>();
+  const navigation = useNavigation<NavigationProp>();
   const { userId } = route.params;
-  const from  = route?.params?.from || "";
+  const from = route?.params?.from || "";
   const userData = getUserStore();
   const queryClient = useQueryClient();
   const [refreshing, setRefreshing] = useState(false);
@@ -69,23 +68,21 @@ const Profile = ({ route }: ProfileProps) => {
     setRefreshing(false);
   }, [queryClient, userId]);
 
-
   const handleBack = () => {
-    if(from === screenName.notifications){
+    if (from === screenName.notifications) {
       navigation.navigate("Notifications");
-    }else{
+    } else {
       navigation.goBack();
     }
   };
   useCustomBackHandler(handleBack);
 
-  
   const handleScroll = (event: any) => {
     const contentOffsetY = event.nativeEvent.contentOffset.y;
     setLastOffset(contentOffsetY);
   };
 
-  if (isUserProfileDataLoading) {
+  if (isUserProfileDataLoading || isUserProfileDataLoading) {
     return <LoadingState />;
   }
 
@@ -106,8 +103,6 @@ const Profile = ({ route }: ProfileProps) => {
       </View>
     );
   };
-
-
 
   return (
     <View style={styles.container}>

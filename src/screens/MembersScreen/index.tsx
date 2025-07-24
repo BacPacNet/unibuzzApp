@@ -57,7 +57,6 @@ const MembersScreen = ({ route }: any) => {
     });
   };
 
-
   useCustomBackHandler(handleBack);
   return (
     <View style={styles.container}>

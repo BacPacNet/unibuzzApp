@@ -11,6 +11,7 @@ import {
   useGetUserUnreadMessagesTotalCount,
 } from "@/services/notification";
 import { NEXT_PUBLIC_SOCKET_URL, NEXT_PUBLIC_SOCKET_URL_IOS } from "@env";
+import { SocketConnectionEnums } from "@/types/SocketType";
 
 type SocketContextType = {
   socket: Socket | null;
@@ -61,12 +62,12 @@ export const SocketProvider: React.FC<{ children: React.ReactNode }> = ({
 
     newSocket.on("connect", () => {
       console.log("Connected to the server");
-      newSocket.emit("setup", userData?.id);
+      newSocket.emit(SocketConnectionEnums.SETUP, userData?.id);
       setSocket(newSocket);
       setIsConnected(true);
     });
 
-    newSocket.on("disconnect", () => {
+    newSocket.on(SocketConnectionEnums.DISCONNECT, () => {
       console.log("Disconnected from the server");
       setSocket(null);
       setIsConnected(false);

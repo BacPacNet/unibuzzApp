@@ -5,20 +5,26 @@ buildscript {
         compileSdkVersion = 34
         targetSdkVersion = 34
         ndkVersion = "26.1.10909125"
-        kotlinVersion = "1.9.22"
+        kotlinVersion = "1.9.20"
     }
     repositories {
         google()
         mavenCentral()
     }
     dependencies {
-        classpath("com.android.tools.build:gradle")
+        classpath("com.android.tools.build:gradle:8.2.2") 
         classpath("com.facebook.react:react-native-gradle-plugin")
-        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin")
-         classpath("com.google.gms:google-services:4.3.15")
+        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.9.20") 
+        classpath("com.google.gms:google-services:4.3.15") 
     }
-    
-
 }
 
 apply plugin: "com.facebook.react.rootproject"
+
+// Dependency resolution to force compatible versions
+configurations.all {
+    resolutionStrategy {
+        force 'com.google.android.gms:play-services-measurement-api:21.5.0'
+        force 'com.google.android.gms:play-services-measurement-impl:21.5.0'
+    }
+}

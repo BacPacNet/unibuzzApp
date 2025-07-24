@@ -1,5 +1,6 @@
 import { Controller } from "react-hook-form";
-import { Text, TextInput, View, StyleSheet } from "react-native";
+import { Text, TextInput, View, StyleSheet, PixelRatio } from "react-native";
+
 
 interface FormInputProps {
   label?: string;
@@ -107,6 +108,7 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: "#1F2937",
     height: 40,
+
   },
   textArea: {
     height: 122,

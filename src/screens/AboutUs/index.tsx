@@ -5,6 +5,7 @@ import {
   ScrollView,
   Dimensions,
   Image,
+  Linking,
 } from "react-native";
 import SecImage from "@/assets/AboutUs/OnboardingSVG.svg";
 import ThirdImage from "@/assets/AboutUs/ThirdOnboardingSVG.svg";
@@ -13,6 +14,7 @@ import LandingImage from "@/assets/AboutUs/LandingSVG.svg";
 import LandingImagePNG from "@/assets/AboutUs/LandingSVGPNG.png";
 import { Discord, MessageText } from "iconoir-react-native";
 import ReusableButton from "@/components/atoms/ReusableButton";
+import { NavigationProp, useNavigation } from "@react-navigation/native";
 
 const team = [
   {
@@ -49,6 +51,7 @@ const team = [
 ];
 
 const AboutUs = () => {
+  const navigation = useNavigation<any>();
   return (
     <ScrollView
       contentContainerStyle={[{ rowGap: 128 }]}
@@ -169,7 +172,9 @@ const AboutUs = () => {
 
           <ReusableButton
             buttonText="Join Discord"
-            onPress={() => {}}
+            onPress={() => {
+              Linking.openURL("https://discord.gg/FRbdHraQj3");
+            }}
             variant="primary"
             isRounded={false}
             height="large"
@@ -188,7 +193,11 @@ const AboutUs = () => {
 
           <ReusableButton
             buttonText="Contact Support"
-            onPress={() => {}}
+            onPress={() =>
+              navigation.navigate("InfoStackScreen", {
+                screen: "FeedBackScreen",
+              })
+            }
             variant="primary"
             isRounded={false}
             height="large"

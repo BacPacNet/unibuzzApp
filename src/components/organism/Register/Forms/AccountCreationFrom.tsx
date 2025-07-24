@@ -8,6 +8,7 @@ import Title from "@/components/atoms/Title";
 import ReusableButton from "@/components/atoms/ReusableButton";
 import { FormInput } from "@/components/atoms/FormInput";
 import { FormInputPassword } from "@/components/atoms/FormInputPassword";
+
 type Props = {
   isPending: boolean;
   onSubmit: (data: any) => Promise<void>;

@@ -254,7 +254,6 @@ const NewGroupPost = ({ navigation }: any) => {
   };
   useCustomBackHandler(handleBack);
 
-  
   return (
     <View className="flex-1 bg-white relative">
       <View
@@ -282,9 +281,7 @@ const NewGroupPost = ({ navigation }: any) => {
           />
         </View>
       </View>
-      <SafeAreaView
-        style={{ flex: 1, paddingBottom: 80}}
-      >
+      <SafeAreaView style={{ flex: 1, paddingBottom: 80 }}>
         {(images.length > 0 || files.length > 0) && (
           <View style={{ height: 100 }}>
             <MediaPreviewList

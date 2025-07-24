@@ -1,3 +1,4 @@
+import { useFirebaseMessaging } from "@/hooks/useFirebaseMessaging";
 import React, { createContext, useContext, useState, ReactNode } from "react";
 
 const HeaderContext = createContext<{
@@ -19,6 +20,8 @@ interface HeaderProviderProps {
 export const HeaderProvider: React.FC<HeaderProviderProps> = ({ children }) => {
   const [showHeader, setShowHeader] = useState(true);
   const [currScreen, setCurrScreen] = useState("");
+
+  useFirebaseMessaging();
 
   const changeHeaderShownStatus = (value: boolean) => {
     setShowHeader(value);

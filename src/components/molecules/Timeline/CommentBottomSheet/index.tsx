@@ -302,7 +302,6 @@ const styles = StyleSheet.create({
     display: "flex",
     justifyContent: "space-between",
     minHeight: 400,
-   
   },
   loaderContainer: {
     flex: 1,
@@ -336,8 +335,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     padding: 16,
   },
-
-
 
   buttonContainer: {
     position: "absolute",

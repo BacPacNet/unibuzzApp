@@ -80,14 +80,11 @@ const GroupSelectors = ({
           )}
           {isGroupOfficial && (
             <View style={styles.badgeWrapper}>
-             
-              
-                <OfficailLogoPlaceHolder
-                  width={12}
-                  height={12}
-                  style={styles.badgeImage}
-                />
-           
+              <OfficailLogoPlaceHolder
+                width={12}
+                height={12}
+                style={styles.badgeImage}
+              />
             </View>
           )}
         </View>
