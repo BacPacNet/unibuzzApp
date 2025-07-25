@@ -238,6 +238,8 @@ const MessageNewGroupFormContainer = forwardRef((props, ref) => {
         <SelectCommunityUsersBottomSheet
           setSelectedUsers={setIndividualsUsers}
           selectedUsers={individualsUsers}
+          communityId={community.id}
+          myUserId={userProiledata?.users_id || ""}
         />
       </ActionSheet>
       <ActionSheet

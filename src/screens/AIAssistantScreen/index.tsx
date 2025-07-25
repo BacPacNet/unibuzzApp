@@ -26,6 +26,8 @@ const AI_Assistant = () => {
     setText(text);
   };
 
+
+
   return (
     <View style={styles.container}>
       <View

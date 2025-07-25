@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import messaging, {
   FirebaseMessagingTypes,
 } from "@react-native-firebase/messaging";
-import { Alert, Platform } from "react-native";
+import { Alert, PermissionsAndroid, Platform } from "react-native";
 import { storeNotificationToken } from "@/storage/NotificationToken";
 import { useHandleSavePushNotificationToken } from "@/services/pushNotification";
 import { notificationRoleAccess } from "@/types/notifications";
@@ -18,6 +18,7 @@ export const useFirebaseMessaging = (): void => {
     useHandleSavePushNotificationToken();
 
   const navigation = useNavigation<NavigationProp>();
+
   const handleUpdateIsRead = async (data: any) => {
     switch (data?.type) {
       case notificationRoleAccess.FOLLOW:
@@ -59,7 +60,6 @@ export const useFirebaseMessaging = (): void => {
           screen: "Messages",
           params: { selectedUserId: data.chatId },
         });
-
       case notificationRoleAccess.PRIVATE_GROUP_REQUEST:
       case notificationRoleAccess.ACCEPTED_OFFICIAL_GROUP_REQUEST:
       case notificationRoleAccess.ACCEPTED_PRIVATE_GROUP_REQUEST:
@@ -74,28 +74,50 @@ export const useFirebaseMessaging = (): void => {
   };
 
   useEffect(() => {
-    const requestPermission = async (): Promise<void> => {
-      const authStatus = await messaging().requestPermission();
-      const enabled =
-        authStatus === messaging.AuthorizationStatus.AUTHORIZED ||
-        authStatus === messaging.AuthorizationStatus.PROVISIONAL;
-
-      if (enabled) {
-        await getToken();
-      }
-    };
-
     const getToken = async (): Promise<void> => {
       try {
         const token = await messaging().getToken();
-
         storeNotificationToken(token);
-        const data = {
-          token: token,
-        };
-        savePushNotificationToken(data);
+        savePushNotificationToken({ token });
       } catch (error) {
         console.error("Failed to get FCM token", error);
+      }
+    };
+
+    const checkAndRequestPermission = async (): Promise<void> => {
+      if (Platform.OS === "ios") {
+        const status = await messaging().hasPermission();
+        if (
+          status === messaging.AuthorizationStatus.NOT_DETERMINED ||
+          status === messaging.AuthorizationStatus.DENIED
+        ) {
+          const requestStatus = await messaging().requestPermission();
+          const granted =
+            requestStatus === messaging.AuthorizationStatus.AUTHORIZED ||
+            requestStatus === messaging.AuthorizationStatus.PROVISIONAL;
+
+          if (granted) {
+            await getToken();
+          }
+        } else if (
+          status === messaging.AuthorizationStatus.AUTHORIZED ||
+          status === messaging.AuthorizationStatus.PROVISIONAL
+        ) {
+          await getToken();
+        }
+      } else if (Platform.OS === "android") {
+        if (Platform.Version >= 33) {
+          const result = await PermissionsAndroid.request(
+            PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS,
+          );
+          if (result === PermissionsAndroid.RESULTS.GRANTED) {
+            await getToken();
+          } else {
+            console.warn("Android notification permission denied");
+          }
+        } else {
+          await getToken();
+        }
       }
     };
 
@@ -118,19 +140,11 @@ export const useFirebaseMessaging = (): void => {
 
     const unsubscribe = messaging().onMessage(
       async (remoteMessage: FirebaseMessagingTypes.RemoteMessage) => {
-        // Alert.alert(
-        //   "New FCM Message",
-        //   remoteMessage?.notification?.body ?? "No message body"
-        // );
-        // console.log("Foreground FCM message:", remoteMessage);
+        // Optional: show local alert/toast if needed
       },
     );
 
-    if (Platform.OS === "ios" || Number(Platform.Version) >= 33) {
-      void requestPermission();
-    } else {
-      void getToken();
-    }
+    void checkAndRequestPermission();
 
     return () => {
       unsubscribe();

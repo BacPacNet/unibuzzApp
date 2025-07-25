@@ -6,6 +6,7 @@ export interface ProfileConnection {
 
 export interface Users {
   _id: string;
+  users_id: string;
   firstName: string;
   lastName: string;
   email: string;

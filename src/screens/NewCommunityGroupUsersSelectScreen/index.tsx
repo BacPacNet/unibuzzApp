@@ -25,6 +25,7 @@ import {
 } from "@/lib/communityGroup";
 import { useNewCommunityGroupStatesContext } from "@/context/NewCommunityGroupStatesProvider/NewCommunityGroupStatesProvider";
 import { useNavigation } from "@react-navigation/native";
+import { useCommunityUsers } from "@/services/community";
 
 const NewCommunityGroupUsersSelectScreen = ({ route }: any) => {
   const universityName = route?.params?.universityName || "";
@@ -59,6 +60,10 @@ const NewCommunityGroupUsersSelectScreen = ({ route }: any) => {
   const userProiledata = getUserProfileStore();
 
   const { data: communityData } = useGetCommunity(community.id);
+  const { data: communityUsersData, hasNextPage:communityHasNextPage, isFetchingNextPage:communityIsFetchingNextPage, fetchNextPage:communityFetchNextPage } = useCommunityUsers(communityId, true, "")
+
+    const communityUsers = communityUsersData?.pages.flatMap((page) => page.data).filter((user) => user.users_id !== userProiledata?.users_id) || []
+
   const {
     studentYearState,
     setStudentYearState,
@@ -134,7 +139,7 @@ const NewCommunityGroupUsersSelectScreen = ({ route }: any) => {
   };
 
   useEffect(() => {
-    const allUsers = communityData?.users || [];
+    const allUsers = communityUsers || [];
     const allStudentUsers = allUsers.filter((user) => user.role == "student");
 
     const filters = { year: studentYear, major: major };
@@ -145,7 +150,7 @@ const NewCommunityGroupUsersSelectScreen = ({ route }: any) => {
   }, [studentYear, major, communityData]);
 
   useEffect(() => {
-    const allUsers = communityData?.users || [];
+    const allUsers = communityUsers || [];
     const allFacultyUsers = allUsers.filter((user) => user.role == "faculty");
 
     const filters = { occupation: occupation, affiliation: affiliation };
@@ -307,6 +312,8 @@ const NewCommunityGroupUsersSelectScreen = ({ route }: any) => {
         <SelectCommunityUsersBottomSheet
           setSelectedUsers={setIndividualsUsers}
           selectedUsers={individualsUsers}
+          communityId={communityId}
+          myUserId={userProiledata?.users_id || ""}
         />
       </ActionSheet>
       <ActionSheet
