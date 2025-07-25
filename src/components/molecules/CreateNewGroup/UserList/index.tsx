@@ -5,7 +5,7 @@ import avatar from "@/assets/avatarPlaceholder.png";
 import { Users } from "@/types/connections";
 
 type Props = {
-  item: Users;
+  item: any;
   selectedUsers: Users[];
   setSelectedUsers: (value: Users[]) => void;
 };
@@ -16,7 +16,7 @@ export const NewGroupUserListItem = ({
   setSelectedUsers,
 }: Props) => {
   const [imageError, setImageError] = useState(false);
-  const imageUri = item?.profile?.profile_dp?.imageUrl;
+  const imageUri = item?.profile_dp?.imageUrl;
 
   const isSelected = selectedUsers?.some(
     (selectedUser: any) => selectedUser._id == item._id,
@@ -56,14 +56,14 @@ export const NewGroupUserListItem = ({
             </Text>
             <View>
               <Text style={{ fontSize: 12 }} className="text-neutral-500">
-                {item?.profile?.role === "student"
-                  ? `${item.profile.study_year}`
-                  : item?.profile?.occupation}
+                {item?.role === 'student'
+                  ? `${item?.study_year}`
+                  : item?.occupation}
               </Text>
               <Text style={{ fontSize: 12 }} className="text-neutral-500">
-                {item?.profile?.role === "student"
-                  ? item.profile.major
-                  : item?.profile?.affiliation}
+                {item?.role === 'student'
+                  ? item?.major
+                  : item?.affiliation}
               </Text>
             </View>
           </View>

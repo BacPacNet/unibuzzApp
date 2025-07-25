@@ -1,43 +1,40 @@
 import React, { useState } from "react";
 import { ActivityIndicator, Text, TextInput, View } from "react-native";
 import { FlatList } from "react-native-actions-sheet";
-
-import { useUsersProfileForConnections } from "@/services/users";
-import { getUserStore } from "@/storage/user";
 import { NewGroupUserListItem } from "../UserList";
 import { Users } from "@/types/connections";
+import { useCommunityUsers } from "@/services/community";
 
 type Props = {
   setSelectedUsers: (value: Users[]) => void;
   selectedUsers: Users[];
+  communityId: string;
+  myUserId: string;
 };
 
 const SelectCommunityUsersBottomSheet = ({
   selectedUsers,
   setSelectedUsers,
+  communityId,
+  myUserId,
 }: Props) => {
   const [searchInput, setSearchInput] = useState("");
-  const userData = getUserStore();
-  const {
-    data,
-    fetchNextPage,
-    isFetchingNextPage,
-    hasNextPage,
-    isLoading,
-    isFetching,
-  } = useUsersProfileForConnections(searchInput, 10, true);
+  const selectedUserIds = selectedUsers.map((user) => user?.users_id || "");
 
-  const selectedUserIds = selectedUsers.map((user) => user._id);
 
-  const userProfiles =
-    data?.pages
-      .flatMap((page) => page.users)
-      .filter(
-        (user) =>
-          user._id !== userData?.id && !selectedUserIds.includes(user._id),
-      ) || [];
 
-  const renderItem = ({ item }: { item: Users }) => {
+  const { data: communityUsersData, isFetching,hasNextPage:communityHasNextPage, isFetchingNextPage:communityIsFetchingNextPage, fetchNextPage:communityFetchNextPage } = useCommunityUsers(communityId, true, searchInput)
+
+  const communityUsers = communityUsersData?.pages.flatMap((page) => page.data).filter(
+    (user) =>
+      user?.users_id !== myUserId && !selectedUserIds?.includes(user?.users_id || ""),
+  ) || [];
+
+
+
+
+
+  const renderItem = ({ item }: { item: any }) => {
     return (
       <NewGroupUserListItem
         item={item}
@@ -68,7 +65,7 @@ const SelectCommunityUsersBottomSheet = ({
       </View>
 
       <FlatList
-        data={userProfiles || []}
+        data={communityUsers || []}
         style={{
           width: "100%",
           height: "100%",
