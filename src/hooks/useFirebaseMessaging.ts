@@ -54,6 +54,12 @@ export const useFirebaseMessaging = (): void => {
           type: "Community",
           from: screenName.notifications,
         });
+      case notificationRoleAccess.MESSAGE_NOTIFICATION:
+        return navigation.navigate("Messages", {
+          screen: "Messages",
+          params: { selectedUserId: data.chatId },
+        });
+
       case notificationRoleAccess.PRIVATE_GROUP_REQUEST:
       case notificationRoleAccess.ACCEPTED_OFFICIAL_GROUP_REQUEST:
       case notificationRoleAccess.ACCEPTED_PRIVATE_GROUP_REQUEST:
@@ -61,11 +67,7 @@ export const useFirebaseMessaging = (): void => {
       case notificationRoleAccess.GROUP_INVITE:
       case notificationRoleAccess.REJECTED_OFFICIAL_GROUP_REQUEST:
       case notificationRoleAccess.REJECTED_PRIVATE_GROUP_REQUEST:
-        return navigation.navigate("CommunityGroup", {
-          communityId: data.communityGroupId?.communityId,
-          communityGroupId: data.communityGroupId?._id,
-          from: screenName.notifications,
-        });
+        return navigation.navigate("Notifications");
       default:
         break;
     }
