@@ -60,9 +60,17 @@ const NewCommunityGroupUsersSelectScreen = ({ route }: any) => {
   const userProiledata = getUserProfileStore();
 
   const { data: communityData } = useGetCommunity(community.id);
-  const { data: communityUsersData, hasNextPage:communityHasNextPage, isFetchingNextPage:communityIsFetchingNextPage, fetchNextPage:communityFetchNextPage } = useCommunityUsers(communityId, true, "")
+  const {
+    data: communityUsersData,
+    hasNextPage: communityHasNextPage,
+    isFetchingNextPage: communityIsFetchingNextPage,
+    fetchNextPage: communityFetchNextPage,
+  } = useCommunityUsers(communityId, true, "");
 
-    const communityUsers = communityUsersData?.pages.flatMap((page) => page.data).filter((user) => user.users_id !== userProiledata?.users_id) || []
+  const communityUsers =
+    communityUsersData?.pages
+      .flatMap((page) => page.data)
+      .filter((user) => user.users_id !== userProiledata?.users_id) || [];
 
   const {
     studentYearState,

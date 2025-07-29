@@ -21,18 +21,22 @@ const SelectCommunityUsersBottomSheet = ({
   const [searchInput, setSearchInput] = useState("");
   const selectedUserIds = selectedUsers.map((user) => user?.users_id || "");
 
+  const {
+    data: communityUsersData,
+    isFetching,
+    hasNextPage: communityHasNextPage,
+    isFetchingNextPage: communityIsFetchingNextPage,
+    fetchNextPage: communityFetchNextPage,
+  } = useCommunityUsers(communityId, true, searchInput);
 
-
-  const { data: communityUsersData, isFetching,hasNextPage:communityHasNextPage, isFetchingNextPage:communityIsFetchingNextPage, fetchNextPage:communityFetchNextPage } = useCommunityUsers(communityId, true, searchInput)
-
-  const communityUsers = communityUsersData?.pages.flatMap((page) => page.data).filter(
-    (user) =>
-      user?.users_id !== myUserId && !selectedUserIds?.includes(user?.users_id || ""),
-  ) || [];
-
-
-
-
+  const communityUsers =
+    communityUsersData?.pages
+      .flatMap((page) => page.data)
+      .filter(
+        (user) =>
+          user?.users_id !== myUserId &&
+          !selectedUserIds?.includes(user?.users_id || ""),
+      ) || [];
 
   const renderItem = ({ item }: { item: any }) => {
     return (

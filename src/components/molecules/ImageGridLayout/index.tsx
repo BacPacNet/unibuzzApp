@@ -74,18 +74,41 @@ const ImageGridLayout = ({ imagesData }: Props) => {
           <View className="flex-1 flex flex-row gap-2">
             <View className="w-1/2">
               <TouchableOpacity
-                onPress={() => handleImageClick(2)}
+                onPress={() => handleImageClick(0)}
                 style={{ height: "100%" }}
                 className=""
               >
                 <ImageWithFallback
-                  uri={formattedImages[2]?.uri}
+                  uri={formattedImages[0]?.uri}
                   style={{ width: "100%", height: "100%", borderRadius: 12 }}
                   iconProps={{ color: "gray" }}
                   resizeMode="cover"
                 />
               </TouchableOpacity>
             </View>
+            <View className="w-1/2 flex gap-2">
+              {formattedImages?.slice(1, 3).map((img, index) => (
+                <View key={index} style={{ flex: 1 }}>
+                  <TouchableOpacity onPress={() => handleImageClick(index + 1)}>
+                    <ImageWithFallback
+                      uri={img?.uri}
+                      style={{
+                        width: "100%",
+                        height: "100%",
+                        borderRadius: 12,
+                      }}
+                      iconProps={{ color: "gray" }}
+                      resizeMode="cover"
+                    />
+                  </TouchableOpacity>
+                </View>
+              ))}
+            </View>
+          </View>
+        );
+      default:
+        return (
+          <View className="flex-1 flex flex-row gap-2">
             <View className="w-1/2 flex gap-2">
               {formattedImages?.slice(0, 2).map((img, index) => (
                 <View key={index} style={{ flex: 1 }}>
@@ -104,10 +127,26 @@ const ImageGridLayout = ({ imagesData }: Props) => {
                 </View>
               ))}
             </View>
+            <View className="w-1/2 flex gap-2">
+              {formattedImages?.slice(2, 4).map((img, index) => (
+                <View key={index} style={{ flex: 1 }}>
+                  <TouchableOpacity onPress={() => handleImageClick(index + 2)}>
+                    <ImageWithFallback
+                      uri={img?.uri}
+                      style={{
+                        width: "100%",
+                        height: "100%",
+                        borderRadius: 12,
+                      }}
+                      iconProps={{ color: "gray" }}
+                      resizeMode="cover"
+                    />
+                  </TouchableOpacity>
+                </View>
+              ))}
+            </View>
           </View>
         );
-      default:
-        return;
     }
   };
 

@@ -56,14 +56,12 @@ export const NewGroupUserListItem = ({
             </Text>
             <View>
               <Text style={{ fontSize: 12 }} className="text-neutral-500">
-                {item?.role === 'student'
+                {item?.role === "student"
                   ? `${item?.study_year}`
                   : item?.occupation}
               </Text>
               <Text style={{ fontSize: 12 }} className="text-neutral-500">
-                {item?.role === 'student'
-                  ? item?.major
-                  : item?.affiliation}
+                {item?.role === "student" ? item?.major : item?.affiliation}
               </Text>
             </View>
           </View>

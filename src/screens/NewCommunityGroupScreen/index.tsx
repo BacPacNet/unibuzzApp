@@ -135,7 +135,6 @@ const NewCommunityGroupScreen = () => {
       const { payload, createGroup, setCreateSelectedFilters } =
         await handleCreateGroup(data, imageToUpload, bannerToUpload);
 
-
       createGroup(
         { communityId, data: payload },
         {

@@ -1,15 +1,19 @@
 import React from "react";
-import { View, Text, Image, StyleSheet } from "react-native";
+import { View, Image, StyleSheet } from "react-native";
 import Avatar from "@/assets/avatar.svg";
 import BotAvatar from "@/assets/chatbot/aiIcon.svg";
+import ThreeDotLoader from "@/components/atoms/ThreeDotLoader";
+import Markdown from "react-native-markdown-display";
 const ChatMessage = ({
   isMine,
   message,
   avatar,
+  isLoading,
 }: {
   isMine: boolean;
   message: string;
   avatar: string;
+  isLoading?: boolean;
 }) => {
   return (
     <View
@@ -27,14 +31,25 @@ const ChatMessage = ({
       <View
         style={[styles.bubble, isMine ? styles.mineBubble : styles.theirBubble]}
       >
-        <Text
-          style={[
-            styles.messageText,
-            isMine ? styles.mineMessageText : styles.theirMessageText,
-          ]}
-        >
-          {message}
-        </Text>
+        {isLoading ? (
+          <ThreeDotLoader />
+        ) : (
+          <Markdown
+            style={{
+              paragraph: { color: isMine ? "#6744FF" : "#3A3B3C" },
+
+              code_block: { color: "black", fontSize: 14 },
+              strong: { color: "#3A3B3C" },
+              em: { color: "#3A3B3C" },
+              list: { color: "#3A3B3C" },
+              list_item: { color: "#3A3B3C" },
+              list_item_bullet: { color: "#3A3B3C" },
+              list_item_number: { color: "#3A3B3C" },
+            }}
+          >
+            {message}
+          </Markdown>
+        )}
       </View>
       {isMine &&
         (avatar ? (
@@ -67,8 +82,13 @@ const styles = StyleSheet.create({
   },
   bubble: {
     maxWidth: "75%",
-    padding: 10,
+    padding: 8,
+    paddingVertical: 0,
     borderRadius: 15,
+    minWidth: 40,
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
   },
   mineBubble: {
     borderWidth: 1,
@@ -79,16 +99,6 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: "#E5E7EB",
     backgroundColor: "white",
-  },
-  mineMessageText: {
-    color: "#6744FF",
-  },
-  theirMessageText: {
-    color: "#3A3B3C",
-  },
-  messageText: {
-    fontSize: 14,
-    color: "#333",
   },
 });
 
