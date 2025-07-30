@@ -13,7 +13,6 @@ import { NEXT_PUBLIC_CUSTOM_BASE_URL, NEXT_PUBLIC_API_BASE_URL } from "@env";
  * @param {object} config.headers - Additional headers
  */
 
-
 const client = async <T, U>(
   endpoint: string,
   {
@@ -59,7 +58,6 @@ const client = async <T, U>(
   };
 
   try {
-
     const response: AxiosResponse<ServerResponse<T>> = await axios(config);
     const { data: resData } = response;
     return resData;
