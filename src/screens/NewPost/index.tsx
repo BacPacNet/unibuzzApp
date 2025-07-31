@@ -144,6 +144,7 @@ const NewPost = ({ navigation }: any) => {
           DocumentPicker.types.doc,
         ],
         allowMultiSelection: true,
+        
       });
 
       const validationResult = validateUploadedFiles(

@@ -263,7 +263,7 @@ export default function ProfileEdit() {
                 required
                 control={control}
                 rules={{ required: "Dob is required!" }}
-                currDob={userProfile?.profile?.dob || ""}
+                currDob={currDob || ""}
               />
 
               {/* <SelectInputWithSearch

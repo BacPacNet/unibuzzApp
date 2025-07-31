@@ -155,9 +155,9 @@ const UserComment = ({
             </TouchableOpacity>
           )}
 
-          <TouchableOpacity className="flex flex-row gap-1 items-center">
+          {/* <TouchableOpacity className="flex flex-row gap-1 items-center">
             <ShareAndroid height={16} width={16} />
-          </TouchableOpacity>
+          </TouchableOpacity> */}
         </View>
       </View>
       {item?.replies?.length > 0 && showReply == item._id && (
