@@ -130,7 +130,7 @@ const Profile = ({ route }: ProfileProps) => {
             email={displayEmail}
             phone_number={phone_number}
             city={city}
-            dob={dob}
+            dob={dob || ""}
             country={country}
             role={role}
           />

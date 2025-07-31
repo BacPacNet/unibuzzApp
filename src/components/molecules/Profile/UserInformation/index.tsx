@@ -16,7 +16,7 @@ type ProfileInfoProps = {
   email?: string;
   phone?: string;
   location?: string;
-  birthday?: string;
+  birthday: string;
   country?: string;
 };
 
@@ -32,13 +32,10 @@ const ProfileInfo: React.FC<ProfileInfoProps> = ({
   birthday,
   country,
 }) => {
-  const dobFormat = birthday?.includes("/")
-    ? convertToDateObj(birthday)
-    : Number(birthday);
-  const dateOfBirth =
-    dobFormat && !isNaN(Number(dobFormat))
-      ? format(new Date(dobFormat), "dd MMM yyyy")
-      : format(new Date(birthday as string), "dd MMM yyyy");
+
+const dobFormat = birthday.includes('/') ? convertToDateObj(birthday) : Number(birthday)
+const dateOfBirth = dobFormat && format(new Date(dobFormat), 'dd MMM yyyy')
+
 
   return (
     <View style={styles.container}>

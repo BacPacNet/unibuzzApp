@@ -77,12 +77,13 @@ const AI_Assistant = () => {
     createChatBotMessage(data, {
       onSuccess: (res) => {
         setChatMessages((prev) => [...prev, res]);
-        setValue("text", "");
+        // setValue("text", "");
       },
       onError: () => {
-        setValue("text", "");
+        // setValue("text", "");
       },
     });
+    setValue("text", "");
   };
 
   const handleRefresh = () => {
