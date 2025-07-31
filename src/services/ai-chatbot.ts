@@ -50,6 +50,16 @@ export const useCreateChatBotMessage = () => {
       storeChatBotMessages(res);
     },
     onError: (res: any) => {
+ 
+      storeChatBotMessages({
+        message: {
+          prompt: "Sorry, I encountered an error. Please try again.",
+          
+        },
+        inserted_id: "",
+        isNewThread: false,
+        response: "",
+      });
       Toast.show(res.response?.data.message || "Something went wrong");
     },
   });

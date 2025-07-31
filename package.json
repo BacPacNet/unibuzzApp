@@ -1,6 +1,6 @@
 {
-  "name": "unibuzzapp",
-  "version": "0.0.4",
+  "name": "Unibuzz",
+  "version": "0.0.6",
   "private": true,
   "scripts": {
     "android": "react-native run-android",
