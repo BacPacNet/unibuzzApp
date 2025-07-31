@@ -3,6 +3,7 @@ import { View, Text, StyleSheet } from "react-native";
 import { LogOut } from "iconoir-react-native";
 import { useAuth } from "@/context/AuthProvider/AuthContext";
 import { TouchableOpacity } from "react-native-gesture-handler";
+import { useHandleDeletePushNotificationToken } from "@/services/pushNotification";
 
 const menuItems = [
   { title: "Log Out", icon: <LogOut width={22} height={22} color="#555" /> },
@@ -10,11 +11,18 @@ const menuItems = [
 
 const SidebarMenuSectionThree = () => {
   const { deauthenticate } = useAuth();
+  const { mutateAsync: deletePushNotificationToken } =
+    useHandleDeletePushNotificationToken();
+  const handleLogout = async() => {
+   await deletePushNotificationToken();
+    deauthenticate();
+    
+  };
   return (
     <View style={styles.container}>
       {menuItems.map((item, index) => (
         <TouchableOpacity
-          onPress={() => deauthenticate()}
+          onPress={handleLogout}
           key={index}
           style={styles.menuItem}
         >
