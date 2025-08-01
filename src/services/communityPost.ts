@@ -63,7 +63,7 @@ export function useGetCommunityPostComments(
     const cookieValue = getToken();
 
     return useInfiniteQuery({
-      queryKey: ["communityPostComments"],
+      queryKey: ["communityPostComments",sortby],
       queryFn: ({ pageParam = 1 }) =>
         getCommunityPostComments(postId, cookieValue, pageParam, limit, sortby),
       getNextPageParam: (lastPage) => {
@@ -94,6 +94,7 @@ export const useLikeUnilikeGroupPost = (
   communityGroupId: string = "",
   isTimeline: boolean,
   isSinglePost: boolean,
+  isProfile: boolean,
 ) => {
   const cookieValue = getToken() as string;
   const userData = getUserStore();
@@ -112,6 +113,7 @@ export const useLikeUnilikeGroupPost = (
       LikeUnilikeGroupPost(communityGroupPostId, cookieValue),
 
     onMutate: async (postId: string) => {
+
       if (isSinglePost) {
         queryClient.setQueryData(["getPost", postId], (oldData: any) => {
           if (!oldData || !oldData.post) return oldData;
@@ -217,7 +219,7 @@ export async function CreateGroupPostComment(data: any, token: any) {
   return response;
 }
 
-export const useCreateGroupPostComment = () => {
+export const useCreateGroupPostComment = (sortby: Sortby) => {
   const cookieValue = getToken();
   const queryClient = useQueryClient();
   return useMutation({
@@ -227,10 +229,10 @@ export const useCreateGroupPostComment = () => {
       const currUserComments = queryClient.getQueryData<{
         pages: any[];
         pageParams: any[];
-      }>(["communityPostComments"]);
+      }>(["communityPostComments",sortby]);
 
       if (currUserComments) {
-        queryClient.setQueryData(["communityPostComments"], {
+        queryClient.setQueryData(["communityPostComments",sortby], {
           ...currUserComments,
           pages: currUserComments.pages.map((page, index) => {
             if (index === 0) {
@@ -297,7 +299,7 @@ export const useLikeUnlikeGroupPostComment = (
       const currUserComments = queryClient.getQueryData<{
         pages: any[];
         pageParams: any[];
-      }>(["communityPostComments"]);
+      }>(["communityPostComments",sortby]);
 
       if (showInitial) {
         const singlePostData: any = queryClient.getQueryData([
@@ -360,7 +362,7 @@ export const useLikeUnlikeGroupPostComment = (
 
       //   single end
       if (currUserComments) {
-        queryClient.setQueryData(["communityPostComments"], {
+        queryClient.setQueryData(["communityPostComments",sortby], {
           ...currUserComments,
           pages: currUserComments.pages.map((page) => {
             return {
@@ -435,6 +437,7 @@ export async function CreateGroupPostCommentReply(data: any, token: any) {
 export const useCreateGroupPostCommentReply = (
   showInitial: boolean,
   postId: string,
+  sortby: Sortby
 ) => {
   const cookieValue = getToken() as string;
   const queryClient = useQueryClient();
@@ -445,7 +448,7 @@ export const useCreateGroupPostCommentReply = (
       const currUserComments = queryClient.getQueryData<{
         pages: any[];
         pageParams: any[];
-      }>(["communityPostComments"]);
+      }>(["communityPostComments",sortby]);
 
       if (showInitial) {
         queryClient.setQueryData(["getPost", postId], (oldData: any) => {
@@ -480,7 +483,7 @@ export const useCreateGroupPostCommentReply = (
           };
         });
 
-        queryClient.setQueryData(["communityPostComments"], {
+        queryClient.setQueryData(["communityPostComments",sortby], {
           ...currUserComments,
           pages: updatedPages,
         });

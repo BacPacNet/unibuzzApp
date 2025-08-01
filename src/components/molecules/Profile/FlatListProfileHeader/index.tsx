@@ -107,7 +107,7 @@ export const FlatListProfileHeaderPart = ({
         ) : null}
 
         <View style={styles.innerContainer}>
-          <CommunityLogo logoUrl={logos || ""} variant="small" />
+          <CommunityLogo logoUrl={logos || ""} variant="large" />
           <View style={styles.textContainer}>
             <Text
               style={[styles.communityName]}

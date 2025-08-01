@@ -1,100 +1,164 @@
-import React, { useState, useCallback, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 import Logo from "@/assets/onboarding/Unibuzz_Logo.svg";
 import Title from "@/components/atoms/Title";
 import SupportingText from "@/components/atoms/SupportingText";
 import { useHandleLogin } from "@/services/auth";
-
 import { removeRegisterData } from "@/storage/register";
 import { AnimatedCircularProgress } from "react-native-circular-progress";
 
-const LoginForm = ({
-  email,
-  password,
-}: {
+// Constants
+const COUNTDOWN_DURATION = 5;
+const PROGRESS_DURATION = 5000;
+const PROGRESS_SIZE = 80;
+const PROGRESS_WIDTH = 10;
+
+// Types
+interface LoginData {
   email: string;
   password: string;
-}) => {
-  const [countdown, setCountdown] = useState(5);
+}
+
+const LoginForm: React.FC<LoginData> = ({ email, password }) => {
+  // State
+  const [countdown, setCountdown] = useState(COUNTDOWN_DURATION);
   const [isCounting, setIsCounting] = useState(true);
-  const [loginEmail, setLoginEmail] = useState(email);
-  const [loginPassword, setLoginPassword] = useState(password);
-  const {
-    mutate: mutateLogin,
+  const [hasTriggeredLogin, setHasTriggeredLogin] = useState(false);
 
-    isSuccess,
-  } = useHandleLogin();
+  // Hooks
+  const { mutate: mutateLogin, isSuccess } = useHandleLogin();
 
-  useEffect(() => {
-    setLoginEmail(loginEmail);
-    setLoginPassword(loginPassword);
-  }, [loginEmail, loginPassword]);
+  // Memoized login data
+  const loginData = useCallback((): LoginData => ({
+    email,
+    password,
+  }), [email, password]);
 
-  useEffect(() => {
-    removeRegisterData();
-  }, [isSuccess]);
+  // Cleanup register data on successful login
+//   useEffect(() => {
+//     if (isSuccess) {
+//       removeRegisterData();
+//     }
+//   }, [isSuccess]);
 
+  // Countdown timer effect
   useEffect(() => {
     let timer: NodeJS.Timeout;
+
     if (isCounting && countdown > 0) {
       timer = setTimeout(() => setCountdown(countdown - 1), 1000);
-    } else if (countdown === 0) {
-      setIsCounting(false);
-      const data = { email: loginEmail, password: loginPassword };
-      mutateLogin(data);
+    } else if (countdown === 0 && !hasTriggeredLogin) {
+      handleLogin();
     }
-    return () => clearTimeout(timer);
-  }, [countdown, isCounting]);
 
-  const onSubmit = () => {
-    const data = { email: loginEmail, password: loginPassword };
-    mutateLogin(data);
-  };
+    return () => clearTimeout(timer);
+  }, [countdown, isCounting, hasTriggeredLogin]);
+
+  // Login handler
+  const handleLogin = useCallback(() => {
+    if (!hasTriggeredLogin) {
+      setHasTriggeredLogin(true);
+      setIsCounting(false);
+      mutateLogin(loginData());
+    }
+  }, [hasTriggeredLogin, mutateLogin, loginData]);
+
+  // Manual login handler
+  const handleManualLogin = useCallback(() => {
+    handleLogin();
+  }, [handleLogin]);
+
   return (
-    <View className="flex w-full justify-center items-center px-4 bg-white h-full">
-      <View className=" w-full flex items-center justify-center ">
-        {/* <LogoCircle className="w-14 h-14 " /> */}
+    <View style={styles.container}>
+      {/* Header Section */}
+      <View style={styles.header}>
         <Logo style={styles.logo} width={112} height={26} />
-        <Title className="text-center mb-2">Congratulations</Title>
-        <SupportingText className="text-center test-xs text-neutral-500">
+        <Title style={styles.title}>Congratulations</Title>
+        <SupportingText style={styles.subtitle}>
           Account Creation Complete
         </SupportingText>
       </View>
 
-      <View
-        style={styles.progressContainer}
-        className="w-full  flex items-center justify-center"
-      >
+      {/* Progress Section */}
+      <View style={styles.progressContainer}>
         <AnimatedCircularProgress
-          size={80}
-          width={10}
+          size={PROGRESS_SIZE}
+          width={PROGRESS_WIDTH}
           fill={100}
           tintColor="#6744FF"
           backgroundColor="#F3F2FF"
           padding={10}
-          duration={5000}
+          duration={PROGRESS_DURATION}
           prefill={0}
         />
-        <Text className="text-sm text-neutral-700">Logging you in...</Text>
+        <Text style={styles.progressText}>Logging you in...</Text>
       </View>
+
+      {/* Manual Login Button */}
       <TouchableOpacity
-        disabled={true}
-        onPress={onSubmit}
-        className="text-primary-500 underline text-lg"
+        disabled={hasTriggeredLogin}
+        onPress={handleManualLogin}
+        style={[
+          styles.manualLoginButton,
+          hasTriggeredLogin && styles.disabledButton
+        ]}
       >
-        <Text> Not Redirected? Click here.</Text>
+        <Text style={styles.manualLoginText}>
+          Not Redirected? Click here.
+        </Text>
       </TouchableOpacity>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    width: "100%",
+    justifyContent: "center",
+    alignItems: "center",
+    paddingHorizontal: 16,
+    backgroundColor: "white",
+  },
+  header: {
+    width: "100%",
+    alignItems: "center",
+    justifyContent: "center",
+  },
   logo: {
     marginBottom: 32,
   },
+  title: {
+    textAlign: "center",
+    marginBottom: 8,
+  },
+  subtitle: {
+    textAlign: "center",
+    fontSize: 12,
+    color: "#6B7280", // neutral-500 equivalent
+  },
   progressContainer: {
+    width: "100%",
+    alignItems: "center",
+    justifyContent: "center",
     marginTop: 64,
     marginBottom: 12,
+  },
+  progressText: {
+    fontSize: 14,
+    color: "#374151", // neutral-700 equivalent
+    marginTop: 8,
+  },
+  manualLoginButton: {
+    marginTop: 16,
+  },
+  disabledButton: {
+    opacity: 0.5,
+  },
+  manualLoginText: {
+    color: "#6366F1", // primary-500 equivalent
+    textDecorationLine: "underline",
+    fontSize: 18,
   },
 });
 

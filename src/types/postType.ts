@@ -11,6 +11,7 @@ export enum UserPostType {
 }
 
 export type PostCardType = {
+    source?:string;
   data: {
     isPostVerified?: boolean;
 
@@ -74,6 +75,7 @@ export type PostCardType = {
   isSinglePost: boolean;
   initialComment?: any;
   toShowInitial?: boolean;
+  isProfile?: boolean;
 };
 
 export type CommentsProp = {

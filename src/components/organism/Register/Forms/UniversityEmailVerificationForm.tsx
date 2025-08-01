@@ -20,6 +20,7 @@ type Props = {
   setSubStep: (value: number) => void;
   isVerificationSuccess: boolean;
   isPending: boolean;
+  logoUrl: string;
 };
 
 const UniversityVerificationForm = ({
@@ -28,6 +29,7 @@ const UniversityVerificationForm = ({
   setSubStep,
   isPending: verificationIsPending,
   isVerificationSuccess,
+  logoUrl,
 }: Props) => {
   const [countdown, setCountdown] = useState(30);
   const [isCounting, setIsCounting] = useState(false);
@@ -36,14 +38,16 @@ const UniversityVerificationForm = ({
     formState: { errors: UniversityVerificationFormErrors },
     control,
     getValues,
+    setError,
   } = useFormContext();
 
   const univeristyName = getValues("universityName");
 
-  const { mutate: generateUniversityEmailOTP, isPending } =
-    useHandleUniversityEmailVerificationGenerate();
   const { mutateAsync: HandleRegister, isPending: registerIsPending } =
     useHandleRegister_v2();
+    const {
+        mutate: generateUniversityEmailOTP,
+      } = useHandleUniversityEmailVerificationGenerate();
 
   const handleskip = async () => {
     const data = await getRegisterData();
@@ -55,17 +59,30 @@ const UniversityVerificationForm = ({
     }
   };
   const handleNext = async () => {
-    const data = await getRegisterData();
+    const storedData = await getRegisterData();
     const universityEmail = getValues("universityEmail");
 
-    storeRegisterData({
-      ...data,
-      universityEmail: universityEmail,
-      step: 3,
-      subStep: 2,
+    if(!universityEmail){
+      setError("universityEmail", { message: "Please enter your university email!" });
+      return;
+    }
+    const data = {
+      email: universityEmail,
+    };
+    generateUniversityEmailOTP(data,{
+        onSuccess:()=>{
+            storeRegisterData({
+                ...storedData,
+                universityEmail: universityEmail,
+                step: 3,
+                subStep: 2,
+              });
+          
+              setStep(3);
+              setSubStep(2);
+        }
     });
-    setStep(3);
-    setSubStep(2);
+
   };
 
   const handleLoginEmailSendCodeCount = () => {
@@ -86,7 +103,7 @@ const UniversityVerificationForm = ({
   return (
     <View style={styles.main}>
       <View style={styles.titlemargin} className=" w-full">
-        <Title className="text-start">Verification</Title>
+        <Title className="text-start">University Verification</Title>
       </View>
       {FeatureList()}
       <View style={styles.universityName}>
@@ -94,7 +111,7 @@ const UniversityVerificationForm = ({
           Verifying University
         </Text>
         <View className="flex-1 flex-row items-center gap-2    ">
-          <CommunityLogo logoUrl={""} variant="small" />
+          <CommunityLogo logoUrl={logoUrl} variant="large" />
           <Text
             style={{ marginLeft: 2 }}
             className="text-xs text-neutral-700 font-medium "

@@ -28,14 +28,16 @@ interface Users {
 interface Props {
   item: any;
   currentUserId: string;
+  myUserId:string;
 }
 
-const UsersScreenUserCardItem = ({ item, currentUserId }: Props) => {
+const UsersScreenUserCardItem = ({ item, currentUserId,myUserId }: Props) => {
   const navigate = useNavigation() as any;
   const { mutateAsync: toggleFollow, isPending } = useToggleFollow("Following");
   const [isFollowingState, setIsFollowingState] = useState(item?.isFollowing);
   const [isProcessing, setIsProcessing] = useState(false);
 
+//   console.log("item",item._id,myUserId);
   const handleFollowClick = async (id: string) => {
     setIsFollowingState(true);
     setIsProcessing(true);
@@ -57,9 +59,9 @@ const UsersScreenUserCardItem = ({ item, currentUserId }: Props) => {
     });
   };
 
-  if (item?._id === currentUserId) return null;
+//   if (item?._id === myUserId) return null;
 
-  const renderCTA = isFollowingState ? (
+  const renderCTA = item?._id === myUserId ? null : isFollowingState ? (
     <ReusableButton
       onPress={() => handleNavigate(item._id)}
       variant="border"
@@ -110,9 +112,9 @@ const UsersScreenUserCardItem = ({ item, currentUserId }: Props) => {
           {isStudent && profile.study_year && (
             <Text style={styles.metaText}>{profile.study_year} Yr.</Text>
           )}
-          {isStudent && profile.degree && (
+          {/* {isStudent && profile.degree && (
             <Text style={styles.metaText}>{profile.degree}</Text>
-          )}
+          )} */}
           {!isStudent && profile.occupation && (
             <Text style={styles.metaText}>{profile.occupation}</Text>
           )}

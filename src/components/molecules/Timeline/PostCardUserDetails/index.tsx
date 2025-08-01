@@ -130,9 +130,12 @@ const PostCardUserDetails = ({
       <DropdownWrapper
         position="left"
         extraLeft={100}
-        renderDropdown={() => (
+        renderDropdown={(closeDropdown) => (
           <PostCardOption
-            handleDeletePost={handleDeletePost}
+            handleDeletePost={() => {
+              handleDeletePost();
+              closeDropdown();
+            }}
             isAdmin={isAdmin}
             postId={postId}
             type={type}

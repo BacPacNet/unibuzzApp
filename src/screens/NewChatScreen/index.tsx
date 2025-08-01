@@ -32,6 +32,7 @@ import { useForm } from "react-hook-form";
 import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { RootStackParamList } from "@/types/navigation";
+import { UserSelectCard } from "@/components/molecules/Message/UserSelectCard";
 
 type NavigationProp = StackNavigationProp<RootStackParamList, "NewChatScreen">;
 export default function NewChatScreen() {
@@ -155,7 +156,7 @@ export default function NewChatScreen() {
                     icon={<NavArrowDown width={20} height={20} />}
                   />
                   {selectedUsers.length > 0 && (
-                    <NewGroupUserListItem
+                    <UserSelectCard
                       item={selectedUsers[0]}
                       selectedUsers={selectedUsers}
                       setSelectedUsers={() => {}}
@@ -242,7 +243,7 @@ export default function NewChatScreen() {
             style={{ minHeight: 400 }}
             renderItem={({ item }) => (
               <View className="p-3">
-                <NewGroupUserListItem
+                <UserSelectCard
                   item={item}
                   selectedUsers={selectedUsers}
                   setSelectedUsers={setSelectedUsers}

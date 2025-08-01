@@ -31,7 +31,7 @@ const NavbarSubscribedUniversity = ({
 }: Props) => {
   if (!subscribedCommunities || subscribedCommunities.length === 0) {
     return (
-      <View>
+      <View style={styles.buttonContainer}>
         <ReusableButton buttonText="Add Your University" variant="primary" />
       </View>
     );
@@ -180,6 +180,10 @@ const styles = StyleSheet.create({
   badge: {
     width: 16,
     height: 16,
+  },
+
+  buttonContainer: {
+    marginHorizontal: 10,
   },
 });
 

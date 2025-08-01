@@ -126,7 +126,7 @@ const UsersScreen = ({ route }: any) => {
           data={userList}
           keyExtractor={(item) => item._id}
           renderItem={({ item }) => (
-            <UsersScreenUserCardItem item={item} currentUserId={userId} />
+            <UsersScreenUserCardItem item={item} currentUserId={userId} myUserId={userProfileData?.users_id || ""} />
           )}
           ListFooterComponent={() =>
             isFetchingNextPage ? (

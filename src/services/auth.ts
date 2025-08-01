@@ -10,6 +10,7 @@ import { removeRegisterData } from "@/storage/register";
 import { MESSAGES } from "@/content/constant";
 import { useUserPasswordReset } from "@/context/UserPasswordResetProvider/UserPasswordResetProvider";
 
+
 const login = async (data: LoginForm): Promise<UserResponseType> => {
   const result = await client<UserResponseType, LoginForm>("auth/login", {
     data,
@@ -40,7 +41,7 @@ export const useHandleLogin = () => {
       await storeUserProfile(response.userProfile);
       setAuthenticated();
       toast.show("Login Successfull");
-
+      removeRegisterData();
       //  setRefreshCookieValue(
       //    response.tokens.refresh.token,
       //    response.tokens.refresh.expires

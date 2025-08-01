@@ -1,12 +1,8 @@
 import React from "react";
-import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import avatar from "../../../../assets/avatar.png";
+import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import {
-  BinMinusIn,
   ChatBubbleEmpty,
-  MoreHoriz,
   Reply,
-  ShareAndroid,
   ThumbsUp,
 } from "iconoir-react-native";
 
@@ -38,6 +34,8 @@ const UserComment = ({
   const { mutate: deleteUserPost } = useDeleteUserPostComment();
   const { mutate: deleteCommunityPost } = useDeleteCommunityPostComment();
   const role = item?.commenterProfileId?.role;
+
+  
   const isStudent = role === userTypeEnum.Student;
   const handleDelete = () => {
     if (type === PostType.Community) {
@@ -58,6 +56,7 @@ const UserComment = ({
       setModalVisible(true);
     }
   };
+
 
   return (
     <View style={styles.container}>

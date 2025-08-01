@@ -10,7 +10,7 @@ const CommentSortDropDownMenu: React.FC<{
       <TouchableOpacity
         style={styles.textContainer}
         onPress={() =>
-          handleSelect({ value: Sortby.DESC, label: "Newest First" })
+          handleSelect({ value: Sortby.ASC, label: "Newest First" })
         }
       >
         <Text className="text-neutral-700 font-medium text-2xs">
@@ -21,7 +21,7 @@ const CommentSortDropDownMenu: React.FC<{
       <TouchableOpacity
         style={styles.textContainer}
         onPress={() =>
-          handleSelect({ value: Sortby.ASC, label: "Oldest First" })
+          handleSelect({ value: Sortby.DESC, label: "Oldest First" })
         }
       >
         <Text className="text-neutral-700 font-medium text-2xs">
