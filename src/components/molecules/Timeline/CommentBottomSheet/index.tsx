@@ -59,8 +59,8 @@ const CommentBottomSheet = ({
   const [showReply, setShowReply] = useState(false);
   const [replyingTo, setReplyingTo] = useState<any>(null);
   const [showTotalReply, setShowTotalReply] = useState(4);
-  const [selectedOption, setSelectedOption] = useState<string>("Most Recent");
-  const [selectedSortValue, setSelectedSortValue] = useState(Sortby.DESC);
+  const [selectedOption, setSelectedOption] = useState<string>("Newest First");
+  const [selectedSortValue, setSelectedSortValue] = useState(Sortby.ASC);
   const [isModalVisible, setModalVisible] = useState(false);
 
   const navigate = useNavigation<any>();
@@ -110,6 +110,7 @@ const CommentBottomSheet = ({
     commentsData?.pages.flatMap((page) => page.finalComments) || [];
   const communityPostCommentsData =
     communityCommentsData?.pages.flatMap((page) => page.finalComments) || [];
+
 
   const handleNavigate = (userID: string) => {
     navigate.navigate("ProfileStack", {
@@ -181,8 +182,12 @@ const CommentBottomSheet = ({
                     <DropdownWrapper
                       position="bottom"
                       extraBottom={-70}
-                      renderDropdown={() => (
-                        <CommentSortDropDownMenu handleSelect={handleSelect} />
+                      
+                      renderDropdown={(closeDropdown) => (
+                        <CommentSortDropDownMenu handleSelect={(option) => {
+                            handleSelect(option); 
+                            closeDropdown();
+                          }} />
                       )}
                     >
                       <TouchableOpacity style={styles.dropDown}>
@@ -289,6 +294,7 @@ const CommentBottomSheet = ({
           commentData={replyingTo}
           postAuthorName={postAuthorName || ""}
           setShowReply={setShowReply}
+          sortby={selectedSortValue}
         />
       </Modal>
     </SafeAreaView>
@@ -301,7 +307,7 @@ const styles = StyleSheet.create({
   fullHeight: {
     display: "flex",
     justifyContent: "space-between",
-    minHeight: 400,
+    minHeight: "100%",
   },
   loaderContainer: {
     flex: 1,

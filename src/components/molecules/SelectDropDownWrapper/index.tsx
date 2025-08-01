@@ -16,11 +16,11 @@ import {
 
 interface DropdownWrapperProps {
   children: ReactElement;
-  renderDropdown: () => ReactNode;
   position?: "top" | "bottom" | "left" | "right";
   extraLeft?: number;
   extraBottom?: number;
   viewTopPosition?: number;
+  renderDropdown: (closeDropdown: () => void) => ReactNode;
 }
 
 const DropdownWrapper = ({
@@ -106,7 +106,7 @@ const DropdownWrapper = ({
                   minWidth: 160,
                 }}
               >
-                {renderDropdown()}
+                {renderDropdown(closeDropdown)}
               </View>
             </TouchableWithoutFeedback>
           </View>

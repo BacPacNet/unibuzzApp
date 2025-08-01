@@ -25,7 +25,7 @@ const LoginVerificationForm = ({
   handlePrev,
 }: Props) => {
   const [countdown, setCountdown] = useState(30);
-  const [isCounting, setIsCounting] = useState(false);
+  const [isCounting, setIsCounting] = useState(true);
   const [isResend, setIsResend] = useState(false);
   const {
     formState: { errors: VerificationFormErrors },
@@ -89,7 +89,7 @@ const LoginVerificationForm = ({
           <Title className="text-start">Verification</Title>
         </View>
         <Text className=" text-sm text-neutral-500">
-          We emailed you a six-digit code to unibuzz@email.com. Enter the code
+          We emailed you a six-digit code to {email}. Enter the code
           below to confirm your email address.
         </Text>
         <View className="w-full flex  mb-4">
@@ -142,7 +142,7 @@ const LoginVerificationForm = ({
                   ? `Resend Available after ${countdown}s`
                   : isResend
                     ? "Resend Code"
-                    : "Send Code"
+                    : "Resend Code"
               }
               variant="border_primary"
               activityIndicatorColor="#6744FF"

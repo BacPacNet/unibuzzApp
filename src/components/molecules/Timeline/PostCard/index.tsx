@@ -24,7 +24,6 @@ import {
 import { getUserStore } from "@/storage/user";
 import { Toast } from "react-native-toast-notifications";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import PostActionModal from "../../PostOptions";
 import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { RootStackParamList } from "@/types/navigation";
@@ -35,12 +34,14 @@ type ScreenNavigationProp = StackNavigationProp<RootStackParamList, "Home">;
 
 const PostCard = memo(
   ({
+    source,
     data,
     isTimeline = true,
     communityGroupId = "",
     isSinglePost = false,
     initialComment,
     toShowInitial = false,
+    isProfile=false
   }: PostCardType) => {
     const navigation = useNavigation<ScreenNavigationProp>();
     const [visible, setVisible] = useState(false);
@@ -70,9 +71,10 @@ const PostCard = memo(
         communityGroupId,
         isTimeline,
         isSinglePost,
+        isProfile
       );
     const { mutate: LikeUnlikeTimelinePost, isPending: isLikeUnlikePending } =
-      useLikeUnlikeTimelinePost("" as string, data?.user?._id, isSinglePost);
+      useLikeUnlikeTimelinePost(source as string, data?.user?._id, isSinglePost);
 
     const sharePost = async (
       message = "Hey, check out this amazing post! https://example.com/post/123",
@@ -85,8 +87,13 @@ const PostCard = memo(
     };
 
     const LikeUnlikeHandler = (postId: string) => {
+      if(source==="profile"){
+        LikeUnlikeTimelinePost(postId);
+        return; // Add return to prevent double execution
+      }
+      
       if (
-        isSinglePost || !isTimeline ? !data?.communityId : !data?.community?._id
+        isSinglePost || !isTimeline  ? !data?.communityId : !data?.community?._id
       ) {
         LikeUnlikeTimelinePost(postId);
       } else if (
@@ -95,6 +102,7 @@ const PostCard = memo(
         LikeUnlikeGroupPost(postId);
       }
     };
+
 
     const handleDeletePost = () => {
       if (
@@ -151,30 +159,30 @@ const PostCard = memo(
           name={data?.user?.firstName + " " + data?.user?.lastName}
           year={
             isSinglePost
-              ? data?.profile?.study_year
-              : data?.userProfile?.study_year
+              ? data?.profile?.study_year || data?.userProfile?.study_year
+              : data?.userProfile?.study_year || data?.profile?.study_year
           }
-          major={isSinglePost ? data?.profile?.major : data?.userProfile?.major}
-          degree={data?.userProfile?.degree}
-          university={data?.userProfile?.university_name}
+          major={isSinglePost ? data?.profile?.major || data?.userProfile?.major : data?.userProfile?.major || data?.profile?.major}
+          degree={data?.userProfile?.degree || data?.profile?.degree}
+          university={data?.userProfile?.university_name || data?.profile?.university_name}
           affiliation={
             isSinglePost
-              ? data?.profile?.affiliation
-              : data?.userProfile?.affiliation
+              ? data?.profile?.affiliation || data?.userProfile?.affiliation
+              : data?.userProfile?.affiliation || data?.profile?.affiliation
           }
           occupation={
             isSinglePost
-              ? data?.profile?.occupation
-              : data?.userProfile?.occupation
+              ? data?.profile?.occupation || data?.userProfile?.occupation
+              : data?.userProfile?.occupation || data?.profile?.occupation
           }
-          role={data?.userProfile?.role}
+          role={data?.userProfile?.role || data?.profile?.role}
           communityName={
             isSinglePost ? data?.communityName : data?.community?.name
           }
           communityGroupName={
             isSinglePost ? data?.communityGroupName : data?.communityGroupName
           }
-          dp={data?.userProfile?.profile_dp?.imageUrl || " "}
+          dp={data?.userProfile?.profile_dp?.imageUrl || data?.profile?.profile_dp?.imageUrl || " "}
           postId={data?._id}
           type={resolvedPostType}
           isAdmin={
@@ -264,6 +272,7 @@ const PostCard = memo(
           gestureEnabled={true}
           safeAreaInsets={insets}
           snapPoints={defaultBottomSheetSnapPoints}
+          
           containerStyle={{
             paddingTop: 10,
           }}

@@ -20,7 +20,7 @@ import {
   View,
 } from "react-native";
 import { launchImageLibrary } from "react-native-image-picker";
-import { PostCommentData } from "@/types/constant";
+import { PostCommentData, Sortby } from "@/types/constant";
 
 import { Toast } from "react-native-toast-notifications";
 import { getUserProfileStore } from "@/storage/user";
@@ -72,6 +72,7 @@ type Props = {
   postAuthorName: string;
   showInitial: boolean;
   setShowReply: (value: boolean) => void;
+  sortby: Sortby;
 };
 
 const NewComment = ({
@@ -84,6 +85,7 @@ const NewComment = ({
   postAuthorName,
   showInitial,
   setShowReply,
+  sortby
 }: Props) => {
   const userProfileData = getUserProfileStore();
   const [images, setImages] = useState<ImageAsset[]>([]);
@@ -108,20 +110,20 @@ const NewComment = ({
   const {
     mutateAsync: mutateUserPostComment,
     isPending: isUserPostCommentPending,
-  } = useCreateUserPostComment();
+  } = useCreateUserPostComment(sortby);
   const {
     mutateAsync: CreateUserPostCommentReply,
     isPending: CreateUserPostCommentReplyLoading,
-  } = useCreateUserPostCommentReply(showInitial, postId || "");
+  } = useCreateUserPostCommentReply(showInitial, postId || "",sortby);
 
   const {
     mutateAsync: mutateGroupPostComment,
     isPending: isGroupPostCommentPending,
-  } = useCreateGroupPostComment();
+  } = useCreateGroupPostComment(sortby);
   const {
     mutateAsync: CreateGroupPostCommentReply,
     isPending: useCreateGroupPostCommentReplyLoading,
-  } = useCreateGroupPostCommentReply(showInitial, postId || "");
+  } = useCreateGroupPostCommentReply(showInitial, postId || "",sortby);
   const [isPostCreating, setIsPostCreating] = useState(false);
 
   const handleImagePick = useCallback(() => {
@@ -267,7 +269,7 @@ const NewComment = ({
         )}
 
         <View style={styles.editorHeight}>
-          <RichText editor={editor} />
+          <RichText editor={editor} focusable={true} />
         </View>
 
         {/* <RichText  editor={editor} /> */}

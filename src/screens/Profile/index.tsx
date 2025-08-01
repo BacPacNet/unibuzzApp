@@ -136,7 +136,7 @@ const Profile = ({ route }: ProfileProps) => {
           />
         }
         renderItem={({ item }) => (
-          <PostCard data={item} isSinglePost={false} isTimeline={false} />
+          <PostCard data={item} source="profile" isSinglePost={false} isTimeline={false} isProfile={true} />
         )}
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />

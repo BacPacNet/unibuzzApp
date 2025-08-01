@@ -68,7 +68,7 @@ const ConnectionMutualUserTabList: React.FC<{}> = ({}) => {
             <SearchInput
               value={name}
               onChangeText={setName}
-              placeholder="Search Messages"
+              placeholder="Search User..."
             />
             {!isFetching && userProfiles?.length === 0 ? (
               <View className="py-4">

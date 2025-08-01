@@ -55,6 +55,7 @@ const UserCard: React.FC<UserCardProps> = ({
   toShowOption = false,
   handleDelete,
 }) => {
+    
   return (
     <View className="flex-1 flex-row items-center gap-4 justify-center">
       <View style={styles.avatarContainer}>
@@ -90,8 +91,14 @@ const UserCard: React.FC<UserCardProps> = ({
             position="left"
             extraLeft={10}
             viewTopPosition={-25}
-            renderDropdown={() => (
-              <TouchableOpacity style={styles.dropdown} onPress={handleDelete}>
+            renderDropdown={(closeDropdown) => (
+              <TouchableOpacity
+                style={styles.dropdown}
+                onPress={() => {
+                  handleDelete();
+                  closeDropdown();
+                }}
+              >
                 <BinMinusIn height={16} width={16} />
                 <Text>Delete</Text>
               </TouchableOpacity>

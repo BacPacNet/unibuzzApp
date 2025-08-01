@@ -4,7 +4,6 @@ import { useForm, FormProvider } from "react-hook-form";
 import AccountCreationForm from "../Forms/AccountCreationFrom";
 import {
   getRegisterData,
-  removeRegisterData,
   storeRegisterData,
   userTypeEnum,
 } from "@/storage/register";
@@ -18,9 +17,10 @@ import ClaimBenefitForm from "../Forms/ClaimBenefitForm";
 import LoginForm from "../Forms/LoginForm";
 import {
   useHandleLoginEmailVerification,
-  useHandleRegister,
+  useHandleLoginEmailVerificationGenerate,
   useHandleRegister_v2,
   useHandleUniversityEmailVerification,
+  useHandleUniversityEmailVerificationGenerate,
   useHandleUserEmailAndUserNameAvailability,
 } from "@/services/auth";
 import VerificationOption from "../Forms/VerificationOption";
@@ -48,6 +48,12 @@ const FormContainer = ({ step, setStep, setSubStep, subStep }: Props) => {
     isPending: UniversityEmailVerificationIsPending,
   } = useHandleUniversityEmailVerification();
 
+  const {
+    mutate: generateLoginEmailOTP,
+    isPending,
+    isError,
+  } = useHandleLoginEmailVerificationGenerate();
+
   const { mutateAsync: HandleRegister, isPending: registerIsPending } =
     useHandleRegister_v2();
 
@@ -70,6 +76,7 @@ const FormContainer = ({ step, setStep, setSubStep, subStep }: Props) => {
       verificationOtp: "",
       universityName: "",
       universityEmail: "",
+      logoUrl:"",
       department: "",
       occupation: "",
       universityId: "",
@@ -78,8 +85,10 @@ const FormContainer = ({ step, setStep, setSubStep, subStep }: Props) => {
       referralCode: "",
       isJoinUniversity: true,
       isUniversityVerified: false,
+
     },
   });
+
 
   useEffect(() => {
     const loadRegisterData = async () => {
@@ -165,6 +174,7 @@ const FormContainer = ({ step, setStep, setSubStep, subStep }: Props) => {
     }
   };
 
+
   const handleNext = () => {
     console.log("step", step, "subStep", subStep);
 
@@ -183,16 +193,23 @@ const FormContainer = ({ step, setStep, setSubStep, subStep }: Props) => {
     ) {
       return setSubStep(1);
     } else if (step === 1 && subStep === 1) {
-      const newStep = step + 1;
+    //   const newStep = step + 1;
+      const newStep = 3;
       setStep(newStep);
-      return setSubStep(0);
+       setSubStep(0);
+      const data = {
+        email: methods.getValues("email"),
+      };
+      return generateLoginEmailOTP(data);
     } else if (
       step === 3 &&
       subStep === 0 &&
       methods.getValues("userType") !== userTypeEnum.Applicant
     ) {
       return setSubStep(1);
-    } else {
+    } 
+    
+    else {
       const newStep = step + 1;
       setStep(newStep);
       setSubStep(0);
@@ -215,8 +232,11 @@ const FormContainer = ({ step, setStep, setSubStep, subStep }: Props) => {
       setSubStep(0);
     } else if (step === 3 && subStep === 2) {
       setSubStep(1);
-    } else if (step === 3) {
-      setStep(step - 1);
+    }
+     else if (step === 3) {
+      // setStep(step - 1);
+      setStep(1);
+      setSubStep(1);
       if (methods.getValues("userType") == userTypeEnum.Applicant) {
         setSubStep(0);
       } else if (
@@ -358,6 +378,7 @@ const FormContainer = ({ step, setStep, setSubStep, subStep }: Props) => {
           setStep={setStep}
           setSubStep={setSubStep}
           handlePrev={() => handlePrev()}
+          email={methods.getValues("email")}
         />
       );
     } else if (step === 3 && subStep === 0) {
@@ -367,6 +388,7 @@ const FormContainer = ({ step, setStep, setSubStep, subStep }: Props) => {
           isVerificationSuccess={userLoginEmailVerificationSuccess}
           isPending={userLoginEmailVerificationIsPending}
           handlePrev={() => handlePrev()}
+   
         />
       );
     } else if (step === 3 && subStep === 1) {
@@ -377,6 +399,7 @@ const FormContainer = ({ step, setStep, setSubStep, subStep }: Props) => {
           setSubStep={setSubStep}
           isVerificationSuccess={userUniversityEmailVerificationSuccess}
           isPending={UniversityEmailVerificationIsPending}
+          logoUrl={methods.getValues("logoUrl")}
         />
       );
     } else if (step === 3 && subStep === 2) {
@@ -386,6 +409,7 @@ const FormContainer = ({ step, setStep, setSubStep, subStep }: Props) => {
           isVerificationSuccess={userUniversityEmailVerificationSuccess}
           isPending={UniversityEmailVerificationIsPending}
           handlePrev={() => handlePrev()}
+          
         />
       );
     } else if (step === 3) {

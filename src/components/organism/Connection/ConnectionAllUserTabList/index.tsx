@@ -122,7 +122,7 @@ const ConnectionAllUserTabList: React.FC<{
             <SearchInput
               value={name}
               onChangeText={setName}
-              placeholder="Search Messages"
+           placeholder="Search User..."
             />
           </View>
           <TouchableOpacity

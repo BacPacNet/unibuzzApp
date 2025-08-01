@@ -18,15 +18,17 @@ interface Props {
   isPending: boolean;
   onSubmit: (data: any) => Promise<void>;
   handlePrev: () => void;
+  
 }
 
 const UniversityEmailOtpVerification = ({
   onSubmit,
   isPending: verificationIsPending,
   handlePrev,
+
 }: Props) => {
   const [countdown, setCountdown] = useState(30);
-  const [isCounting, setIsCounting] = useState(false);
+  const [isCounting, setIsCounting] = useState(true);
   const [isResend, setIsResend] = useState(false);
   const {
     formState: { errors: VerificationFormErrors },
@@ -86,6 +88,7 @@ const UniversityEmailOtpVerification = ({
     return () => clearTimeout(timer);
   }, [countdown, isCounting]);
 
+  
   return (
     <View style={styles.main}>
       <View>
@@ -135,9 +138,9 @@ const UniversityEmailOtpVerification = ({
                       minLength: { value: 6, message: "OTP must be 6 digits!" },
                     }}
                   />
-                  {VerificationFormErrors?.verificationOtp && (
+                  {VerificationFormErrors?.UniversityOtp && (
                     <Text className="text-red-500 text-sm mt-1">
-                      {VerificationFormErrors?.verificationOtp?.message?.toString()}
+                      {VerificationFormErrors?.UniversityOtp?.message?.toString()}
                     </Text>
                   )}
                 </View>
@@ -148,9 +151,9 @@ const UniversityEmailOtpVerification = ({
               buttonText={
                 isCounting
                   ? `Resend Available after ${countdown}s`
-                  : isResend
-                    ? "Resend Code"
-                    : "Send Code"
+                  : 
+                    "Resend Code"
+                  
               }
               variant="border_primary"
               activityIndicatorColor="#6744FF"
@@ -172,7 +175,11 @@ const UniversityEmailOtpVerification = ({
           height="large"
         />
         <ReusableButton
-          onPress={handlePrev}
+          onPress={()=>{handlePrev();
+            setError("UniversityOtp", {
+              message: "",
+            });
+          }}
           buttonContent={
             <View className="flex flex-row items-center justify-center gap-2">
               <ArrowLeft width={20} height={20} color="#6744FF" />

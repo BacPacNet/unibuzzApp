@@ -1,4 +1,3 @@
-import { convertToDateObj } from "@/utils";
 import { format } from "date-fns";
 import { NavArrowDown, Xmark } from "iconoir-react-native";
 import React, { useState } from "react";
@@ -38,11 +37,40 @@ export function DateSelect({
     return `${day}/${month}/${year}`;
   };
 
-  const dobFormat = currDob?.includes("/")
-    ? convertToDateObj(currDob)
-    : Number(currDob);
-  const dateOfBirth = dobFormat && format(new Date(dobFormat), "dd/MM/yyyy");
+  // Parse the current DOB properly
+  const parseCurrentDob = () => {
+    if (!currDob) return null;
+    
+    try {
+      // If currDob is already a date string in dd/MM/yyyy format
+      if (currDob.includes("/")) {
+        const [day, month, year] = currDob.split("/");
+        return new Date(parseInt(year), parseInt(month) - 1, parseInt(day));
+      }
+      
+      // If currDob is a timestamp
+      if (!isNaN(Number(currDob))) {
+        return new Date(Number(currDob));
+      }
+      
+      // Try to parse as ISO string
+      const parsed = new Date(currDob);
+      if (!isNaN(parsed.getTime())) {
+        return parsed;
+      }
+      
+      return null;
+    } catch (error) {
+      console.log("Error parsing currDob:", error);
+      return null;
+    }
+  };
 
+  const currentDobDate = parseCurrentDob();
+  const dateOfBirth = currentDobDate ? format(currentDobDate, "dd/MM/yyyy") : null;
+
+
+  
   return (
     <View style={styles.container}>
       {isLabelShown && (
@@ -94,15 +122,13 @@ export function DateSelect({
                 modal
                 open={open}
                 date={
-                  value && !isNaN(new Date(value).getTime())
-                    ? new Date(value)
-                    : new Date()
+                  currentDobDate || new Date()
                 }
                 mode={"date"}
                 onConfirm={(date: any) => {
                   setOpen(false);
-
                   formOnChange(format(new Date(date), "dd/MM/yyyy"));
+                  onChange?.(format(new Date(date), "dd/MM/yyyy"));
                 }}
                 onCancel={() => {
                   setOpen(false);

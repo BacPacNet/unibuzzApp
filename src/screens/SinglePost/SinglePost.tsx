@@ -30,6 +30,8 @@ const SinglePost = ({ route }: any) => {
   const item = data?.post;
   const comment = data?.comment;
 
+ 
+  
   const handleBack = () => {
     if (from === screenName.notifications) {
       navigation.navigate("Notifications");

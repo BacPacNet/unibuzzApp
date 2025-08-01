@@ -26,6 +26,7 @@ export async function getAllUserPosts(
   page: number,
   limit: number,
 ) {
+    
   const response: any = await client(
     `/userpost?userId=${userId}&page=${page}&limit=${limit}`,
     { headers: { Authorization: `Bearer ${token}` } },
