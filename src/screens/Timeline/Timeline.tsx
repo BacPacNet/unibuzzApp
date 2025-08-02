@@ -51,6 +51,8 @@ const Timeline = () => {
       </View>
     );
   }
+
+  
   return (
     <View style={{ position: "relative" }} className="bg-white flex-1 relative">
       <CreatePostButton
@@ -92,8 +94,8 @@ const Timeline = () => {
             </View>
           ) : (
             <View className="flex-1 justify-center items-center">
-              {userProfileData?.email?.length &&
-              userProfileData?.email?.length > 0 ? (
+              {userProfileData?.communities?.length &&
+              userProfileData?.communities?.length > 0 ? (
                 <EmptyStateCard
                   imageWidth={226}
                   imageHeight={158}

@@ -130,7 +130,7 @@ export function useGetUserFollowing(
   const debouncedSearchTerm = useDebounce(name, 1000);
 
   return useInfiniteQuery({
-    queryKey: ["getUserFollowing", debouncedSearchTerm],
+    queryKey: ["getUserFollowing", debouncedSearchTerm,userId],
     queryFn: ({ pageParam = 1 }) =>
       getUserFollowing(
         cookieValue,
@@ -160,7 +160,7 @@ export function useGetUserFollowers(
   const debouncedSearchTerm = useDebounce(name, 1000);
 
   return useInfiniteQuery({
-    queryKey: ["getUserFollower", debouncedSearchTerm],
+    queryKey: ["getUserFollower", debouncedSearchTerm,userId],
     queryFn: ({ pageParam = 1 }) =>
       getUserFollowers(
         cookieValue,

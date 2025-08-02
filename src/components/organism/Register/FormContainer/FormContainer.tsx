@@ -76,7 +76,7 @@ const FormContainer = ({ step, setStep, setSubStep, subStep }: Props) => {
       verificationOtp: "",
       universityName: "",
       universityEmail: "",
-      logoUrl:"",
+      universityLogo:"",
       department: "",
       occupation: "",
       universityId: "",
@@ -399,7 +399,7 @@ const FormContainer = ({ step, setStep, setSubStep, subStep }: Props) => {
           setSubStep={setSubStep}
           isVerificationSuccess={userUniversityEmailVerificationSuccess}
           isPending={UniversityEmailVerificationIsPending}
-          logoUrl={methods.getValues("logoUrl")}
+          logoUrl={methods.getValues("universityLogo")}
         />
       );
     } else if (step === 3 && subStep === 2) {

@@ -14,6 +14,9 @@ import { Community } from "@/types/Community";
 import { User } from "@/models/auth";
 import ReusableButton from "@/components/atoms/ReusableButton";
 import CommunityLogo from "@/components/atoms/LogoHolder";
+import { useNavigation } from "@react-navigation/native";
+import { RootStackParamList } from "@/types/navigation";
+import { StackNavigationProp } from "@react-navigation/stack";
 
 interface Props {
   subscribedCommunities: Community[];
@@ -23,16 +26,29 @@ interface Props {
   isGroup: boolean;
 }
 
+
+type NavigationProp = StackNavigationProp<RootStackParamList, "Timeline">;
+
 const NavbarSubscribedUniversity = ({
   subscribedCommunities,
   communityId,
   handleCommunityClick,
   isGroup,
 }: Props) => {
+const navigation = useNavigation<NavigationProp>();
+    const handleAddUniversity = () => {      
+        navigation.navigate("DiscoverStack", {
+            screen: "Discover",
+          });
+    }
   if (!subscribedCommunities || subscribedCommunities.length === 0) {
     return (
       <View style={styles.buttonContainer}>
-        <ReusableButton buttonText="Add Your University" variant="primary" />
+        <ReusableButton 
+          buttonText="Add Your University" 
+          variant="primary" 
+          onPress={handleAddUniversity}
+        />
       </View>
     );
   }
