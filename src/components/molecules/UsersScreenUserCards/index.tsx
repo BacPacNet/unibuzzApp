@@ -29,9 +29,10 @@ interface Props {
   item: any;
   currentUserId: string;
   myUserId:string;
+  isFollowing:boolean;
 }
 
-const UsersScreenUserCardItem = ({ item, currentUserId,myUserId }: Props) => {
+const UsersScreenUserCardItem = ({ item, currentUserId,myUserId,isFollowing }: Props) => {
   const navigate = useNavigation() as any;
   const { mutateAsync: toggleFollow, isPending } = useToggleFollow("Following");
   const [isFollowingState, setIsFollowingState] = useState(item?.isFollowing);
@@ -61,7 +62,7 @@ const UsersScreenUserCardItem = ({ item, currentUserId,myUserId }: Props) => {
 
 //   if (item?._id === myUserId) return null;
 
-  const renderCTA = item?._id === myUserId ? null : isFollowingState ? (
+  const renderCTA = item?._id === myUserId ? null : (isFollowing || isFollowingState) ? (
     <ReusableButton
       onPress={() => handleNavigate(item._id)}
       variant="border"

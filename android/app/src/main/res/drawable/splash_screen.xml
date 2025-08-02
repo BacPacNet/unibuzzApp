@@ -1,12 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android">
-    <!-- Background color -->
-    <item android:drawable="@android:color/white" />
+    <item android:drawable="@color/primary_color" />
     
-    <!-- Logo image -->
-    <item>
+    <item
+        android:width="50dp"
+        android:height="50dp"
+        android:gravity="center">
         <bitmap
             android:gravity="center"
-            android:src="@mipmap/unibuzz" />
+            android:src="@drawable/splash_icon" />
     </item>
 </layer-list>

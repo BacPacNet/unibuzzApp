@@ -321,6 +321,9 @@ const Messages = ({ route }: any) => {
     }
   };
 
+
+
+  
   const renderChat = () => {
     if (selectedChat) {
       return (
@@ -330,9 +333,10 @@ const Messages = ({ route }: any) => {
             name={
               selectedChat?.isGroupChat
                 ? selectedChat?.chatName
-                : (userName?.userId.firstName ?? "Unknown")
+                : ( userName?.userId?.firstName ?(userName?.userId?.firstName + " " + userName?.userId?.lastName) : "Unknown")
             }
             users={selectedChat?.users}
+            userId={userName?.userId?._id}
             yourID={userData?.id || ""}
             isGroupChat={selectedChat?.isGroupChat}
             groupAdmin={selectedChat?.groupAdmin}
@@ -356,7 +360,7 @@ const Messages = ({ route }: any) => {
             name={
               selectedChat.isGroupChat
                 ? selectedChat.chatName
-                : (userName?.userId.firstName ?? "Unknown")
+                : ((userName?.userId.firstName + " " + userName?.userId.lastName) && "Unknown")
             }
             users={selectedChat?.users}
             profileCover={selectedChat?.groupLogoImage ?? ""}

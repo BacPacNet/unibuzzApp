@@ -33,6 +33,7 @@ type Props = {
   setCurrTab: (value: string) => void;
   isBlockedByYou: boolean;
   communitySelected: CommunityChat;
+  userId:string
 };
 
 type User = {
@@ -61,6 +62,7 @@ const MessageUserStickyBar = ({
   setCurrTab,
   isBlockedByYou,
   communitySelected,
+  userId
 }: Props) => {
   const userName =
     users?.flat().filter((item) => item.userId._id !== yourID) || [];
@@ -108,14 +110,21 @@ const MessageUserStickyBar = ({
     });
   };
 
+  const handleNavigateToProfile = () => {
+    navigation.navigate("ProfileStack", {
+        screen: "Profile",
+        params: { userId: userId },
+      });
+  };
+
   return (
     <View className=" fixed w-full top-0 z-10 flex flex-row justify-between border-b border-neutral-200 bg-white py-4 px-4">
       <View className="flex flex-row items-center gap-2">
         <TouchableOpacity onPress={handleBack}>
           {/* <IoIosArrowBack className="w-8 h-8 text-[#6744FF]" /> */}
-          <NavArrowLeft height={20} width={20} color="#6744FF" />
+          <NavArrowLeft height={24} width={24} color="#6744FF" strokeWidth={3}  />
         </TouchableOpacity>
-        <View className="relative">
+        <TouchableOpacity onPress={handleNavigateToProfile} className="relative flex flex-row items-center gap-2">
           <Image
             source={profileCover ? { uri: profileCover } : avatar}
             style={{ width: 48, height: 48, borderRadius: 100 }}
@@ -129,7 +138,11 @@ const MessageUserStickyBar = ({
                 : "bg-neutral-300"
             }`}
           /> */}
-        </View>
+      <Text className="text-neutral-700 font-bold text-sm">{name}</Text>
+        </TouchableOpacity>
+      
+      
+   
       </View>
       <View className="flex flex-row gap-4 items-center">
         {isRequestNotAccepted && (

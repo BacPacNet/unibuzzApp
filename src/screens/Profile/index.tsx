@@ -104,6 +104,7 @@ const Profile = ({ route }: ProfileProps) => {
     );
   };
 
+  
   return (
     <View style={styles.container}>
       <FlatList

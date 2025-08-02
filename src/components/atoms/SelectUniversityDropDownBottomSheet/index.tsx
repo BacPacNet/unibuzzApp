@@ -100,7 +100,7 @@ const SelectUniversityDropdownBottomSheet: React.FC<SelectDropdownProps> = ({
               ref={actionSheetRef}
               gestureEnabled={true}
               safeAreaInsets={insets}
-              snapPoints={defaultBottomSheetSnapPoints}
+              snapPoints={[100]}
               onClose={() => setShow(false)}
             >
               {/* <TouchableOpacity
@@ -135,7 +135,7 @@ const SelectUniversityDropdownBottomSheet: React.FC<SelectDropdownProps> = ({
                         onChange(item.name);
                         setValue && setValue("universityId", item._id);
                         setValue && setValue("communityId", item.communityId);
-                        setValue && setValue("logoUrl", item.logo);
+                        setValue && setValue("universityLogo", item.logo);
                         actionSheetRef.current?.hide();
                       }}
                     >
@@ -168,6 +168,7 @@ export default SelectUniversityDropdownBottomSheet;
 const styles = StyleSheet.create({
   container: {
     marginBottom: 16,
+
   },
   label: {
     fontSize: 14,
@@ -211,6 +212,7 @@ const styles = StyleSheet.create({
     borderTopLeftRadius: 16,
     borderTopRightRadius: 16,
     paddingHorizontal: 8,
+    height:"100%"
   },
   modalHeader: {
     padding: 16,
@@ -235,7 +237,7 @@ const styles = StyleSheet.create({
     marginHorizontal: 16,
     borderBottomWidth: 1,
     borderBottomColor: "#E5E7EB",
-    gap: 4,
+    gap: 8,
   },
   universityLogo: {
     width: 40,

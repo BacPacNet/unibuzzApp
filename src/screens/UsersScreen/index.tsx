@@ -54,7 +54,7 @@ const UsersScreen = ({ route }: any) => {
     "",
     userId,
     10,
-    listType.following.toString() == type,
+    listType.followers.toString() == type,
   );
 
   const userFollow = useMemo(() => {
@@ -78,6 +78,8 @@ const UsersScreen = ({ route }: any) => {
     );
   }, [userFollowData, userProfileData, userId]);
 
+
+
   const userFollowers = useMemo(() => {
     const followingIds = new Set(
       userProfileData?.following?.map((f) => f.userId),
@@ -97,7 +99,7 @@ const UsersScreen = ({ route }: any) => {
           })),
       ) || []
     );
-  }, [userFollowersData, userProfileData, userId]);
+  }, [userFollowersData, userProfileData, userId,type]);
 
   const handleBack = () => {
     navigate.navigate("ProfileStack", {
@@ -118,15 +120,25 @@ const UsersScreen = ({ route }: any) => {
       ? isFetchingFollowingNextPage
       : isFetchingFollowersNextPage;
 
+      
+
+      if(isFollowingLoading || isFollowersLoading){
+        return (
+            <View style={styles.emptyList}>
+              <ActivityIndicator />
+            </View>
+          );
+      }
   return (
     <View style={styles.container}>
       <BackHeader label="User Profile" onPress={() => handleBack()} />
+ 
       <View style={styles.paddingContainer} className="   ">
         <FlatList
           data={userList}
           keyExtractor={(item) => item._id}
           renderItem={({ item }) => (
-            <UsersScreenUserCardItem item={item} currentUserId={userId} myUserId={userProfileData?.users_id || ""} />
+            <UsersScreenUserCardItem isFollowing={listType.following.toString() == type} item={item} currentUserId={userId} myUserId={userProfileData?.users_id || ""} />
           )}
           ListFooterComponent={() =>
             isFetchingNextPage ? (
@@ -138,7 +150,7 @@ const UsersScreen = ({ route }: any) => {
               {isLoading ? (
                 <ActivityIndicator />
               ) : (
-                <Text>No University Found</Text>
+                <Text>No User Found</Text>
               )}
             </View>
           }
