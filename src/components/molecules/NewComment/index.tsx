@@ -272,7 +272,7 @@ const NewComment = ({
           <RichText editor={editor} focusable={true} />
         </View>
 
-        {/* <RichText  editor={editor} /> */}
+     
         <KeyboardAvoidingView
           behavior={Platform.OS === "ios" ? "padding" : "height"}
           style={{
@@ -299,6 +299,8 @@ export default NewComment;
 const styles = StyleSheet.create({
   padingHorizontal: {
     paddingHorizontal: 8,
+    marginTop:24,
+    marginBottom:0
   },
   editorHeight: {
     flex: 1,

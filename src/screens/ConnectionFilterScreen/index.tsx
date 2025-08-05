@@ -35,6 +35,7 @@ const ConnectionsFilter = () => {
     formState: { errors },
     setValue,
     getValues,
+    reset
   } = useForm<any>({
     defaultValues: {
       studentYear: [],
@@ -93,9 +94,23 @@ const ConnectionsFilter = () => {
     }
   }, [paramValues]);
 
+
+  const resetFilters = () => {
+  reset()
+  navigation.navigate("Connections", {
+    values: null,
+  });
+  }
+
   return (
     <View style={styles.container}>
-      <BackHeader label="Connections" />
+      <View className="flex-row items-end justify-between ">
+        <BackHeader label="Connections" />
+     <ReusableButton containerStyle="" size="small" buttonText="Clear Filters" variant="shade" onPress={() => {
+      resetFilters()
+     }} />
+      </View>
+
       <View style={styles.bulkContainer}>
         <SelectUniversityDropdownBottomSheet
           placeholder="Select University Name"

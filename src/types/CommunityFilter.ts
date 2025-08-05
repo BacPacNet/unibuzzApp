@@ -1,5 +1,7 @@
 export const GroupCategories = ["Private", "Public", "Official", "Casual"];
 
+export const GroupAccess=['Private', 'Public']
+export const GroupType=['Official', 'Casual']
 export type Category =
   | "Academic Focus"
   | "Recreation and Hobbies"

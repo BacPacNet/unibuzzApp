@@ -5,6 +5,7 @@ import {
   StyleSheet,
   TextInput,
   ScrollView,
+  SafeAreaView,
 } from "react-native";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import BackHeader from "@/components/atoms/BackHeader";
@@ -121,7 +122,7 @@ const AI_Assistant = () => {
   };
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
       <View style={styles.headerContainer}>
         <BackHeader
           label="Home"
@@ -176,7 +177,7 @@ const AI_Assistant = () => {
           </TouchableOpacity>
         </View>
       </View>
-    </View>
+    </SafeAreaView>
   );
 };
 

@@ -176,7 +176,6 @@ const FormContainer = ({ step, setStep, setSubStep, subStep }: Props) => {
 
 
   const handleNext = () => {
-    console.log("step", step, "subStep", subStep);
 
     if (
       step === 1 &&

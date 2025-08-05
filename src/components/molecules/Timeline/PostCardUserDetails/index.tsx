@@ -82,7 +82,7 @@ const PostCardUserDetails = ({
   };
 
   return (
-    <View className="relative flex flex-row justify-between items-center py-2 px-4">
+    <View className="relative flex flex-row justify-between items-center  px-4">
       {/*{visible && (
         <PostCardOption handleDeletePost={handleDeletePost} isAdmin={isAdmin} />
       )}*/}
@@ -100,7 +100,7 @@ const PostCardUserDetails = ({
 
         <View>
           <View className="flex flex-row gap-2 items-center">
-            <Text className="font-semibold text-neutral-900 text-sm ">
+            <Text className="font-semibold text-neutral-900 text-2xs ">
               {name}
             </Text>
             {isCommunityAdmin ? (
@@ -162,7 +162,7 @@ const styles = StyleSheet.create({
   },
 
   fontSize: {
-    fontSize: 12,
+    fontSize: 10,
   },
 
   dotBg: {

@@ -1,7 +1,9 @@
 import { getMimeTypeFromUrl, imageMimeTypes } from "@/utils";
 import React, { useState } from "react";
-import { View, Text, TouchableOpacity, Image, StyleSheet } from "react-native";
+import { View, Text, TouchableOpacity, Image, StyleSheet, Linking } from "react-native";
 import ImageViewing from "react-native-image-viewing";
+import PDFModalWebView from "../PdfView";
+import ImageWithFallback from "@/components/atoms/ImageWithFallBack";
 
 const ImageGallery = ({
   images,
@@ -22,15 +24,139 @@ const ImageGallery = ({
 
   const [isOpen, setIsOpen] = useState(false);
   const [photoIndex, setPhotoIndex] = useState(0);
+  const [isPdfOpen, setIsPdfOpen] = useState(false);
+  const [pdfUrl, setPdfUrl] = useState("");
 
   const handleImageClick = (index: number) => {
     setPhotoIndex(index);
     setIsOpen(true);
   };
 
-  const formattedImages = images?.map((img: { imageUrl: string }) => ({
-    uri: img?.imageUrl,
+  const formattedImages = imageItems?.map(({ imageUrl }: any) => ({
+    uri: imageUrl,
   }));
+
+  const handlePdfClick = (url: string) => {
+    setPdfUrl(url);
+    setIsPdfOpen(true);
+  };
+
+  const renderImages = () => {
+    switch (formattedImages?.length) {
+      case 1:
+        return (
+          <TouchableOpacity
+            onPress={() => handleImageClick(0)}
+            style={{ height: "100%" }}
+            className=""
+          >
+            <ImageWithFallback
+              uri={formattedImages[0]?.uri}
+              style={{ width: "100%", height: "100%", borderRadius: 12 }}
+              iconProps={{ color: "gray" }}
+              resizeMode="contain"
+            />
+          </TouchableOpacity>
+        );
+      case 2:
+        return (
+          <View
+            className="flex-1 flex flex-row gap-2  "
+          >
+            {formattedImages?.slice(0, 2).map((img: any, index: number) => (
+              <View key={index} className="w-1/2">
+                <TouchableOpacity onPress={() => handleImageClick(index)}>
+                  <ImageWithFallback
+                    uri={img?.uri}
+                    style={{ width: "100%", height: "100%", borderRadius: 12 }}
+                    iconProps={{ color: "gray" }}
+                    resizeMode="contain"
+                  />
+                </TouchableOpacity>
+              </View>
+            ))}
+          </View>
+        );
+      case 3:
+        return (
+          <View className="flex-1 flex flex-row gap-2">
+            <View className="w-1/2">
+              <TouchableOpacity
+                onPress={() => handleImageClick(0)}
+                style={{ height: "100%" }}
+                className=""
+              >
+                <ImageWithFallback
+                  uri={formattedImages[0]?.uri}
+                  style={{ width: "100%", height: "100%", borderRadius: 12 }}
+                  iconProps={{ color: "gray" }}
+                  resizeMode="cover"
+                />
+              </TouchableOpacity>
+            </View>
+            <View className="w-1/2 flex gap-2">
+              {formattedImages?.slice(1, 3).map((img: any, index: number) => (
+                <View key={index} style={{ flex: 1 }}>
+                  <TouchableOpacity onPress={() => handleImageClick(index + 1)}>
+                    <ImageWithFallback
+                      uri={img?.uri}
+                      style={{
+                        width: "100%",
+                        height: "100%",
+                        borderRadius: 12,
+                      }}
+                      iconProps={{ color: "gray" }}
+                      resizeMode="cover"
+                    />
+                  </TouchableOpacity>
+                </View>
+              ))}
+            </View>
+          </View>
+        );
+      default:
+        return (
+          <View className="flex-1 flex flex-row gap-2">
+            <View className="w-1/2 flex gap-2">
+              {formattedImages?.slice(0, 2).map((img: any, index: number) => (
+                <View key={index} style={{ flex: 1 }}>
+                  <TouchableOpacity onPress={() => handleImageClick(index)}>
+                    <ImageWithFallback
+                      uri={img?.uri}
+                      style={{
+                        width: "100%",
+                        height: "100%",
+                        borderRadius: 12,
+                      }}
+                      iconProps={{ color: "gray" }}
+                      resizeMode="cover"
+                    />
+                  </TouchableOpacity>
+                </View>
+              ))}
+            </View>
+            <View className="w-1/2 flex gap-2">
+              {formattedImages?.slice(2, 4).map((img: any, index: number) => (
+                <View key={index} style={{ flex: 1 }}>
+                  <TouchableOpacity onPress={() => handleImageClick(index + 2)}>
+                    <ImageWithFallback
+                      uri={img?.uri}
+                      style={{
+                        width: "100%",
+                        height: "100%",
+                        borderRadius: 12,
+                      }}
+                      iconProps={{ color: "gray" }}
+                      resizeMode="cover"
+                    />
+                  </TouchableOpacity>
+                </View>
+              ))}
+            </View>
+          </View>
+        );
+    }
+  };
 
   return (
     <View className="w-full">
@@ -50,81 +176,41 @@ const ImageGallery = ({
         />
       )}
 
-      <View
-        style={{
-          display: "flex",
-          flexDirection: "row",
-          flexWrap: "wrap",
-          gap: 6,
-          flexGrow: 1,
-          //   overflow: "hidden",
-          width: "100%",
-        }}
-      >
-        {imageItems?.slice(0, 4).map((src: any, index: number) => (
-          <TouchableOpacity
-            key={index}
-            onPress={() => handleImageClick(index)}
-            style={{ position: "relative", overflow: "hidden" }}
-            className={` ${imageCount == 1 ? "h-40 w-full" : imageCount == 2 ? "h-40 w-40 " : imageCount >= 4 ? "h-20 w-40 " : imageCount >= 3 ? "h-20 w-40" : ""} `}
-          >
-            <Image
-              source={{ uri: src?.imageUrl }}
-              style={styles.image}
-              resizeMode="cover"
-            />
-            {imageCount > 4 && index === 3 && (
-              <View style={styles.extraImagesCount}>
-                <Text style={styles.extraImagesText}>+{imageCount - 4}</Text>
-              </View>
-            )}
-          </TouchableOpacity>
-        ))}
+      <View style={formattedImages?.length ? styles.imageContainer : undefined}>
+        {renderImages()}
       </View>
 
       <View className="flex gap-2">
         {fileItems.map((item: any, index: number) => (
-          <View
+          <TouchableOpacity
+          onPress={() => {
+            if (item.imageUrl.includes(".pdf")) {
+              handlePdfClick(item.imageUrl);
+            } else {
+              Linking.openURL(item.imageUrl);
+            }
+          }}
             key={index}
             className="border border-neutral-200 rounded-lg p-2 mt-1"
           >
             <Text lineBreakMode="clip" style={styles.fileText}>
               {decodeURI(item.imageUrl.split("/").pop() || "Unknown File")}
             </Text>
-          </View>
+          </TouchableOpacity>
         ))}
       </View>
+
+      {isPdfOpen && <PDFModalWebView visible={isPdfOpen} onClose={() => setIsPdfOpen(false)} pdfUrl={pdfUrl} />}
+
     </View>
   );
 };
 
 const styles = StyleSheet.create({
-  image: {
-    width: "100%",
-    height: "100%",
-    borderRadius: 16,
+  imageContainer: {
+    minHeight: 150,
+    maxHeight: 200,
   },
-  extraImagesCount: {
-    position: "absolute",
-    backgroundColor: "#F1F1F1",
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    right: -10,
-    bottom: -10,
-    justifyContent: "center",
-    alignItems: "center",
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-  },
-  extraImagesText: {
-    color: "#555",
-    fontSize: 16,
-    fontWeight: "bold",
-  },
-
   fileText: {
     color: "#3A3B3C",
     fontSize: 12,

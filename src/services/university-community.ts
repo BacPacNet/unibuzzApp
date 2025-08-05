@@ -66,6 +66,7 @@ export function useGetFilteredSubscribedCommunities(communityId: string = "") {
   });
 }
 
+
 export async function joinCommunity(communityId: string, token: string) {
   const response = await client(`/community/${communityId}/join`, {
     method: "PUT",
@@ -149,8 +150,12 @@ export const useJoinCommunityFromUniversity = () => {
     mutationFn: (universityId: string) =>
       joinCommunityFromUniversityAPI(universityId, cookieValue),
     onSuccess: (response: any) => {
+        queryClient.invalidateQueries({ queryKey: ["communityGroupsPost"] });
       queryClient.invalidateQueries({
         queryKey: ["useGetSubscribedCommunties"],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["community"],
       });
     },
   });

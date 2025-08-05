@@ -71,7 +71,7 @@ const InfoItem: React.FC<InfoItemProps> = ({ icon, text }) => (
 
 const styles = StyleSheet.create({
   container: {
-    paddingVertical: 10,
+ 
     gap: 10,
   },
   infoItem: {

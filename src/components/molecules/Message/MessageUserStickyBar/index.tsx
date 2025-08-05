@@ -98,8 +98,10 @@ const MessageUserStickyBar = ({
     navigation.navigate("ChatMembersScreen", {
       users,
       chatId,
+      groupAdmin
     });
   };
+
 
   const navigateToEditGroup = () => {
     navigation.navigate("EditChatScreen", {

@@ -25,6 +25,8 @@ import {
 import { Controller, useForm } from "react-hook-form";
 import { StyleSheet, Text, View } from "react-native";
 import ActionSheet, { ActionSheetRef } from "react-native-actions-sheet";
+import { AllUserSelectBottomSheet } from "../../UserBottomSheet";
+import { Toast } from "react-native-toast-notifications";
 
 const MessageNewGroupFormContainer = forwardRef((props, ref) => {
   const {
@@ -61,6 +63,7 @@ const MessageNewGroupFormContainer = forwardRef((props, ref) => {
   const [individualsUsers, setIndividualsUsers] = useState<any[]>([]);
   const [filteredUsers, setFilterUsers] = useState<any[]>([]);
   const [filteredFacultyUsers, setFilterFacultyUsers] = useState<any[]>([]);
+  const [selectedUsers, setSelectedUsers] = useState<any>([]);
   const actionSheetRef = useRef<ActionSheetRef>(null);
   const yearActionSheetRef = useRef<ActionSheetRef>(null);
   const majorActionSheetRef = useRef<ActionSheetRef>(null);
@@ -87,8 +90,12 @@ const MessageNewGroupFormContainer = forwardRef((props, ref) => {
     setValue(fieldName, updatedValue);
   };
 
+
+  
   const removeUser = (userId: string) => {
-    setIndividualsUsers((prev: any[]) => prev.filter((u) => u._id !== userId));
+    console.log("userId", userId);
+    console.log("selectedUsers", individualsUsers);
+    setIndividualsUsers((prev: any[]) => prev.filter((u) => u.profile?.users_id !== userId));
   };
 
   const handleAddUsers = () => {
@@ -114,6 +121,18 @@ const MessageNewGroupFormContainer = forwardRef((props, ref) => {
     setFilterFacultyUsers(filtered);
   }, [occupation, affiliation]);
 
+
+  const openUniversityActionSheet = () => {
+    if(userProiledata?.communities?.length && userProiledata?.communities?.length > 0){
+      universityActionSheetRef.current?.show();
+    }else{
+        return Toast.show("Please add a university", {
+            type: "warning",
+            placement: "top",
+          });
+    }
+  };
+
   return (
     <View>
       <View style={styles.paddingContainer}>
@@ -126,8 +145,10 @@ const MessageNewGroupFormContainer = forwardRef((props, ref) => {
             text={"Search Name"}
             icon={<Search width={20} height={20} />}
           />
-          <SelectUserProfileChips
+       
+           <SelectUserProfileChips
             individualsUsers={individualsUsers}
+            isAllUsers={true}
             onRemove={(id) => removeUser(id as string)}
           />
         </View>
@@ -142,7 +163,7 @@ const MessageNewGroupFormContainer = forwardRef((props, ref) => {
           <View style={styles.bulkContainer}>
             <DummyButton
               label="University"
-              onPress={() => universityActionSheetRef.current?.show()}
+              onPress={() => openUniversityActionSheet()}
               toShowCross={!!community.name}
               text={
                 community.name
@@ -235,12 +256,13 @@ const MessageNewGroupFormContainer = forwardRef((props, ref) => {
         snapPoints={[50, 100]}
         onClose={() => setSearchInput("")}
       >
-        <SelectCommunityUsersBottomSheet
+        {/* <SelectCommunityUsersBottomSheet
           setSelectedUsers={setIndividualsUsers}
           selectedUsers={individualsUsers}
           communityId={community.id}
           myUserId={userProiledata?.users_id || ""}
-        />
+        /> */}
+          <AllUserSelectBottomSheet selectedUsers={individualsUsers} setSelectedUsers={setIndividualsUsers} isMultiAllowed={true} />
       </ActionSheet>
       <ActionSheet
         ref={yearActionSheetRef}

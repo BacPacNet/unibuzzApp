@@ -31,6 +31,7 @@ import { AxiosError } from "axios";
 import EmptyStateCard from "@/components/molecules/EmptyStateCard";
 import NotMember from "@/assets/placeHolder/joinGroup.svg";
 import NoUniversityPost from "@/assets/placeHolder/noUniversityPost.svg";
+import BackHeader from "@/components/atoms/BackHeader";
 type NavigationProp = StackNavigationProp<RootStackParamList, "Community">;
 
 const CommunityScreen = ({ route }: any) => {
@@ -123,6 +124,7 @@ const CommunityScreen = ({ route }: any) => {
   const FlatListCommunityHeaderSec = () => {
     return (
       <View style={styles.card}>
+    
         {imageSrc?.length && !ImageSrcErr ? (
           <Image
             source={{ uri: imageSrc }}
@@ -167,6 +169,14 @@ const CommunityScreen = ({ route }: any) => {
         </View>
       </View>
     );
+  };
+
+  const handleBackToGroups = () => {
+    navigation.navigate("manageGroupStack", {
+        screen: "SearchCommunityGroupScreen",
+  
+        params: { communityId: communityId },
+      });
   };
 
   return (
@@ -215,6 +225,7 @@ const CommunityScreen = ({ route }: any) => {
         }
         ListHeaderComponent={
           <>
+              <BackHeader isLeftPadding={false} label="University Groups" onPress={handleBackToGroups}  />
             <FlatListCommunityHeaderSec />
 
             {!isUserJoinedCommunity && (

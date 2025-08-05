@@ -35,6 +35,7 @@ import MediaPreviewList from "@/components/molecules/MediaPreview";
 import BackHeader from "@/components/atoms/BackHeader";
 import ReusableButton from "@/components/atoms/ReusableButton";
 import useCustomBackHandler from "@/hooks/useCustomBackHandler";
+import { useTabBarVisibility } from "@/hooks/useTabBarVisibility";
 
 type ImageAsset = {
   uri: string;
@@ -83,26 +84,8 @@ const NewGroupPost = ({ navigation }: any) => {
     UserPostType.PUBLIC,
   );
 
-  useFocusEffect(
-    useCallback(() => {
-      navigation.getParent().setOptions({
-        tabBarStyle: { display: "none" },
-      });
 
-      return () => {
-        navigation.getParent().setOptions({
-          tabBarStyle: {
-            display: "flex",
-            backgroundColor: "white",
-            height: 60,
-            paddingBottom: 10,
-            paddingTop: 10,
-          },
-        });
-      };
-    }, [navigation]),
-  );
-
+  useTabBarVisibility(navigation)
   const handleImagePick = useCallback(() => {
     launchImageLibrary(
       { mediaType: "photo", selectionLimit: 0 },
@@ -293,7 +276,7 @@ const NewGroupPost = ({ navigation }: any) => {
           </View>
         )}
         <View style={styles.editorHeight}>
-          <RichText editor={editor} />
+          <RichText editor={editor} focusable={true} />
         </View>
         <KeyboardAvoidingView
           behavior={Platform.OS === "ios" ? "padding" : "height"}

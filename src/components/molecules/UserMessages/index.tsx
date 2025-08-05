@@ -122,9 +122,6 @@ const UserMessages = ({
     }
   }, [chatMessages, changed]);
 
-  //   useEffect(() => {
-  //     navigation.setOptions({ tabBarStyle: { display: "none" } });
-  //   }, [navigation]);
 
   useFocusEffect(
     useCallback(() => {

@@ -1,5 +1,5 @@
 import { useNavigation, useRoute } from "@react-navigation/native";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import {
   ScrollView,
   StyleSheet,
@@ -9,7 +9,7 @@ import {
   View,
 } from "react-native";
 import { Filter, Search, SortUp } from "iconoir-react-native";
-import { useGetFilteredSubscribedCommunities } from "@/services/university-community";
+import { useGetFilteredSubscribedCommunities, useGetSubscribedCommunities } from "@/services/university-community";
 import SearchCommunityGroupList from "@/components/organism/SearchCommunityGroupsList";
 import { RootStackParamList } from "@/types/navigation";
 import { StackNavigationProp } from "@react-navigation/stack";
@@ -20,6 +20,9 @@ import SearchCommunityFilterBottomSheet from "@/components/molecules/SearchCommu
 
 import PlusCircleButton from "@/components/atoms/PlusCircle";
 import SortCommunityBottomSheet from "@/components/molecules/SearchCommunity/SortCommunityBottomSheet";
+import { getUserProfileStore } from "@/storage/user";
+import { Community } from "@/types/Community";
+import { Toast } from "react-native-toast-notifications";
 
 type NavigationProp = StackNavigationProp<
   RootStackParamList,
@@ -33,34 +36,47 @@ const SearchCommunityGroupScreen = () => {
   const sortBottomSheet = useRef<ActionSheetRef>(null);
   const navigation = useNavigation<NavigationProp>();
   const insets = useSafeAreaInsets();
+const userProfileData = getUserProfileStore()
+const [community, setCommunity] = useState<Community>()
 
-  const hideBottomBar = () => {
-    filterBottomSheet.current?.hide();
-  };
 
+
+  const isUserVerifiedForCommunity: boolean = userProfileData?.email?.some((community) => community?.communityId === communityId) || false
+  const canUserCreateGroup = community?.users.some((user) => user._id === userProfileData?.users_id) && isUserVerifiedForCommunity
+
+  const { data: subscribedCommunitiesForUser, isLoading } = useGetSubscribedCommunities()
   const {
     mutate,
     data: subscribedCommunities,
     isPending,
   } = useGetFilteredSubscribedCommunities(communityId);
 
+
   const {
     selectedTypeMain,
     selectedFiltersMain,
-
     sort,
     setSort,
   } = useCommunityFilterContext();
-  const [modalVisible, setModalVisible] = useState(false);
 
+  const isFilterApplied = useMemo(() => {
+    return Object.values(selectedFiltersMain)?.length > 0;
+  }, [selectedFiltersMain]);
+  
+  
   const handleNavigateToGroup = (data: any) => {
     navigation.navigate("CommunityGroup", {
       communityId: data?.communityId,
       communityGroupId: data?._id,
+      from: "manageCommunityGroup",
     });
   };
 
   const handleNavigateToNewCommunityGroupScreen = () => {
+
+    if(!canUserCreateGroup){
+        return Toast.show("Verify Account to Create Groups",{type:"warning",placement:"top"})
+    }
     navigation.navigate("manageGroupStack", {
       screen: "NewCommunityGroupScreen",
 
@@ -78,6 +94,19 @@ const SearchCommunityGroupScreen = () => {
     mutate(data);
   }, [sort, communityId, selectedTypeMain, selectedFiltersMain, change]);
 
+  useEffect(() => {
+    if (communityId && subscribedCommunitiesForUser) {
+      setCommunity(subscribedCommunitiesForUser.find((community:any) => community._id === communityId))
+    } else if (subscribedCommunitiesForUser) {
+      setCommunity(subscribedCommunitiesForUser[0] as Community)
+    }
+  }, [subscribedCommunitiesForUser, communityId])
+
+
+
+  
+
+  
   return (
     <ScrollView className="flex-1 bg-white pb-20">
       <View className="p-4 flex-row items-center gap-2">
@@ -103,8 +132,9 @@ const SearchCommunityGroupScreen = () => {
           <Filter
             width={24}
             height={24}
+
             color={"#6744FF"}
-            fill={"#6744FF"}
+            fill={isFilterApplied ? "#6744FF" : "#F3F2FF"}
             strokeWidth={2}
           />
         </TouchableOpacity>

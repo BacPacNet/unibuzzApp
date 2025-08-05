@@ -18,7 +18,7 @@ import {
   Community,
 } from "iconoir-react-native";
 import CommunityLogo from "@/components/atoms/LogoHolder";
-import { getUserProfileStore } from "@/storage/user";
+import { getUserProfileStore, updateUserProfileCommunities } from "@/storage/user";
 import { useJoinCommunityFromUniversity } from "@/services/university-community";
 import { Toast } from "react-native-toast-notifications";
 import { useNavigation } from "@react-navigation/native";
@@ -86,10 +86,13 @@ const University = ({
   const handleJoinCommunity = () => {
     joinCommunityFromUniversity(data._id, {
       onSuccess: (response: any) => {
+        
         if (response.statusCode === 406) {
           limitActionSheetRef.current?.show();
         } else {
           Toast.show("Joined Community");
+          updateUserProfileCommunities(response.data.profile.communities)
+        
           navigation.navigate("Community", {
             communityId: response.data.community._id,
           });
