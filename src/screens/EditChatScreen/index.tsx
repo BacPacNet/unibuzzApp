@@ -1,14 +1,11 @@
 import BackHeader from "@/components/atoms/BackHeader";
-import DummyButton from "@/components/atoms/DummyButton";
-import ExpandableRadioGroup from "@/components/atoms/ExpandableRadioGroup";
 import { FormInput } from "@/components/atoms/FormInput";
 import ReusableButton from "@/components/atoms/ReusableButton";
 import { NewGroupUserListItem } from "@/components/molecules/CreateNewGroup/UserList";
 import MessageNewGroupFormContainer from "@/components/molecules/Message/MessageTopBar/MessageNewGroupFormContainer";
 import { ImageAsset } from "@/hooks/useImageUpload";
 import {
-  useCreateGroupChat,
-  useCreateUserChat,
+
   useEditGroupChat,
 } from "@/services/Messages";
 import { useUploadToS3 } from "@/services/upload";
@@ -16,7 +13,7 @@ import { useUsersProfileForConnections } from "@/services/users";
 import { getUserProfileStore } from "@/storage/user";
 import { defaultBottomSheetSnapPoints } from "@/types/constant";
 import { UPLOAD_CONTEXT } from "@/types/uploads";
-import { NavArrowDown, User } from "iconoir-react-native";
+import {  User } from "iconoir-react-native";
 import { useRef, useState } from "react";
 import {
   View,
@@ -61,9 +58,6 @@ export default function EditChatScreen({ route }: any) {
   const userProfileData = getUserProfileStore();
   const formRef = useRef<any>(null);
 
-  const [selectedType, setSelectedType] = useState<"single" | "group" | null>(
-    null,
-  );
   const [searchInput, setSearchInput] = useState("");
   const [selectedUsers, setSelectedUsers] = useState<any>([]);
 
@@ -138,7 +132,7 @@ export default function EditChatScreen({ route }: any) {
 
   return (
     <ScrollView style={styles.container}>
-      <BackHeader label="messages" />
+      <BackHeader label="Messages" />
       <View style={styles.bulkContainer}>
         <View>
           <View style={styles.photoSection}>
@@ -275,7 +269,7 @@ const styles = StyleSheet.create({
   },
   required: {
     color: "#EF4444",
-
+marginBottom:16,
     fontSize: 12,
   },
 });

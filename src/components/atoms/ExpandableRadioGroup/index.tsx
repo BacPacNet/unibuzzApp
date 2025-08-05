@@ -27,7 +27,7 @@ function ExpandableRadioGroup<T extends string | number>({
   };
 
   return (
-    <View style={{ gap: 12 }}>
+    <View style={{ gap: 16 }}>
       {options.map((option) => {
         const isSelected = selectedValue === option.value;
         return (

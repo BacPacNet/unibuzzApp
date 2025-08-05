@@ -5,6 +5,7 @@ import React, { useState } from "react";
 import { View, Image, Text, Linking, StyleSheet } from "react-native";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import ImageViewing from "react-native-image-viewing";
+import PDFModal from "../PdfView";
 
 type Props = {
   imagesData: {
@@ -15,6 +16,8 @@ type Props = {
 const ImageGridLayout = ({ imagesData }: Props) => {
   const [isOpen, setIsOpen] = useState(false);
   const [photoIndex, setPhotoIndex] = useState(0);
+  const [isPdfOpen, setIsPdfOpen] = useState(false);
+  const [pdfUrl, setPdfUrl] = useState("");
 
   const imageItems = imagesData.filter((item) =>
     imageMimeTypes.includes(getMimeTypeFromUrl(item.imageUrl)),
@@ -31,6 +34,11 @@ const ImageGridLayout = ({ imagesData }: Props) => {
   const formattedImages = imageItems?.map(({ imageUrl }: any) => ({
     uri: imageUrl,
   }));
+
+  const handlePdfClick = (url: string) => {
+    setPdfUrl(url);
+    setIsPdfOpen(true);
+  };
 
   const renderImages = () => {
     switch (formattedImages?.length) {
@@ -150,12 +158,12 @@ const ImageGridLayout = ({ imagesData }: Props) => {
     }
   };
 
-  if (imagesData?.length == 0) {
+  if (imagesData?.length == 0 ) {
     return;
   }
 
   return (
-    <View style={styles.mainContainer} className="flex-1 bg-white py-2 px-4">
+    <View style={styles.mainContainer} className="flex-1 bg-white  px-4">
       {isOpen && (
         <ImageViewing
           images={formattedImages}
@@ -180,7 +188,13 @@ const ImageGridLayout = ({ imagesData }: Props) => {
           {fileItems?.map((item, index) => (
             <TouchableOpacity
               key={index}
-              onPress={() => Linking.openURL(item.imageUrl)}
+              onPress={() => {
+                if (item.imageUrl.includes(".pdf")) {
+                  handlePdfClick(item.imageUrl);
+                } else {
+                  Linking.openURL(item.imageUrl);
+                }
+              }}
               style={{
                 borderWidth: 1,
                 borderColor: "#e5e7eb",
@@ -206,6 +220,8 @@ const ImageGridLayout = ({ imagesData }: Props) => {
           ))}
         </View>
       )}
+
+      {isPdfOpen && <PDFModal visible={isPdfOpen} onClose={() => setIsPdfOpen(false)} pdfUrl={pdfUrl} />}
     </View>
   );
 };

@@ -12,6 +12,7 @@ export const styles = StyleSheet.create({
   },
   flatList: {
     width: "100%",
+
   },
   editButton: {
     paddingHorizontal: 10,

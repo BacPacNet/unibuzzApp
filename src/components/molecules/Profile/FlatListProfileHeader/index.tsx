@@ -12,6 +12,7 @@ import CommunityLogo from "@/components/atoms/LogoHolder";
 import Badge from "@/assets/badge.svg";
 import { IsUniversityVerified } from "@/utils";
 import { userTypeEnum } from "@/types/register";
+import ReusableButton from "@/components/atoms/ReusableButton";
 
 type Props = {
   firstName: string;
@@ -96,6 +97,7 @@ export const FlatListProfileHeaderPart = ({
           affiliation={affiliation}
           isSideBar={false}
           userId={userId}
+          ProfileSize="large"
         />
       </View>
       <View
@@ -133,7 +135,8 @@ export const FlatListProfileHeaderPart = ({
               {following?.length || 0} Following
             </Text>
           </TouchableOpacity>
-          <TouchableOpacity
+
+       <TouchableOpacity
             onPress={() => handleNavigate("followers")}
             style={styles.followButton}
           >
@@ -157,7 +160,11 @@ export const FlatListProfileHeaderPart = ({
 
 const styles = StyleSheet.create({
   bottomMargin: {
-    marginBottom: 32,
+
+    paddingBottom:32,
+    borderBottomWidth: 1,
+    borderBottomColor: "#E5E7EB",
+    marginBottom:32
   },
   padding: {
     paddingHorizontal: 16,
@@ -197,7 +204,7 @@ const styles = StyleSheet.create({
     height: 36,
     borderColor: "#E5E7EB",
     borderWidth: 1,
-    borderRadius: 8,
+    borderRadius: 80,
     display: "flex",
     alignItems: "center",
     justifyContent: "center",

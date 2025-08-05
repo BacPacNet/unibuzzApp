@@ -82,38 +82,57 @@ const MembersUserCard = ({
     setIsFollowingState(isFollowing);
   }, [isFollowing]);
 
-  if (_id === currentUserId) return null;
 
   const isStudent = role === "student";
 
-  const renderCTA =
-    isViewerAdmin && !isSelfProfile ? (
-      <ReusableButton
-        onPress={() => membersBottomSheet.current?.show()}
-        variant="border"
-        buttonText="Settings"
-        height="medium"
-        size={100}
-      />
-    ) : isSelfProfile ? null : isFollowingState ? (
-      <ReusableButton
-        onPress={() => handleNavigate(_id)}
-        variant="border"
-        buttonText="View Profile"
-        height="medium"
-        size={100}
-      />
-    ) : isChat && !isGroupAdmin ? (
-      <ReusableButton
-        onPress={() => handleRemoveClick?.(_id)}
-        variant="border"
-        buttonText="Remove"
-        height="medium"
-        size={100}
-        disabled={disabled}
-        isLoading={isRemoving}
-      />
-    ) : isChat && isGroupAdmin ? null : (
+  
+  const renderCTA = (() => {
+    if(isSelfProfile || _id === currentUserId ){
+      return null;
+    }
+    if (isViewerAdmin) {
+      return (
+        <ReusableButton
+          onPress={() => membersBottomSheet.current?.show()}
+          variant="border"
+          buttonText="Settings"
+          height="medium"
+          size={100}
+        />
+      );
+    }
+    
+    if (isFollowingState) {
+      return (
+        <ReusableButton
+          onPress={() => handleNavigate(_id)}
+          variant="border"
+          buttonText="View Profile"
+          height="medium"
+          size={100}
+        />
+      );
+    }
+    
+    if (isChat && !isGroupAdmin) {
+      return (
+        <ReusableButton
+          onPress={() => handleRemoveClick?.(_id)}
+          variant="border"
+          buttonText="Remove"
+          height="medium"
+          size={100}
+          disabled={disabled}
+          isLoading={isRemoving}
+        />
+      );
+    }
+    
+    if (isChat && isGroupAdmin) {
+      return null;
+    }
+    
+    return (
       <ReusableButton
         variant="primary"
         buttonContent={
@@ -129,6 +148,7 @@ const MembersUserCard = ({
         isLoading={isProcessing}
       />
     );
+  })();
 
   return (
     <View style={styles.container}>

@@ -33,6 +33,7 @@ import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { RootStackParamList } from "@/types/navigation";
 import { UserSelectCard } from "@/components/molecules/Message/UserSelectCard";
+import { AllUserSelectBottomSheet } from "@/components/molecules/Message/UserBottomSheet";
 
 type NavigationProp = StackNavigationProp<RootStackParamList, "NewChatScreen">;
 export default function NewChatScreen() {
@@ -135,7 +136,7 @@ export default function NewChatScreen() {
 
   return (
     <ScrollView style={styles.container}>
-      <BackHeader label="messages" />
+      <BackHeader label="Messages" />
       <View style={styles.bulkContainer}>
         <ExpandableRadioGroup
           selectedValue={selectedType}
@@ -160,6 +161,10 @@ export default function NewChatScreen() {
                       item={selectedUsers[0]}
                       selectedUsers={selectedUsers}
                       setSelectedUsers={() => {}}
+                     isRemoveAllowed={true}
+                     handleRemoveUser={() => {
+                      setSelectedUsers([]);
+                     }}
                     />
                   )}
                 </View>
@@ -227,7 +232,7 @@ export default function NewChatScreen() {
         gestureEnabled={true}
         snapPoints={defaultBottomSheetSnapPoints}
       >
-        <View>
+        {/* <View>
           <View className="w-full p-3">
             <TextInput
               style={{ paddingStart: 8 }}
@@ -251,7 +256,8 @@ export default function NewChatScreen() {
               </View>
             )}
           />
-        </View>
+        </View> */}
+        <AllUserSelectBottomSheet hideBottomSheet={()=> userActionSheetRef.current?.hide()} selectedUsers={selectedUsers} setSelectedUsers={setSelectedUsers} isMultiAllowed={false} />
         {/* <Text>User</Text> */}
       </ActionSheet>
     </ScrollView>
@@ -309,5 +315,6 @@ const styles = StyleSheet.create({
     color: "#EF4444",
 
     fontSize: 12,
+    marginBottom:16
   },
 });

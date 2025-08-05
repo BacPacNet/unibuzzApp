@@ -8,6 +8,7 @@ function SafeScreen({ children }: PropsWithChildren) {
   const { layout, variant, navigationTheme } = useTheme();
   const insets = useSafeAreaInsets();
 
+ 
   return (
     <View
       style={[
@@ -17,8 +18,8 @@ function SafeScreen({ children }: PropsWithChildren) {
           // Paddings to handle safe area
           paddingTop: insets.top,
           paddingBottom: insets.bottom,
-          paddingLeft: insets.left + 16,
-          paddingRight: insets.right + 16,
+        //   paddingLeft: insets.left + 16,
+        //   paddingRight: insets.right + 16,
         },
       ]}
     >

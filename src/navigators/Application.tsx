@@ -132,7 +132,6 @@ function ApplicationNavigator() {
           },
           tabBarActiveTintColor: "#6744FF",
           tabBarInactiveTintColor: "black",
-
           tabBarStyle: {
             backgroundColor: "white",
             height: 80,

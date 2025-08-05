@@ -1,16 +1,17 @@
 import CollapsibleMultiSelect from "@/components/atoms/CollapsibleMultiSelect";
 import { useCommunityFilterContext } from "@/context/CommunityFilterProvider/CommunityFilterProvider";
-import { subCategories } from "@/types/CommunityFilter";
+import { GroupAccess, GroupType, subCategories } from "@/types/CommunityFilter";
 import { useFocusEffect } from "@react-navigation/native";
 import { useCallback, useEffect, useState } from "react";
 import { View } from "react-native";
 import { ScrollView } from "react-native-actions-sheet";
 const SearchCommunityFilterBottomSheet = () => {
-  const { selectedFiltersMain, setSelectedFiltersMain } =
+  const { selectedFiltersMain, setSelectedFiltersMain,selectedTypeMain,setSelectedTypeMain } =
     useCommunityFilterContext();
   const [selectedFilters, setSelectedFilters] = useState<
     Record<string, string[]>
   >({});
+  const [selectedType, setSelectedType] = useState<string[]>([])
 
   useEffect(() => {
     if (Object.keys(selectedFilters)?.length >= 0) {
@@ -18,12 +19,27 @@ const SearchCommunityFilterBottomSheet = () => {
     }
   }, [selectedFilters]);
 
+  useEffect(() => {
+    if (selectedType?.length >= 0) {
+        setSelectedTypeMain(selectedType);
+    }
+  }, [selectedType]);
+
+  
   useFocusEffect(
     useCallback(() => {
       setSelectedFilters(selectedFiltersMain);
+      setSelectedType(selectedTypeMain)
     }, []),
   );
 
+
+  
+
+  const handleSelectTypes = (type: string) => {
+    setSelectedType((prev) => (prev.includes(type) ? prev.filter((item) => item !== type) : [...prev, type]))
+  }
+  
   const handleSelect = (category: string, option: string) => {
     setSelectedFilters((prev: any) => {
       const categoryFilters = prev[category] || [];
@@ -72,6 +88,20 @@ const SearchCommunityFilterBottomSheet = () => {
           flexShrink: 1,
         }}
       >
+          <CollapsibleMultiSelect
+          title="Group Access"
+          options={GroupAccess}
+          selectedOptions={ selectedType}
+          onSelect={(value: string) => handleSelectTypes( value)}
+        
+        />
+          <CollapsibleMultiSelect
+          title="Group Type"
+          options={GroupType}
+          selectedOptions={ selectedType}
+          onSelect={(value: string) => handleSelectTypes( value)}
+        
+        />
         <CollapsibleMultiSelect
           title="Academic Focus"
           options={subCategories["Academic Focus"]}

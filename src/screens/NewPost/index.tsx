@@ -31,6 +31,7 @@ import MediaPreviewList from "@/components/molecules/MediaPreview";
 import { useHeader } from "@/context/HeaderProvider/Header";
 import BackHeader from "@/components/atoms/BackHeader";
 import ReusableButton from "@/components/atoms/ReusableButton";
+import { useTabBarVisibility } from "@/hooks/useTabBarVisibility";
 
 type ImageAsset = {
   uri: string;
@@ -76,25 +77,9 @@ const NewPost = ({ navigation }: any) => {
   const [showPostType, setShowPostType] = useState(false);
   const { changeHeaderShownStatus } = useHeader();
 
-  useFocusEffect(
-    useCallback(() => {
-      navigation.getParent().setOptions({
-        tabBarStyle: { display: "none" },
-      });
 
-      return () => {
-        navigation.getParent().setOptions({
-          tabBarStyle: {
-            display: "flex",
-            backgroundColor: "white",
-            height: 60,
-            paddingBottom: 10,
-            paddingTop: 10,
-          },
-        });
-      };
-    }, [navigation]),
-  );
+
+useTabBarVisibility(navigation)
 
   const handleImagePick = useCallback(() => {
     launchImageLibrary(
@@ -244,7 +229,7 @@ const NewPost = ({ navigation }: any) => {
   
 
   return (
-    <View className="flex-1 bg-white relative">
+    <SafeAreaView className="flex-1 bg-white relative">
       <View
         style={{ paddingBottom: 16 }}
         className="  flex flex-row gap-4 items-center justify-between border-b border-neutral-300"
@@ -304,7 +289,7 @@ const NewPost = ({ navigation }: any) => {
           <Toolbar editor={editor} />
         </KeyboardAvoidingView>
       </SafeAreaView>
-    </View>
+    </SafeAreaView>
   );
 };
 

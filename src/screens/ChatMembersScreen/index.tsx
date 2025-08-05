@@ -5,7 +5,7 @@ import { View, StyleSheet, FlatList } from "react-native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { RootStackParamList } from "@/types/navigation";
 import MembersUserCard from "@/components/molecules/MembersUserCard";
-import { getUserProfileStore } from "@/storage/user";
+import { getUserProfileStore, getUserStore } from "@/storage/user";
 import { useRemoveGroupChatMember } from "@/services/Messages";
 import { useState } from "react";
 
@@ -18,10 +18,12 @@ const ChatMembersScreen = ({ route }: any) => {
   const navigate = useNavigation<NavigationProp>();
   const users = route?.params?.users ?? [];
   const chatId = route?.params?.chatId ?? "";
+  const groupAdmin = route?.params?.groupAdmin ?? "";
   const [removing, setRemoving] = useState("");
   const [usersList, setUsersList] = useState(users || []);
-
   const userProfileData = getUserProfileStore();
+  
+  
   const { mutateAsync, isPending } = useRemoveGroupChatMember(chatId);
   const handleRemoveUser = async (userIdToRemove: string) => {
     setRemoving(userIdToRemove);
@@ -55,10 +57,10 @@ const ChatMembersScreen = ({ route }: any) => {
               firstName={item.userId.firstName}
               lastName={item.userId.lastName}
               isFollowing={false}
-              isSelfProfile={false}
+              isSelfProfile={userProfileData?.users_id === item.userId._id}
               isViewerAdmin={false}
-              isGroupAdmin={userProfileData?.users_id === item.userId._id}
-              currentUserId={""}
+              isGroupAdmin={groupAdmin === item.userId._id}
+              currentUserId={userProfileData?.users_id || ""}
               role={item.userId.role}
               isChat={true}
               profile_dp_imageUrl={item.userId.profileDp}

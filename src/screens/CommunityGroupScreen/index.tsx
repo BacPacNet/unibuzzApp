@@ -232,9 +232,16 @@ const CommunityGroupScreen = ({ route }: any) => {
     });
   };
 
+
   const handleBack = () => {
     if (from === screenName.notifications) {
       navigation.navigate("Notifications");
+    } if(from === screenName.manageCommunityGroup){
+        navigation.navigate("manageGroupStack", {
+            screen: "SearchCommunityGroupScreen",
+      
+            params: { communityId: communityId },
+          });
     } else {
       navigation.goBack();
     }

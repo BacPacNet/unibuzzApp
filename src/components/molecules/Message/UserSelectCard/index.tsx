@@ -2,17 +2,24 @@ import { useState } from "react";
 import { Image, Text, TouchableOpacity, View } from "react-native";
 import avatar from "@/assets/avatarPlaceholder.png";
 import { Users } from "@/types/connections";
+import { Xmark } from "iconoir-react-native";
 
 type Props = {
   item: Users;
   selectedUsers: Users[];
-  setSelectedUsers: (value: Users[]) => void;
+  setSelectedUsers: (value: Users | Users[]) => void;
+  handleUserSelect?: (value: Users) => void;
+  handleRemoveUser?: () => void;
+  isRemoveAllowed?: boolean;
 };
 
 export const UserSelectCard = ({
   item,
   selectedUsers,
   setSelectedUsers,
+  handleUserSelect,
+  isRemoveAllowed,
+  handleRemoveUser
 }: Props) => {
   const [imageError, setImageError] = useState(false);
   const imageUri = item?.profile?.profile_dp?.imageUrl;
@@ -22,14 +29,27 @@ export const UserSelectCard = ({
   );
 
   const handleClick = () => {
+    if (handleUserSelect) {
+      return handleUserSelect(item);
+    }
     if (isSelected) {
-      setSelectedUsers(selectedUsers.filter((u: any) => u._id !== item._id));
+      // Handle deselection
+      if (Array.isArray(selectedUsers)) {
+        setSelectedUsers(selectedUsers.filter((u: any) => u._id !== item._id));
+      } else {
+        setSelectedUsers([]);
+      }
     } else {
-      setSelectedUsers([...selectedUsers, item]);
+      // Handle selection
+      if (Array.isArray(selectedUsers)) {
+        setSelectedUsers([...selectedUsers, item]);
+      } else {
+        setSelectedUsers(item);
+      }
     }
   };
 
-  let bouncyCheckboxRef: any = null;
+
 
   return (
     <TouchableOpacity
@@ -70,6 +90,14 @@ export const UserSelectCard = ({
         
         </View>
       </View>
+      {isRemoveAllowed ? 
+      <View className="flex-row items-center justify-center"> 
+      <TouchableOpacity onPress={() => handleRemoveUser?.()}>
+        <Text>
+        <Xmark width={20} height={20} />
+        </Text>
+      </TouchableOpacity>
+      </View> : null}
     </TouchableOpacity>
   );
 };

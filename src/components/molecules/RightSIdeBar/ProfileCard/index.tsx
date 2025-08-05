@@ -41,6 +41,7 @@ type Props = {
   affiliation?: string;
   isSideBar?: boolean;
   userId?: string;
+  ProfileSize?: "small" | "large";
 };
 
 type NavigationProp = StackNavigationProp<RootStackParamList, "Profile">;
@@ -59,6 +60,7 @@ const ProfileCard = ({
   affiliation,
   isSideBar = false,
   userId,
+  ProfileSize = "small",
 }: Props) => {
   const user = getUserStore();
   const userProfile = getUserProfileStore();
@@ -190,7 +192,7 @@ const ProfileCard = ({
         <View style={styles.profilePicWrapper}>
           {(isSideBar && !userProfile?.profile_dp?.imageUrl) ||
           (!isSideBar && !avatarUrl) ? (
-            <Ava width={48} height={48} />
+            <Ava width={ProfileSize === "large" ? 80 : 48} height={ProfileSize === "large" ? 80 : 48} />
           ) : (
             <Image
               source={
@@ -198,7 +200,13 @@ const ProfileCard = ({
                   ? { uri: userProfile?.profile_dp?.imageUrl }
                   : { uri: avatarUrl }
               }
-              style={styles.profilePic}
+              style={[
+                styles.profilePic,
+                {
+                  width: ProfileSize === "large" ? 80 : 48,
+                  height: ProfileSize === "large" ? 80 : 48,
+                }
+              ]}
             />
           )}
           {/* <Image
@@ -214,12 +222,12 @@ const ProfileCard = ({
         </View>
         <View style={styles.info}>
           <View className="flex   justify-between">
-            <Text style={styles.name}>
+            <Text style={[styles.name, { fontSize: ProfileSize === "large" ? 16 : 12 }]}>
               {name ? name : user?.firstName + " " + user?.lastName}
             </Text>
             <View style={styles.universityContainer}>
-              <Text style={styles.year}>{first}</Text>
-              <Text style={styles.year}>{second}</Text>
+              <Text style={[styles.year, { fontSize: ProfileSize === "large" ? 14 : 10 }]}>{first}</Text>
+              <Text style={[styles.year, { fontSize: ProfileSize === "large" ? 14 : 10 }]}>{second}</Text>
             </View>
           </View>
         </View>
@@ -246,8 +254,8 @@ const styles = StyleSheet.create({
     padding: 3,
   },
   profilePic: {
-    width: 48,
-    height: 48,
+    // width: 48,
+    // height: 48,
     borderRadius: 200,
   },
   info: {

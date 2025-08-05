@@ -15,6 +15,7 @@ type Props = {
   onRemove: (userId: string) => void;
   userId: string;
   name: string;
+  isAllUsers?: boolean;
 };
 
 const SelectedUserProfileChips = ({
@@ -22,6 +23,7 @@ const SelectedUserProfileChips = ({
   onRemove,
   userId,
   name,
+  isAllUsers,
 }: Props) => {
   const [imageError, setImageError] = useState(false);
 
@@ -53,7 +55,11 @@ type IndividualUser = {
     profile_dp: {
       imageUrl: string;
     };
+    users_id: string;
   };
+  profile_dp:{
+    imageUrl: string;
+  }
   firstName: string;
   _id: string;
 };
@@ -61,12 +67,18 @@ type IndividualUser = {
 type ChipsProps = {
   individualsUsers: IndividualUser[];
   onRemove: (userId: string) => void;
+  isAllUsers?: boolean;
 };
 
 export const SelectUserProfileChips = ({
   individualsUsers,
   onRemove,
+  isAllUsers,
 }: ChipsProps) => {
+
+
+
+
   return (
     <ScrollView
       horizontal
@@ -76,10 +88,11 @@ export const SelectUserProfileChips = ({
       {individualsUsers?.map((item, index) => (
         <SelectedUserProfileChips
           key={item?._id || index}
-          avatarUrl={item?.profile?.profile_dp?.imageUrl}
+          avatarUrl={ isAllUsers ? item?.profile?.profile_dp?.imageUrl : item?.profile_dp?.imageUrl}
           name={item?.firstName}
-          userId={item?._id}
+          userId={isAllUsers ? item?.profile?.users_id : item?._id}
           onRemove={onRemove}
+          isAllUsers={isAllUsers}
         />
       ))}
     </ScrollView>

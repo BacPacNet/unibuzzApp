@@ -151,7 +151,7 @@ const PostCard = memo(
 
     return (
       <View
-        className={`relative bg-white ${isSinglePost ? "flex-1 " : ""} flex   gap-4 my-4 z-1`}
+        className={`relative  ${isSinglePost ? "flex-1 " : ""} flex   gap-4 my-4 z-1`}
       >
         <PostCardUserDetails
           visible={visible}
@@ -200,16 +200,36 @@ const PostCard = memo(
             <RenderHtml
               contentWidth={width}
               source={{ html: data?.content }}
-              tagsStyles={{ body: { color: "black" } }}
+            tagsStyles={{
+                body: {
+                  margin: 0,
+                  padding: 0,
+                  color: '#3A3B3C',
+                
+                },
+                p: {
+                  margin: 0,
+                  padding: 0,
+                  fontSize:14
+                },
+                div: {
+                  margin: 0,
+                  padding: 0,
+                },
+              }}
               ignoredDomTags={["label", "input"]}
             />
           </View>
         ) : (
           <View></View>
         )}
-        <View style={{ flex: 1 }}>
-          <ImageGridLayout imagesData={data?.imageUrl || []} />
-        </View>
+        {
+            data?.imageUrl?.length > 0 ?
+            <View style={{ flex: 1 }}>
+            <ImageGridLayout imagesData={data?.imageUrl || []} />
+          </View> : null
+        }
+      
 
         <View className="px-4">
           <RenderCreatedAt
@@ -218,20 +238,20 @@ const PostCard = memo(
           />
         </View>
 
-        <View className="flex flex-row justify-between py-2 px-4 border-t border-b border-neutral-300">
-          <View className="flex flex-row gap-4">
+        <View  className="flex flex-row justify-end items-end pt-2 pb-4 px-4  border-b border-neutral-300">
+          <View className="flex flex-row  gap-4">
             <TouchableOpacity
               onPress={() => LikeUnlikeHandler(data?._id)}
               className="flex flex-row gap-2 items-center"
             >
-              <Text className="text-sm font-bold text-neutral-500">
+              <Text className="text-2xs font-bold text-neutral-500">
                 {data?.likeCount?.length}
               </Text>
               <ThumbsUp
                 strokeWidth={2}
                 color={isSelfLike ? "#6647FF" : "#6B7280"}
-                height={20}
-                width={20}
+                height={16}
+                width={16}
               />
             </TouchableOpacity>
             <TouchableOpacity
@@ -241,29 +261,33 @@ const PostCard = memo(
               }}
               className="flex flex-row gap-2 items-center"
             >
-              <Text className="text-sm font-bold text-neutral-500">
+              <Text className="text-2xs font-bold text-neutral-500">
                 {data?.commentCount}
               </Text>
               <ChatBubbleEmpty
                 strokeWidth={2}
                 color="#6B7280"
-                height={20}
-                width={20}
+                height={16}
+                width={16}
               />
             </TouchableOpacity>
-          </View>
-
-          <TouchableOpacity
+            <TouchableOpacity
             onPress={() => sharePost()}
             className="flex flex-row gap-2 items-center"
           >
+             <Text className="text-2xs font-bold text-neutral-500">
+               Share
+              </Text>
             <ShareAndroid
               strokeWidth={2}
               color="#6B7280"
-              height={20}
-              width={20}
+              height={16}
+              width={16}
             />
           </TouchableOpacity>
+          </View>
+
+        
         </View>
 
         <ActionSheet
@@ -296,3 +320,7 @@ const PostCard = memo(
 );
 
 export default PostCard;
+
+
+
+
