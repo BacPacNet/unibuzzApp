@@ -21,7 +21,7 @@ export const HeaderProvider: React.FC<HeaderProviderProps> = ({ children }) => {
   const [showHeader, setShowHeader] = useState(true);
   const [currScreen, setCurrScreen] = useState("");
 
-  useFirebaseMessaging();
+  // useFirebaseMessaging();
 
   const changeHeaderShownStatus = (value: boolean) => {
     setShowHeader(value);

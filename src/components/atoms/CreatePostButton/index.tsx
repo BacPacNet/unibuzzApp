@@ -1,5 +1,6 @@
 import React from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { Plus } from "iconoir-react-native";
 
 type Props = {
   isAllowed: boolean;
@@ -7,13 +8,17 @@ type Props = {
 };
 
 const CreatePostButton = ({ isAllowed, onPress }: Props) => {
+  if (!isAllowed) return null;
+
   return (
-    <View style={styles.plusButtonContainer}>
-      {isAllowed && (
-        <TouchableOpacity onPress={onPress} style={styles.createButton}>
-          <Text style={{ color: "white", fontSize: 24 }}>+</Text>
-        </TouchableOpacity>
-      )}
+    <View style={styles.container}>
+      <TouchableOpacity
+        onPress={onPress}
+        style={styles.button}
+        activeOpacity={0.8}
+      >
+        <Plus width={24} height={24} color="white" strokeWidth={2.5} />
+      </TouchableOpacity>
     </View>
   );
 };
@@ -21,24 +26,23 @@ const CreatePostButton = ({ isAllowed, onPress }: Props) => {
 export default CreatePostButton;
 
 const styles = StyleSheet.create({
-  plusButtonContainer: {
+  container: {
     position: "absolute",
     right: 20,
-    top: "80%",
-    zIndex: 200,
+    bottom: 50,
+    zIndex: 1000,
   },
-  createButton: {
+  button: {
     backgroundColor: "#6744FF",
-    padding: 15,
-    height: 60,
-    width: 60,
-    borderRadius: 30,
     justifyContent: "center",
     alignItems: "center",
+    width: 60,
+    height: 60,
+    borderRadius: 30,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 4,
-    elevation: 5,
+    shadowOpacity: 0.2,
+    shadowRadius: 6,
+    elevation: 6,
   },
 });

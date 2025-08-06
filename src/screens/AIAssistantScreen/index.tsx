@@ -6,6 +6,10 @@ import {
   TextInput,
   ScrollView,
   SafeAreaView,
+  KeyboardAvoidingView,
+  Keyboard,
+  Platform,
+  Dimensions,
 } from "react-native";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import BackHeader from "@/components/atoms/BackHeader";
@@ -23,6 +27,7 @@ import { getUserStore } from "@/storage/user";
 import { useForm } from "react-hook-form";
 import { Toast } from "react-native-toast-notifications";
 import BotAvatar from "@/assets/chatbot/aiIcon.svg";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 const AI_Assistant = () => {
   const navigation = useNavigation();
@@ -34,9 +39,11 @@ const AI_Assistant = () => {
   });
   const watchText = watch("text");
   const { mutate: createChatBotMessage, isPending } = useCreateChatBotMessage();
+  const inset = useSafeAreaInsets();
   const scrollViewRef = useRef<ScrollView>(null);
   const chatBotMessages = getChatBotMessages();
   const [chatMessages, setChatMessages] = useState<ChatBotMessage[]>([]);
+  const [keyboardHeight, setKeyboardHeight] = useState(inset.bottom);
 
   useEffect(() => {
     if (scrollViewRef.current) {
@@ -44,10 +51,36 @@ const AI_Assistant = () => {
     }
   }, [chatMessages]);
 
+  useEffect(() => {
+    const keyboardDidShowListener = Keyboard.addListener(
+      "keyboardDidShow",
+      (e) => {
+        setKeyboardHeight(e.endCoordinates.height);
+        setTimeout(() => {
+          if (scrollViewRef.current) {
+            scrollViewRef.current.scrollToEnd({ animated: true });
+          }
+        }, 100);
+      }
+    );
+
+    const keyboardDidHideListener = Keyboard.addListener(
+      "keyboardDidHide",
+      () => {
+        setKeyboardHeight(inset.bottom);
+      }
+    );
+
+    return () => {
+      keyboardDidShowListener?.remove();
+      keyboardDidHideListener?.remove();
+    };
+  }, []);
+
   useFocusEffect(
     useCallback(() => {
       navigation.setOptions({ tabBarStyle: { display: "none" } });
-    }, [navigation]),
+    }, [navigation])
   );
 
   useFocusEffect(
@@ -55,7 +88,7 @@ const AI_Assistant = () => {
       if (chatBotMessages?.length !== chatMessages?.length) {
         setChatMessages(chatBotMessages || []);
       }
-    }, []),
+    }, [])
   );
 
   const handleSendMessage = () => {
@@ -79,8 +112,7 @@ const AI_Assistant = () => {
       onSuccess: (res) => {
         setChatMessages((prev) => [...prev, res]);
       },
-      onError: () => {
-      },
+      onError: () => {},
     });
     setValue("text", "");
   };
@@ -154,12 +186,16 @@ const AI_Assistant = () => {
           onContentSizeChange={() =>
             scrollViewRef.current?.scrollToEnd({ animated: true })
           }
+          keyboardShouldPersistTaps="handled"
+          showsVerticalScrollIndicator={false}
         >
           {renderChatMessages()}
           {renderLoadingMessage()}
         </ScrollView>
 
-        <View style={styles.inputContainer}>
+        <View
+          style={[styles.inputContainer, { marginBottom: keyboardHeight - 32 }]}
+        >
           <TextInput
             {...register("text")}
             placeholder="Type a message"
@@ -188,6 +224,9 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "white",
   },
+  keyboardAvoidingView: {
+    flex: 1,
+  },
   headerContainer: {
     flexDirection: "row",
     alignItems: "center",
@@ -213,12 +252,12 @@ const styles = StyleSheet.create({
     flex: 1,
     display: "flex",
     flexDirection: "column",
-    justifyContent: "space-between",
     paddingTop: 16,
   },
   scrollView: {
+    flex: 1,
     paddingHorizontal: 16,
-    marginBottom: 100,
+    paddingBottom: 16,
   },
   emptyStateContainer: {
     height: 400,
@@ -233,24 +272,26 @@ const styles = StyleSheet.create({
   inputContainer: {
     borderTopWidth: 1,
     borderTopColor: "#e0e0e0",
-    position: "absolute",
-    paddingBottom: 40,
-    bottom: 0,
-    left: 0,
-    right: 0,
+    paddingHorizontal: 16,
+    paddingVertical: 12,
     backgroundColor: "white",
+    flexDirection: "row",
+    alignItems: "flex-end",
+    minHeight: 60,
   },
   input: {
+    flex: 1,
     fontSize: 16,
-    paddingHorizontal: 8,
-    height: "auto",
+    paddingHorizontal: 12,
+    paddingVertical: 8,
     color: "#3A3B3C",
-    padding: 4,
+    maxHeight: 100,
+    borderWidth: 1,
+    borderColor: "#e0e0e0",
+    borderRadius: 20,
+    marginRight: 8,
   },
   sendButton: {
-    position: "absolute",
-    bottom: 8,
-    right: 16,
     backgroundColor: "#6744FF",
     width: 32,
     height: 32,

@@ -5,6 +5,7 @@ import {
   KeyboardAvoidingView,
   Platform,
   StyleSheet,
+  SafeAreaView,
 } from "react-native";
 
 import { useForm } from "react-hook-form";
@@ -17,7 +18,6 @@ import { RootStackParamList } from "@/types/navigation";
 import ReusableButton from "@/components/atoms/ReusableButton";
 import { FormInput } from "@/components/atoms/FormInput";
 import { FormInputPassword } from "@/components/atoms/FormInputPassword";
-
 
 type LoginScreenNavigationProp = StackNavigationProp<
   RootStackParamList,
@@ -44,95 +44,97 @@ function LoginScreen() {
   };
 
   return (
-    <KeyboardAvoidingView
-      behavior={Platform.OS === "ios" ? "padding" : "height"}
-      className="flex-1"
-    >
-      <View
-        style={styles.container}
-        className="flex-1 p-4 bg-white justify-between h-full"
+    <SafeAreaView style={styles.container}>
+      <KeyboardAvoidingView
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        className="flex-1"
       >
-        <View></View>
-        <View>
-          <Text style={styles.title}>Sign In</Text>
+        <View
+          style={styles.container}
+          className="flex-1 p-4 bg-white justify-between h-full"
+        >
+          <View></View>
+          <View>
+            <Text style={styles.title}>Sign In</Text>
 
-          <View style={styles.formContainer}>
-            <View className="">
-              <FormInput
-                isLabelShown={true}
-                label="  Email Address/Username"
-                placeholder="john.dowry@example.com"
-                name="email"
-                control={control}
-                keyboardType="email-address"
-                rules={{
-                  required: "Please enter your email!",
-                  pattern: {
-                    value: /^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/,
-                    message: "Invalid email format",
-                  },
-                }}
-                isError={!!loginErrors.email}
-                errorMessage={
-                  loginErrors.email
-                    ? loginErrors.email.message?.toString()
-                    : "email  is required"
-                }
-              />
-
-              <View style={styles.passwordContainer}>
-                <FormInputPassword
-                  label="Password"
-                  placeholder="*********"
-                  name="password"
+            <View style={styles.formContainer}>
+              <View className="">
+                <FormInput
+                  isLabelShown={true}
+                  label="  Email Address/Username"
+                  placeholder="john.dowry@example.com"
+                  name="email"
                   control={control}
+                  keyboardType="email-address"
                   rules={{
-                    required: "Password is required!",
+                    required: "Please enter your email!",
+                    pattern: {
+                      value: /^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/,
+                      message: "Invalid email format",
+                    },
                   }}
-                  isInfoVisible={false}
-                  isPasswordStrengthVisible={false}
-                  isError={!!loginErrors.password}
-                  errorMessage={loginErrors.password?.message?.toString()}
+                  isError={!!loginErrors.email}
+                  errorMessage={
+                    loginErrors.email
+                      ? loginErrors.email.message?.toString()
+                      : "email  is required"
+                  }
                 />
 
-                <TouchableOpacity
-                  onPress={() => navigation.navigate("ForgetPassword")}
-                  style={styles.forgotPasswordContainer}
-                >
-                  <Text style={styles.forgotPasswordText}>
-                    Forgot Password?
-                  </Text>
-                </TouchableOpacity>
+                <View style={styles.passwordContainer}>
+                  <FormInputPassword
+                    label="Password"
+                    placeholder="*********"
+                    name="password"
+                    control={control}
+                    rules={{
+                      required: "Password is required!",
+                    }}
+                    isInfoVisible={false}
+                    isPasswordStrengthVisible={false}
+                    isError={!!loginErrors.password}
+                    errorMessage={loginErrors.password?.message?.toString()}
+                  />
+
+                  <TouchableOpacity
+                    onPress={() => navigation.navigate("ForgetPassword")}
+                    style={styles.forgotPasswordContainer}
+                  >
+                    <Text style={styles.forgotPasswordText}>
+                      Forgot Password?
+                    </Text>
+                  </TouchableOpacity>
+                </View>
               </View>
             </View>
           </View>
-        </View>
-        {/* </Card> */}
+          {/* </Card> */}
 
-        <View className="flex gap-4">
-          <ReusableButton
-            onPress={handleSubmitLogin(onSubmit)}
-            buttonText="Log in"
-            variant="primary"
-            disabled={isPending}
-            isLoading={isPending}
-            height="large"
-          />
-          <ReusableButton
-            onPress={() => navigation.navigate("RegisterScreen")}
-            buttonText="Create Account"
-            variant="border"
-            disabled={isPending}
-            height="large"
-          />
-          {isError && (
-            <Text className="text-red-500 text-sm mt-4 text-center">
-              {error?.response?.data.message || "Something went wrong!"}
-            </Text>
-          )}
+          <View className="flex gap-4">
+            <ReusableButton
+              onPress={handleSubmitLogin(onSubmit)}
+              buttonText="Log in"
+              variant="primary"
+              disabled={isPending}
+              isLoading={isPending}
+              height="large"
+            />
+            <ReusableButton
+              onPress={() => navigation.navigate("RegisterScreen")}
+              buttonText="Create Account"
+              variant="border"
+              disabled={isPending}
+              height="large"
+            />
+            {isError && (
+              <Text className="text-red-500 text-sm mt-4 text-center">
+                {error?.response?.data.message || "Something went wrong!"}
+              </Text>
+            )}
+          </View>
         </View>
-      </View>
-    </KeyboardAvoidingView>
+      </KeyboardAvoidingView>
+    </SafeAreaView>
   );
 }
 
@@ -147,7 +149,8 @@ const styles = StyleSheet.create({
     fontFamily: "font-poppins",
   },
   container: {
-    paddingVertical: "8%",
+    flex: 1,
+    backgroundColor: "white",
   },
   formContainer: {
     marginTop: 32,

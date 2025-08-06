@@ -7,6 +7,7 @@ import {
   Image,
   Platform,
   RefreshControl,
+  SafeAreaView,
   StyleSheet,
   Text,
   TouchableOpacity,
@@ -20,14 +21,12 @@ import {
   useLeaveCommunity,
 } from "@/services/university-community";
 import { getUserStore } from "@/storage/user";
-import { SafeAreaView } from "react-native-safe-area-context";
 import PostCard from "@/components/molecules/Timeline/PostCard";
 import { useQueryClient } from "@tanstack/react-query";
 import { RootStackParamList } from "@/types/navigation";
 import { StackNavigationProp } from "@react-navigation/stack";
 import CreatePostButton from "@/components/atoms/CreatePostButton";
 import CommunityLogo from "@/components/atoms/LogoHolder";
-import { AxiosError } from "axios";
 import EmptyStateCard from "@/components/molecules/EmptyStateCard";
 import NotMember from "@/assets/placeHolder/joinGroup.svg";
 import NoUniversityPost from "@/assets/placeHolder/noUniversityPost.svg";
@@ -60,7 +59,7 @@ const CommunityScreen = ({ route }: any) => {
     boolean | null
   >(null);
   const [imageSrc, setImageSrc] = useState(
-    communityData?.communityCoverUrl?.imageUrl,
+    communityData?.communityCoverUrl?.imageUrl
   );
   const [ImageSrcErr, setImageSrcErr] = useState(false);
   const [refreshing, setRefreshing] = React.useState(false);
@@ -73,7 +72,7 @@ const CommunityScreen = ({ route }: any) => {
       return () => {
         setCurrentCommunityId("");
       };
-    }, [communityId]),
+    }, [communityId])
   );
 
   useEffect(() => {
@@ -88,15 +87,15 @@ const CommunityScreen = ({ route }: any) => {
     if (communityData && userData) {
       setIsUserJoinedCommunity(
         communityData.users.some(
-          (user) => user?._id?.toString() === userData.id,
-        ),
+          (user) => user?._id?.toString() === userData.id
+        )
       );
     }
   }, [communityData, userData]);
 
   useEffect(() => {
     const communityDatas: any = communityGroupPost?.pages.flatMap(
-      (page) => page?.finalPost,
+      (page) => page?.finalPost
     );
     setCommunityDatas(communityDatas);
   }, [communityGroupPost, dataUpdatedAt]);
@@ -124,7 +123,6 @@ const CommunityScreen = ({ route }: any) => {
   const FlatListCommunityHeaderSec = () => {
     return (
       <View style={styles.card}>
-    
         {imageSrc?.length && !ImageSrcErr ? (
           <Image
             source={{ uri: imageSrc }}
@@ -173,93 +171,101 @@ const CommunityScreen = ({ route }: any) => {
 
   const handleBackToGroups = () => {
     navigation.navigate("manageGroupStack", {
-        screen: "SearchCommunityGroupScreen",
-  
-        params: { communityId: communityId },
-      });
+      screen: "SearchCommunityGroupScreen",
+
+      params: { communityId: communityId },
+    });
   };
 
   return (
-    <SafeAreaView className="bg-white flex-1">
-      <CreatePostButton
-        isAllowed={communityData?.adminId == userData?.id}
-        onPress={() =>
-          navigation.navigate("NewGroupPost", {
-            communityId,
-          })
-        }
-      />
-      <FlatList
-        // data={communityDatas}
-        data={isUserJoinedCommunity || communityPostError ? communityDatas : []}
-        style={{
-          width: "100%",
-          height: "100%",
-        }}
-        keyExtractor={(item, index) =>
-          item?._id ? item._id.toString() : index.toString()
-        }
-        renderItem={({ item }) =>
-          isUserJoinedCommunity ? (
-            <PostCard data={item} isTimeline={false} isSinglePost={false} />
-          ) : (
-            <Text></Text>
-          )
-        }
-        refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-        }
-        onEndReached={() => {
-          if (communityPostHasNextPage && !communityPostIsFetchingNextPage) {
-            communityPostNextpage();
+    <>
+      <SafeAreaView className="bg-white flex-1">
+        <CreatePostButton
+          isAllowed={communityData?.adminId == userData?.id}
+          onPress={() =>
+            navigation.navigate("NewGroupPost", {
+              communityId,
+            })
           }
-        }}
-        ListFooterComponent={
-          communityPostIsFetchingNextPage && communityPostHasNextPage ? (
-            <View>
-              <ActivityIndicator size="large" color="#7367f0" />
-            </View>
-          ) : (
-            <View></View>
-          )
-        }
-        ListHeaderComponent={
-          <>
-              <BackHeader isLeftPadding={false} label="University Groups" onPress={handleBackToGroups}  />
-            <FlatListCommunityHeaderSec />
-
-            {!isUserJoinedCommunity && (
-              <EmptyStateCard
-                imageWidth={320}
-                imageHeight={171}
-                SvgComponent={NotMember}
-                title="Join University Community"
-                description="Join this community to access its groups and connect with fellow university members"
+        />
+        <FlatList
+          // data={communityDatas}
+          data={
+            isUserJoinedCommunity || communityPostError ? communityDatas : []
+          }
+          style={{
+            width: "100%",
+            height: "100%",
+          }}
+          keyExtractor={(item, index) =>
+            item?._id ? item._id.toString() : index.toString()
+          }
+          renderItem={({ item }) =>
+            isUserJoinedCommunity ? (
+              <PostCard data={item} isTimeline={false} isSinglePost={false} />
+            ) : (
+              <Text></Text>
+            )
+          }
+          refreshControl={
+            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+          }
+          onEndReached={() => {
+            if (communityPostHasNextPage && !communityPostIsFetchingNextPage) {
+              communityPostNextpage();
+            }
+          }}
+          ListFooterComponent={
+            communityPostIsFetchingNextPage && communityPostHasNextPage ? (
+              <View>
+                <ActivityIndicator size="large" color="#7367f0" />
+              </View>
+            ) : (
+              <View></View>
+            )
+          }
+          ListHeaderComponent={
+            <>
+              <BackHeader
+                isLeftPadding={false}
+                label="University Groups"
+                onPress={handleBackToGroups}
               />
-            )}
-          </>
-        }
-        ListEmptyComponent={
-          isLoading ? (
-            <View className="flex-1 justify-center items-center">
-              <ActivityIndicator size="large" color="#7367f0" />
-            </View>
-          ) : (
-            <View className="flex-1 justify-center items-center">
-              {isUserJoinedCommunity && (
+              <FlatListCommunityHeaderSec />
+
+              {!isUserJoinedCommunity && (
                 <EmptyStateCard
                   imageWidth={320}
                   imageHeight={171}
-                  SvgComponent={NoUniversityPost}
-                  title="No Posts from University."
-                  description="Your university admins will share important updates here when the time comes. Stay tuned!"
+                  SvgComponent={NotMember}
+                  title="Join University Community"
+                  description="Join this community to access its groups and connect with fellow university members"
                 />
               )}
-            </View>
-          )
-        }
-      />
-    </SafeAreaView>
+            </>
+          }
+          ListEmptyComponent={
+            isLoading ? (
+              <View className="flex-1 justify-center items-center">
+                <ActivityIndicator size="large" color="#7367f0" />
+              </View>
+            ) : (
+              <View className="flex-1 justify-center items-center">
+                {isUserJoinedCommunity && (
+                  <EmptyStateCard
+                    imageWidth={320}
+                    imageHeight={171}
+                    SvgComponent={NoUniversityPost}
+                    title="No Posts from University."
+                    description="Your university admins will share important updates here when the time comes. Stay tuned!"
+                  />
+                )}
+              </View>
+            )
+          }
+        />
+      </SafeAreaView>
+    </>
   );
 };
 

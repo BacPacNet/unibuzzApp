@@ -5,7 +5,15 @@ import React, {
   useRef,
   useState,
 } from "react";
-import { View, Text, Image, ScrollView, ActivityIndicator } from "react-native";
+import {
+  View,
+  Text,
+  Image,
+  ScrollView,
+  ActivityIndicator,
+  KeyboardAvoidingView,
+  Platform,
+} from "react-native";
 import { useQueryClient } from "@tanstack/react-query";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
@@ -66,7 +74,6 @@ const UserCard = ({
   name,
   content,
   date,
-
   media,
   isOnline,
 }: MessageProps) => {
@@ -116,12 +123,12 @@ const UserMessages = ({
   const scrollViewRef = useRef<ScrollView>(null);
   const [changed, setChanged] = useState("");
   let previousDate: any = "";
+
   useEffect(() => {
     if (scrollViewRef.current) {
       scrollViewRef.current.scrollToEnd({ animated: false });
     }
   }, [chatMessages, changed]);
-
 
   useFocusEffect(
     useCallback(() => {
@@ -130,7 +137,7 @@ const UserMessages = ({
       return () => {
         changeHeaderShownStatus(true);
       };
-    }, []),
+    }, [])
   );
 
   if (isFetching)
@@ -141,9 +148,13 @@ const UserMessages = ({
     );
 
   return (
-    <View className="flex-1 justify-between h-full">
+    <KeyboardAvoidingView
+      behavior={Platform.OS === "ios" ? "padding" : undefined}
+      keyboardVerticalOffset={0}
+      className="flex-1 justify-between h-full"
+    >
       <ScrollView
-        className="flex-1 px-4  h-full"
+        className="flex-1 px-4 h-full"
         ref={scrollViewRef}
         onContentSizeChange={() =>
           scrollViewRef.current?.scrollToEnd({ animated: true })
@@ -152,11 +163,11 @@ const UserMessages = ({
         {chatMessages?.map((item: any, idx: any) => {
           const currentDate = format(
             new Date(item?.createdAt),
-            "d MMMM h:mm a",
+            "d MMMM h:mm a"
           );
           const shouldShowDateDivider = !dayjs(item.createdAt).isSame(
             previousDate,
-            "day",
+            "day"
           );
           previousDate = dayjs(item.createdAt);
 
@@ -195,7 +206,7 @@ const UserMessages = ({
           setChanged={setChanged}
         />
       </View>
-    </View>
+    </KeyboardAvoidingView>
   );
 };
 

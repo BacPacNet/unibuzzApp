@@ -20,7 +20,7 @@ import { Menu } from "iconoir-react-native";
 import Notifications from "@/screens/NotificationsScreen";
 import Messages from "@/screens/MessagesScreen";
 import AI_Assistant from "@/screens/AIAssistantScreen";
-import { Animated, Image, Pressable, Text, View } from "react-native";
+import { Animated, Image, Platform, Pressable, Text, View } from "react-native";
 import { getUserStore, getUserProfileStore } from "@/storage/user";
 import { Drawer } from "react-native-drawer-layout";
 import { createDrawerNavigator } from "@react-navigation/drawer";
@@ -66,7 +66,7 @@ function ApplicationNavigator() {
   const { variant, navigationTheme } = useTheme();
   const { isAuthenticated, setAuthenticated, deauthenticate } = useAuth();
   const [isAppFirstLaunched, setIsAppFirstLaunched] = useState<boolean | null>(
-    null,
+    null
   );
   const userProfileStore = getUserProfileStore();
   const user = getUserStore();
@@ -117,9 +117,9 @@ function ApplicationNavigator() {
       () =>
         getTabIcons(
           unreadNotificationCount || 0,
-          Number(userUnreadMessagesCount?.messageTotalCount) || 0,
+          Number(userUnreadMessagesCount?.messageTotalCount) || 0
         ),
-      [unreadNotificationCount, userUnreadMessagesCount],
+      [unreadNotificationCount, userUnreadMessagesCount]
     );
     return (
       <Tab.Navigator
@@ -140,6 +140,7 @@ function ApplicationNavigator() {
             alignItems: "center",
             justifyContent: "space-between",
             paddingHorizontal: 0,
+            paddingTop: Platform.OS === "ios" ? 12 : 0,
             gap: 8,
             borderTopWidth: 1,
           },

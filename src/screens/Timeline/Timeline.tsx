@@ -52,7 +52,6 @@ const Timeline = () => {
     );
   }
 
-  
   return (
     <View style={{ position: "relative" }} className="bg-white flex-1 relative">
       <CreatePostButton

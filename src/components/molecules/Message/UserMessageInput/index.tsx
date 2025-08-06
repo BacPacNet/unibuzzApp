@@ -82,13 +82,13 @@ const useMessageState = () => {
 // Utility functions
 const mergeMessages = (
   oldMessages: LatestMessage[],
-  newMessage: LatestMessage,
+  newMessage: LatestMessage
 ): LatestMessage[] => {
   if (!oldMessages.length) return [newMessage];
 
   const lastMsg = oldMessages[oldMessages.length - 1];
   const isDuplicate = oldMessages.findIndex(
-    (msg) => msg._id === newMessage._id,
+    (msg) => msg._id === newMessage._id
   );
 
   if (isDuplicate !== -1) {
@@ -145,7 +145,7 @@ const updateChatsList = (chats: any[], newMessage: any) => {
 
 const prepareMediaFiles = (
   images: ImageAsset[],
-  files: FileWithId[],
+  files: FileWithId[]
 ): MediaFile[] => {
   const imageFiles = images.map((image) => ({
     uri: image.uri,
@@ -196,7 +196,7 @@ const UserMessageInput = ({
       setText(text);
       setChanged(text);
     },
-    [setText, setChanged],
+    [setText, setChanged]
   );
 
   const handleImagePick = useCallback(() => {
@@ -224,7 +224,7 @@ const UserMessageInput = ({
         }
 
         setImages((prevImages) => [...prevImages, ...response.assets]);
-      },
+      }
     );
   }, [files.length, setImages]);
 
@@ -244,7 +244,7 @@ const UserMessageInput = ({
           ...file,
           size: file.size,
           type: file.type,
-        })),
+        }))
       );
 
       if (!validationResult.isValid) {
@@ -274,7 +274,7 @@ const UserMessageInput = ({
         setFiles((prev) => prev.filter((file) => file.name !== identifier));
       }
     },
-    [setImages, setFiles],
+    [setImages, setFiles]
   );
 
   const uploadMedia = useCallback(async () => {
@@ -319,7 +319,7 @@ const UserMessageInput = ({
             queryClient.setQueryData(
               ["chatMessages", chatId._id],
               (oldMessages: LatestMessage[] = []) =>
-                mergeMessages(oldMessages, newMessage),
+                mergeMessages(oldMessages, newMessage)
             );
 
             socket?.emit(SocketEnums.SEND_MESSAGE, newMessage);
@@ -346,7 +346,7 @@ const UserMessageInput = ({
       chatId,
       userProfileId,
       setIsImageUploading,
-    ],
+    ]
   );
 
   const handleSubmit = useCallback(() => {
@@ -360,23 +360,20 @@ const UserMessageInput = ({
   const isSubmitting = isPending || isImageUploading;
 
   return (
-    <KeyboardAvoidingView
-      behavior={Platform.OS === "ios" ? "padding" : "height"}
-      className="bg-white rounded-2xl w-full"
-    >
-      <ScrollView
-        style={{ height: "auto", marginBottom: 50 }}
-        className="rounded-lg relative"
-      >
-        {hasMedia && (
-          <View style={{ height: 100 }}>
-            <MediaPreviewList
-              files={[...images, ...files]}
-              onRemove={handleMediaRemove}
-            />
-          </View>
-        )}
+    <View className="bg-white rounded-2xl w-full">
+      {hasMedia && (
+        <ScrollView
+          style={{ height: 100, marginBottom: 10 }}
+          className="rounded-lg relative"
+        >
+          <MediaPreviewList
+            files={[...images, ...files]}
+            onRemove={handleMediaRemove}
+          />
+        </ScrollView>
+      )}
 
+      <View>
         <TextInput
           ref={inputRef}
           value={text}
@@ -385,46 +382,49 @@ const UserMessageInput = ({
           placeholder="What's on your mind?"
           multiline
           style={styles.input}
-          className="text-base p-1"
+          className="text-base"
         />
-      </ScrollView>
 
-      <View
-        style={{ position: "absolute", bottom: 0, width: "100%" }}
-        className="flex-row justify-between items-center px-2"
-      >
-        <View className="flex-row gap-4">
-          <TouchableOpacity onPress={handleImagePick}>
-            <MediaImage height={20} width={20} color="#a3a3a3" />
-          </TouchableOpacity>
-          <TouchableOpacity onPress={handleFilePick}>
-            <PagePlus height={20} width={20} color="#a3a3a3" />
+        <View style={styles.actionBar}>
+          <View className="flex-row gap-4">
+            <TouchableOpacity onPress={handleImagePick}>
+              <MediaImage height={20} width={20} color="#a3a3a3" />
+            </TouchableOpacity>
+            <TouchableOpacity onPress={handleFilePick}>
+              <PagePlus height={20} width={20} color="#a3a3a3" />
+            </TouchableOpacity>
+          </View>
+
+          <TouchableOpacity
+            onPress={handleSubmit}
+            disabled={isSubmitting}
+            className="bg-primary-500 w-8 h-8 flex items-center justify-center rounded-full disabled:opacity-50"
+          >
+            {isSubmitting ? (
+              <ActivityIndicator size="small" color="white" />
+            ) : (
+              <SendSolid height={18} width={18} color="white" />
+            )}
           </TouchableOpacity>
         </View>
-
-        <TouchableOpacity
-          onPress={handleSubmit}
-          disabled={isSubmitting}
-          className="bg-primary-500 w-8 h-8 flex items-center justify-center rounded-full mb-2 disabled:opacity-50"
-        >
-          {isSubmitting ? (
-            <ActivityIndicator size="small" color="white" />
-          ) : (
-            <SendSolid height={18} width={18} color="white" />
-          )}
-        </TouchableOpacity>
       </View>
-    </KeyboardAvoidingView>
+    </View>
   );
 };
 
 export default UserMessageInput;
 
 const styles = StyleSheet.create({
+  inputContainer: {},
   input: {
     fontSize: 16,
-    paddingHorizontal: 8,
     height: "auto",
     color: "#3A3B3C",
+    minHeight: 40,
+  },
+  actionBar: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
   },
 });

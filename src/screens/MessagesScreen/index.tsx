@@ -1,4 +1,4 @@
-import { View, ActivityIndicator } from "react-native";
+import { View, ActivityIndicator, SafeAreaView } from "react-native";
 import React, { useEffect, useMemo, useState } from "react";
 import MessageTopBar from "@/components/molecules/Message/MessageTopBar";
 import UserChats from "@/components/molecules/Message/UserChats";
@@ -39,7 +39,7 @@ const Messages = ({ route }: any) => {
   const [onlineUsersSet, setOnlineUsersSet] = useState<Set<string>>(new Set());
   const userData = getUserStore();
   const userName = selectedChat?.users?.find(
-    (item: any) => item?.userId._id !== userData?.id,
+    (item: any) => item?.userId._id !== userData?.id
   );
   const [searchByNameText, setSearchByNameText] = useState("");
   const navigation = useNavigation();
@@ -57,7 +57,7 @@ const Messages = ({ route }: any) => {
   const totalUnreadMessages = chats?.reduce((sum, item) => {
     if (item.isGroupChat) {
       const isUserInGroup = item.users.some(
-        (user) => user.userId._id === userData?.id && user.isRequestAccepted,
+        (user) => user.userId._id === userData?.id && user.isRequestAccepted
       );
 
       return isUserInGroup ? sum + item.unreadMessagesCount : sum;
@@ -71,7 +71,7 @@ const Messages = ({ route }: any) => {
       ? item.users.some(
           (user) =>
             user.userId._id.toString() === userData?.id &&
-            !user.isRequestAccepted,
+            !user.isRequestAccepted
         )
       : !item.isRequestAccepted && item.groupAdmin.toString() !== userData?.id;
 
@@ -81,12 +81,12 @@ const Messages = ({ route }: any) => {
   const filteredChats = useFilteredChats(
     chats,
     searchByNameText,
-    userData?.id as string,
+    userData?.id as string
   );
 
   const updateMessageSeen = () => {
     const isRead = selectedChat?.latestMessage?.readByUsers?.includes(
-      userData?.id || "",
+      userData?.id || ""
     );
 
     if (!isRead && isRead !== undefined && selectedChat) {
@@ -119,7 +119,7 @@ const Messages = ({ route }: any) => {
               latestMessage: newMessage,
               unreadMessagesCount: (chat.unreadMessagesCount || 0) + 1,
             }
-          : chat,
+          : chat
       );
 
       updatedChats.sort((a, b) => {
@@ -135,7 +135,7 @@ const Messages = ({ route }: any) => {
     } else if (isActiveChat) {
       queryClient.setQueryData(
         ["chatMessages", selectedChat?._id],
-        (oldMessages: Message[]) => [...(oldMessages || []), newMessage],
+        (oldMessages: Message[]) => [...(oldMessages || []), newMessage]
       );
 
       const updatedChats = chatData.map((chat) =>
@@ -144,7 +144,7 @@ const Messages = ({ route }: any) => {
               ...chat,
               latestMessage: newMessage,
             }
-          : chat,
+          : chat
       );
       queryClient.setQueryData(["userChats"], updatedChats);
 
@@ -177,7 +177,7 @@ const Messages = ({ route }: any) => {
     setChats(updatedChats);
     const updateCurrSelectedChat = () => {
       const toWrite = updatedChats.find(
-        (item) => item._id == selectedChat?._id,
+        (item) => item._id == selectedChat?._id
       );
       setSelectedChat(toWrite);
     };
@@ -193,9 +193,9 @@ const Messages = ({ route }: any) => {
     return chatsData?.flatMap((chat) =>
       chat.users
         .map((user) =>
-          user.userId._id !== userData?.id ? user.userId._id : null,
+          user.userId._id !== userData?.id ? user.userId._id : null
         )
-        .filter((id) => id !== null),
+        .filter((id) => id !== null)
     );
   }, [chatsData, userData?.id]);
 
@@ -260,7 +260,7 @@ const Messages = ({ route }: any) => {
   useEffect(() => {
     if (selectedUserId) {
       const selectedChatBySearchQuery = chats?.find(
-        (item) => item._id.toString() == selectedUserId,
+        (item) => item._id.toString() == selectedUserId
       );
       if (selectedChatBySearchQuery) {
         setSelectedChat(selectedChatBySearchQuery);
@@ -321,9 +321,6 @@ const Messages = ({ route }: any) => {
     }
   };
 
-
-
-  
   const renderChat = () => {
     if (selectedChat) {
       return (
@@ -333,7 +330,11 @@ const Messages = ({ route }: any) => {
             name={
               selectedChat?.isGroupChat
                 ? selectedChat?.chatName
-                : ( userName?.userId?.firstName ?(userName?.userId?.firstName + " " + userName?.userId?.lastName) : "Unknown")
+                : userName?.userId?.firstName
+                  ? userName?.userId?.firstName +
+                    " " +
+                    userName?.userId?.lastName
+                  : "Unknown"
             }
             users={selectedChat?.users}
             userId={userName?.userId?._id}
@@ -351,7 +352,7 @@ const Messages = ({ route }: any) => {
             setAcceptedId={selectedChat._id}
             setCurrTab={setCurrTab}
             isBlockedByYou={selectedChat?.blockedBy?.some(
-              (id: string) => id.toString() == userData?.id,
+              (id: string) => id.toString() == userData?.id
             )}
             communitySelected={selectedChat?.community as CommunityChat}
           />
@@ -360,7 +361,9 @@ const Messages = ({ route }: any) => {
             name={
               selectedChat.isGroupChat
                 ? selectedChat.chatName
-                : ((userName?.userId.firstName + " " + userName?.userId.lastName) && "Unknown")
+                : userName?.userId.firstName +
+                    " " +
+                    userName?.userId.lastName && "Unknown"
             }
             users={selectedChat?.users}
             profileCover={selectedChat?.groupLogoImage ?? ""}
@@ -378,7 +381,7 @@ const Messages = ({ route }: any) => {
   };
 
   return (
-    <View className="flex-1 bg-white">
+    <SafeAreaView className="flex-1 bg-white">
       {currTab !== "Group" && currTab !== "Single" && !selectedChat && (
         <MessageTopBar
           currTab={currTab}
@@ -390,7 +393,7 @@ const Messages = ({ route }: any) => {
       )}
 
       {renderChat()}
-    </View>
+    </SafeAreaView>
   );
 };
 

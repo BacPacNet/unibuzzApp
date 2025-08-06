@@ -11,7 +11,7 @@ import { Text, View } from "react-native";
 
 export const getTabIcons = (
   unreadCount: number = 0,
-  unreadMessagesCount: number = 0,
+  unreadMessagesCount: number = 0
 ): Record<
   "Home" | "Example" | "Connection" | "Messages" | "Notifications" | "BuzzBot",
   (focused: boolean) => JSX.Element

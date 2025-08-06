@@ -18,6 +18,7 @@ import {
   StyleSheet,
   TouchableOpacity,
   View,
+  Text,
 } from "react-native";
 import { launchImageLibrary } from "react-native-image-picker";
 import DocumentPicker from "react-native-document-picker";
@@ -71,15 +72,13 @@ const NewPost = ({ navigation }: any) => {
   const { mutate: CreateTimelinePost, isPending } = useCreateUserPost();
   const { mutateAsync: uploadToS3 } = useUploadToS3();
   const [postAccessType, setPostAccessType] = useState<UserPostType>(
-    UserPostType.PUBLIC,
+    UserPostType.PUBLIC
   );
   const [isPostCreating, setIsPostCreating] = useState(false);
   const [showPostType, setShowPostType] = useState(false);
   const { changeHeaderShownStatus } = useHeader();
 
-
-
-useTabBarVisibility(navigation)
+  useTabBarVisibility(navigation);
 
   const handleImagePick = useCallback(() => {
     launchImageLibrary(
@@ -105,7 +104,7 @@ useTabBarVisibility(navigation)
           }
           setImages((prevImages) => [...prevImages, ...response.assets]);
         }
-      },
+      }
     );
   }, []);
 
@@ -117,7 +116,7 @@ useTabBarVisibility(navigation)
         setFiles((prev) => prev.filter((file) => file.name !== identifier));
       }
     },
-    [],
+    []
   );
 
   const handleFilePick = async () => {
@@ -129,7 +128,6 @@ useTabBarVisibility(navigation)
           DocumentPicker.types.doc,
         ],
         allowMultiSelection: true,
-        
       });
 
       const validationResult = validateUploadedFiles(
@@ -137,7 +135,7 @@ useTabBarVisibility(navigation)
           ...file,
           size: file.size,
           type: file.type,
-        })),
+        }))
       );
 
       if (!validationResult.isValid) {
@@ -222,62 +220,57 @@ useTabBarVisibility(navigation)
       return () => {
         changeHeaderShownStatus(true);
       };
-    }, []),
+    }, [])
   );
 
-
-  
-
   return (
-    <SafeAreaView className="flex-1 bg-white relative">
-      <View
-        style={{ paddingBottom: 16 }}
-        className="  flex flex-row gap-4 items-center justify-between border-b border-neutral-300"
-      >
-        <BackHeader
-          label="New Post"
-          onPress={() => navigation.goBack()}
-          isLeftPadding={false}
-        />
+    <KeyboardAvoidingView
+      style={{ flex: 1 }}
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
+      keyboardVerticalOffset={0} // adjust if you have a custom header
+    >
+      <SafeAreaView className="flex-1 bg-white">
         <View
-          style={{ marginTop: 16 }}
-          className="flex flex-row items-center gap-4 px-4"
+          style={{ paddingBottom: 16 }}
+          className="  flex flex-row gap-4 items-center justify-between border-b border-neutral-300"
         >
-          <ReusableButton
-            variant="primary"
-            size={58}
-            height="small"
-            buttonText="Post"
-            onPress={handlePostCreate}
-            isLoading={isPending || isPostCreating}
+          <BackHeader
+            label="New Post"
+            onPress={() => navigation.goBack()}
+            isLeftPadding={false}
           />
-        </View>
-      </View>
-      <SafeAreaView style={{ flex: 1, paddingBottom: 80 }}>
-        {(images.length > 0 || files.length > 0) && (
-          <View style={{ height: 100 }}>
-            <MediaPreviewList
-              files={[...images, ...files]}
-              onRemove={(index: any, isImage: boolean) =>
-                handleImageRemove(index, isImage)
-              }
+          <View
+            style={{ marginTop: 16 }}
+            className="flex flex-row items-center gap-4 px-4"
+          >
+            <ReusableButton
+              variant="primary"
+              size={58}
+              height="small"
+              buttonText="Post"
+              onPress={handlePostCreate}
+              isLoading={isPending || isPostCreating}
             />
           </View>
-        )}
-
-        <View style={styles.editorHeight}>
-          <RichText focusable={true} editor={editor} />
         </View>
-
-        <KeyboardAvoidingView
-          behavior={Platform.OS === "ios" ? "padding" : "height"}
-          style={{
-            position: "absolute",
-            width: "100%",
-            bottom: 0,
-          }}
-        >
-          <View className="flex flex-row gap-2 items-center border-t border-neutral-300 p-2">
+        <View style={{ flex: 1 }}>
+          {(images.length > 0 || files.length > 0) && (
+            <View style={{ height: 100 }}>
+              <MediaPreviewList
+                files={[...images, ...files]}
+                onRemove={(index: any, isImage: boolean) =>
+                  handleImageRemove(index, isImage)
+                }
+              />
+            </View>
+          )}
+          <View style={styles.editorHeight}>
+            <RichText focusable={true} editor={editor} />
+          </View>
+        </View>
+        {/* Bottom bar, always visible above the keyboard */}
+        <View>
+          <View className="flex flex-row gap-2 items-center  p-2">
             <TouchableOpacity onPress={handleImagePick}>
               <MediaImage height={20} width={20} color={"#a3a3a3"} />
             </TouchableOpacity>
@@ -285,11 +278,12 @@ useTabBarVisibility(navigation)
               <PagePlus height={20} width={20} color={"#a3a3a3"} />
             </TouchableOpacity>
           </View>
-
-          <Toolbar editor={editor} />
-        </KeyboardAvoidingView>
+          <View className="flex flex-row gap-2 items-center  p-2">
+            <Toolbar editor={editor} />
+          </View>
+        </View>
       </SafeAreaView>
-    </SafeAreaView>
+    </KeyboardAvoidingView>
   );
 };
 
