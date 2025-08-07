@@ -3,4 +3,5 @@ export const screenName = {
   timeline: "Timeline",
   community: "Community",
   manageCommunityGroup: "manageCommunityGroup",
+  message: "message",
 };

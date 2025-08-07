@@ -43,6 +43,7 @@ export default function NewChatScreen() {
     handleSubmit,
     formState: { errors },
     getValues,
+    setError
   } = useForm({
     defaultValues: {
       groupName: "",
@@ -75,6 +76,10 @@ export default function NewChatScreen() {
   const { mutateAsync: createGroupChat, isPending: groupChatPending } =
     useCreateGroupChat();
 
+
+
+
+
   const handleIndividualUserClick = async () => {
     if (selectedType === "group") {
       const formValues = formRef.current?.getFormValues();
@@ -82,6 +87,10 @@ export default function NewChatScreen() {
       const filteredStudents = formRef.current.getFilteredUsers();
       const individualUsers = formRef.current.getIndividualsUsers();
 
+    //   if(formValues?.groupName.length < 1){
+    //     setError("groupName", { message: "Group Name is required!" });
+    //     return;
+    //   }
       let ImageData;
       if (imageToUpload) {
         const uploadPayload = {
@@ -97,10 +106,11 @@ export default function NewChatScreen() {
         };
       }
 
+
       const mergedUsers = [
         ...individualUsers.map((user: { _id: string }) => user._id),
-        ...filteredStudents.map((user: { _id: string }) => user._id),
-        ...filteredFaculty.map((user: { _id: string }) => user._id),
+        ...filteredStudents.map((user: { users_id: string }) => user.users_id),
+        ...filteredFaculty.map((user: { users_id: string }) => user.users_id),
       ];
 
       const groupName = getValues("groupName");
@@ -232,33 +242,9 @@ export default function NewChatScreen() {
         gestureEnabled={true}
         snapPoints={defaultBottomSheetSnapPoints}
       >
-        {/* <View>
-          <View className="w-full p-3">
-            <TextInput
-              style={{ paddingStart: 8 }}
-              onChangeText={(text) => setSearchInput(text)}
-              className="border border-neutral-200 w-full   rounded-lg h-14 p-0"
-              placeholderTextColor="#a9a9a9"
-              placeholder="Search User..."
-            />
-          </View>
 
-          <FlatList
-            data={userProfiles}
-            style={{ minHeight: 400 }}
-            renderItem={({ item }) => (
-              <View className="p-3">
-                <UserSelectCard
-                  item={item}
-                  selectedUsers={selectedUsers}
-                  setSelectedUsers={setSelectedUsers}
-                />
-              </View>
-            )}
-          />
-        </View> */}
         <AllUserSelectBottomSheet hideBottomSheet={()=> userActionSheetRef.current?.hide()} selectedUsers={selectedUsers} setSelectedUsers={setSelectedUsers} isMultiAllowed={false} />
-        {/* <Text>User</Text> */}
+
       </ActionSheet>
     </ScrollView>
   );

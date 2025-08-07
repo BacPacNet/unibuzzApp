@@ -197,6 +197,35 @@ export const useLeaveCommunityGroup = () => {
   });
 };
 
+
+
+async function deleteCommunityGroupAPI(communityGroupId: string, token: string) {
+    return await client(`/communitygroup/${communityGroupId}`, {
+      method: 'DELETE',
+      headers: { Authorization: `Bearer ${token}` },
+    })
+  }
+export const useDeleteCommunityGroup = () => {
+    const cookieValue = getToken() as string;
+    const queryClient = useQueryClient()
+  
+    return useMutation({
+      mutationFn: (communityGroupId: string) => deleteCommunityGroupAPI(communityGroupId, cookieValue),
+  
+      onSuccess: () => {
+        Toast.show(`Community group deleted`,{type:'success',placement:'top'})
+        queryClient.invalidateQueries({ queryKey: ["communityGroup"] });
+        queryClient.invalidateQueries({ queryKey: ['useGetSubscribedCommunties'] })
+      },
+  
+      onError: (error: any) => {
+        const errorMessage = error?.response?.data?.message || 'Something went wrong'
+        console.error('Error deleting community group:', errorMessage)
+        Toast.show(errorMessage,{type:'danger',placement:'top'})
+      },
+    })
+  }
+
 async function removeUserFromCommunityGroupAPI(
   communityGroupId: string,
   userId: string,

@@ -38,6 +38,7 @@ export interface CreateCommunityGroupType {
   communityGroupType: string;
   communityGroupAccess: string;
   selectedGroupCategory: string | null;
+  communityGroupLabel: string ;
   groupSubCategory: Array<string>;
   communityGroupLogoUrl: any;
   communityGroupLogoCoverUrl: any;

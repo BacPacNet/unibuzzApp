@@ -19,12 +19,15 @@ type NavigationProp = StackNavigationProp<RootStackParamList, "SinglePost">;
 const Profile = ({ route }: ProfileProps) => {
   const navigation = useNavigation<NavigationProp>();
   const { userId } = route.params;
+  const  chatId   = route?.params?.chatId as any || null;
   const from = route?.params?.from || "";
   const userData = getUserStore();
   const queryClient = useQueryClient();
   const [refreshing, setRefreshing] = useState(false);
   const [lastOffset, setLastOffset] = useState(0);
 
+
+  
   const { data: userProfileData, isLoading: isUserProfileDataLoading } =
     useGetUserData(userId);
 
@@ -69,8 +72,16 @@ const Profile = ({ route }: ProfileProps) => {
   }, [queryClient, userId]);
 
   const handleBack = () => {
+    console.log("sss",from);
+    
     if (from === screenName.notifications) {
       navigation.navigate("Notifications");
+    } 
+    if (from === screenName.message) {
+        navigation.navigate("Messages", {
+            screen: "Messages",
+            params: { selectedUserId: chatId },
+          });
     } else {
       navigation.goBack();
     }

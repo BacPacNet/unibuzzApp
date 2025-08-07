@@ -1,3 +1,8 @@
+import { useDeleteCommunityGroup } from "@/services/community-group";
+import { useGetFilteredSubscribedCommunities } from "@/services/university-community";
+import { RootStackParamList } from "@/types/navigation";
+import { useNavigation } from "@react-navigation/native";
+import { StackNavigationProp } from "@react-navigation/stack";
 import {
   Edit,
   LogIn,
@@ -15,7 +20,14 @@ type CommunityGroupSettingPopMenuProps = {
   isGroupAdmin: boolean;
   leaveCommunityGroup: () => void;
   handleNavigateToEditCommunityGroupScreen: () => void;
+  communityGroupId: string;
+  communityId: string;
 };
+
+
+type NavigationProp = StackNavigationProp<RootStackParamList, "CommunityGroup">;
+
+
 
 const CommunityGroupSettingPopMenu: React.FC<
   CommunityGroupSettingPopMenuProps
@@ -24,8 +36,40 @@ const CommunityGroupSettingPopMenu: React.FC<
   isGroupAdmin,
   leaveCommunityGroup,
   handleNavigateToEditCommunityGroupScreen,
+  communityGroupId,
+  communityId
 }) => {
-  return (
+    const { navigate } = useNavigation<NavigationProp>();
+    const { mutate: deleteCommunityGroup, isPending: isDeleteCommunityGroupPending } = useDeleteCommunityGroup()
+    const {
+        mutate,
+   
+        
+      } = useGetFilteredSubscribedCommunities(communityId);
+    const handleDeleteCommunityGroup = () => {
+
+        const data = {
+            selectedType: [],
+            selectedFilters: [],
+            sort: "",
+          };
+
+        deleteCommunityGroup(communityGroupId as string,{
+         
+            onSuccess:()=>{
+                mutate(data)
+                navigate("manageGroupStack", {
+                    screen: "SearchCommunityGroupScreen",
+          
+                    params: { communityId: communityId },
+                  });
+            }
+        })
+    
+        // router.push(`/community/${communityId}`)
+      }
+  
+    return (
     <View style={styles.container}>
       {isGroupAdmin && (
         <TouchableOpacity
@@ -40,13 +84,25 @@ const CommunityGroupSettingPopMenu: React.FC<
         </TouchableOpacity>
       )}
 
-      <TouchableOpacity
-        onPress={leaveCommunityGroup}
-        style={styles.textContainer}
-      >
-        <LogIn height={16} width={16} color={"#EF4444"} />
-        <Text className="text-neutral-700"> Leave</Text>
-      </TouchableOpacity>
+{
+    isGroupAdmin ?
+    <TouchableOpacity
+    onPress={handleDeleteCommunityGroup}
+    style={styles.textContainer}
+  >
+    <LogIn height={16} width={16} color={"#EF4444"} />
+    <Text className="text-neutral-700">Delete Group</Text>
+  </TouchableOpacity>
+   :
+  <TouchableOpacity
+  onPress={leaveCommunityGroup}
+  style={styles.textContainer}
+>
+  <LogIn height={16} width={16} color={"#EF4444"} />
+  <Text className="text-neutral-700"> Leave</Text>
+</TouchableOpacity>
+}
+    
     </View>
   );
 };

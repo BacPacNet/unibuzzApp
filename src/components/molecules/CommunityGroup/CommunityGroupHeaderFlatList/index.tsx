@@ -193,6 +193,8 @@ const FlatListCommunityHeader: React.FC<Props> = ({
                     handleNavigateToEditCommunityGroupScreen={
                       handleNavigateToEditCommunityGroupScreen
                     }
+                    communityGroupId={communityGroups?._id}
+                    communityId={communityGroups?.communityId?._id}
                   />
                 )}
               >

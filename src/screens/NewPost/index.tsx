@@ -33,6 +33,7 @@ import { useHeader } from "@/context/HeaderProvider/Header";
 import BackHeader from "@/components/atoms/BackHeader";
 import ReusableButton from "@/components/atoms/ReusableButton";
 import { useTabBarVisibility } from "@/hooks/useTabBarVisibility";
+import { SafeScreen } from "@/components/template";
 
 type ImageAsset = {
   uri: string;
@@ -227,11 +228,11 @@ const NewPost = ({ navigation }: any) => {
     <KeyboardAvoidingView
       style={{ flex: 1 }}
       behavior={Platform.OS === "ios" ? "padding" : "height"}
-      keyboardVerticalOffset={0} // adjust if you have a custom header
+      keyboardVerticalOffset={Platform.OS === "ios" ? 0 : -600} // adjust if you have a custom header
     >
-      <SafeAreaView className="flex-1 bg-white">
+      <SafeScreen className="bg-white" >
         <View
-          style={{ paddingBottom: 16 }}
+       
           className="  flex flex-row gap-4 items-center justify-between border-b border-neutral-300"
         >
           <BackHeader
@@ -240,7 +241,7 @@ const NewPost = ({ navigation }: any) => {
             isLeftPadding={false}
           />
           <View
-            style={{ marginTop: 16 }}
+           
             className="flex flex-row items-center gap-4 px-4"
           >
             <ReusableButton
@@ -282,7 +283,7 @@ const NewPost = ({ navigation }: any) => {
             <Toolbar editor={editor} />
           </View>
         </View>
-      </SafeAreaView>
+      </SafeScreen>
     </KeyboardAvoidingView>
   );
 };

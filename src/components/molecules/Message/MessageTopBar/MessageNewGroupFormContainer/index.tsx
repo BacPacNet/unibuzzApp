@@ -93,8 +93,6 @@ const MessageNewGroupFormContainer = forwardRef((props, ref) => {
 
   
   const removeUser = (userId: string) => {
-    console.log("userId", userId);
-    console.log("selectedUsers", individualsUsers);
     setIndividualsUsers((prev: any[]) => prev.filter((u) => u.profile?.users_id !== userId));
   };
 
@@ -168,7 +166,7 @@ const MessageNewGroupFormContainer = forwardRef((props, ref) => {
               text={
                 community.name
                   ? community.name
-                  : "If you are a student choose your current year"
+                  : "Select University"
               }
               icon={<NavArrowDown width={20} height={20} />}
             />

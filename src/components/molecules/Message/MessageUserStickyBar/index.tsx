@@ -5,6 +5,7 @@ import { MoreHoriz, NavArrowLeft } from "iconoir-react-native";
 import {
   useAcceptGroupRequest,
   useAcceptRequest,
+  useDeleteChatGroup,
   useLeaveGroup,
   useToggleBlockMessages,
 } from "@/services/Messages";
@@ -17,6 +18,7 @@ import { StackNavigationProp } from "@react-navigation/stack";
 import { RootStackParamList } from "@/types/navigation";
 import ReusableButton from "@/components/atoms/ReusableButton";
 import useCustomBackHandler from "@/hooks/useCustomBackHandler";
+import { screenName } from "@/constant/screenName";
 
 type Props = {
   setSelectedChat: (value: any) => void;
@@ -66,7 +68,6 @@ const MessageUserStickyBar = ({
 }: Props) => {
   const userName =
     users?.flat().filter((item) => item.userId._id !== yourID) || [];
-  const [showDropDown, setShowDropDown] = useState(false);
   const { mutate: acceptRequest } = useAcceptRequest();
   const { mutate: acceptGroupRequest } = useAcceptGroupRequest();
   const { mutate: toggleBlockMessage } = useToggleBlockMessages(
@@ -74,6 +75,7 @@ const MessageUserStickyBar = ({
     isBlockedByYou,
   );
   const { mutate: leaveGroup } = useLeaveGroup(chatId);
+  const { mutate: mutateDeleteChatGroup } = useDeleteChatGroup(chatId)
 
   const bottomSheet = useRef<ActionSheetRef>(null);
   const navigation = useNavigation<NavigationProp>();
@@ -96,7 +98,6 @@ const MessageUserStickyBar = ({
 
   const navigateToMembers = () => {
     navigation.navigate("ChatMembersScreen", {
-      users,
       chatId,
       groupAdmin
     });
@@ -115,7 +116,8 @@ const MessageUserStickyBar = ({
   const handleNavigateToProfile = () => {
     navigation.navigate("ProfileStack", {
         screen: "Profile",
-        params: { userId: userId },
+        params: { userId: userId,chatId:chatId,from: screenName.message, },
+        
       });
   };
 
@@ -126,7 +128,7 @@ const MessageUserStickyBar = ({
           {/* <IoIosArrowBack className="w-8 h-8 text-[#6744FF]" /> */}
           <NavArrowLeft height={24} width={24} color="#6744FF" strokeWidth={3}  />
         </TouchableOpacity>
-        <TouchableOpacity onPress={handleNavigateToProfile} className="relative flex flex-row items-center gap-2">
+        <TouchableOpacity disabled={isGroupChat} onPress={handleNavigateToProfile} className="relative flex flex-row items-center gap-2">
           <Image
             source={profileCover ? { uri: profileCover } : avatar}
             style={{ width: 48, height: 48, borderRadius: 100 }}
@@ -181,6 +183,7 @@ const MessageUserStickyBar = ({
           isBlockedByYou={isBlockedByYou}
           isGroupChat={isGroupChat}
           handleLeaveGroup={leaveGroup}
+          handleDeleteGroup={()=> mutateDeleteChatGroup()}
           navigateToEditGroup={navigateToEditGroup}
           isAdmin={groupAdmin == yourID}
           handleNavigate={navigateToMembers}

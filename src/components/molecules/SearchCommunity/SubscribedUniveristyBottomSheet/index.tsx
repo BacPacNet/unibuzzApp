@@ -55,6 +55,9 @@ const SubscribedUniveristyBottomSheet: React.FC<
         renderItem={renderItem}
         keyExtractor={(item) => item.UniversityName}
         style={styles.optionsList}
+        ListEmptyComponent={<View className="flex-1 justify-center items-center">
+          <Text>No data found</Text>
+        </View>}
       />
     </View>
   );

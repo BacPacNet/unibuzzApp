@@ -32,6 +32,32 @@ export function useGetUserChats() {
   return { ...state, error: errorMessage };
 }
 
+
+export async function getChatMembers(token: any, chatId: string) {
+    const response:any = await client(`/chat/group/${chatId}/members`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+  
+    return response;
+  }
+export function useGetChatMembers(chatId: string) {
+  const cookieValue = getToken();
+
+
+  const state = useQuery({
+    queryKey: ["chatMembers",chatId],
+    queryFn: () => getChatMembers(cookieValue, chatId),
+    enabled: !!cookieValue,
+  });
+
+  let errorMessage = null;
+  if (axios.isAxiosError(state.error) && state.error.response) {
+    errorMessage = state.error.response.data;
+  }
+
+  return { ...state, error: errorMessage };
+}
+
 export async function userFollowingAndFollowers(name: string, token: any) {
   const response: any = await client(
     `/userprofile/following_and_followers?name=${name}`,
@@ -379,3 +405,32 @@ export const useEditGroupChat = (chatId: string) => {
     },
   });
 };
+
+
+
+
+export async function deleteChatGroupByAdmin(token: string, chatId: any) {
+    const response = await client(`/chat/group/${chatId}`, { headers: { Authorization: `Bearer ${token}` }, method: 'DELETE' })
+    return response
+  }
+
+export const useDeleteChatGroup = (chatId: string) => {
+    const cookieValue = getToken() as string
+    const queryClient = useQueryClient()
+    return useMutation({
+      mutationFn: () => deleteChatGroupByAdmin(cookieValue, chatId),
+      onSuccess: () => {
+        queryClient.invalidateQueries({ queryKey: ['userChats'] })
+        Toast.show('Group Deleted Successfully', {
+            placement: "top",
+            type: "success",
+          });
+      },
+      onError: (res: any) => {
+        Toast.show(res.response.data.message, {
+            placement: "top",
+            type: "warning",
+          });
+      },
+    })
+  }
