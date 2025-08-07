@@ -1,17 +1,18 @@
 import CollapsibleMultiSelect from "@/components/atoms/CollapsibleMultiSelect";
 import { useCommunityFilterContext } from "@/context/CommunityFilterProvider/CommunityFilterProvider";
-import { GroupAccess, GroupType, subCategories } from "@/types/CommunityFilter";
+import { GroupAccess, GroupLabel, GroupType, subCategories } from "@/types/CommunityFilter";
 import { useFocusEffect } from "@react-navigation/native";
 import { useCallback, useEffect, useState } from "react";
 import { View } from "react-native";
 import { ScrollView } from "react-native-actions-sheet";
 const SearchCommunityFilterBottomSheet = () => {
-  const { selectedFiltersMain, setSelectedFiltersMain,selectedTypeMain,setSelectedTypeMain } =
+  const { selectedFiltersMain, setSelectedFiltersMain,selectedTypeMain,setSelectedTypeMain,setSelectedLabelMain } =
     useCommunityFilterContext();
   const [selectedFilters, setSelectedFilters] = useState<
     Record<string, string[]>
   >({});
   const [selectedType, setSelectedType] = useState<string[]>([])
+  const [selectedLabel, setSelectedLabel] = useState<string[]>([])
 
   useEffect(() => {
     if (Object.keys(selectedFilters)?.length >= 0) {
@@ -24,6 +25,11 @@ const SearchCommunityFilterBottomSheet = () => {
         setSelectedTypeMain(selectedType);
     }
   }, [selectedType]);
+  useEffect(() => {
+    if (selectedLabel?.length >= 0) {
+        setSelectedLabelMain(selectedLabel);
+    }
+  }, [selectedLabel]);
 
   
   useFocusEffect(
@@ -34,7 +40,9 @@ const SearchCommunityFilterBottomSheet = () => {
   );
 
 
-  
+  const handleSelectLabel = (label: string) => {
+    setSelectedLabel((prev) => (prev.includes(label) ? prev.filter((item) => item !== label) : [...prev, label]))
+  }
 
   const handleSelectTypes = (type: string) => {
     setSelectedType((prev) => (prev.includes(type) ? prev.filter((item) => item !== type) : [...prev, type]))
@@ -102,26 +110,70 @@ const SearchCommunityFilterBottomSheet = () => {
           onSelect={(value: string) => handleSelectTypes( value)}
         
         />
-        <CollapsibleMultiSelect
-          title="Academic Focus"
-          options={subCategories["Academic Focus"]}
-          selectedOptions={selectedFilters["Academic Focus"] || []}
-          onSelect={(value: string) => handleSelect("Academic Focus", value)}
+          <CollapsibleMultiSelect
+          title="Group Label"
+          options={GroupLabel}
+          selectedOptions={ selectedLabel}
+          onSelect={(value: string) => handleSelectLabel( value)}
+        
+        />
+         <CollapsibleMultiSelect
+          title="Academic"
+          options={subCategories["Academic"]}
+          selectedOptions={selectedFilters["Academic"] || []}
+          onSelect={(value: string) => handleSelect("Academic", value)}
           handleSelectAll={() =>
-            handleSelectAll("Academic Focus", subCategories["Academic Focus"])
+            handleSelectAll("Academic", subCategories["Academic"])
           }
         />
         <CollapsibleMultiSelect
-          title="Recreation and Hobbies"
-          options={subCategories["Recreation and Hobbies"]}
-          selectedOptions={selectedFilters["Recreation and Hobbies"] || []}
+          title="Educational"
+          options={subCategories["Educational"]}
+          selectedOptions={selectedFilters["Educational"] || []}
           onSelect={(value: string) =>
-            handleSelect("Recreation and Hobbies", value)
+            handleSelect("Educational", value)
           }
           handleSelectAll={() =>
             handleSelectAll(
-              "Recreation and Hobbies",
-              subCategories["Recreation and Hobbies"],
+              "Educational",
+              subCategories["Educational"],
+            )
+          }
+        />
+        <CollapsibleMultiSelect
+          title="Interest"
+          options={subCategories["Interest"]}
+          selectedOptions={selectedFilters["Interest"] || []}
+          onSelect={(value: string) =>
+                handleSelect("Interest", value)
+          }
+          handleSelectAll={() =>
+            handleSelectAll(
+              "Interest",
+              subCategories["Interest"],
+            )
+          }
+        />
+        <CollapsibleMultiSelect
+          title="Events & Activities"
+          options={subCategories["Events & Activities"]}
+          selectedOptions={selectedFilters["Events & Activities"] || []}
+          onSelect={(value: string) => handleSelect("Events & Activities", value)}
+          handleSelectAll={() =>
+            handleSelectAll("Events & Activities", subCategories["Events & Activities"])
+          }
+        />
+        <CollapsibleMultiSelect
+          title="Personal Growth"
+          options={subCategories["Personal Growth"]}
+          selectedOptions={selectedFilters["Personal Growth"] || []}
+          onSelect={(value: string) =>
+            handleSelect("Personal Growth", value)
+          }
+          handleSelectAll={() =>
+            handleSelectAll(
+              "Personal Growth",
+              subCategories["Personal Growth"],
             )
           }
         />
@@ -132,22 +184,9 @@ const SearchCommunityFilterBottomSheet = () => {
           onSelect={(value: string) =>
             handleSelect("Advocacy and Awareness", value)
           }
-          handleSelectAll={() =>
-            handleSelectAll(
-              "Advocacy and Awareness",
-              subCategories["Advocacy and Awareness"],
-            )
-          }
+     
         />
-        <CollapsibleMultiSelect
-          title="Personal Growth"
-          options={subCategories["Personal Growth"]}
-          selectedOptions={selectedFilters["Personal Growth"] || []}
-          onSelect={(value: string) => handleSelect("Personal Growth", value)}
-          handleSelectAll={() =>
-            handleSelectAll("Personal Growth", subCategories["Personal Growth"])
-          }
-        />
+     
         <CollapsibleMultiSelect
           title="Professional Development"
           options={subCategories["Professional Development"]}
@@ -155,11 +194,13 @@ const SearchCommunityFilterBottomSheet = () => {
           onSelect={(value: string) =>
             handleSelect("Professional Development", value)
           }
-          handleSelectAll={() =>
-            handleSelectAll(
-              "Professional Development",
-              subCategories["Professional Development"],
-            )
+        />
+        <CollapsibleMultiSelect
+          title="Utility & Campus Life"
+          options={subCategories["Utility & Campus Life"]}
+          selectedOptions={selectedFilters["Utility & Campus Life"] || []}
+          onSelect={(value: string) =>
+            handleSelect("Utility & Campus Life", value)
           }
         />
       </ScrollView>

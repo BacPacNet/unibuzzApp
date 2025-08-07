@@ -100,8 +100,8 @@ export default function EditChatScreen({ route }: any) {
 
     const mergedUsers = [
       ...individualUsers.map((user: { _id: string }) => user._id),
-      ...filteredStudents.map((user: { _id: string }) => user._id),
-      ...filteredFaculty.map((user: { _id: string }) => user._id),
+      ...filteredStudents.map((user: { users_id: string }) => user.users_id),
+      ...filteredFaculty.map((user: { users_id: string }) => user.users_id),
     ];
 
     const groupName = getValues("groupName");

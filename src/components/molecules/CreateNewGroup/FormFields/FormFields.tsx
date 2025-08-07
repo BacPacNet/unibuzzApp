@@ -6,6 +6,7 @@ import TextAreaWithWordCount from "@/components/atoms/TextAreaWIthWordCount";
 import SelectedChip from "@/components/molecules/CreateNewGroup/SelectedChip";
 import {
   GROUP_ACCESS_OPTIONS,
+  GROUP_LABEL_OPTIONS,
   GROUP_TYPE_OPTIONS,
 } from "../../../../screens/NewCommunityGroupScreen/constants";
 import { WarningCircleSolid } from "iconoir-react-native";
@@ -55,6 +56,7 @@ export const FormFields: React.FC<FormFieldsProps> = ({
         control={control}
         name="description"
         maxChars={160}
+        
       />
     </View>
 
@@ -67,6 +69,18 @@ export const FormFields: React.FC<FormFieldsProps> = ({
         name="communityGroupAccess"
         control={control}
         options={GROUP_ACCESS_OPTIONS}
+        required
+      />
+    </View>
+    <View style={styles.section}>
+      <View style={styles.flexRowContainer}>
+        <Text style={styles.inputLabels}>Group Label</Text>
+        <Text style={styles.required}>*</Text>
+      </View>
+      <RadioInput
+        name="communityGroupLabel"
+        control={control}
+        options={GROUP_LABEL_OPTIONS}
         required
       />
     </View>

@@ -76,6 +76,7 @@ const EditCommunityGroupScreen = () => {
       description: "",
       communityGroupAccess: "",
       communityGroupType: "",
+      communityGroupLabel: "",
       selectedUsers: [],
       selectedFilters: [],
     },
@@ -84,6 +85,7 @@ const EditCommunityGroupScreen = () => {
   const title = watch("title") || "";
   const initialDescription = watch("description") || "";
   const communityGroupAccess = watch("communityGroupAccess") || "";
+  const communityGroupLabel = watch("communityGroupLabel") || "";
   const communityGroupType = watch("communityGroupType") || "";
   const selectedUsers = watch("selectedUsers") || [];
   const selectedFilters = watch("selectedFilters") || [];
@@ -116,6 +118,7 @@ const EditCommunityGroupScreen = () => {
       communityGroups?.communityGroupAccess ?? "",
     );
     setValue("communityGroupType", communityGroups?.communityGroupType);
+    setValue("communityGroupLabel", communityGroups?.communityGroupLabel);
     setValue("selectedUsers", communityGroups?.users ?? []);
     setValue("selectedFilters", communityGroups?.communityGroupCategory);
     setPreviewProfileImage(
@@ -176,6 +179,7 @@ const EditCommunityGroupScreen = () => {
       title: title,
       description: initialDescription,
       communityGroupAccess: communityGroupAccess,
+      communityGroupLabel: communityGroupLabel,
       ...communityGroupCategory,
       selectedUsers: selectedUsersState,
     };
@@ -190,6 +194,7 @@ const EditCommunityGroupScreen = () => {
           navigate.navigate("CommunityGroup", {
             communityId: communityId,
             communityGroupId: communityGroups?._id,
+            from: "edit",
           });
         },
         onError: (error) => {
@@ -203,6 +208,7 @@ const EditCommunityGroupScreen = () => {
     navigate.navigate("CommunityGroup", {
       communityId: communityId,
       communityGroupId: communityGroups?._id,
+      from: "edit",
     });
   };
   useCustomBackHandler(handleGOBack);

@@ -69,7 +69,7 @@ const styles = StyleSheet.create({
   },
   textarea: {
     borderWidth: 1,
-    borderColor: "#ccc",
+    borderColor: "#E5E7EB",
     borderRadius: 5,
     padding: 10,
     minHeight: 80,
@@ -80,7 +80,7 @@ const styles = StyleSheet.create({
   wordCount: {
     textAlign: "right",
     marginTop: 5,
-    color: "#666",
+    color: "#A3A3A3",
   },
   errorText: {
     color: "red",

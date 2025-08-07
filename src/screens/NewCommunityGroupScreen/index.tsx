@@ -58,6 +58,7 @@ const NewCommunityGroupScreen = () => {
     handleSubmit: handleGroupCreate,
     formState: { errors },
     setValue,
+    watch
   } = useForm<CreateCommunityGroupType>({
     defaultValues: {
       communityGroupLogoUrl: null,
@@ -66,6 +67,7 @@ const NewCommunityGroupScreen = () => {
       description: "",
       communityGroupAccess: "",
       communityGroupType: "",
+      communityGroupLabel: "",
       selectedUsers: [],
       selectedFilters: [],
     },
@@ -120,6 +122,7 @@ const NewCommunityGroupScreen = () => {
 
   // Form submission
   const onSubmit = async (data: CreateCommunityGroupType) => {
+  
     const isValid = isFilterSelectionValid(createSelectedFilters);
 
     if (!isValid) {

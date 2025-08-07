@@ -9,6 +9,8 @@ const CommunityFilterContext = createContext<{
   sort: string;
   createSelectedFilters: Record<string, string[]>;
   setCreateSelectedFilters: (value: any) => void;
+  selectedLabelMain: string[];
+  setSelectedLabelMain: (value: any) => void;
 }>({
   selectedFiltersMain: {},
   setSelectedFiltersMain: () => {},
@@ -18,6 +20,8 @@ const CommunityFilterContext = createContext<{
   setSort: () => "",
   createSelectedFilters: {},
   setCreateSelectedFilters: () => {},
+  selectedLabelMain: [],
+  setSelectedLabelMain: () => {},
 });
 
 interface CommunityFilterProviderProps {
@@ -31,6 +35,7 @@ export const CommunityFilterProvider: React.FC<
     Record<string, string[]>
   >({});
   const [selectedTypeMain, setSelectedTypeMain] = useState<any>([]);
+  const [selectedLabelMain, setSelectedLabelMain] = useState<any>([]);
   const [sort, setSort] = useState("");
   const [createSelectedFilters, setCreateSelectedFilters] = useState<
     Record<string, string[]>
@@ -47,6 +52,8 @@ export const CommunityFilterProvider: React.FC<
         sort,
         createSelectedFilters,
         setCreateSelectedFilters,
+        selectedLabelMain,
+        setSelectedLabelMain,
       }}
     >
       {children}

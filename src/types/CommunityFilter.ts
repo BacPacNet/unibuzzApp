@@ -2,84 +2,115 @@ export const GroupCategories = ["Private", "Public", "Official", "Casual"];
 
 export const GroupAccess=['Private', 'Public']
 export const GroupType=['Official', 'Casual']
+export const GroupLabel=['Course', 'Club','Circle','Other']
+
 export type Category =
-  | "Academic Focus"
-  | "Recreation and Hobbies"
-  | "Advocacy and Awareness"
+  | "Academic"
+  | "Educational"
+  | "Interest"
+  | "Events & Activities"
   | "Personal Growth"
+  | "Advocacy and Awareness"
   | "Professional Development"
-  | "Others";
+  | "Utility & Campus Life"
+
 
 export const categories: Category[] = [
-  "Academic Focus",
-  "Recreation and Hobbies",
-  "Advocacy and Awareness",
+  "Academic",
+  "Educational",
+  "Interest",
+  "Events & Activities",
   "Personal Growth",
+  "Advocacy and Awareness",
   "Professional Development",
-  "Others",
+  "Utility & Campus Life",
+  "Advocacy and Awareness"
 ];
 
 export const subCategories: Record<Category, string[]> = {
-  "Academic Focus": [
-    "Science & Technology",
-    "Arts & Humanities",
-    "Social Sciences",
-    "Education",
-    "Business & Economics",
-    "Health & Medicine",
-    "Environmental Studies",
-    "Law & Policy",
-    "Mathematics & Statistics",
-    "Engineering",
+ 'Academic': [
+    'Science',
+    'Technology',
+    'Arts and Humanities',
+    'Social Sciences',
+    'Education',
+    'Business and Economics',
+    'Health & Medicine',
+    'Environmental Studies',
+    'Laws & Policy',
+    'Mathematics & Statistics',
+    'Engineering',
+    'Coding',
+    'Robotics',
+    'Philosophy & Religion',
+    'Literature & Language',
+    'Agriculture',
+    'Architecture & Design',
+    'Media & Communication',
+    'Hospitality & Tourism',
   ],
-  "Recreation and Hobbies": [
-    "Sports & Fitness",
-    "Music & Performing Arts",
-    "Gaming & Esports",
-    "Outdoor Activities",
-    "Crafting & DIY",
-    "Culinary Arts",
-    "Media Arts",
-    "Dance",
-    "Travel & Exploration",
-    "Literature & Writing",
-    "Others",
+  'Educational': ['Course Discussion', 'Exam Prep', 'Study Materials', 'Research', 'Study Group', 'Peer Tutoring'],
+  'Interest': [
+    'Sports & Fitness',
+    'Music & Performing Arts',
+    'Gaming & Esports',
+    'Outdoor Activities',
+    'Crafting & DIY',
+    'Culinary Arts',
+    'Media',
+    'Dance',
+    'Travel & Exploration',
+    'Literature',
+    'Culture',
+    'Finance & Advice',
+    'Language Learning',
+    'Memes & Fun',
   ],
-  "Advocacy and Awareness": [
-    "Environmental Conservation",
-    "Human Rights",
-    "Gender Equality",
-    "LGBTQ+ Advocacy",
-    "Mental Health",
-    "Disability Rights",
-    "Animal Welfare",
-    "Political Activism",
-    "Scientific Education",
-    "Others",
+  'Events & Activities': [
+    'Fest',
+    'Competition',
+    'Talks & Webinar',
+    'Workshop',
+    'Social Meetup',
+    'Event Organizing',
+    'Volunteering',
   ],
-  "Personal Growth": [
-    "Mindfulness & Meditation",
-    "Physical Health",
-    "Leadership Development",
-    "Finance Advice",
-    "Stress Management",
-    "Public Speaking",
-    "Confidence Building",
-    "Sex Education",
-    "Language Learning",
-    "Others",
+  'Personal Growth': [
+    'Mindfulness & Meditation',
+    'Physical Health',
+    'Leadership Development',
+    'Stress Management',
+    'Public Speaking',
+    'Confidence Building',
+    'Sex Education',
   ],
-  "Professional Development": [
-    "Entrepreneurship & Startups",
-    "Career Mentorship",
-    "Professional Workshops",
-    "Internships",
-    "Networking & Mixers",
-    "Alumni Connections",
-    "Job Hunting",
-    "Certificates",
-    "Business Communication",
-    "Others",
+  'Advocacy and Awareness': [
+    'Environmental Conservation',
+    'Human Rights',
+    'Gender Equality',
+    'LGBTQ+',
+    'Mental Health',
+    'Animal Welfare',
+    'Political Activism',
   ],
-  Others: [],
+  'Professional Development': [
+    'Entrepreneurship & Startups',
+    'Career Mentorship',
+    'Professional Workshops',
+    'Internships',
+    'Networking & Mixers',
+    'Job Hunting',
+    'Certificates & Licenses',
+  ],
+  'Utility & Campus Life': [
+    'Cab Sharing',
+    'Housing & Roommates',
+    'Buy/Sell/Exchange',
+    'Lost & Found',
+    'Local Services',
+    'Student Hacks',
+    'Study Exchange',
+    'Study Abroad',
+    'Alumni Connections',
+  ],
 };

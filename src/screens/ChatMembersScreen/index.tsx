@@ -6,23 +6,39 @@ import { StackNavigationProp } from "@react-navigation/stack";
 import { RootStackParamList } from "@/types/navigation";
 import MembersUserCard from "@/components/molecules/MembersUserCard";
 import { getUserProfileStore, getUserStore } from "@/storage/user";
-import { useRemoveGroupChatMember } from "@/services/Messages";
-import { useState } from "react";
+import { useGetChatMembers, useRemoveGroupChatMember } from "@/services/Messages";
+import { useEffect, useState } from "react";
 
 type NavigationProp = StackNavigationProp<
   RootStackParamList,
   "ChatMembersScreen"
 >;
 
+type userList = {
+    userId: {
+        _id: string;
+        firstName: string;
+        lastName: string;
+        role: string;
+        profileDp: string;
+        studyYear: string;
+        major: string;
+        occupation: string;
+        affiliation: string;
+    }
+}
+
 const ChatMembersScreen = ({ route }: any) => {
   const navigate = useNavigation<NavigationProp>();
-  const users = route?.params?.users ?? [];
+
   const chatId = route?.params?.chatId ?? "";
   const groupAdmin = route?.params?.groupAdmin ?? "";
   const [removing, setRemoving] = useState("");
-  const [usersList, setUsersList] = useState(users || []);
+  const [usersList, setUsersList] = useState<userList[]>( []);
   const userProfileData = getUserProfileStore();
   
+  const {data: chatMembers} = useGetChatMembers(chatId)
+//   console.log(chatMembers?.members?.users[0], "chatMembers","chatId",chatId);
   
   const { mutateAsync, isPending } = useRemoveGroupChatMember(chatId);
   const handleRemoveUser = async (userIdToRemove: string) => {
@@ -43,6 +59,13 @@ const ChatMembersScreen = ({ route }: any) => {
     // });
     navigate.goBack();
   };
+
+
+  useEffect(()=>{
+    if(chatMembers){
+      setUsersList(chatMembers?.members?.users)
+    }
+  },[chatMembers])
 
   return (
     <View style={styles.container}>

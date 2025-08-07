@@ -10,6 +10,7 @@ export default function MessageUserOptions({
   isGroupChat = false,
   isBlockedByYou = false,
   handleToggleBlockMessage,
+  handleDeleteGroup,
 }: {
   navigateToEditGroup: () => void;
   handleLeaveGroup: () => void;
@@ -20,6 +21,7 @@ export default function MessageUserOptions({
   isGroupChat: boolean;
   isBlockedByYou: boolean;
   handleToggleBlockMessage: () => void;
+  handleDeleteGroup: () => void;
 }) {
   return (
     <View style={styles.container}>
@@ -63,12 +65,21 @@ export default function MessageUserOptions({
       <View style={styles.divider} />
 
       {/* Remove Member */}
-      {isGroupChat && (
+      {isGroupChat && !isAdmin && (
         <TouchableOpacity
           style={styles.actionRow}
           onPress={() => handleLeaveGroup()}
         >
           <Text style={[styles.text, { color: "#FF4D4D" }]}>Leave Chat</Text>
+          <LogIn color="#FF4D4D" width={20} height={20} />
+        </TouchableOpacity>
+      )}
+      {isGroupChat && isAdmin && (
+        <TouchableOpacity
+          style={styles.actionRow}
+          onPress={() => handleDeleteGroup()}
+        >
+          <Text style={[styles.text, { color: "#FF4D4D" }]}>Delete Chat</Text>
           <LogIn color="#FF4D4D" width={20} height={20} />
         </TouchableOpacity>
       )}

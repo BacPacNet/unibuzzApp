@@ -1,6 +1,7 @@
 import { useNavigation, useRoute } from "@react-navigation/native";
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import {
+  RefreshControl,
   ScrollView,
   StyleSheet,
   Text,
@@ -38,7 +39,7 @@ const SearchCommunityGroupScreen = () => {
   const insets = useSafeAreaInsets();
 const userProfileData = getUserProfileStore()
 const [community, setCommunity] = useState<Community>()
-
+const [refreshing, setRefreshing] = useState(false);
 
 
   const isUserVerifiedForCommunity: boolean = userProfileData?.email?.some((community) => community?.communityId === communityId) || false
@@ -54,14 +55,18 @@ const [community, setCommunity] = useState<Community>()
 
   const {
     selectedTypeMain,
+    setSelectedTypeMain,
     selectedFiltersMain,
+    setSelectedFiltersMain,
     sort,
     setSort,
+    selectedLabelMain,
+    setSelectedLabelMain,
   } = useCommunityFilterContext();
 
   const isFilterApplied = useMemo(() => {
-    return Object.values(selectedFiltersMain)?.length > 0;
-  }, [selectedFiltersMain]);
+    return Object.values(selectedFiltersMain)?.length > 0 || selectedLabelMain?.length > 0 || selectedTypeMain?.length > 0;
+  }, [selectedFiltersMain,selectedLabelMain,selectedTypeMain]);
   
   
   const handleNavigateToGroup = (data: any) => {
@@ -84,15 +89,19 @@ const [community, setCommunity] = useState<Community>()
     });
   };
 
+
   useEffect(() => {
     const data = {
       selectedType: selectedTypeMain,
       selectedFilters: selectedFiltersMain,
       sort,
+      selectedLabel: selectedLabelMain,
     };
 
     mutate(data);
-  }, [sort, communityId, selectedTypeMain, selectedFiltersMain, change]);
+
+
+  }, [sort, communityId, selectedTypeMain, selectedFiltersMain, change,selectedLabelMain]);
 
   useEffect(() => {
     if (communityId && subscribedCommunitiesForUser) {
@@ -105,10 +114,22 @@ const [community, setCommunity] = useState<Community>()
 
 
   
+  const resetFilter = () => {
+    setSelectedFiltersMain({});
+    setSelectedTypeMain([]);
+    setSelectedLabelMain([]);
+    setSort("");
+  }
+
+  const onRefresh = React.useCallback(() => {
+    setRefreshing(true);
+    resetFilter()
+    setRefreshing(false);
+  }, []);
 
   
   return (
-    <ScrollView className="flex-1 bg-white pb-20">
+    <ScrollView refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />} className="flex-1 bg-white pb-20">
       <View className="p-4 flex-row items-center gap-2">
         <View className="flex-1 relative">
           <TextInput

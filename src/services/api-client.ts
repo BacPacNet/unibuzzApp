@@ -58,7 +58,7 @@ const client = async <T, U>(
   };
 
   try {
-
+    // console.log(config, "config");
     const response: AxiosResponse<ServerResponse<T>> = await axios(config);
     const { data: resData } = response;
     return resData;

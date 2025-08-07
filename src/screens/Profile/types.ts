@@ -3,6 +3,7 @@ import { RouteProp } from "@react-navigation/native";
 export interface ProfileRouteParams {
   userId: string;
   from?: string;
+  chatId?: string;
 }
 
 export interface ProfileProps {

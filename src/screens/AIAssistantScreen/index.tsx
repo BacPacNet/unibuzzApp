@@ -7,7 +7,6 @@ import {
   ScrollView,
   SafeAreaView,
   KeyboardAvoidingView,
-  Keyboard,
   Platform,
   Dimensions,
 } from "react-native";
@@ -43,39 +42,13 @@ const AI_Assistant = () => {
   const scrollViewRef = useRef<ScrollView>(null);
   const chatBotMessages = getChatBotMessages();
   const [chatMessages, setChatMessages] = useState<ChatBotMessage[]>([]);
-  const [keyboardHeight, setKeyboardHeight] = useState(inset.bottom);
+
 
   useEffect(() => {
     if (scrollViewRef.current) {
       scrollViewRef.current.scrollToEnd({ animated: false });
     }
   }, [chatMessages]);
-
-  useEffect(() => {
-    const keyboardDidShowListener = Keyboard.addListener(
-      "keyboardDidShow",
-      (e) => {
-        setKeyboardHeight(e.endCoordinates.height);
-        setTimeout(() => {
-          if (scrollViewRef.current) {
-            scrollViewRef.current.scrollToEnd({ animated: true });
-          }
-        }, 100);
-      }
-    );
-
-    const keyboardDidHideListener = Keyboard.addListener(
-      "keyboardDidHide",
-      () => {
-        setKeyboardHeight(inset.bottom);
-      }
-    );
-
-    return () => {
-      keyboardDidShowListener?.remove();
-      keyboardDidHideListener?.remove();
-    };
-  }, []);
 
   useFocusEffect(
     useCallback(() => {
@@ -154,6 +127,7 @@ const AI_Assistant = () => {
   };
 
   return (
+ 
     <SafeAreaView style={styles.container}>
       <View style={styles.headerContainer}>
         <BackHeader
@@ -179,41 +153,46 @@ const AI_Assistant = () => {
         </View>
       </View>
 
-      <View style={styles.chatContainer}>
-        <ScrollView
-          style={styles.scrollView}
-          ref={scrollViewRef}
-          onContentSizeChange={() =>
-            scrollViewRef.current?.scrollToEnd({ animated: true })
-          }
-          keyboardShouldPersistTaps="handled"
-          showsVerticalScrollIndicator={false}
-        >
-          {renderChatMessages()}
-          {renderLoadingMessage()}
-        </ScrollView>
-
-        <View
-          style={[styles.inputContainer, { marginBottom: keyboardHeight - 32 }]}
-        >
-          <TextInput
-            {...register("text")}
-            placeholder="Type a message"
-            multiline
-            style={styles.input}
-            value={watchText}
-            onChangeText={(text) => setValue("text", text)}
-          />
-          <TouchableOpacity
-            onPress={handleSendMessage}
-            style={styles.sendButton}
-            disabled={isPending}
+      <KeyboardAvoidingView 
+    style={styles.keyboardAvoidingView}
+    behavior={Platform.OS === "ios" ? "padding" : "height"}
+    keyboardVerticalOffset={Platform.OS === "ios" ? 0 : -100}
+  >
+        <View style={styles.chatContainer}>
+          <ScrollView
+            style={styles.scrollView}
+            ref={scrollViewRef}
+            onContentSizeChange={() =>
+              scrollViewRef.current?.scrollToEnd({ animated: true })
+            }
+            keyboardShouldPersistTaps="handled"
+            showsVerticalScrollIndicator={false}
           >
-            <SendSolid height={18} width={18} color={"white"} />
-          </TouchableOpacity>
+            {renderChatMessages()}
+            {renderLoadingMessage()}
+          </ScrollView>
+{/* <View style={styles.scrollView}></View> */}
+          <View style={styles.inputContainer}>
+            <TextInput
+              {...register("text")}
+              placeholder="Type a message"
+              multiline
+              style={styles.input}
+              value={watchText}
+              onChangeText={(text) => setValue("text", text)}
+            />
+            <TouchableOpacity
+              onPress={handleSendMessage}
+              style={styles.sendButton}
+              disabled={isPending}
+            >
+              <SendSolid height={18} width={18} color={"white"} />
+            </TouchableOpacity>
+          </View>
         </View>
-      </View>
+        </KeyboardAvoidingView>
     </SafeAreaView>
+
   );
 };
 
@@ -255,7 +234,8 @@ const styles = StyleSheet.create({
     paddingTop: 16,
   },
   scrollView: {
-    flex: 1,
+    // flex: 1,
+    flexGrow:1,
     paddingHorizontal: 16,
     paddingBottom: 16,
   },
