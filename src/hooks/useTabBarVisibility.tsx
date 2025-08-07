@@ -23,6 +23,6 @@ export const useTabBarVisibility = (navigation: any) => {
           },
         });
       };
-    }, [navigation]),
+    }, [navigation])
   );
 };
