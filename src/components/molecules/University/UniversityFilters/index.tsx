@@ -198,8 +198,8 @@ const UniversitySearchFilters: React.FC<Props> = ({ setQuery }) => {
 
   return (
     <>
-      <View className="p-4 flex">
-        <Title>Discover</Title>
+      <View style={styles.container}>
+        <Title height={36}>Discover</Title>
 
         <View style={styles.searchTagContainer}>
           {FILTER_TYPES.map(renderFilterTag)}
@@ -208,7 +208,7 @@ const UniversitySearchFilters: React.FC<Props> = ({ setQuery }) => {
           </TouchableOpacity>
         </View>
 
-        <View className="flex relative">
+        <View style={styles.searchContainer}>
           <Search
             style={styles.searchIcon}
             width={24}
@@ -253,6 +253,11 @@ const UniversitySearchFilters: React.FC<Props> = ({ setQuery }) => {
 export default UniversitySearchFilters;
 
 const styles = StyleSheet.create({
+    container:{
+paddingHorizontal:16,
+paddingTop:16,
+marginBottom:32
+    },
   searchTagContainer: {
     marginTop: 24,
     display: "flex",
@@ -284,19 +289,30 @@ const styles = StyleSheet.create({
     fontWeight: "500",
     backgroundColor: "#6744FF",
   },
+  searchContainer:{
+      position:"relative",
+      height:42,
+      marginTop:16,
+      padding:0
+    },
   searchInput: {
     height: 42,
     marginTop: 0,
     paddingRight: 24,
     paddingLeft: 58,
-    paddingVertical: 12,
+    paddingVertical: 0,
+    paddingTop: 0,
+    paddingBottom: 0,
     borderWidth: 1,
     borderColor: "#E2E8F0",
     borderRadius: 20,
     fontSize: 14,
   },
   searchIcon: {
-    top: "50%",
+    position: "absolute",
+    top: 9,
     left: 24,
+    zIndex: 30,
   },
+
 });

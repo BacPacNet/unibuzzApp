@@ -10,7 +10,7 @@ import {
 } from "@10play/tentap-editor";
 import { useFocusEffect } from "@react-navigation/native";
 import { MediaImage, PagePlus } from "iconoir-react-native";
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import {
   KeyboardAvoidingView,
   Platform,
@@ -19,6 +19,7 @@ import {
   TouchableOpacity,
   View,
   Text,
+  Keyboard,
 } from "react-native";
 import { launchImageLibrary } from "react-native-image-picker";
 import DocumentPicker from "react-native-document-picker";
@@ -76,7 +77,7 @@ const NewPost = ({ navigation }: any) => {
     UserPostType.PUBLIC
   );
   const [isPostCreating, setIsPostCreating] = useState(false);
-  const [showPostType, setShowPostType] = useState(false);
+  const [keyboardVisible, setKeyboardVisible] = useState(false);
   const { changeHeaderShownStatus } = useHeader();
 
   useTabBarVisibility(navigation);
@@ -224,67 +225,87 @@ const NewPost = ({ navigation }: any) => {
     }, [])
   );
 
+  useEffect(() => {
+    const showSub = Keyboard.addListener("keyboardDidShow", () =>
+      setKeyboardVisible(true)
+    );
+    const hideSub = Keyboard.addListener("keyboardDidHide", () =>
+      setKeyboardVisible(false)
+    );
+
+    return () => {
+      showSub.remove();
+      hideSub.remove();
+    };
+  }, []);
+
   return (
-    <KeyboardAvoidingView
-      style={{ flex: 1 }}
-      behavior={Platform.OS === "ios" ? "padding" : "height"}
-      keyboardVerticalOffset={Platform.OS === "ios" ? 0 : -600} // adjust if you have a custom header
-    >
-      <SafeScreen className="bg-white" >
-        <View
-       
-          className="  flex flex-row gap-4 items-center justify-between border-b border-neutral-300"
-        >
-          <BackHeader
-            label="New Post"
-            onPress={() => navigation.goBack()}
-            isLeftPadding={false}
+    <SafeScreen className="bg-white">
+      <View className="flex flex-row gap-4 items-center justify-between border-b border-neutral-300">
+        <BackHeader
+          label="New Post"
+          onPress={() => navigation.goBack()}
+          isLeftPadding={false}
+        />
+        <View className="flex flex-row items-center gap-4 px-4">
+          <ReusableButton
+            variant="primary"
+            size={58}
+            height="small"
+            buttonText="Post"
+            onPress={handlePostCreate}
+            isLoading={isPending || isPostCreating}
           />
-          <View
-           
-            className="flex flex-row items-center gap-4 px-4"
-          >
-            <ReusableButton
-              variant="primary"
-              size={58}
-              height="small"
-              buttonText="Post"
-              onPress={handlePostCreate}
-              isLoading={isPending || isPostCreating}
+        </View>
+      </View>
+
+      {/* <KeyboardAvoidingView
+        style={{ flex: 1 }}
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 32}
+      > */}
+      <View style={{ flex: 1 }}>
+        {(images.length > 0 || files.length > 0) && (
+          <View style={{ height: 100 }}>
+            <MediaPreviewList
+              files={[...images, ...files]}
+              onRemove={(index: any, isImage: boolean) =>
+                handleImageRemove(index, isImage)
+              }
             />
           </View>
+        )}
+        <View style={styles.editorHeight}>
+          <RichText editor={editor} />
         </View>
-        <View style={{ flex: 1 }}>
-          {(images.length > 0 || files.length > 0) && (
-            <View style={{ height: 100 }}>
-              <MediaPreviewList
-                files={[...images, ...files]}
-                onRemove={(index: any, isImage: boolean) =>
-                  handleImageRemove(index, isImage)
-                }
-              />
+      </View>
+      <KeyboardAvoidingView
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        style={{
+          position: "absolute",
+          width: "100%",
+          bottom: 0,
+        }}
+      >
+        {/* Bottom bar, always visible above the keyboard */}
+        <View style={[keyboardVisible && styles.bottomBar]}>
+          {keyboardVisible && (
+            <View className="flex flex-row gap-2 items-center p-2">
+              <TouchableOpacity onPress={handleImagePick}>
+                <MediaImage height={20} width={20} color={"#a3a3a3"} />
+              </TouchableOpacity>
+              <TouchableOpacity onPress={handleFilePick}>
+                <PagePlus height={20} width={20} color={"#a3a3a3"} />
+              </TouchableOpacity>
             </View>
           )}
-          <View style={styles.editorHeight}>
-            <RichText focusable={true} editor={editor} />
-          </View>
-        </View>
-        {/* Bottom bar, always visible above the keyboard */}
-        <View>
-          <View className="flex flex-row gap-2 items-center  p-2">
-            <TouchableOpacity onPress={handleImagePick}>
-              <MediaImage height={20} width={20} color={"#a3a3a3"} />
-            </TouchableOpacity>
-            <TouchableOpacity onPress={handleFilePick}>
-              <PagePlus height={20} width={20} color={"#a3a3a3"} />
-            </TouchableOpacity>
-          </View>
-          <View className="flex flex-row gap-2 items-center  p-2">
+
+          <View className="flex flex-row gap-2 items-center p-2">
             <Toolbar editor={editor} />
           </View>
         </View>
-      </SafeScreen>
-    </KeyboardAvoidingView>
+      </KeyboardAvoidingView>
+    </SafeScreen>
   );
 };
 
@@ -293,6 +314,13 @@ export default NewPost;
 const styles = StyleSheet.create({
   editorHeight: {
     flex: 1,
+    marginBottom: 20,
+    // height: 200,
     paddingHorizontal: 8,
+  },
+  bottomBar: {
+    backgroundColor: "white",
+    borderTopWidth: 1,
+    borderTopColor: "#e5e5e5",
   },
 });

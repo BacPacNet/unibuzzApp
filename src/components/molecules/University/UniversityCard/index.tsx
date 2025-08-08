@@ -4,6 +4,7 @@ import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { RootStackParamList } from "@/types/navigation";
 import CommunityLogo from "@/components/atoms/LogoHolder";
+import { FONTS } from "@/constants/fonts";
 
 type Props = {
   data: {
@@ -33,8 +34,7 @@ const DiscoverUniversityCard = ({ data }: Props) => {
   return (
     <TouchableOpacity
       onPress={handlePress}
-      style={{ backgroundColor: "#FAFAFA", borderRadius: 10 }}
-      className="flex relative  shadow-md  m-4 "
+      style={styles.card}
     >
       <Image
         source={{ uri: imageSrc }}
@@ -66,6 +66,14 @@ const DiscoverUniversityCard = ({ data }: Props) => {
 export default DiscoverUniversityCard;
 
 const styles = StyleSheet.create({
+  card:{
+    marginHorizontal:16,
+    marginBottom:16,
+    borderWidth:1,
+    borderColor:"#E5E7EB",
+    backgroundColor:"white",
+    borderRadius:16
+  },
   bottomContainer: {
     height: 60,
     paddingHorizontal: 16,
@@ -74,7 +82,7 @@ const styles = StyleSheet.create({
     fontSize: 12,
     fontWeight: 700,
     color: "#3A3B3C",
-    fontFamily: "poppins",
+    fontFamily: FONTS.poppins.bold,
     marginLeft: 8,
     flexWrap: "wrap",
     width: "90%",

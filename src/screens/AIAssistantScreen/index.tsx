@@ -27,6 +27,7 @@ import { useForm } from "react-hook-form";
 import { Toast } from "react-native-toast-notifications";
 import BotAvatar from "@/assets/chatbot/aiIcon.svg";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { SafeScreen } from "@/components/template";
 
 const AI_Assistant = () => {
   const navigation = useNavigation();
@@ -42,7 +43,6 @@ const AI_Assistant = () => {
   const scrollViewRef = useRef<ScrollView>(null);
   const chatBotMessages = getChatBotMessages();
   const [chatMessages, setChatMessages] = useState<ChatBotMessage[]>([]);
-
 
   useEffect(() => {
     if (scrollViewRef.current) {
@@ -127,8 +127,7 @@ const AI_Assistant = () => {
   };
 
   return (
- 
-    <SafeAreaView style={styles.container}>
+    <SafeScreen>
       <View style={styles.headerContainer}>
         <BackHeader
           label="Home"
@@ -153,11 +152,11 @@ const AI_Assistant = () => {
         </View>
       </View>
 
-      <KeyboardAvoidingView 
-    style={styles.keyboardAvoidingView}
-    behavior={Platform.OS === "ios" ? "padding" : "height"}
-    keyboardVerticalOffset={Platform.OS === "ios" ? 0 : -100}
-  >
+      <KeyboardAvoidingView
+        style={styles.keyboardAvoidingView}
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        keyboardVerticalOffset={Platform.OS === "ios" ? 0 : -100}
+      >
         <View style={styles.chatContainer}>
           <ScrollView
             style={styles.scrollView}
@@ -171,7 +170,7 @@ const AI_Assistant = () => {
             {renderChatMessages()}
             {renderLoadingMessage()}
           </ScrollView>
-{/* <View style={styles.scrollView}></View> */}
+          {/* <View style={styles.scrollView}></View> */}
           <View style={styles.inputContainer}>
             <TextInput
               {...register("text")}
@@ -190,9 +189,8 @@ const AI_Assistant = () => {
             </TouchableOpacity>
           </View>
         </View>
-        </KeyboardAvoidingView>
-    </SafeAreaView>
-
+      </KeyboardAvoidingView>
+    </SafeScreen>
   );
 };
 
@@ -235,7 +233,7 @@ const styles = StyleSheet.create({
   },
   scrollView: {
     // flex: 1,
-    flexGrow:1,
+    flexGrow: 1,
     paddingHorizontal: 16,
     paddingBottom: 16,
   },
