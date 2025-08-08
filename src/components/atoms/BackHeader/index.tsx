@@ -2,6 +2,7 @@ import React from "react";
 import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { NavArrowLeft } from "iconoir-react-native";
+import { FONTS } from "@/constants/fonts";
 
 type BackHeaderProps = {
   label?: string;
@@ -22,7 +23,7 @@ const BackHeader: React.FC<BackHeaderProps> = ({
         style={styles.button}
         onPress={onPress || (() => navigation.goBack())}
       >
-        <NavArrowLeft width={24} height={24} color="#6744FF" />
+        <NavArrowLeft width={24} height={24} color="#6744FF" strokeWidth={2} />
         <Text style={styles.label}>{label}</Text>
       </TouchableOpacity>
     </View>
@@ -47,7 +48,7 @@ const styles = StyleSheet.create({
   label: {
     color: "#6744FF",
     fontSize: 16,
-    fontWeight: "500",
+    fontFamily:FONTS.poppins.medium
   },
 });
 

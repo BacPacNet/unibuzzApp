@@ -30,6 +30,7 @@ import { MessageTextSolid, NavArrowDown } from "iconoir-react-native";
 import DropdownWrapper from "../../SelectDropDownWrapper";
 import CommentSortDropDownMenu from "../CommentSortDropDownMenu";
 import { Sortby } from "@/types/constant";
+import { SafeScreen } from "@/components/template";
 
 type Props = {
   postId: string;
@@ -76,13 +77,13 @@ const CommentBottomSheet = ({
     postId,
     type == PostType.Timeline,
     5,
-    selectedSortValue,
+    selectedSortValue
   );
 
   const { mutate: likeUserPostComment } = useLikeUnlikeUserPostComment(
     showInitial,
     postId,
-    selectedSortValue,
+    selectedSortValue
   );
 
   // community
@@ -97,20 +98,19 @@ const CommentBottomSheet = ({
     postId,
     type == PostType.Community,
     5,
-    selectedSortValue,
+    selectedSortValue
   );
 
   const { mutate: likeGroupPostComment } = useLikeUnlikeGroupPostComment(
     showInitial,
     postId,
-    selectedSortValue,
+    selectedSortValue
   );
 
   const userCommentsData =
     commentsData?.pages.flatMap((page) => page.finalComments) || [];
   const communityPostCommentsData =
     communityCommentsData?.pages.flatMap((page) => page.finalComments) || [];
-
 
   const handleNavigate = (userID: string) => {
     navigate.navigate("ProfileStack", {
@@ -182,12 +182,13 @@ const CommentBottomSheet = ({
                     <DropdownWrapper
                       position="bottom"
                       extraBottom={-70}
-                      
                       renderDropdown={(closeDropdown) => (
-                        <CommentSortDropDownMenu handleSelect={(option) => {
-                            handleSelect(option); 
+                        <CommentSortDropDownMenu
+                          handleSelect={(option) => {
+                            handleSelect(option);
                             closeDropdown();
-                          }} />
+                          }}
+                        />
                       )}
                     >
                       <TouchableOpacity style={styles.dropDown}>
@@ -277,26 +278,27 @@ const CommentBottomSheet = ({
           />
         </View>
       </View>
-
-      <Modal
-        visible={isModalVisible}
-        animationType="slide"
-        transparent={true}
-        onRequestClose={() => setModalVisible(false)}
-      >
-        <NewComment
-          setModalVisible={setModalVisible}
-          showInitial={showInitial}
-          type={type}
-          postId={postId}
-          adminID={adminID}
-          level={replyingTo?.commentId?.length ? true : false}
-          commentData={replyingTo}
-          postAuthorName={postAuthorName || ""}
-          setShowReply={setShowReply}
-          sortby={selectedSortValue}
-        />
-      </Modal>
+      <SafeScreen>
+        <Modal
+          visible={isModalVisible}
+          animationType="slide"
+          transparent={true}
+          onRequestClose={() => setModalVisible(false)}
+        >
+          <NewComment
+            setModalVisible={setModalVisible}
+            showInitial={showInitial}
+            type={type}
+            postId={postId}
+            adminID={adminID}
+            level={replyingTo?.commentId?.length ? true : false}
+            commentData={replyingTo}
+            postAuthorName={postAuthorName || ""}
+            setShowReply={setShowReply}
+            sortby={selectedSortValue}
+          />
+        </Modal>
+      </SafeScreen>
     </SafeAreaView>
   );
 };

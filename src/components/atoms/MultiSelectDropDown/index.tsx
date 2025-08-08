@@ -9,6 +9,7 @@ import {
 import BouncyCheckbox from "react-native-bouncy-checkbox";
 import { FlatList } from "react-native-actions-sheet";
 import { CheckSquareSolid, Search } from "iconoir-react-native";
+import { FONTS } from "@/constants/fonts";
 interface MultiSelectDropdownProps {
   options: string[];
   onChange: (value: string[]) => void;
@@ -111,9 +112,9 @@ const MultiSelectDropdown = ({
       {label && <Text style={styles.label}>{label}</Text>}
 
       {search && (
-        <View className="  relative  w-full">
+        <View className="   relative  w-full">
           <Search
-            style={{ top: 20, right: 10, position: "absolute" }}
+            style={{ top: 10, right: 10, position: "absolute" }}
             width={20}
             height={20}
             color={"#242526"}
@@ -134,6 +135,7 @@ const MultiSelectDropdown = ({
         renderItem={renderOption}
         style={styles.optionsList}
         maxToRenderPerBatch={20}
+        showsVerticalScrollIndicator={false}
       />
     </View>
   );
@@ -141,9 +143,11 @@ const MultiSelectDropdown = ({
 
 const styles = StyleSheet.create({
   container: {
-    padding: 12,
+    // padding: 12,
+    paddingTop: 36,
+    paddingHorizontal:32,
     height: "100%",
-    gap: 10,
+    gap: 8,
     width: "100%",
   },
   label: {
@@ -203,10 +207,10 @@ const styles = StyleSheet.create({
     borderColor: "#E5E7EB",
     borderWidth: 1,
     borderRadius: 8,
-    paddingVertical: 8,
+    // paddingVertical: 8,
     paddingLeft: 12,
     paddingRight: 35,
-    marginVertical: 10,
+    // marginVertical: 10,
     height: 40,
   },
   optionsList: {
@@ -225,6 +229,7 @@ const styles = StyleSheet.create({
     color: "#3A3B3C",
     fontSize: 14,
     fontWeight: 500,
+    fontFamily:FONTS.inter.medium
   },
   optionSelected: {
     // backgroundColor: "#f0f0f0",

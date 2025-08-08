@@ -58,12 +58,15 @@ import MembersScreen from "@/screens/MembersScreen";
 import MessageStack from "./MessageStack";
 import InfoStack from "./InfoStack";
 import AboutUs from "@/screens/AboutUs";
+import { SafeScreen } from "@/components/template";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 const Stack = createStackNavigator<RootStackParamList>();
 const Tab = createBottomTabNavigator<RootStackParamList>();
 const noHeaderScreens = [];
 function ApplicationNavigator() {
   const { variant, navigationTheme } = useTheme();
+  const insets = useSafeAreaInsets();
   const { isAuthenticated, setAuthenticated, deauthenticate } = useAuth();
   const [isAppFirstLaunched, setIsAppFirstLaunched] = useState<boolean | null>(
     null
@@ -123,6 +126,7 @@ function ApplicationNavigator() {
     );
     return (
       <Tab.Navigator
+        safeAreaInsets={{ bottom: insets.bottom }}
         screenOptions={({ route }) => ({
           tabBarIcon: ({ focused }) => {
             if (isTabName(route.name)) {
@@ -130,6 +134,7 @@ function ApplicationNavigator() {
             }
             return null;
           },
+
           tabBarActiveTintColor: "#6744FF",
           tabBarInactiveTintColor: "black",
           tabBarStyle: {

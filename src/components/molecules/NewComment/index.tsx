@@ -85,7 +85,7 @@ const NewComment = ({
   postAuthorName,
   showInitial,
   setShowReply,
-  sortby
+  sortby,
 }: Props) => {
   const userProfileData = getUserProfileStore();
   const [images, setImages] = useState<ImageAsset[]>([]);
@@ -114,7 +114,7 @@ const NewComment = ({
   const {
     mutateAsync: CreateUserPostCommentReply,
     isPending: CreateUserPostCommentReplyLoading,
-  } = useCreateUserPostCommentReply(showInitial, postId || "",sortby);
+  } = useCreateUserPostCommentReply(showInitial, postId || "", sortby);
 
   const {
     mutateAsync: mutateGroupPostComment,
@@ -123,7 +123,7 @@ const NewComment = ({
   const {
     mutateAsync: CreateGroupPostCommentReply,
     isPending: useCreateGroupPostCommentReplyLoading,
-  } = useCreateGroupPostCommentReply(showInitial, postId || "",sortby);
+  } = useCreateGroupPostCommentReply(showInitial, postId || "", sortby);
   const [isPostCreating, setIsPostCreating] = useState(false);
 
   const handleImagePick = useCallback(() => {
@@ -150,7 +150,7 @@ const NewComment = ({
           }
           setImages((prevImages) => [...prevImages, ...response.assets]);
         }
-      },
+      }
     );
   }, []);
 
@@ -162,7 +162,7 @@ const NewComment = ({
         setFiles((prev) => prev.filter((file) => file.name !== identifier));
       }
     },
-    [],
+    []
   );
 
   const handleComment = async () => {
@@ -247,49 +247,46 @@ const NewComment = ({
           />
         </View>
       </View>
-      <SafeAreaView style={{ flex: 1, paddingBottom: 80 }}>
-        <Text
-          style={styles.padingHorizontal}
-          className="text-sm text-primary-500  "
-        >
-          {level
-            ? `Replying to ${commentData.name}`
-            : `Commenting on ${postAuthorName} post`}
-        </Text>
+      <Text
+        style={styles.padingHorizontal}
+        className="text-sm text-primary-500  "
+      >
+        {level
+          ? `Replying to ${commentData.name}`
+          : `Commenting on ${postAuthorName} post`}
+      </Text>
 
-        {images.length > 0 && (
-          <View style={{ height: 100 }}>
-            <MediaPreviewList
-              files={[...images, ...files]}
-              onRemove={(index: any, isImage: boolean) =>
-                handleImageRemove(index, isImage)
-              }
-            />
-          </View>
-        )}
+      {images.length > 0 && (
+        <View style={{ height: 100 }}>
+          <MediaPreviewList
+            files={[...images, ...files]}
+            onRemove={(index: any, isImage: boolean) =>
+              handleImageRemove(index, isImage)
+            }
+          />
+        </View>
+      )}
 
-        <View style={styles.editorHeight}>
-          <RichText editor={editor} focusable={true} />
+      <View style={styles.editorHeight}>
+        <RichText editor={editor} />
+      </View>
+
+      <KeyboardAvoidingView
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        style={{
+          position: "absolute",
+          width: "100%",
+          bottom: 0,
+        }}
+      >
+        <View className="flex flex-row gap-2 items-center border-t border-neutral-300 p-2">
+          <TouchableOpacity onPress={handleImagePick}>
+            <MediaImage height={20} width={20} color={"#a3a3a3"} />
+          </TouchableOpacity>
         </View>
 
-     
-        <KeyboardAvoidingView
-          behavior={Platform.OS === "ios" ? "padding" : "height"}
-          style={{
-            position: "absolute",
-            width: "100%",
-            bottom: 0,
-          }}
-        >
-          <View className="flex flex-row gap-2 items-center border-t border-neutral-300 p-2">
-            <TouchableOpacity onPress={handleImagePick}>
-              <MediaImage height={20} width={20} color={"#a3a3a3"} />
-            </TouchableOpacity>
-          </View>
-
-          <Toolbar editor={editor} />
-        </KeyboardAvoidingView>
-      </SafeAreaView>
+        <Toolbar editor={editor} />
+      </KeyboardAvoidingView>
     </View>
   );
 };
@@ -299,8 +296,8 @@ export default NewComment;
 const styles = StyleSheet.create({
   padingHorizontal: {
     paddingHorizontal: 8,
-    marginTop:24,
-    marginBottom:0
+    marginTop: 24,
+    marginBottom: 0,
   },
   editorHeight: {
     flex: 1,

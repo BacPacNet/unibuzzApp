@@ -104,6 +104,7 @@ const styles = StyleSheet.create({
     borderRadius: 30,
     elevation: 5,
   },
+
 });
 
 export default AllUniversities;

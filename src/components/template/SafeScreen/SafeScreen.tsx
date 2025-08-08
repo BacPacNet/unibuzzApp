@@ -4,7 +4,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { useTheme } from "@/theme";
 
-function SafeScreen({ children,className }: {children:React.ReactNode,className?:string}) {
+function SafeScreen({ children,className = "bg-white" }: {children:React.ReactNode,className?:string}) {
   const { layout, variant, navigationTheme } = useTheme();
   const insets = useSafeAreaInsets();
 
