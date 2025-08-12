@@ -32,6 +32,8 @@ import { useHeader } from "@/context/HeaderProvider/Header";
 import { UPLOAD_CONTEXT } from "@/types/uploads";
 import { useUploadToS3 } from "@/services/upload";
 import { Toast } from "react-native-toast-notifications";
+import SelectUniversityDropdownBottomSheet from "@/components/atoms/SelectUniversityDropDownBottomSheet";
+import CommunityLogo from "@/components/atoms/LogoHolder";
 
 type ImageAsset = {
   uri: string;
@@ -45,12 +47,32 @@ type ImageAsset = {
 export default function ProfileEdit() {
   const {
     handleSubmit,
-    reset,
     control,
     setValue,
     watch,
     formState: { errors, isDirty },
-  } = useForm<editProfileInputs>();
+  } = useForm<editProfileInputs>({
+    defaultValues: {
+      firstName: "",
+      lastName: "",
+      displayEmail: "",
+      gender: "",
+      affiliation: "",
+      bio: "",
+      city: "",
+      country: "",
+      degree: "",
+      dob: "",
+      major: "",
+      occupation: "",
+      phone_number: "",
+      study_year: "",
+      university_name: "",
+      universityId: "",
+      communityId: "",
+      universityLogo: "",
+    },
+  });
 
   const navigate = useNavigation();
   const userProfileData = getUserProfileStore();
@@ -59,13 +81,13 @@ export default function ProfileEdit() {
   const [cityOptions, setCityOptions] = useState<string[]>([]);
   const [userType, setUserType] = useState(userProfileData?.role || "student");
   const [previewProfileImage, setPreviewProfileImage] = useState<string | null>(
-    null,
+    null
   );
   const [isProfileLoading, setIsProfileLoading] = useState(false);
   const [imageToUpload, setImageToUpload] = useState<ImageAsset | null>(null);
 
   const { data: userProfile } = useGetUserData(
-    userProfileData?.users_id as string,
+    userProfileData?.users_id as string
   );
   const { mutateAsync: mutateEditProfile, isPending } = useEditProfile();
   const { mutateAsync: uploadToS3 } = useUploadToS3();
@@ -77,36 +99,38 @@ export default function ProfileEdit() {
   useEffect(() => {
     if (userProfile) {
       const { firstName, lastName, gender, profile } = userProfile || {};
-      const userDefault = {
-        firstName: firstName || "",
-        lastName: lastName || "",
-        displayEmail: profile?.displayEmail || "",
-        gender: gender || "",
-        affiliation: profile.affiliation || "",
-        bio: profile.bio || "",
-        city: profile.city || "",
-        country: profile.country || "",
-        degree: profile.degree || "test",
-        dob: profile.dob || "",
-        major: profile.major || "",
-        occupation: profile.occupation || "",
-        phone_number: profile.phone_number || "",
-        study_year: profile.study_year || "",
-        // profilePicture: null,
-      };
-      reset(userDefault);
+
+      // Set individual form values when userProfile data loads
+      setValue("firstName", firstName || "");
+      setValue("lastName", lastName || "");
+      setValue("displayEmail", profile?.displayEmail || "");
+      setValue("gender", gender || "");
+      setValue("affiliation", profile?.affiliation || "");
+      setValue("bio", profile?.bio || "");
+      setValue("city", profile?.city || "");
+      setValue("country", profile?.country || "");
+      setValue("degree", profile?.degree || "");
+      setValue("dob", profile?.dob || "");
+      setValue("major", profile?.major || "");
+      setValue("occupation", profile?.occupation || "");
+      setValue("phone_number", profile?.phone_number || "");
+      setValue("study_year", profile?.study_year || "");
+      setValue("university_name", profile?.university_name || "");
+      setValue("universityId", profile?.university_id || "");
+      setValue("communityId", profile?.communityId || "");
+      setValue("universityLogo", profile?.universityLogo || "");
 
       setPreviewProfileImage(profile?.profile_dp?.imageUrl);
     }
-  }, [userProfile, reset]);
+  }, [userProfile, setValue]);
 
   const handleCountryChange = (selectedCountry: string) => {
     const getCountyCode = Country.getAllCountries().find(
-      (country) => country.name === selectedCountry,
+      (country) => country.name === selectedCountry
     )?.isoCode;
     if (getCountyCode) {
       setCityOptions(
-        City.getCitiesOfCountry(getCountyCode)!.map((state) => state.name),
+        City.getCitiesOfCountry(getCountyCode)!.map((state) => state.name)
       );
       setValue("city", "");
     }
@@ -124,11 +148,11 @@ export default function ProfileEdit() {
   useEffect(() => {
     if (currCountryWatch && !currCityWatch) {
       const getCountyCode = Country.getAllCountries().find(
-        (country) => country.name === currCountryWatch,
+        (country) => country.name === currCountryWatch
       )?.isoCode;
       if (getCountyCode) {
         setCityOptions(
-          City.getCitiesOfCountry(getCountyCode)!.map((state) => state.name),
+          City.getCitiesOfCountry(getCountyCode)!.map((state) => state.name)
         );
       }
     }
@@ -290,7 +314,7 @@ export default function ProfileEdit() {
                 placeholder="Your country of birth"
                 name="country"
                 options={Country.getAllCountries().map(
-                  (country) => country.name,
+                  (country) => country.name
                 )}
                 control={control}
                 onChange={(selectedCountry: string) =>
@@ -338,6 +362,29 @@ export default function ProfileEdit() {
                 }
                 keyboardType="phone-pad"
               />
+
+              <SelectUniversityDropdownBottomSheet
+                control={control}
+                setValue={setValue as any}
+                name="university_name"
+                label="University"
+                placeholder="Select University Name"
+                icon="single"
+                search={true}
+                rules={{ required: "University is required!" }}
+              />
+
+              {watch("university_name") && (
+                <View style={styles.universityDisplay}>
+                  <CommunityLogo
+                    logoUrl={watch("universityLogo") || ""}
+                    variant="small"
+                  />
+                  <Text style={styles.universityName}>
+                    {watch("university_name")}
+                  </Text>
+                </View>
+              )}
             </View>
 
             {/* Status Section */}
@@ -472,5 +519,15 @@ const styles = StyleSheet.create({
     borderTopWidth: 1,
     borderColor: "#E5E7EB",
     paddingTop: 32,
+  },
+  universityDisplay: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
+  },
+  universityName: {
+    fontSize: 14,
+    fontWeight: "500",
+    color: "#1F2937",
   },
 });

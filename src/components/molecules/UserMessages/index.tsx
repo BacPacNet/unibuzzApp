@@ -126,7 +126,7 @@ const UserMessages = ({
 
   useEffect(() => {
     if (scrollViewRef.current) {
-      scrollViewRef.current.scrollToEnd({ animated: false });
+      scrollViewRef.current.scrollToEnd({ animated: true });
     }
   }, [chatMessages, changed]);
 
@@ -149,12 +149,14 @@ const UserMessages = ({
 
   return (
     <KeyboardAvoidingView
-      behavior={Platform.OS === "ios" ? "padding" : undefined}
-      keyboardVerticalOffset={0}
-      className="flex-1 justify-between h-full"
+      style={{ flex: 1 }}
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
+      keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 0} // adjust for header height
     >
       <ScrollView
         className="flex-1 px-4 h-full"
+        contentContainerStyle={{ flexGrow: 1, padding: 16 }}
+        keyboardShouldPersistTaps="handled"
         ref={scrollViewRef}
         onContentSizeChange={() =>
           scrollViewRef.current?.scrollToEnd({ animated: true })

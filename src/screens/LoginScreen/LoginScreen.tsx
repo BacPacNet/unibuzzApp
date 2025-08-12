@@ -18,6 +18,7 @@ import { RootStackParamList } from "@/types/navigation";
 import ReusableButton from "@/components/atoms/ReusableButton";
 import { FormInput } from "@/components/atoms/FormInput";
 import { FormInputPassword } from "@/components/atoms/FormInputPassword";
+import { SafeScreen } from "@/components/template";
 
 type LoginScreenNavigationProp = StackNavigationProp<
   RootStackParamList,
@@ -44,7 +45,7 @@ function LoginScreen() {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeScreen>
       <KeyboardAvoidingView
         behavior={Platform.OS === "ios" ? "padding" : "height"}
         className="flex-1"
@@ -134,7 +135,7 @@ function LoginScreen() {
           </View>
         </View>
       </KeyboardAvoidingView>
-    </SafeAreaView>
+    </SafeScreen>
   );
 }
 

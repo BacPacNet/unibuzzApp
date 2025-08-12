@@ -5,10 +5,8 @@ import {
   StyleSheet,
   TextInput,
   ScrollView,
-  SafeAreaView,
-  KeyboardAvoidingView,
   Platform,
-  Dimensions,
+  KeyboardAvoidingView,
 } from "react-native";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import BackHeader from "@/components/atoms/BackHeader";
@@ -27,26 +25,24 @@ import { useForm } from "react-hook-form";
 import { Toast } from "react-native-toast-notifications";
 import BotAvatar from "@/assets/chatbot/aiIcon.svg";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { SafeScreen } from "@/components/template";
 
 const AI_Assistant = () => {
   const navigation = useNavigation();
   const userData = getUserStore();
   const { register, setValue, watch } = useForm({
-    defaultValues: {
-      text: "",
-    },
+    defaultValues: { text: "" },
   });
   const watchText = watch("text");
   const { mutate: createChatBotMessage, isPending } = useCreateChatBotMessage();
   const inset = useSafeAreaInsets();
   const scrollViewRef = useRef<ScrollView>(null);
+
   const chatBotMessages = getChatBotMessages();
   const [chatMessages, setChatMessages] = useState<ChatBotMessage[]>([]);
 
   useEffect(() => {
     if (scrollViewRef.current) {
-      scrollViewRef.current.scrollToEnd({ animated: false });
+      scrollViewRef.current.scrollToEnd({ animated: true });
     }
   }, [chatMessages]);
 
@@ -82,10 +78,7 @@ const AI_Assistant = () => {
 
     setChatMessages((prev) => [...prev, data]);
     createChatBotMessage(data, {
-      onSuccess: (res) => {
-        setChatMessages((prev) => [...prev, res]);
-      },
-      onError: () => {},
+      onSuccess: (res) => setChatMessages((prev) => [...prev, res]),
     });
     setValue("text", "");
   };
@@ -107,7 +100,6 @@ const AI_Assistant = () => {
     if (chatMessages?.length === 0) {
       return renderEmptyState();
     }
-
     return chatMessages?.map((message, idx) => (
       <ChatMessage
         key={idx}
@@ -120,28 +112,28 @@ const AI_Assistant = () => {
 
   const renderLoadingMessage = () => {
     if (!isPending) return null;
-
     return (
       <ChatMessage isMine={false} avatar={""} message={""} isLoading={true} />
     );
   };
 
   return (
-    <SafeScreen>
+    <View
+      style={{ flex: 1, backgroundColor: "white", paddingBottom: inset.bottom }}
+    >
+      {/* Header */}
       <View style={styles.headerContainer}>
         <BackHeader
           label="Home"
           onPress={() => navigation.goBack()}
           isLeftPadding={true}
         />
-
         <View style={styles.refreshButtonContainer}>
           <ReusableButton
             onPress={handleRefresh}
             variant="shade"
             size={89}
             height="small"
-            buttonText="Refresh"
             buttonContent={
               <View style={styles.refreshButtonContent}>
                 <Text style={styles.refreshButtonText}>Refresh</Text>
@@ -152,58 +144,52 @@ const AI_Assistant = () => {
         </View>
       </View>
 
+      {/* Keyboard Avoider */}
       <KeyboardAvoidingView
-        style={styles.keyboardAvoidingView}
+        style={{ flex: 1 }}
         behavior={Platform.OS === "ios" ? "padding" : "height"}
-        keyboardVerticalOffset={Platform.OS === "ios" ? 0 : -100}
+        keyboardVerticalOffset={Platform.OS === "ios" ? 100 : 120} // adjust for header height
       >
-        <View style={styles.chatContainer}>
-          <ScrollView
-            style={styles.scrollView}
-            ref={scrollViewRef}
-            onContentSizeChange={() =>
-              scrollViewRef.current?.scrollToEnd({ animated: true })
-            }
-            keyboardShouldPersistTaps="handled"
-            showsVerticalScrollIndicator={false}
+        {/* Messages */}
+        <ScrollView
+          ref={scrollViewRef}
+          contentContainerStyle={{ flexGrow: 1, padding: 16 }}
+          keyboardShouldPersistTaps="handled"
+          onContentSizeChange={() =>
+            scrollViewRef.current?.scrollToEnd({ animated: true })
+          }
+          showsVerticalScrollIndicator={false}
+        >
+          {renderChatMessages()}
+          {renderLoadingMessage()}
+        </ScrollView>
+
+        {/* Input fixed at bottom */}
+        <View style={styles.inputContainer}>
+          <TextInput
+            {...register("text")}
+            placeholder="Type a message"
+            multiline
+            style={styles.input}
+            value={watchText}
+            onChangeText={(text) => setValue("text", text)}
+          />
+          <TouchableOpacity
+            onPress={handleSendMessage}
+            style={styles.sendButton}
+            disabled={isPending}
           >
-            {renderChatMessages()}
-            {renderLoadingMessage()}
-          </ScrollView>
-          {/* <View style={styles.scrollView}></View> */}
-          <View style={styles.inputContainer}>
-            <TextInput
-              {...register("text")}
-              placeholder="Type a message"
-              multiline
-              style={styles.input}
-              value={watchText}
-              onChangeText={(text) => setValue("text", text)}
-            />
-            <TouchableOpacity
-              onPress={handleSendMessage}
-              style={styles.sendButton}
-              disabled={isPending}
-            >
-              <SendSolid height={18} width={18} color={"white"} />
-            </TouchableOpacity>
-          </View>
+            <SendSolid height={18} width={18} color={"white"} />
+          </TouchableOpacity>
         </View>
       </KeyboardAvoidingView>
-    </SafeScreen>
+    </View>
   );
 };
 
 export default AI_Assistant;
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "white",
-  },
-  keyboardAvoidingView: {
-    flex: 1,
-  },
   headerContainer: {
     flexDirection: "row",
     alignItems: "center",
@@ -225,20 +211,7 @@ const styles = StyleSheet.create({
   refreshButtonText: {
     color: "#6744FF",
   },
-  chatContainer: {
-    flex: 1,
-    display: "flex",
-    flexDirection: "column",
-    paddingTop: 16,
-  },
-  scrollView: {
-    // flex: 1,
-    flexGrow: 1,
-    paddingHorizontal: 16,
-    paddingBottom: 16,
-  },
   emptyStateContainer: {
-    height: 400,
     flex: 1,
     alignItems: "center",
     justifyContent: "center",

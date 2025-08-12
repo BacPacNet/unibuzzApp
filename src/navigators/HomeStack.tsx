@@ -15,8 +15,8 @@ const HomeStack = () => {
         name="NewPost"
         component={NewPost}
         options={{
-          gestureEnabled: true,
-          gestureDirection: "horizontal",
+          gestureEnabled: false,
+          // gestureDirection: "horizontal",
         }}
       />
       <Stack.Screen name="Example" component={Example} />
