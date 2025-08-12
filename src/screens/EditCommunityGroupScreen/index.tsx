@@ -91,10 +91,10 @@ const EditCommunityGroupScreen = () => {
   const selectedFilters = watch("selectedFilters") || [];
 
   const [previewProfileImage, setPreviewProfileImage] = useState<string | null>(
-    communityGroups?.communityGroupLogoUrl?.imageUrl,
+    communityGroups?.communityGroupLogoUrl?.imageUrl
   );
   const [previewBannerImage, setPreviewBannerImage] = useState<string | null>(
-    null,
+    null
   );
   const [isProfileLoading, setIsProfileLoading] = useState(false);
   const [imageToUpload, setImageToUpload] = useState<ImageAsset | null>(null);
@@ -107,7 +107,7 @@ const EditCommunityGroupScreen = () => {
       return () => {
         resetFilters();
       };
-    }, [communityGroups]),
+    }, [communityGroups])
   );
 
   useEffect(() => {
@@ -115,17 +115,17 @@ const EditCommunityGroupScreen = () => {
     setValue("description", communityGroups?.description);
     setValue(
       "communityGroupAccess",
-      communityGroups?.communityGroupAccess ?? "",
+      communityGroups?.communityGroupAccess ?? ""
     );
     setValue("communityGroupType", communityGroups?.communityGroupType);
     setValue("communityGroupLabel", communityGroups?.communityGroupLabel);
     setValue("selectedUsers", communityGroups?.users ?? []);
     setValue("selectedFilters", communityGroups?.communityGroupCategory);
     setPreviewProfileImage(
-      communityGroups?.communityGroupLogoUrl?.imageUrl ?? "",
+      communityGroups?.communityGroupLogoUrl?.imageUrl ?? ""
     );
     setPreviewBannerImage(
-      communityGroups?.communityGroupLogoCoverUrl?.imageUrl ?? "",
+      communityGroups?.communityGroupLogoCoverUrl?.imageUrl ?? ""
     );
     setCreateSelectedFilters(communityGroups?.communityGroupCategory);
   }, [communityGroups]);
@@ -136,11 +136,15 @@ const EditCommunityGroupScreen = () => {
     });
   };
 
-  const handleImagePick = async () => {
+  const handleImagePick = async (type: "profile" | "banner") => {
     launchImageLibrary({ mediaType: "photo" }, (response: any) => {
       if (!response.didCancel && !response.errorCode) {
         const imageObject = response.assets[0];
-        setImageToUpload(imageObject);
+        if (type === "profile") {
+          setImageToUpload(imageObject);
+        } else {
+          setBannerToUpload(imageObject);
+        }
       }
     });
   };
@@ -182,6 +186,12 @@ const EditCommunityGroupScreen = () => {
       communityGroupLabel: communityGroupLabel,
       ...communityGroupCategory,
       selectedUsers: selectedUsersState,
+      ...(logoImageData && {
+        communityGroupLogoUrl: logoImageData.data[0],
+      }),
+      ...(CoverImageData && {
+        communityGroupLogoCoverUrl: CoverImageData.data[0],
+      }),
     };
 
     mutateEditGroup(
@@ -190,7 +200,8 @@ const EditCommunityGroupScreen = () => {
         onSuccess: () => {
           setCreateSelectedFilters([]);
           setIsProfileLoading(false);
-
+          setImageToUpload(null);
+          setBannerToUpload(null);
           navigate.navigate("CommunityGroup", {
             communityId: communityId,
             communityGroupId: communityGroups?._id,
@@ -200,7 +211,7 @@ const EditCommunityGroupScreen = () => {
         onError: (error) => {
           setIsProfileLoading(false);
         },
-      },
+      }
     );
   };
 

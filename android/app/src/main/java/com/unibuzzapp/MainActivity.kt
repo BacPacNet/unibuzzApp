@@ -4,6 +4,8 @@ import com.facebook.react.ReactActivity
 import com.facebook.react.ReactActivityDelegate
 import com.facebook.react.defaults.DefaultNewArchitectureEntryPoint.fabricEnabled
 import com.facebook.react.defaults.DefaultReactActivityDelegate
+import android.os.Bundle
+import androidx.core.view.WindowCompat
 
 class MainActivity : ReactActivity() {
 
@@ -19,4 +21,16 @@ class MainActivity : ReactActivity() {
    */
   override fun createReactActivityDelegate(): ReactActivityDelegate =
       DefaultReactActivityDelegate(this, mainComponentName, fabricEnabled)
+
+  /**
+   * Switch from SplashTheme to AppTheme and enable edge-to-edge so SafeArea can report insets.
+   */
+  override fun onCreate(savedInstanceState: Bundle?) {
+    // Ensure we switch from SplashTheme to AppTheme
+    setTheme(R.style.AppTheme)
+    super.onCreate(savedInstanceState)
+
+    // Draw behind system bars so react-native-safe-area-context can measure insets
+    WindowCompat.setDecorFitsSystemWindows(window, false)
+  }
 }

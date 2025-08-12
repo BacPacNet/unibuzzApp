@@ -126,7 +126,7 @@ function ApplicationNavigator() {
     );
     return (
       <Tab.Navigator
-        safeAreaInsets={{ bottom: insets.bottom }}
+        // safeAreaInsets={{ bottom: insets.bottom }}
         screenOptions={({ route }) => ({
           tabBarIcon: ({ focused }) => {
             if (isTabName(route.name)) {
@@ -139,7 +139,7 @@ function ApplicationNavigator() {
           tabBarInactiveTintColor: "black",
           tabBarStyle: {
             backgroundColor: "white",
-            height: 80,
+            height: 80 + (Platform.OS === "android" ? insets.bottom : 0),
             display: "flex",
             flexDirection: "row",
             alignItems: "center",

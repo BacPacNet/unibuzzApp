@@ -56,7 +56,7 @@ const NewPost = ({ navigation }: any) => {
   const [images, setImages] = useState<ImageAsset[]>([]);
   const [files, setFiles] = useState<fileType[]>([]);
   const editor = useEditorBridge({
-    autofocus: true,
+    autofocus: false,
     avoidIosKeyboard: true,
     // initialContent: "test",
     bridgeExtensions: [
