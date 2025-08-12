@@ -1,26 +1,33 @@
-import { StatusBar, View } from "react-native";
+import { StatusBar, View, StyleProp, ViewStyle } from "react-native";
 import type { PropsWithChildren } from "react";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { useTheme } from "@/theme";
 
-function SafeScreen({ children,className = "bg-white" }: {children:React.ReactNode,className?:string}) {
+function SafeScreen({
+  children,
+  className = "bg-white",
+  style,
+}: {
+  children: React.ReactNode;
+  className?: string;
+  style?: StyleProp<ViewStyle>;
+}) {
   const { layout, variant, navigationTheme } = useTheme();
   const insets = useSafeAreaInsets();
 
- 
   return (
     <View
       style={[
         layout.flex_1,
         {
-        
           // Paddings to handle safe area
           paddingTop: insets.top,
           paddingBottom: insets.bottom,
-        //   paddingLeft: insets.left + 16,
-        //   paddingRight: insets.right + 16,
+          //   paddingLeft: insets.left + 16,
+          //   paddingRight: insets.right + 16,
         },
+        style,
       ]}
       className={`${className}`}
     >

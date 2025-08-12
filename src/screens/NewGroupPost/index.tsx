@@ -37,6 +37,7 @@ import ReusableButton from "@/components/atoms/ReusableButton";
 import useCustomBackHandler from "@/hooks/useCustomBackHandler";
 import { useTabBarVisibility } from "@/hooks/useTabBarVisibility";
 import { useHeader } from "@/context/HeaderProvider/Header";
+import { SafeScreen } from "@/components/template";
 
 type ImageAsset = {
   uri: string;
@@ -242,75 +243,78 @@ const NewGroupPost = ({ navigation }: any) => {
   useFocusEffect(
     useCallback(() => {
       changeHeaderShownStatus(false);
+      navigation.setOptions({ tabBarStyle: { display: "none" } });
 
       return () => {
         changeHeaderShownStatus(true);
       };
-    }, [])
+    }, [navigation])
   );
 
   return (
-    <KeyboardAvoidingView
-      style={{ flex: 1 }}
-      behavior={Platform.OS === "ios" ? "padding" : "height"}
-      keyboardVerticalOffset={0} // adjust if you have a custom header
-    >
-      <SafeAreaView style={{ flex: 1, backgroundColor: "white" }}>
-        <View
-          style={{ paddingBottom: 16 }}
-          className="  flex flex-row gap-4 items-center justify-between border-b border-neutral-300"
-        >
-          <BackHeader
-            label="New Post"
-            onPress={() => handleBack()}
-            isLeftPadding={false}
-          />
+    <SafeScreen>
+      <KeyboardAvoidingView
+        style={{ flex: 1 }}
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        keyboardVerticalOffset={0} // adjust if you have a custom header
+      >
+        <View style={{ flex: 1, backgroundColor: "white" }}>
           <View
-            style={{ marginTop: 16 }}
-            className="flex flex-row items-center gap-4 px-4"
+            style={{ paddingBottom: 16 }}
+            className="  flex flex-row gap-4 items-center justify-between border-b border-neutral-300"
           >
-            <ReusableButton
-              variant="primary"
-              size={58}
-              height="small"
-              buttonText="Post"
-              onPress={handlePostCreate}
-              disabled={isPending || isPostCreating}
-              isLoading={isPending || isPostCreating}
+            <BackHeader
+              label="New Post"
+              onPress={() => handleBack()}
+              isLeftPadding={false}
             />
-          </View>
-        </View>
-        <View style={{ flex: 1 }}>
-          {(images.length > 0 || files.length > 0) && (
-            <View style={{ height: 100 }}>
-              <MediaPreviewList
-                files={[...images, ...files]}
-                onRemove={(index: any, isImage: boolean) =>
-                  handleImageRemove(index, isImage)
-                }
+            <View
+              style={{ marginTop: 16 }}
+              className="flex flex-row items-center gap-4 px-4"
+            >
+              <ReusableButton
+                variant="primary"
+                size={58}
+                height="small"
+                buttonText="Post"
+                onPress={handlePostCreate}
+                disabled={isPending || isPostCreating}
+                isLoading={isPending || isPostCreating}
               />
             </View>
-          )}
-          <View style={styles.editorHeight}>
-            <RichText editor={editor} focusable={true} />
+          </View>
+          <View style={{ flex: 1 }}>
+            {(images.length > 0 || files.length > 0) && (
+              <View style={{ height: 100 }}>
+                <MediaPreviewList
+                  files={[...images, ...files]}
+                  onRemove={(index: any, isImage: boolean) =>
+                    handleImageRemove(index, isImage)
+                  }
+                />
+              </View>
+            )}
+            <View style={styles.editorHeight}>
+              <RichText editor={editor} focusable={true} />
+            </View>
+          </View>
+          {/* Bottom bar, always visible above the keyboard */}
+          <View>
+            <View className="flex flex-row gap-2 items-center border-t border-neutral-300 p-2">
+              <TouchableOpacity onPress={handleImagePick}>
+                <MediaImage height={20} width={20} color={"#a3a3a3"} />
+              </TouchableOpacity>
+              <TouchableOpacity onPress={handleFilePick}>
+                <PagePlus height={20} width={20} color={"#a3a3a3"} />
+              </TouchableOpacity>
+            </View>
+            <View className="flex flex-row gap-2 items-center  p-2">
+              <Toolbar editor={editor} />
+            </View>
           </View>
         </View>
-        {/* Bottom bar, always visible above the keyboard */}
-        <View>
-          <View className="flex flex-row gap-2 items-center border-t border-neutral-300 p-2">
-            <TouchableOpacity onPress={handleImagePick}>
-              <MediaImage height={20} width={20} color={"#a3a3a3"} />
-            </TouchableOpacity>
-            <TouchableOpacity onPress={handleFilePick}>
-              <PagePlus height={20} width={20} color={"#a3a3a3"} />
-            </TouchableOpacity>
-          </View>
-          <View className="flex flex-row gap-2 items-center  p-2">
-            <Toolbar editor={editor} />
-          </View>
-        </View>
-      </SafeAreaView>
-    </KeyboardAvoidingView>
+      </KeyboardAvoidingView>
+    </SafeScreen>
   );
 };
 

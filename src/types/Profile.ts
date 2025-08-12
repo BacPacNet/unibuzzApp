@@ -13,6 +13,9 @@ export interface editProfileInputs {
   country?: string;
   city?: string;
   university_name?: string;
+  universityId?: string;
+  communityId?: string;
+  universityLogo?: string;
   study_year?: string;
   degree?: string;
   major?: string;

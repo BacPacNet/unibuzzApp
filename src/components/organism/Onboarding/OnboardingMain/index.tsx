@@ -4,6 +4,7 @@ import { useNavigation } from "@react-navigation/native";
 import Logo from "@/assets/onboarding/Unibuzz_Logo.svg";
 import ReusableButton from "@/components/atoms/ReusableButton";
 import { NativeStackNavigationProp } from "react-native-screens/lib/typescript/native-stack/types";
+import { SafeScreen } from "@/components/template";
 
 type RootStackParamList = {
   LoginScreen: undefined;
@@ -24,7 +25,7 @@ const OnboardingMain: React.FC<OnboardingMainProps> = ({
   const handleLogin = () => navigation.navigate("LoginScreen");
 
   return (
-    <View style={styles.container}>
+    <SafeScreen style={styles.container}>
       <View style={styles.contentContainer}>
         <Logo width={220} height={51} />
         <View style={styles.buttonContainer}>
@@ -45,7 +46,7 @@ const OnboardingMain: React.FC<OnboardingMainProps> = ({
           />
         </View>
       </View>
-    </View>
+    </SafeScreen>
   );
 };
 

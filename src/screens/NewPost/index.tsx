@@ -259,34 +259,35 @@ const NewPost = ({ navigation }: any) => {
         </View>
       </View>
 
-      {/* <KeyboardAvoidingView
+      <KeyboardAvoidingView
         style={{ flex: 1 }}
         behavior={Platform.OS === "ios" ? "padding" : "height"}
-        keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 32}
-      > */}
-      <View style={{ flex: 1 }}>
-        {(images.length > 0 || files.length > 0) && (
-          <View style={{ height: 100 }}>
-            <MediaPreviewList
-              files={[...images, ...files]}
-              onRemove={(index: any, isImage: boolean) =>
-                handleImageRemove(index, isImage)
-              }
-            />
+        keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 0}
+      >
+        <View style={{ flex: 1 }}>
+          {(images.length > 0 || files.length > 0) && (
+            <View style={{ height: 100 }}>
+              <MediaPreviewList
+                files={[...images, ...files]}
+                onRemove={(index: any, isImage: boolean) =>
+                  handleImageRemove(index, isImage)
+                }
+              />
+            </View>
+          )}
+          <View style={styles.editorHeight}>
+            <RichText editor={editor} />
           </View>
-        )}
-        <View style={styles.editorHeight}>
-          <RichText editor={editor} />
         </View>
-      </View>
-      <KeyboardAvoidingView
+        {/* <KeyboardAvoidingView
         behavior={Platform.OS === "ios" ? "padding" : "height"}
+        keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 120}
         style={{
           position: "absolute",
           width: "100%",
           bottom: 0,
         }}
-      >
+      > */}
         {/* Bottom bar, always visible above the keyboard */}
         <View style={[keyboardVisible && styles.bottomBar]}>
           {keyboardVisible && (

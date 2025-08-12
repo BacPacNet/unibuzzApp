@@ -14,6 +14,7 @@ import { SocketConnectionEnums, SocketEnums } from "@/types/SocketType";
 import { useQueryClient } from "@tanstack/react-query";
 import { useFilteredChats } from "@/hooks/useFilteredChats";
 import { ChatsArray, CommunityChat } from "@/types/constant";
+import { SafeScreen } from "@/components/template";
 
 interface Message {
   _id: string;
@@ -324,7 +325,7 @@ const Messages = ({ route }: any) => {
   const renderChat = () => {
     if (selectedChat) {
       return (
-        <>
+        <SafeScreen>
           <MessageUserStickyBar
             setSelectedChat={setSelectedChat}
             name={
@@ -373,7 +374,7 @@ const Messages = ({ route }: any) => {
             isRequestNotAccepted={currTab == "Message Requests"}
             setCurrTab={setCurrTab}
           />
-        </>
+        </SafeScreen>
       );
     } else {
       return renderTab();
@@ -381,7 +382,7 @@ const Messages = ({ route }: any) => {
   };
 
   return (
-    <SafeAreaView className="flex-1 bg-white">
+    <View className="flex-1 bg-white">
       {currTab !== "Group" && currTab !== "Single" && !selectedChat && (
         <MessageTopBar
           currTab={currTab}
@@ -393,7 +394,7 @@ const Messages = ({ route }: any) => {
       )}
 
       {renderChat()}
-    </SafeAreaView>
+    </View>
   );
 };
 
