@@ -10,7 +10,10 @@ import {
   View,
 } from "react-native";
 import { Filter, Search, SortUp } from "iconoir-react-native";
-import { useGetFilteredSubscribedCommunities, useGetSubscribedCommunities } from "@/services/university-community";
+import {
+  useGetFilteredSubscribedCommunities,
+  useGetSubscribedCommunities,
+} from "@/services/university-community";
 import SearchCommunityGroupList from "@/components/organism/SearchCommunityGroupsList";
 import { RootStackParamList } from "@/types/navigation";
 import { StackNavigationProp } from "@react-navigation/stack";
@@ -37,21 +40,25 @@ const SearchCommunityGroupScreen = () => {
   const sortBottomSheet = useRef<ActionSheetRef>(null);
   const navigation = useNavigation<NavigationProp>();
   const insets = useSafeAreaInsets();
-const userProfileData = getUserProfileStore()
-const [community, setCommunity] = useState<Community>()
-const [refreshing, setRefreshing] = useState(false);
+  const userProfileData = getUserProfileStore();
+  const [community, setCommunity] = useState<Community>();
+  const [refreshing, setRefreshing] = useState(false);
 
+  const isUserVerifiedForCommunity: boolean =
+    userProfileData?.email?.some(
+      (community) => community?.communityId === communityId
+    ) || false;
+  const canUserCreateGroup =
+    community?.users.some((user) => user._id === userProfileData?.users_id) &&
+    isUserVerifiedForCommunity;
 
-  const isUserVerifiedForCommunity: boolean = userProfileData?.email?.some((community) => community?.communityId === communityId) || false
-  const canUserCreateGroup = community?.users.some((user) => user._id === userProfileData?.users_id) && isUserVerifiedForCommunity
-
-  const { data: subscribedCommunitiesForUser, isLoading } = useGetSubscribedCommunities()
+  const { data: subscribedCommunitiesForUser, isLoading } =
+    useGetSubscribedCommunities();
   const {
     mutate,
     data: subscribedCommunities,
     isPending,
   } = useGetFilteredSubscribedCommunities(communityId);
-
 
   const {
     selectedTypeMain,
@@ -65,10 +72,13 @@ const [refreshing, setRefreshing] = useState(false);
   } = useCommunityFilterContext();
 
   const isFilterApplied = useMemo(() => {
-    return Object.values(selectedFiltersMain)?.length > 0 || selectedLabelMain?.length > 0 || selectedTypeMain?.length > 0;
-  }, [selectedFiltersMain,selectedLabelMain,selectedTypeMain]);
-  
-  
+    return (
+      Object.values(selectedFiltersMain)?.length > 0 ||
+      selectedLabelMain?.length > 0 ||
+      selectedTypeMain?.length > 0
+    );
+  }, [selectedFiltersMain, selectedLabelMain, selectedTypeMain]);
+
   const handleNavigateToGroup = (data: any) => {
     navigation.navigate("CommunityGroup", {
       communityId: data?.communityId,
@@ -78,9 +88,11 @@ const [refreshing, setRefreshing] = useState(false);
   };
 
   const handleNavigateToNewCommunityGroupScreen = () => {
-
-    if(!canUserCreateGroup){
-        return Toast.show("Verify Account to Create Groups",{type:"warning",placement:"top"})
+    if (!canUserCreateGroup) {
+      return Toast.show("Verify Account to Create Groups", {
+        type: "warning",
+        placement: "top",
+      });
     }
     navigation.navigate("manageGroupStack", {
       screen: "NewCommunityGroupScreen",
@@ -88,7 +100,6 @@ const [refreshing, setRefreshing] = useState(false);
       params: { communityId: communityId },
     });
   };
-
 
   useEffect(() => {
     const data = {
@@ -99,43 +110,53 @@ const [refreshing, setRefreshing] = useState(false);
     };
 
     mutate(data);
-
-
-  }, [sort, communityId, selectedTypeMain, selectedFiltersMain, change,selectedLabelMain]);
+  }, [
+    sort,
+    communityId,
+    selectedTypeMain,
+    selectedFiltersMain,
+    change,
+    selectedLabelMain,
+  ]);
 
   useEffect(() => {
     if (communityId && subscribedCommunitiesForUser) {
-      setCommunity(subscribedCommunitiesForUser.find((community:any) => community._id === communityId))
+      setCommunity(
+        subscribedCommunitiesForUser.find(
+          (community: any) => community._id === communityId
+        )
+      );
     } else if (subscribedCommunitiesForUser) {
-      setCommunity(subscribedCommunitiesForUser[0] as Community)
+      setCommunity(subscribedCommunitiesForUser[0] as Community);
     }
-  }, [subscribedCommunitiesForUser, communityId])
+  }, [subscribedCommunitiesForUser, communityId]);
 
-
-
-  
   const resetFilter = () => {
     setSelectedFiltersMain({});
     setSelectedTypeMain([]);
     setSelectedLabelMain([]);
     setSort("");
-  }
+  };
 
   const onRefresh = React.useCallback(() => {
     setRefreshing(true);
-    resetFilter()
+    resetFilter();
     setRefreshing(false);
   }, []);
 
-  
   return (
-    <ScrollView refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />} className="flex-1 bg-white pb-20">
+    <ScrollView
+      refreshControl={
+        <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+      }
+      className="flex-1 bg-white pb-20"
+    >
       <View className="p-4 flex-row items-center gap-2">
         <View className="flex-1 relative">
           <TextInput
             value={searchQuery}
             onChangeText={setSearchQuery}
-            placeholder="Search Messages"
+            placeholder="Search Group"
             className="border border-neutral-200 p-2  rounded-lg"
             style={styles.searchInput}
           />
@@ -153,7 +174,6 @@ const [refreshing, setRefreshing] = useState(false);
           <Filter
             width={24}
             height={24}
-
             color={"#6744FF"}
             fill={isFilterApplied ? "#6744FF" : "#F3F2FF"}
             strokeWidth={2}
