@@ -1,3 +1,4 @@
+import { FONTS } from "@/constants/fonts";
 import { Controller } from "react-hook-form";
 import { Text, TextInput, View, StyleSheet, PixelRatio } from "react-native";
 
@@ -91,7 +92,7 @@ const styles = StyleSheet.create({
   },
   label: {
     fontSize: 14,
-    fontWeight: "500",
+    fontFamily: FONTS.inter.medium,
     color: "#3A3B3C",
   },
   required: {

@@ -3,14 +3,15 @@ import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { RootStackParamList } from "@/types/navigation";
+import { FONTS } from "@/constants/fonts";
 
 const menuItems = [
   {
     title: "Discover",
   },
-  {
-    title: "Community",
-  },
+  //   {
+  //     title: "Community",
+  //   },
   {
     title: "About Us",
   },
@@ -19,6 +20,24 @@ const menuItems = [
 type NavigationProp = StackNavigationProp<RootStackParamList, "Community">;
 const LeftSideBarPagesSection = () => {
   const navigation = useNavigation<NavigationProp>();
+
+  const getCurrentStackInfo = () => {
+    const currentRoute =
+      navigation?.getState()?.routes[navigation?.getState()?.index];
+    const currentStackName = currentRoute?.name;
+
+    return {
+      currentStack: currentStackName,
+      currentScreen:
+        currentRoute?.state?.routes?.[currentRoute?.state?.index || 0]?.name ||
+        currentStackName,
+    };
+  };
+
+  const stackInfo = getCurrentStackInfo();
+
+  const isDiscoverScreen = stackInfo?.currentScreen === "DiscoverStack";
+  const isAboutUsScreen = stackInfo?.currentScreen === "AboutUs";
 
   const handleRedirect = (route: string) => {
     if (route == "Discover") {
@@ -40,7 +59,18 @@ const LeftSideBarPagesSection = () => {
           key={index}
           style={styles.menuItem}
         >
-          <Text style={styles.menuText}>{item.title}</Text>
+          <Text
+            style={[
+              styles.menuText,
+              isDiscoverScreen && item.title === "Discover"
+                ? styles.activeMenuText
+                : isAboutUsScreen && item.title === "About Us"
+                  ? styles.activeMenuText
+                  : null,
+            ]}
+          >
+            {item.title}
+          </Text>
         </TouchableOpacity>
       ))}
     </View>
@@ -52,8 +82,8 @@ const styles = StyleSheet.create({
     borderBottomColor: "#E5E7EB",
     borderBottomWidth: 1,
     // margin: 20,
-    marginBottom: 20,
-    paddingBottom: 9,
+    marginBottom: 16,
+    paddingBottom: 16,
     marginTop: 48,
     marginHorizontal: 16,
   },
@@ -62,16 +92,20 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   headerText: {
-    fontSize: 12,
+    fontSize: 14,
     color: "#6B7280",
-    fontWeight: 700,
-    fontFamily: "inter",
+    fontFamily: FONTS.inter.bold,
+    marginBottom: 8,
   },
   menuText: {
     fontSize: 14,
-    color: "#404040",
-    paddingVertical: 12,
+    color: "#6B7280",
+    paddingVertical: 8,
     height: 40,
+    fontFamily: FONTS.inter.medium,
+  },
+  activeMenuText: {
+    color: "#3A3B3C",
   },
   UpgradeText: {
     fontSize: 14,

@@ -6,6 +6,7 @@ import type { RootScreenProps } from "@/types/navigation";
 import OnboardingSwiper from "@/components/organism/Onboarding/OnboardingSwiper/OnboardingSwiper";
 import OnboardingMain from "@/components/organism/Onboarding/OnboardingMain";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { SafeScreen } from "@/components/template";
 
 const { width } = Dimensions.get("window");
 
@@ -14,20 +15,18 @@ function OnboardingScreen({ navigation }: RootScreenProps<"OnboardingScreen">) {
   const inset = useSafeAreaInsets();
   console.log(inset);
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeScreen style={[styles.container]}>
       {!startOnboarding ? (
         <OnboardingMain setStartOnboarding={setStartOnboarding} />
       ) : (
         <OnboardingSwiper />
       )}
-    </SafeAreaView>
+    </SafeScreen>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    width,
-    flex: 1,
     backgroundColor: "#F3F2FF",
   },
 });

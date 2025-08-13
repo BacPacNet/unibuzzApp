@@ -198,16 +198,6 @@ export default function ProfileEdit() {
     }
   };
 
-  //   useFocusEffect(
-  //     useCallback(() => {
-  //       changeHeaderShownStatus(false);
-
-  //       return () => {
-  //         changeHeaderShownStatus(true);
-  //       };
-  //     }, [])
-  //   );
-
   return (
     <SafeAreaView style={styles.container}>
       <KeyboardAvoidingView

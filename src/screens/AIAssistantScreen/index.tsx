@@ -25,6 +25,7 @@ import { useForm } from "react-hook-form";
 import { Toast } from "react-native-toast-notifications";
 import BotAvatar from "@/assets/chatbot/aiIcon.svg";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { useTabBarVisibility } from "@/hooks/useTabBarVisibility";
 
 const AI_Assistant = () => {
   const navigation = useNavigation();
@@ -46,11 +47,7 @@ const AI_Assistant = () => {
     }
   }, [chatMessages]);
 
-  useFocusEffect(
-    useCallback(() => {
-      navigation.setOptions({ tabBarStyle: { display: "none" } });
-    }, [navigation])
-  );
+  useTabBarVisibility(navigation);
 
   useFocusEffect(
     useCallback(() => {
@@ -148,7 +145,7 @@ const AI_Assistant = () => {
       <KeyboardAvoidingView
         style={{ flex: 1 }}
         behavior={Platform.OS === "ios" ? "padding" : "height"}
-        keyboardVerticalOffset={Platform.OS === "ios" ? 100 : 120} // adjust for header height
+        keyboardVerticalOffset={Platform.OS === "ios" ? 100 : 110} // adjust for header height
       >
         {/* Messages */}
         <ScrollView
@@ -224,11 +221,11 @@ const styles = StyleSheet.create({
     borderTopWidth: 1,
     borderTopColor: "#e0e0e0",
     paddingHorizontal: 16,
-    paddingVertical: 12,
+    paddingVertical: 0,
     backgroundColor: "white",
     flexDirection: "row",
-    alignItems: "flex-end",
-    minHeight: 60,
+    alignItems: "center",
+    paddingTop: 12,
   },
   input: {
     flex: 1,

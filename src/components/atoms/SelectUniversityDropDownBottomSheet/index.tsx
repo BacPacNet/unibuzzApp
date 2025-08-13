@@ -51,7 +51,7 @@ const SelectUniversityDropdownBottomSheet: React.FC<SelectDropdownProps> = ({
     show,
     searchTerm,
     1,
-    10,
+    10
   );
   const universities = universitiesData?.result?.universities;
 
@@ -96,7 +96,6 @@ const SelectUniversityDropdownBottomSheet: React.FC<SelectDropdownProps> = ({
             {/* Dropdown Menu */}
 
             <ActionSheet
-              useBottomSafeAreaPadding
               ref={actionSheetRef}
               gestureEnabled={true}
               safeAreaInsets={insets}
@@ -168,7 +167,6 @@ export default SelectUniversityDropdownBottomSheet;
 const styles = StyleSheet.create({
   container: {
     marginBottom: 16,
-
   },
   label: {
     fontSize: 14,
@@ -212,7 +210,7 @@ const styles = StyleSheet.create({
     borderTopLeftRadius: 16,
     borderTopRightRadius: 16,
     paddingHorizontal: 8,
-    height:"100%"
+    height: "100%",
   },
   modalHeader: {
     padding: 16,

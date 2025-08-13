@@ -6,11 +6,15 @@ const HeaderContext = createContext<{
   changeHeaderShownStatus: (value: boolean) => void;
   currScreen: string;
   setCurrScreen: (value: string) => void;
+  isTabBarVisible: boolean;
+  setIsTabBarVisible: (value: boolean) => void;
 }>({
   showHeader: true,
   changeHeaderShownStatus: () => {},
   currScreen: "",
   setCurrScreen: () => {},
+  isTabBarVisible: true,
+  setIsTabBarVisible: () => {},
 });
 
 interface HeaderProviderProps {
@@ -20,7 +24,7 @@ interface HeaderProviderProps {
 export const HeaderProvider: React.FC<HeaderProviderProps> = ({ children }) => {
   const [showHeader, setShowHeader] = useState(true);
   const [currScreen, setCurrScreen] = useState("");
-
+  const [isTabBarVisible, setIsTabBarVisible] = useState(true);
   // useFirebaseMessaging();
 
   const changeHeaderShownStatus = (value: boolean) => {
@@ -29,7 +33,14 @@ export const HeaderProvider: React.FC<HeaderProviderProps> = ({ children }) => {
 
   return (
     <HeaderContext.Provider
-      value={{ showHeader, changeHeaderShownStatus, currScreen, setCurrScreen }}
+      value={{
+        showHeader,
+        changeHeaderShownStatus,
+        currScreen,
+        setCurrScreen,
+        isTabBarVisible,
+        setIsTabBarVisible,
+      }}
     >
       {children}
     </HeaderContext.Provider>

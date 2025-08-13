@@ -60,6 +60,7 @@ import InfoStack from "./InfoStack";
 import AboutUs from "@/screens/AboutUs";
 import { SafeScreen } from "@/components/template";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { useTabBarVisibility } from "@/hooks/useTabBarVisibility";
 
 const Stack = createStackNavigator<RootStackParamList>();
 const Tab = createBottomTabNavigator<RootStackParamList>();
@@ -111,6 +112,8 @@ function ApplicationNavigator() {
   }
 
   function TabsGroup() {
+    const { isTabBarVisible } = useHeader();
+
     const { data: unreadNotificationCount } =
       useGetUserNotificationTotalCount();
     const { data: userUnreadMessagesCount } =
@@ -139,8 +142,8 @@ function ApplicationNavigator() {
           tabBarInactiveTintColor: "black",
           tabBarStyle: {
             backgroundColor: "white",
-            height: 80 + (Platform.OS === "android" ? insets.bottom : 0),
-            display: "flex",
+            height: 70 + (Platform.OS === "android" ? insets.bottom : 0),
+            display: isTabBarVisible ? "flex" : "none",
             flexDirection: "row",
             alignItems: "center",
             justifyContent: "space-between",
@@ -375,7 +378,7 @@ function ApplicationNavigator() {
           drawerStyle: {
             width: 284,
           },
-
+          swipeEnabled: false,
           headerLeft: () => (
             <View className="flex flex-row gap-4 items-center">
               <Pressable
@@ -444,6 +447,7 @@ function ApplicationNavigator() {
         drawerStyle={{
           width: 284,
         }}
+        swipeEnabled={false}
         renderDrawerContent={() => (
           <UserProfileDrawerContent
             navigation={useNavigation()}

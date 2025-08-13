@@ -1,11 +1,9 @@
-import React, { useState } from "react";
+import React from "react";
 import {
   View,
   Text,
-  Image,
   TouchableOpacity,
   StyleSheet,
-  FlatList,
   Platform,
 } from "react-native";
 import Badge from "@/assets/badge.svg";
@@ -17,6 +15,7 @@ import CommunityLogo from "@/components/atoms/LogoHolder";
 import { useNavigation } from "@react-navigation/native";
 import { RootStackParamList } from "@/types/navigation";
 import { StackNavigationProp } from "@react-navigation/stack";
+import { FONTS } from "@/constants/fonts";
 
 interface Props {
   subscribedCommunities: Community[];
@@ -26,7 +25,6 @@ interface Props {
   isGroup: boolean;
 }
 
-
 type NavigationProp = StackNavigationProp<RootStackParamList, "Timeline">;
 
 const NavbarSubscribedUniversity = ({
@@ -35,18 +33,18 @@ const NavbarSubscribedUniversity = ({
   handleCommunityClick,
   isGroup,
 }: Props) => {
-const navigation = useNavigation<NavigationProp>();
-    const handleAddUniversity = () => {      
-        navigation.navigate("DiscoverStack", {
-            screen: "Discover",
-          });
-    }
+  const navigation = useNavigation<NavigationProp>();
+  const handleAddUniversity = () => {
+    navigation.navigate("DiscoverStack", {
+      screen: "Discover",
+    });
+  };
   if (!subscribedCommunities || subscribedCommunities.length === 0) {
     return (
       <View style={styles.buttonContainer}>
-        <ReusableButton 
-          buttonText="Add Your University" 
-          variant="primary" 
+        <ReusableButton
+          buttonText="Add Your University"
+          variant="primary"
           onPress={handleAddUniversity}
         />
       </View>
@@ -83,8 +81,6 @@ const CommunityHolder = ({
   communityId,
   isGroup,
 }: CommunityHolderProps) => {
-  const [logoSrc, setLogoSrc] = useState(false);
-
   return (
     <TouchableOpacity
       onPress={() => handleCommunityClick(community._id)}
@@ -94,30 +90,10 @@ const CommunityHolder = ({
       ]}
     >
       <View style={styles.innerContainer}>
-        {/* {!logoSrc ? (
-          <View style={styles.imageWrapper}>
-            {!logoSrc ? (
-              <Image
-                source={{ uri: community?.communityLogoUrl?.imageUrl }}
-                style={styles.communityImage}
-                onError={() => setLogoSrc(true)}
-              />
-            ) : (
-              <UniversityLogoPlaceHolder
-                width={40}
-                height={40}
-                style={styles.communityImage}
-              />
-            )}
-          </View>
-        ) : (
-          <UniversityLogoPlaceHolder
-            width={40}
-            height={40}
-            style={styles.communityImage}
-          />
-        )} */}
-        <CommunityLogo logoUrl={community?.communityLogoUrl?.imageUrl} />
+        <CommunityLogo
+          logoUrl={community?.communityLogoUrl?.imageUrl}
+          variant="large"
+        />
         <View style={styles.textContainer}>
           <Text
             style={[
@@ -144,9 +120,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     paddingHorizontal: 12,
-    paddingVertical: 10,
-    // borderRadius: 10,
-    marginVertical: 4,
+    paddingVertical: 12,
   },
   activeCommunity: {
     backgroundColor: "#E5E7FF",
@@ -154,30 +128,9 @@ const styles = StyleSheet.create({
   innerContainer: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 10,
+    gap: 12,
   },
-  imageWrapper: {
-    padding: 4,
-    backgroundColor: "#fff",
-    borderRadius: 24,
-    ...Platform.select({
-      ios: {
-        shadowColor: "#000",
-        shadowOffset: { width: 0, height: 0 },
-        shadowOpacity: 0.25,
-        shadowRadius: 6,
-      },
-      android: {
-        elevation: 6,
-      },
-    }),
-  },
-  communityImage: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    resizeMode: "contain",
-  },
+
   textContainer: {
     flexDirection: "row",
     alignItems: "center",
@@ -185,9 +138,9 @@ const styles = StyleSheet.create({
     width: "80%",
   },
   communityName: {
-    fontSize: 13,
-    color: "#4B5563",
-    fontWeight: "500",
+    fontSize: 14,
+    color: "#6B7280",
+    fontFamily: FONTS.inter.medium,
   },
   activeText: {
     fontWeight: "bold",

@@ -1,6 +1,7 @@
 import React from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import {
+  BorderBottom,
   ChatBubbleEmpty,
   Reply,
   ThumbsUp,
@@ -29,13 +30,13 @@ const UserComment = ({
   handleNavigate,
   setModalVisible,
   type,
+  showBorder = true,
 }: CommentsProp) => {
   const userData = getUserStore();
   const { mutate: deleteUserPost } = useDeleteUserPostComment();
   const { mutate: deleteCommunityPost } = useDeleteCommunityPostComment();
   const role = item?.commenterProfileId?.role;
 
-  
   const isStudent = role === userTypeEnum.Student;
   const handleDelete = () => {
     if (type === PostType.Community) {
@@ -57,9 +58,16 @@ const UserComment = ({
     }
   };
 
-
   return (
-    <View style={styles.container}>
+    <View
+      style={[
+        styles.container,
+        showBorder && {
+          borderBottomWidth: 1,
+          borderBottomColor: "#E5E7EB",
+        },
+      ]}
+    >
       <View className="flex flex-row justify-between   ">
         <UserCard
           userId={item?.commenterId?._id}
@@ -133,7 +141,7 @@ const UserComment = ({
               width={16}
               color={
                 item?.likeCount?.some(
-                  (like: any) => like.userId === userData?.id,
+                  (like: any) => like.userId === userData?.id
                 )
                   ? "#6647FF"
                   : "#6B7280"
@@ -141,18 +149,19 @@ const UserComment = ({
             />
           </TouchableOpacity>
 
-          {item?.level == 0 && (
-            <TouchableOpacity
-              // onPress={() => commentBottomSheet.current?.show()}
-              className="flex flex-row gap-1 items-center"
-              onPress={() => setShowReply(showReply.length ? "" : item._id)}
-            >
-              <Text style={styles.commentIconText}>
-                {item.totalCount || item?.replies?.length}
-              </Text>
-              <ChatBubbleEmpty height={16} width={16} />
-            </TouchableOpacity>
-          )}
+          {item?.level == 0 &&
+            (item?.replies?.length > 0 || Number(item?.totalCount) > 0) && (
+              <TouchableOpacity
+                // onPress={() => commentBottomSheet.current?.show()}
+                className="flex flex-row gap-1 items-center"
+                onPress={() => setShowReply(showReply.length ? "" : item._id)}
+              >
+                <Text style={styles.commentIconText}>
+                  {item.totalCount || item?.replies?.length}
+                </Text>
+                <ChatBubbleEmpty height={16} width={16} />
+              </TouchableOpacity>
+            )}
 
           {/* <TouchableOpacity className="flex flex-row gap-1 items-center">
             <ShareAndroid height={16} width={16} />
@@ -160,7 +169,15 @@ const UserComment = ({
         </View>
       </View>
       {item?.replies?.length > 0 && showReply == item._id && (
-        <View style={styles.repliesContainer}>
+        <View
+          style={[
+            styles.repliesContainer,
+            showReply == item._id && {
+              borderTopWidth: 1,
+              borderTopColor: "#E5E7EB",
+            },
+          ]}
+        >
           {item.replies
             .slice(0, showTotalReply)
             .map((reply: any, index: number) => (
@@ -173,6 +190,7 @@ const UserComment = ({
                 setShowTotalReply={setShowTotalReply}
                 showTotalReply={showTotalReply}
                 type={type}
+                showBorder={index !== 0}
               />
             ))}
           {item?.level === 0 &&
@@ -195,10 +213,12 @@ export default UserComment;
 
 const styles = StyleSheet.create({
   container: {
-    paddingHorizontal: 12,
+    // paddingHorizontal: 12,
+    marginHorizontal: 16,
     paddingVertical: 16,
     display: "flex",
     gap: 16,
+    borderBottomColor: "#E5E7EB",
   },
   header: {
     flexDirection: "row",

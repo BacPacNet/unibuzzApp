@@ -11,7 +11,7 @@ export enum UserPostType {
 }
 
 export type PostCardType = {
-    source?:string;
+  source?: string;
   data: {
     isPostVerified?: boolean;
 
@@ -118,4 +118,5 @@ export type CommentsProp = {
   showTotalReply: number;
   handleNavigate?: any;
   type: PostType;
+  showBorder?: boolean;
 };

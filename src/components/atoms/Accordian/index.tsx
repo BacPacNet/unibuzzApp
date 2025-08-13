@@ -11,6 +11,7 @@ import {
   TextStyle,
 } from "react-native";
 import { NavArrowDown, NavArrowUp } from "iconoir-react-native";
+import { FONTS } from "@/constants/fonts";
 
 interface AccordionProps {
   title: string;
@@ -73,7 +74,7 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 14,
-    fontWeight: "500",
+    fontFamily: FONTS.inter.medium,
     lineHeight: 16,
     color: "#3A3B3C",
   },

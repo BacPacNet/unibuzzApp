@@ -1,3 +1,4 @@
+import { FONTS } from "@/constants/fonts";
 import React from "react";
 import {
   TouchableOpacity,
@@ -66,7 +67,7 @@ const ReusableButton: React.FC<ReusableButtonProps> = ({
   };
 
   const getSizeStyle = (
-    size?: "w-full" | "w-1/2" | "small" | number,
+    size?: "w-full" | "w-1/2" | "small" | number
   ): { width: number | string } | {} => {
     switch (size) {
       case "w-full":
@@ -103,6 +104,7 @@ const ReusableButton: React.FC<ReusableButtonProps> = ({
         <>{buttonContent}</>
       ) : (
         <Text
+          style={styles.buttonText}
           className={`text-center font-medium  ${textSize} ${textColorClass}`}
         >
           {buttonText}
@@ -126,5 +128,8 @@ const styles = StyleSheet.create({
   },
   small: {
     height: 36,
+  },
+  buttonText: {
+    fontFamily: FONTS.inter.medium,
   },
 });

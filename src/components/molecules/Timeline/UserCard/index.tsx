@@ -4,6 +4,7 @@ import React from "react";
 import { View, Text, Image, TouchableOpacity, StyleSheet } from "react-native";
 import Avatar from "@/assets/avatar.svg";
 import DropdownWrapper from "../../SelectDropDownWrapper";
+import { FONTS } from "@/constants/fonts";
 
 interface CommenterProfile {
   profile_dp?: { imageUrl?: string };
@@ -55,7 +56,6 @@ const UserCard: React.FC<UserCardProps> = ({
   toShowOption = false,
   handleDelete,
 }) => {
-    
   return (
     <View className="flex-1 flex-row items-center gap-4 justify-center">
       <View style={styles.avatarContainer}>
@@ -73,7 +73,7 @@ const UserCard: React.FC<UserCardProps> = ({
 
       <View className="flex-1 flex-row items-center">
         <TouchableOpacity onPress={() => onNavigate(userId)} className="flex-1">
-          <Text className="text-neutral-700 text-2xs font-semibold">
+          <Text style={styles.nameFont} className="text-neutral-700 text-2xs">
             {firstName} {lastName}
           </Text>
           <View className="flex">
@@ -90,7 +90,7 @@ const UserCard: React.FC<UserCardProps> = ({
           <DropdownWrapper
             position="left"
             extraLeft={10}
-            viewTopPosition={-25}
+            viewTopPosition={-15}
             renderDropdown={(closeDropdown) => (
               <TouchableOpacity
                 style={styles.dropdown}
@@ -133,6 +133,7 @@ const styles = StyleSheet.create({
   userDetails: {
     fontSize: 10,
     color: "#6B7280",
+    fontFamily: FONTS.inter.regular,
   },
   moreButton: {
     backgroundColor: "#F3F2FF",
@@ -152,6 +153,10 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     borderWidth: 1,
     borderColor: "#E5E7EB",
+  },
+
+  nameFont: {
+    fontFamily: FONTS.inter.semiBold,
   },
 });
 
