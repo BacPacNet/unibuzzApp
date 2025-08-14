@@ -1,5 +1,12 @@
 import React, { useEffect } from "react";
-import { View, StyleSheet, KeyboardAvoidingView, Platform } from "react-native";
+import {
+  View,
+  StyleSheet,
+  KeyboardAvoidingView,
+  Platform,
+  TouchableWithoutFeedback,
+  Keyboard,
+} from "react-native";
 import { useForm } from "react-hook-form";
 import ReusableButton from "@/components/atoms/ReusableButton";
 import { useUserPasswordReset } from "@/context/UserPasswordResetProvider/UserPasswordResetProvider";
@@ -66,76 +73,78 @@ const SetResetPassword: React.FC<SetPasswordFormProps> = ({
   }, [resetToken]);
 
   return (
-    <View style={styles.main}>
-      <View></View>
-      {/* Password Input */}
-      <View>
-        <View style={styles.titlemargin} className=" w-full">
-          <Title className="text-start">Reset Password</Title>
+    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+      <View style={styles.main}>
+        <View></View>
+        {/* Password Input */}
+        <View>
+          <View style={styles.titlemargin} className=" w-full">
+            <Title className="text-start">Reset Password</Title>
+          </View>
+          <KeyboardAvoidingView
+            behavior={Platform.OS === "ios" ? "padding" : "height"}
+            style={{ display: "flex", flexDirection: "column", gap: 16 }}
+          >
+            <FormInputPassword
+              label="Password"
+              placeholder="*********"
+              name="password"
+              control={control}
+              rules={{
+                required: "Password is required!",
+                minLength: {
+                  value: 8,
+                  message: "Password must be at least 8 characters",
+                },
+                pattern: {
+                  value:
+                    /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*(),.?":{}|<>]).{8,}$/,
+                  message:
+                    "Password must contain uppercase, lowercase, number, and special character",
+                },
+              }}
+              isInfoVisible={password.length == 0}
+              isError={!!errors.password}
+              errorMessage={errors.password?.message?.toString()}
+              isPasswordStrengthVisible={true}
+            />
+
+            {/* Confirm Password Field */}
+
+            <FormInputPassword
+              label="Confirm Password"
+              placeholder="*********"
+              name="confirmpassword"
+              control={control}
+              rules={{
+                required: "Password is required",
+                validate: (value: string) =>
+                  value === password || "Passwords do not match",
+              }}
+              isPasswordStrengthVisible={false}
+              isError={!!errors.confirmpassword}
+              errorMessage={errors.confirmpassword?.message?.toString()}
+            />
+          </KeyboardAvoidingView>
         </View>
-        <KeyboardAvoidingView
-          behavior={Platform.OS === "ios" ? "padding" : "height"}
-          style={{ display: "flex", flexDirection: "column", gap: 32 }}
-        >
-          <FormInputPassword
-            label="Password"
-            placeholder="*********"
-            name="password"
-            control={control}
-            rules={{
-              required: "Password is required!",
-              minLength: {
-                value: 8,
-                message: "Password must be at least 8 characters",
-              },
-              pattern: {
-                value:
-                  /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*(),.?":{}|<>]).{8,}$/,
-                message:
-                  "Password must contain uppercase, lowercase, number, and special character",
-              },
-            }}
-            isInfoVisible={password.length == 0}
-            isError={!!errors.password}
-            errorMessage={errors.password?.message?.toString()}
-            isPasswordStrengthVisible={true}
+        <View style={styles.buttonContainer}>
+          <ReusableButton
+            onPress={handleSubmit(handleResetPassword)}
+            buttonText="Reset Password"
+            variant="primary"
+            disabled={isResetPasswordLoading}
+            isLoading={isResetPasswordLoading}
+            height="large"
           />
-
-          {/* Confirm Password Field */}
-
-          <FormInputPassword
-            label="Confirm Password"
-            placeholder="*********"
-            name="confirmpassword"
-            control={control}
-            rules={{
-              required: "Password is required",
-              validate: (value: string) =>
-                value === password || "Passwords do not match",
-            }}
-            isPasswordStrengthVisible={false}
-            isError={!!errors.confirmpassword}
-            errorMessage={errors.confirmpassword?.message?.toString()}
+          <ReusableButton
+            onPress={handleBack}
+            buttonText="Sign In"
+            variant="border"
+            height="large"
           />
-        </KeyboardAvoidingView>
+        </View>
       </View>
-      <View style={styles.buttonContainer}>
-        <ReusableButton
-          onPress={handleSubmit(handleResetPassword)}
-          buttonText="Reset Password"
-          variant="primary"
-          disabled={isResetPasswordLoading}
-          isLoading={isResetPasswordLoading}
-          height="large"
-        />
-        <ReusableButton
-          onPress={handleBack}
-          buttonText="Sign In"
-          variant="border"
-          height="large"
-        />
-      </View>
-    </View>
+    </TouchableWithoutFeedback>
   );
 };
 

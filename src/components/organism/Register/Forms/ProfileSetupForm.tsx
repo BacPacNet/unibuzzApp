@@ -9,6 +9,7 @@ import { DateSelect } from "@/components/atoms/DateSelect";
 import { ArrowLeft } from "iconoir-react-native";
 import RadioInput from "@/components/atoms/RadioInput";
 import Accordion from "@/components/atoms/Accordian";
+import { FONTS } from "@/constants/fonts";
 
 const ProfileSetupForm = ({
   onSubmit,
@@ -84,7 +85,7 @@ const ProfileSetupForm = ({
                 const birthDate = new Date(
                   Number(year),
                   Number(month) - 1,
-                  Number(day),
+                  Number(day)
                 );
 
                 if (isNaN(birthDate.getTime()))
@@ -137,17 +138,25 @@ const ProfileSetupForm = ({
               }}
             >
               <View className="flex flex-col gap-2">
-                <Text className="font-bold text-neutral-700">• Students:</Text>
-                <Text>
-                  {" "}
+                <Text
+                  style={styles.descriptionTitle}
+                  className=" text-neutral-700"
+                >
+                  • Students:
+                </Text>
+                <Text className="text-neutral-700">
                   For current university students. Select if you are already
                   enrolled.
                 </Text>
               </View>
               <View className="flex flex-col gap-2">
-                <Text className="font-bold text-neutral-700">• Faculty:</Text>
-                <Text>
-                  {" "}
+                <Text
+                  style={styles.descriptionTitle}
+                  className=" text-neutral-700"
+                >
+                  • Faculty:
+                </Text>
+                <Text className="text-neutral-700">
                   For current employers or employees of a university. Select if
                   you have an occupation.
                 </Text>
@@ -205,5 +214,8 @@ const styles = StyleSheet.create({
     flexDirection: "column",
     gap: 16,
     marginTop: 64,
+  },
+  descriptionTitle: {
+    fontFamily: FONTS.inter.bold,
   },
 });

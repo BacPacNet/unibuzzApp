@@ -6,6 +6,8 @@ import {
   KeyboardAvoidingView,
   Platform,
   StyleSheet,
+  TouchableWithoutFeedback,
+  Keyboard,
 } from "react-native";
 import Title from "@/components/atoms/Title";
 import { OtpInput } from "react-native-otp-entry";
@@ -18,6 +20,7 @@ import {
   useResetPasswordCodeGenerate,
   useVerifyResetPasswordOtp,
 } from "@/services/auth";
+import { FONTS } from "@/constants/fonts";
 
 interface Props {
   setCurrStage: (value: ForgetPasswordStep) => void;
@@ -26,7 +29,7 @@ interface Props {
 
 const ForgetPasswordOtpCheck = ({ navigation, setCurrStage }: Props) => {
   const [countdown, setCountdown] = useState(30);
-  const [isCounting, setIsCounting] = useState(false);
+  const [isCounting, setIsCounting] = useState(true);
   const [isResend, setIsResend] = useState(false);
   const { resetEmail } = useUserPasswordReset();
   const {
@@ -85,103 +88,109 @@ const ForgetPasswordOtpCheck = ({ navigation, setCurrStage }: Props) => {
   };
 
   return (
-    <View style={styles.main}>
-      <View></View>
-      <View>
-        <View style={styles.titlemargin} className=" w-full">
-          <Title className="text-start">Reset Password</Title>
-        </View>
-        <Text className=" text-sm text-neutral-500">
-          We emailed you a six-digit code to {resetEmail}. Enter the code below
-          to confirm your email address.
-        </Text>
-        <View className="w-full flex  mb-4">
-          <View>
-            {/* otp  */}
-            <KeyboardAvoidingView
-              behavior={Platform.OS === "ios" ? "padding" : "height"}
-              className=""
-            >
-              <View className="">
-                <View style={styles.marginTop}>
-                  {/* <Text className="font-medium text-neutral-900 mb-2">
+    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+      <View style={styles.main}>
+        <View></View>
+        <View>
+          <View style={styles.titlemargin} className=" w-full">
+            <Title className="text-start">Reset Password</Title>
+          </View>
+          <Text
+            style={styles.description}
+            className=" text-sm text-neutral-500"
+          >
+            We emailed you a six-digit code to {resetEmail}. Enter the code
+            below to confirm your email address.
+          </Text>
+          <View className="w-full flex  mb-4">
+            <View>
+              {/* otp  */}
+              <KeyboardAvoidingView
+                behavior={Platform.OS === "ios" ? "padding" : "height"}
+                className=""
+              >
+                <View className="">
+                  <View style={styles.marginTop}>
+                    {/* <Text className="font-medium text-neutral-900 mb-2">
               Input Verification Code
             </Text> */}
 
-                  <Controller
-                    control={control}
-                    render={({ field: { onChange } }) => {
-                      return (
-                        <OtpInput
-                          ref={otpRef}
-                          type="numeric"
-                          numberOfDigits={6}
-                          // onTextChange={(text) => onChange(text)}
-                          placeholder="000000"
-                          onTextChange={(text) => onChange(text || "")}
-                          focusColor="#6744FF"
-                          autoFocus={false}
-                          theme={{
-                            containerStyle: { width: 300, gap: 10 },
-                            pinCodeContainerStyle: { height: 50 },
-                          }}
-                        />
-                      );
-                    }}
-                    name="verificationOtp"
-                    rules={{
-                      required: "Please enter your verification OTP!",
-                      minLength: { value: 6, message: "OTP must be 6 digits!" },
-                    }}
-                  />
-                  {VerificationFormErrors?.verificationOtp && (
-                    <Text className="text-red-500 text-sm mt-1">
-                      {VerificationFormErrors?.verificationOtp?.message?.toString()}
-                    </Text>
-                  )}
+                    <Controller
+                      control={control}
+                      render={({ field: { onChange } }) => {
+                        return (
+                          <OtpInput
+                            ref={otpRef}
+                            type="numeric"
+                            numberOfDigits={6}
+                            // onTextChange={(text) => onChange(text)}
+                            placeholder="000000"
+                            onTextChange={(text) => onChange(text || "")}
+                            focusColor="#6744FF"
+                            autoFocus={false}
+                            theme={{
+                              containerStyle: { width: 300, gap: 10 },
+                              pinCodeContainerStyle: { height: 50 },
+                            }}
+                          />
+                        );
+                      }}
+                      name="verificationOtp"
+                      rules={{
+                        required: "Please enter your verification OTP!",
+                        minLength: {
+                          value: 6,
+                          message: "OTP must be 6 digits!",
+                        },
+                      }}
+                    />
+                    {VerificationFormErrors?.verificationOtp && (
+                      <Text className="text-red-500 text-sm mt-1">
+                        {VerificationFormErrors?.verificationOtp?.message?.toString()}
+                      </Text>
+                    )}
+                  </View>
                 </View>
-              </View>
-            </KeyboardAvoidingView>
-            <ReusableButton
-              onPress={() => handleUniversityEmailSendCode()}
-              buttonText={
-                isCounting
-                  ? `Resend Available after ${countdown}s`
-                  : isResend
-                    ? "Resend Code"
-                    : "Send Code"
-              }
-              variant="border_primary"
-              activityIndicatorColor="#6744FF"
-              disabled={isCounting}
-              isLoading={isPending && !isError}
-              textStyle="text-primary-500"
-              height="large"
-            />
+              </KeyboardAvoidingView>
+              <ReusableButton
+                onPress={() => handleUniversityEmailSendCode()}
+                buttonText={
+                  isCounting
+                    ? `Resend Available after ${countdown}s`
+                    : "Resend Code"
+                }
+                variant="border_primary"
+                activityIndicatorColor="#6744FF"
+                disabled={isCounting}
+                isLoading={isPending && !isError}
+                textStyle="text-primary-500"
+                height="large"
+              />
+            </View>
           </View>
         </View>
+        <View style={styles.buttonContainer}>
+          <ReusableButton
+            onPress={resetPasswordOtp}
+            buttonText="Confirm"
+            variant="primary"
+            disabled={verificationIsPending}
+            isLoading={verificationIsPending}
+            height="large"
+          />
+          <ReusableButton
+            onPress={() => navigation.navigate("LoginScreen" as any)}
+            buttonContent={
+              <View className="flex flex-row items-center justify-center gap-2">
+                <Text className="text-neutral-700"> Sign In</Text>
+              </View>
+            }
+            variant="border"
+            height="large"
+          />
+        </View>
       </View>
-      <View style={styles.buttonContainer}>
-        <ReusableButton
-          onPress={resetPasswordOtp}
-          buttonText="Confirm"
-          variant="primary"
-          disabled={verificationIsPending}
-          isLoading={verificationIsPending}
-          height="large"
-        />
-        <ReusableButton
-          onPress={() => navigation.navigate("LoginScreen" as any)}
-          buttonContent={
-            <View className="flex flex-row items-center justify-center gap-2">
-              <Text className="text-primary-500"> Sign In</Text>
-            </View>
-          }
-          variant="border"
-          height="large"
-        />
-      </View>
-    </View>
+    </TouchableWithoutFeedback>
   );
 };
 
@@ -212,5 +221,8 @@ const styles = StyleSheet.create({
   marginTop: {
     marginTop: 32,
     marginBottom: 32,
+  },
+  description: {
+    fontFamily: FONTS.inter.regular,
   },
 });

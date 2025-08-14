@@ -1,5 +1,12 @@
-import { ActivityIndicator, FlatList, Text, View } from "react-native";
-import React from "react";
+import {
+  ActivityIndicator,
+  FlatList,
+  NativeScrollEvent,
+  NativeSyntheticEvent,
+  Text,
+  View,
+} from "react-native";
+import React, { useState } from "react";
 
 import PostCard from "@/components/molecules/Timeline/PostCard";
 import { useGetTimelinePosts } from "@/services/timeline";
@@ -19,7 +26,11 @@ import { getUserProfileStore } from "@/storage/user";
 type NavigationProp = StackNavigationProp<RootStackParamList, "Timeline">;
 const Timeline = () => {
   const userProfileData = getUserProfileStore();
-  const [refreshing, setRefreshing] = React.useState(false);
+  const [refreshing, setRefreshing] = useState(false);
+
+  const [showCreatePostButton, setShowCreatePostButton] = useState(false);
+  const [lastScrollY, setLastScrollY] = useState(0);
+
   const navigation = useNavigation<NavigationProp>();
   const {
     isLoading,
@@ -44,6 +55,24 @@ const Timeline = () => {
     setRefreshing(false);
   }, []);
 
+  const handleScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
+    const { contentOffset, layoutMeasurement, contentSize } = event.nativeEvent;
+
+    const isAtBottom =
+      contentOffset.y + layoutMeasurement.height >= contentSize.height - 20;
+    if (isAtBottom) {
+      setShowCreatePostButton(false);
+    } else if (contentOffset.y > 100) {
+      if (contentOffset.y < lastScrollY) {
+        setShowCreatePostButton(true);
+      } else if (contentOffset.y > lastScrollY) {
+        setShowCreatePostButton(false);
+      }
+    }
+
+    setLastScrollY(contentOffset.y);
+  };
+
   if (isPending) {
     return (
       <View className="flex-1 justify-center items-center">
@@ -54,17 +83,20 @@ const Timeline = () => {
 
   return (
     <View style={{ position: "relative" }} className="bg-white flex-1 relative">
-      <CreatePostButton
-        isAllowed={true}
-        onPress={() => navigation.navigate("NewPost")}
-      />
+      {(showCreatePostButton || lastScrollY == 0) && (
+        <CreatePostButton
+          isAllowed={true}
+          onPress={() => navigation.navigate("NewPost")}
+        />
+      )}
+
       <FlatList
         data={timlineDatas}
         style={{
           width: "100%",
           height: "100%",
         }}
-        // onScroll={handleScroll}
+        onScroll={handleScroll}
         keyExtractor={(item, index) => item._id + index}
         renderItem={({ item }) => (
           <PostCard data={item} isTimeline={true} isSinglePost={false} />

@@ -224,19 +224,13 @@ const NewComment = ({
 
   return (
     <View className="flex-1 bg-white relative">
-      <View
-        style={{ paddingBottom: 16 }}
-        className="  flex flex-row gap-4 items-center justify-between border-b border-neutral-300 "
-      >
+      <View className="  flex flex-row gap-4 items-center justify-between border-b border-neutral-300 ">
         <BackHeader
           label={postAuthorName + " post"}
           onPress={() => handleBack()}
           isLeftPadding={false}
         />
-        <View
-          style={{ marginTop: 16 }}
-          className="flex flex-row items-center gap-4 px-4"
-        >
+        <View className="flex flex-row items-center gap-4 px-4">
           <ReusableButton
             variant="primary"
             size={58}

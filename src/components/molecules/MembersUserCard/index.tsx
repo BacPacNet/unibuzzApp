@@ -82,12 +82,10 @@ const MembersUserCard = ({
     setIsFollowingState(isFollowing);
   }, [isFollowing]);
 
-
   const isStudent = role === "student";
 
-  
   const renderCTA = (() => {
-    if(isSelfProfile || _id === currentUserId ){
+    if (isSelfProfile || _id === currentUserId) {
       return null;
     }
     if (isViewerAdmin) {
@@ -101,7 +99,7 @@ const MembersUserCard = ({
         />
       );
     }
-    
+
     if (isFollowingState) {
       return (
         <ReusableButton
@@ -113,7 +111,7 @@ const MembersUserCard = ({
         />
       );
     }
-    
+
     if (isChat && !isGroupAdmin) {
       return (
         <ReusableButton
@@ -127,11 +125,11 @@ const MembersUserCard = ({
         />
       );
     }
-    
+
     if (isChat && isGroupAdmin) {
       return null;
     }
-    
+
     return (
       <ReusableButton
         variant="primary"
@@ -218,7 +216,7 @@ const styles = StyleSheet.create({
   container: {
     flexDirection: "row",
     alignItems: "center",
-    padding: 16,
+    paddingVertical: 16,
     borderBottomWidth: 1,
     borderColor: "#d4d4d4",
   },

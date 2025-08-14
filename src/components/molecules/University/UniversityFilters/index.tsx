@@ -64,7 +64,7 @@ const UniversitySearchFilters: React.FC<Props> = ({ setQuery }) => {
     (filterType: FilterType) => {
       sheetRefs[filterType].current?.show();
     },
-    [sheetRefs],
+    [sheetRefs]
   );
 
   const closeAllSheets = useCallback(() => {
@@ -88,7 +88,7 @@ const UniversitySearchFilters: React.FC<Props> = ({ setQuery }) => {
       closeAllSheets();
       setQuery(JSON.stringify(watch()));
     },
-    [setValue, closeAllSheets, setQuery, watch],
+    [setValue, closeAllSheets, setQuery, watch]
   );
 
   const handleCountryChange = useCallback(
@@ -107,7 +107,7 @@ const UniversitySearchFilters: React.FC<Props> = ({ setQuery }) => {
       closeAllSheets();
       setQuery(JSON.stringify(watch()));
     },
-    [setValue, closeAllSheets, setQuery, watch],
+    [setValue, closeAllSheets, setQuery, watch]
   );
 
   const handleCityChange = useCallback(
@@ -116,7 +116,7 @@ const UniversitySearchFilters: React.FC<Props> = ({ setQuery }) => {
       closeAllSheets();
       setQuery(JSON.stringify(watch()));
     },
-    [closeAllSheets, setQuery, watch],
+    [closeAllSheets, setQuery, watch]
   );
 
   const handleTypeChange = useCallback(
@@ -125,7 +125,7 @@ const UniversitySearchFilters: React.FC<Props> = ({ setQuery }) => {
       closeAllSheets();
       setQuery(JSON.stringify(watch()));
     },
-    [closeAllSheets, setQuery, watch],
+    [closeAllSheets, setQuery, watch]
   );
 
   const handleSearch = useCallback(
@@ -133,7 +133,7 @@ const UniversitySearchFilters: React.FC<Props> = ({ setQuery }) => {
       const finalData = { ...currentFormData, Search: text };
       setQuery(JSON.stringify(finalData));
     },
-    [currentFormData, setQuery],
+    [currentFormData, setQuery]
   );
 
   const handleReset = useCallback(() => {
@@ -159,7 +159,7 @@ const UniversitySearchFilters: React.FC<Props> = ({ setQuery }) => {
         </Text>
       );
     },
-    [currentFormData, handleBottomSheet],
+    [currentFormData, handleBottomSheet]
   );
 
   const renderActionSheet = useCallback(
@@ -168,7 +168,7 @@ const UniversitySearchFilters: React.FC<Props> = ({ setQuery }) => {
       options: string[],
       onChange: (selected: string[], field: any) => void,
       placeholder: string,
-      search = false,
+      search = false
     ) => (
       <ActionSheet
         ref={sheetRefs[filterType]}
@@ -193,7 +193,7 @@ const UniversitySearchFilters: React.FC<Props> = ({ setQuery }) => {
         />
       </ActionSheet>
     ),
-    [sheetRefs, control, setCityOptions],
+    [sheetRefs, control, setCityOptions]
   );
 
   return (
@@ -203,9 +203,9 @@ const UniversitySearchFilters: React.FC<Props> = ({ setQuery }) => {
 
         <View style={styles.searchTagContainer}>
           {FILTER_TYPES.map(renderFilterTag)}
-          <TouchableOpacity style={styles.resetButton} onPress={handleReset}>
+          {/* <TouchableOpacity style={styles.resetButton} onPress={handleReset}>
             <Refresh width={20} height={20} color="white" />
-          </TouchableOpacity>
+          </TouchableOpacity> */}
         </View>
 
         <View style={styles.searchContainer}>
@@ -242,7 +242,7 @@ const UniversitySearchFilters: React.FC<Props> = ({ setQuery }) => {
         countryOptions,
         handleCountryChange,
         "Country",
-        true,
+        true
       )}
       {renderActionSheet("City", cityOptions, handleCityChange, "City", true)}
       {renderActionSheet("Type", UNIVERSITY_TYPES, handleTypeChange, "Type")}
@@ -253,11 +253,11 @@ const UniversitySearchFilters: React.FC<Props> = ({ setQuery }) => {
 export default UniversitySearchFilters;
 
 const styles = StyleSheet.create({
-    container:{
-paddingHorizontal:16,
-paddingTop:16,
-marginBottom:32
-    },
+  container: {
+    paddingHorizontal: 16,
+    paddingTop: 16,
+    marginBottom: 32,
+  },
   searchTagContainer: {
     marginTop: 24,
     display: "flex",
@@ -289,12 +289,12 @@ marginBottom:32
     fontWeight: "500",
     backgroundColor: "#6744FF",
   },
-  searchContainer:{
-      position:"relative",
-      height:42,
-      marginTop:16,
-      padding:0
-    },
+  searchContainer: {
+    position: "relative",
+    height: 42,
+    marginTop: 16,
+    padding: 0,
+  },
   searchInput: {
     height: 42,
     marginTop: 0,
@@ -314,5 +314,4 @@ marginBottom:32
     left: 24,
     zIndex: 30,
   },
-
 });

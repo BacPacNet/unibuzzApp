@@ -1,20 +1,20 @@
 import React, { useEffect, useMemo, useState } from "react";
-import { Platform, StyleSheet, Text, View } from "react-native";
+import { StyleSheet, Text, View } from "react-native";
 import NavbarSubscribedUniversity from "../SubscribedUniversity";
 import { getUserProfileStore, getUserStore } from "@/storage/user";
 import { useGetSubscribedCommunities } from "@/services/university-community";
 import { Community } from "@/types/Community";
-
 import { useNavigation } from "@react-navigation/native";
 import { RootStackParamList } from "@/types/navigation";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { useCommunityContext } from "@/context/CommunityProvider/CommunityProvider";
-
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { FilterList } from "iconoir-react-native";
 import CommunityGroupTabs from "@/components/organism/CommunityGroupTabs";
 import CommunityLogo from "@/components/atoms/LogoHolder";
 import { useNewCommunityGroupStatesContext } from "@/context/NewCommunityGroupStatesProvider/NewCommunityGroupStatesProvider";
+import { FONTS } from "@/constants/fonts";
+import ManageGroupIcon from "@/assets/icons/manageGroupIcon.svg";
 
 type NavigationProp = StackNavigationProp<RootStackParamList, "Timeline">;
 const UniversitySec = () => {
@@ -52,14 +52,14 @@ const UniversitySec = () => {
     const selectedCommunityGroup = subscribedCommunities?.find(
       (community) =>
         community?._id ===
-        (currentCommunityId || subscribedCommunities?.[0]._id),
+        (currentCommunityId || subscribedCommunities?.[0]._id)
     )?.communityGroups;
     return selectedCommunityGroup
       ?.filter((userCommunityGroup) =>
         userCommunityGroup?.users?.some(
           (selectCommunityGroup) =>
-            selectCommunityGroup?._id?.toString() === userData?.id?.toString(),
-        ),
+            selectCommunityGroup?._id?.toString() === userData?.id?.toString()
+        )
       )
       ?.filter((group) => group.title.toLowerCase());
   }, [subscribedCommunities, currentCommunityId, userData, userProfileData]);
@@ -68,7 +68,7 @@ const UniversitySec = () => {
     const groups = subscribedCommunities?.find(
       (community) =>
         community._id ===
-        (currentCommunityId || subscribedCommunities?.[0]?._id),
+        (currentCommunityId || subscribedCommunities?.[0]?._id)
     )?.communityGroups;
 
     return groups || [];
@@ -78,7 +78,7 @@ const UniversitySec = () => {
     const groups = subscribedCommunities?.find(
       (community) =>
         community._id ===
-        (currentCommunityId || subscribedCommunities?.[0]?._id),
+        (currentCommunityId || subscribedCommunities?.[0]?._id)
     )?.communityGroups;
 
     return groups?.filter((group) => group?.adminUserId === userData?.id) || [];
@@ -88,8 +88,8 @@ const UniversitySec = () => {
     if (currentCommunityId && subscribedCommunities) {
       setCommunity(
         subscribedCommunities.find(
-          (community) => community._id === currentCommunityId,
-        ),
+          (community) => community._id === currentCommunityId
+        )
       );
     } else if (subscribedCommunities) {
       setCommunity(subscribedCommunities?.[0] as Community);
@@ -99,15 +99,16 @@ const UniversitySec = () => {
   return (
     <View>
       <Text style={styles.headerText}>UNIVERSITIES</Text>
-      <NavbarSubscribedUniversity
-        userData={userData || {}}
-        communityId={currentCommunityId || ""}
-        subscribedCommunities={subscribedCommunities as Community[]}
-        handleCommunityClick={handleCommunityClick}
-        isGroup={!!currentCommunityGroupId}
-      />
-
-      <View className="mt-4">
+      <View style={styles.universityContainer}>
+        <NavbarSubscribedUniversity
+          userData={userData || {}}
+          communityId={currentCommunityId || ""}
+          subscribedCommunities={subscribedCommunities as Community[]}
+          handleCommunityClick={handleCommunityClick}
+          isGroup={!!currentCommunityGroupId}
+        />
+      </View>
+      <View>
         <View style={styles.communityImageContainer}>
           <Text style={styles.groupHeaderText}>Groups</Text>
 
@@ -120,8 +121,9 @@ const UniversitySec = () => {
           onPress={() => handleManageGroupNavigate()}
           style={styles.communityMangeButton}
         >
-          <FilterList width={22} height={22} color="#6744FF" />
-          <Text className="text-neutral-800">Manage Groups</Text>
+          <ManageGroupIcon width={20} height={20} color="#6744FF" />
+
+          <Text style={styles.manageGroupText}>Manage Groups</Text>
         </TouchableOpacity>
 
         {/* <CommunityGroupAll
@@ -166,47 +168,20 @@ const styles = StyleSheet.create({
   headerText: {
     fontSize: 14,
     color: "#6B7280",
-    padding: 16,
-    paddingTop: 9,
-    fontWeight: 700,
+    fontFamily: FONTS.inter.bold,
+
+    marginBottom: 8,
+    paddingHorizontal: 16,
+    paddingVertical: 8,
   },
   groupHeaderText: {
     fontSize: 14,
     color: "#6B7280",
-    fontWeight: 700,
+    fontFamily: FONTS.inter.bold,
+    marginVertical: 8,
   },
-  UpgradeText: {
-    fontSize: 14,
-    color: "#6744FF",
-  },
-  imageWrapper: {
-    padding: 4,
-    backgroundColor: "#fff",
-    borderRadius: 24,
-    ...Platform.select({
-      ios: {
-        shadowColor: "#000",
-        shadowOffset: { width: 0, height: 0 },
-        shadowOpacity: 0.25,
-        shadowRadius: 6,
-      },
-      android: {
-        elevation: 6,
-      },
-    }),
-  },
-  communityImage: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    resizeMode: "contain",
-  },
-  universityPlaceHolder: {
-    width: 40,
-    height: 40,
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "center",
+  universityContainer: {
+    marginBottom: 16,
   },
   communityImageContainer: {
     display: "flex",
@@ -223,16 +198,20 @@ const styles = StyleSheet.create({
     display: "flex",
     flexDirection: "row",
     justifyContent: "center",
-    alignSelf: "flex-start",
-    // padding: 16,
-    borderColor: "#D1D5DB",
+    alignItems: "center",
+    alignSelf: "center",
+    borderColor: "#E5E7EB",
     borderWidth: 1,
-    padding: 8,
-    borderRadius: 10,
+    borderRadius: 8,
     gap: 4,
     width: 236,
+    height: 48,
     marginBottom: 32,
-    marginStart: 16,
   },
   borderBottom: {},
+  manageGroupText: {
+    fontSize: 14,
+    color: "#3A3B3C",
+    fontFamily: FONTS.inter.medium,
+  },
 });

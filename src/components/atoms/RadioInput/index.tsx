@@ -82,13 +82,13 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   radioOuterSelected: {
-    borderColor: "#9685FF",
+    borderColor: "#6744FF",
   },
   radioInner: {
     width: 12,
     height: 12,
     borderRadius: 6,
-    backgroundColor: "#9685FF",
+    backgroundColor: "#6744FF",
   },
   label: {
     fontSize: 14,

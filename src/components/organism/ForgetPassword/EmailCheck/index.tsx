@@ -1,7 +1,15 @@
 import React, { useEffect } from "react";
-import { View, StyleSheet } from "react-native";
+import {
+  View,
+  StyleSheet,
+  TouchableWithoutFeedback,
+  Keyboard,
+} from "react-native";
 import { useForm } from "react-hook-form";
-import { useHandleUserEmailAvailability } from "@/services/auth";
+import {
+  useHandleUserEmailAvailability,
+  useResetPasswordCodeGenerate,
+} from "@/services/auth";
 
 import ReusableButton from "@/components/atoms/ReusableButton";
 import { useUserPasswordReset } from "@/context/UserPasswordResetProvider/UserPasswordResetProvider";
@@ -36,8 +44,10 @@ const ForgetPasswordEmailCheck: React.FC<Props> = ({
   });
 
   const email = watch("email");
-  console.log("isFromSettings", isFromSettings);
+
   const { setResetPasswordEmail } = useUserPasswordReset();
+  const { mutate: generateResetPasswordOtp, isPending } =
+    useResetPasswordCodeGenerate();
 
   const {
     mutateAsync: handleUserEmailAvailability,
@@ -49,7 +59,7 @@ const ForgetPasswordEmailCheck: React.FC<Props> = ({
   const handleEmailCheck = async () => {
     try {
       await handleUserEmailAvailability({ email: email });
-
+      await generateResetPasswordOtp({ email: email });
       setResetPasswordEmail(email);
       setCurrStage(ForgetPasswordStep.OtpCheck);
     } catch (err: any) {
@@ -62,61 +72,55 @@ const ForgetPasswordEmailCheck: React.FC<Props> = ({
     }
   };
 
-  //   useEffect(() => {
-  //     if (resetToken.length > 1) {
-  //       setCurrStage(ForgetPasswordStep.ResetPassword);
-  //     } else {
-  //       setCurrStage(ForgetPasswordStep.EmailCheck);
-  //     }
-  //   }, [resetToken]);
-
   return (
-    <View style={styles.main}>
-      <View></View>
-      <View style={styles.mainContainer}>
-        <View style={styles.titlemargin} className="flex items-start  w-full">
-          <Title>Reset Password</Title>
+    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+      <View style={styles.main}>
+        <View></View>
+        <View style={styles.mainContainer}>
+          <View style={styles.titlemargin} className="flex items-start  w-full">
+            <Title>Reset Password</Title>
+          </View>
+          <View className="my-4">
+            <FormInput
+              isLabelShown={true}
+              label="Email Address"
+              placeholder="john.dowry@example.com"
+              name="email"
+              control={control}
+              keyboardType="email-address"
+              rules={{
+                required: "Please enter your email!",
+                pattern: {
+                  value: /^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/,
+                  message: "Invalid email format",
+                },
+              }}
+              isError={!!errors.email}
+              errorMessage={
+                errors.email
+                  ? errors.email.message?.toString()
+                  : "email  is required"
+              }
+            />
+          </View>
         </View>
-        <View className="my-4">
-          <FormInput
-            isLabelShown={true}
-            label="Email Address"
-            placeholder="john.dowry@example.com"
-            name="email"
-            control={control}
-            keyboardType="email-address"
-            rules={{
-              required: "Please enter your email!",
-              pattern: {
-                value: /^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/,
-                message: "Invalid email format",
-              },
-            }}
-            isError={!!errors.email}
-            errorMessage={
-              errors.email
-                ? errors.email.message?.toString()
-                : "email  is required"
-            }
+
+        <View style={styles.buttonContainer}>
+          <ReusableButton
+            onPress={handleSubmit(handleEmailCheck)}
+            buttonText="Reset Password"
+            variant="primary"
+            height="large"
+          />
+          <ReusableButton
+            onPress={handleBack}
+            buttonText={isFromSettings ? "Back to Settings" : "Back to Login"}
+            variant="border"
+            height="large"
           />
         </View>
       </View>
-
-      <View style={styles.buttonContainer}>
-        <ReusableButton
-          onPress={handleSubmit(handleEmailCheck)}
-          buttonText="Reset Password"
-          variant="primary"
-          height="large"
-        />
-        <ReusableButton
-          onPress={handleBack}
-          buttonText={isFromSettings ? "Back to Settings" : "Back to Login"}
-          variant="border"
-          height="large"
-        />
-      </View>
-    </View>
+    </TouchableWithoutFeedback>
   );
 };
 

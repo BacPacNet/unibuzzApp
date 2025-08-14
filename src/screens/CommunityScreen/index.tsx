@@ -31,6 +31,8 @@ import EmptyStateCard from "@/components/molecules/EmptyStateCard";
 import NotMember from "@/assets/placeHolder/joinGroup.svg";
 import NoUniversityPost from "@/assets/placeHolder/noUniversityPost.svg";
 import BackHeader from "@/components/atoms/BackHeader";
+import { FONTS } from "@/constants/fonts";
+import ReusableButton from "@/components/atoms/ReusableButton";
 type NavigationProp = StackNavigationProp<RootStackParamList, "Community">;
 
 const CommunityScreen = ({ route }: any) => {
@@ -149,7 +151,7 @@ const CommunityScreen = ({ route }: any) => {
           </View>
           <Text style={styles.description}>{communityData?.about}</Text>
 
-          <TouchableOpacity
+          {/* <TouchableOpacity
             disabled={isJoinLoading || isLeaveLoading || isFetching}
             onPress={() => handleToggleJoinCommunity()}
             style={styles.button}
@@ -163,7 +165,18 @@ const CommunityScreen = ({ route }: any) => {
                 "Leave Community"
               )}
             </Text>
-          </TouchableOpacity>
+          </TouchableOpacity> */}
+          <ReusableButton
+            variant={isUserJoinedCommunity ? "border" : "primary"}
+            isLoading={isJoinLoading || isLeaveLoading || isFetching}
+            disabled={isJoinLoading || isLeaveLoading || isFetching}
+            onPress={handleToggleJoinCommunity}
+            buttonText={
+              !isUserJoinedCommunity ? "Join Community" : "Leave Community"
+            }
+            size={isUserJoinedCommunity ? 132 : 126}
+            activityIndicatorColor={isUserJoinedCommunity ? "#3A3B3C" : "#fff"}
+          />
         </View>
       </View>
     );
@@ -278,6 +291,8 @@ const styles = StyleSheet.create({
     overflow: "hidden",
 
     // margin: 10,
+    borderBottomColor: "#E5E7EB",
+    borderBottomWidth: 1,
   },
   image: {
     width: "100%",
@@ -290,12 +305,12 @@ const styles = StyleSheet.create({
     display: "flex",
     flexDirection: "row",
     alignItems: "center",
-    gap: 8,
+    gap: 12,
     marginBottom: 16,
   },
   title: {
     fontSize: 14,
-    fontWeight: "bold",
+    fontFamily: FONTS.inter.bold,
     color: "#3A3B3C",
     width: "60%",
     minWidth: 200,
@@ -308,7 +323,8 @@ const styles = StyleSheet.create({
   description: {
     fontSize: 14,
     color: "#6B7280",
-    marginVertical: 16,
+    fontFamily: FONTS.inter.medium,
+    marginBottom: 16,
   },
 
   button: {
@@ -316,8 +332,8 @@ const styles = StyleSheet.create({
     borderColor: "#E5E7EB",
     padding: 10,
     alignItems: "center",
-    borderRadius: 8,
-    marginTop: 10,
+    borderRadius: 360,
+
     height: 40,
     width: 163,
   },

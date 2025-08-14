@@ -42,7 +42,7 @@ const SelectedUserProfileChips = ({
           style={styles.remove}
           onPress={() => onRemove(userId)}
         >
-          <Xmark width={20} height={20} color="#6744FF" />
+          <Xmark width={18} height={18} color="#6744FF" strokeWidth={2} />
         </TouchableOpacity>
       </View>
       <Text>{name}</Text>
@@ -57,9 +57,9 @@ type IndividualUser = {
     };
     users_id: string;
   };
-  profile_dp:{
+  profile_dp: {
     imageUrl: string;
-  }
+  };
   firstName: string;
   _id: string;
 };
@@ -75,10 +75,6 @@ export const SelectUserProfileChips = ({
   onRemove,
   isAllUsers,
 }: ChipsProps) => {
-
-
-
-
   return (
     <ScrollView
       horizontal
@@ -88,7 +84,11 @@ export const SelectUserProfileChips = ({
       {individualsUsers?.map((item, index) => (
         <SelectedUserProfileChips
           key={item?._id || index}
-          avatarUrl={ isAllUsers ? item?.profile?.profile_dp?.imageUrl : item?.profile_dp?.imageUrl}
+          avatarUrl={
+            isAllUsers
+              ? item?.profile?.profile_dp?.imageUrl
+              : item?.profile_dp?.imageUrl
+          }
           name={item?.firstName}
           userId={isAllUsers ? item?.profile?.users_id : item?._id}
           onRemove={onRemove}
@@ -103,9 +103,11 @@ const styles = StyleSheet.create({
   container: {
     display: "flex",
     flexDirection: "row",
-    gap: 4,
+    gap: 18,
     alignItems: "center",
     overflow: "scroll",
+    // width: "100%",
+    paddingRight: 18,
   },
   imageWrapper: {
     width: 50,
@@ -118,14 +120,15 @@ const styles = StyleSheet.create({
   remove: {
     position: "absolute",
     top: 0,
-    right: 0,
+    right: -10,
     backgroundColor: "#E9E8FF",
     borderRadius: 24,
+    padding: 2,
   },
   communityImage: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
+    width: 48,
+    height: 48,
+    borderRadius: 360,
     resizeMode: "contain",
   },
   universityPlaceHolder: {

@@ -8,6 +8,7 @@ import {
 } from "react-native";
 import { Controller } from "react-hook-form";
 import { Eye, EyeClosed } from "iconoir-react-native";
+import { FONTS } from "@/constants/fonts";
 
 interface PasswordInputProps {
   label?: string;
@@ -139,7 +140,7 @@ const styles = StyleSheet.create({
   },
   label: {
     fontSize: 14,
-    fontWeight: "500",
+    fontFamily: FONTS.inter.medium,
     color: "#3A3B3C",
   },
   required: {
@@ -190,5 +191,6 @@ const styles = StyleSheet.create({
   infoText: {
     color: "#6B7280",
     fontSize: 12,
+    fontFamily: FONTS.inter.regular,
   },
 });

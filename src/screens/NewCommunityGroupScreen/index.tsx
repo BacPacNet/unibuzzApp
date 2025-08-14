@@ -58,7 +58,7 @@ const NewCommunityGroupScreen = () => {
     handleSubmit: handleGroupCreate,
     formState: { errors },
     setValue,
-    watch
+    watch,
   } = useForm<CreateCommunityGroupType>({
     defaultValues: {
       communityGroupLogoUrl: null,
@@ -122,7 +122,6 @@ const NewCommunityGroupScreen = () => {
 
   // Form submission
   const onSubmit = async (data: CreateCommunityGroupType) => {
-  
     const isValid = isFilterSelectionValid(createSelectedFilters);
 
     if (!isValid) {
@@ -154,7 +153,7 @@ const NewCommunityGroupScreen = () => {
           onError: () => {
             setIsProfileLoading(false);
           },
-        },
+        }
       );
     } catch (error) {
       setIsProfileLoading(false);
@@ -180,7 +179,7 @@ const NewCommunityGroupScreen = () => {
   }
 
   return (
-    <SafeAreaView style={styles.container}>
+    <View style={styles.container}>
       <KeyboardAvoidingView
         behavior={Platform.OS === "ios" ? "padding" : "height"}
         style={styles.keyboardAvoid}
@@ -244,7 +243,7 @@ const NewCommunityGroupScreen = () => {
           </View>
         </ScrollView>
       </KeyboardAvoidingView>
-    </SafeAreaView>
+    </View>
   );
 };
 

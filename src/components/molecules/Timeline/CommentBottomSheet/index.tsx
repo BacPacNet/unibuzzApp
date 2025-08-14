@@ -61,7 +61,7 @@ const CommentBottomSheet = ({
   const [replyingTo, setReplyingTo] = useState<any>(null);
   const [showTotalReply, setShowTotalReply] = useState(4);
   const [selectedOption, setSelectedOption] = useState<string>("Newest First");
-  const [selectedSortValue, setSelectedSortValue] = useState(Sortby.ASC);
+  const [selectedSortValue, setSelectedSortValue] = useState(Sortby.DESC);
   const [isModalVisible, setModalVisible] = useState(false);
 
   const navigate = useNavigation<any>();

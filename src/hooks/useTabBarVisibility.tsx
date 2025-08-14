@@ -1,28 +1,22 @@
+import { useHeader } from "@/context/HeaderProvider/Header";
 import { useFocusEffect } from "@react-navigation/native";
 import { useCallback } from "react";
 
-export const useTabBarVisibility = (navigation: any) => {
+export const useTabBarVisibility = (
+  navigation: any,
+  toCall: boolean = true
+) => {
+  const { isTabBarVisible, setIsTabBarVisible } = useHeader();
+
   useFocusEffect(
     useCallback(() => {
-      navigation?.getParent()?.setOptions({
-        tabBarStyle: { display: "none" },
-      });
+      setIsTabBarVisible(false);
 
       return () => {
-        navigation?.getParent()?.setOptions({
-          tabBarStyle: {
-            backgroundColor: "white",
-            height: 80,
-            display: "flex",
-            flexDirection: "row",
-            alignItems: "center",
-            justifyContent: "space-between",
-            paddingHorizontal: 0,
-            gap: 8,
-            borderTopWidth: 1,
-          },
-        });
+        setIsTabBarVisible(true);
       };
-    }, [navigation])
+    }, [navigation, toCall])
   );
+
+  return isTabBarVisible;
 };

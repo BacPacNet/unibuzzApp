@@ -6,11 +6,14 @@ import UniversityLogoPlaceHolder from "@/assets/LogoCircle.svg";
 type LogoVariant = "extraSmall" | "small" | "default" | "large";
 
 // Configuration object for different variants
-const LOGO_VARIANTS: Record<LogoVariant, {
-  size: number;
-  padding: number;
-  borderRadius: number;
-}> = {
+const LOGO_VARIANTS: Record<
+  LogoVariant,
+  {
+    size: number;
+    padding: number;
+    borderRadius: number;
+  }
+> = {
   extraSmall: {
     size: 16,
     padding: 2,
@@ -27,7 +30,7 @@ const LOGO_VARIANTS: Record<LogoVariant, {
     borderRadius: 200,
   },
   large: {
-    size: 30,
+    size: 48,
     padding: 4,
     borderRadius: 200,
   },

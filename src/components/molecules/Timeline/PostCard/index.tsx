@@ -41,7 +41,7 @@ const PostCard = memo(
     isSinglePost = false,
     initialComment,
     toShowInitial = false,
-    isProfile=false
+    isProfile = false,
   }: PostCardType) => {
     const navigation = useNavigation<ScreenNavigationProp>();
     const [visible, setVisible] = useState(false);
@@ -74,10 +74,14 @@ const PostCard = memo(
         isProfile
       );
     const { mutate: LikeUnlikeTimelinePost, isPending: isLikeUnlikePending } =
-      useLikeUnlikeTimelinePost(source as string, data?.user?._id, isSinglePost);
+      useLikeUnlikeTimelinePost(
+        source as string,
+        data?.user?._id,
+        isSinglePost
+      );
 
     const sharePost = async (
-      message = "Hey, check out this amazing post! https://example.com/post/123",
+      message = "Hey, check out this amazing post! https://example.com/post/123"
     ) => {
       try {
         await Share.share({ message });
@@ -87,13 +91,13 @@ const PostCard = memo(
     };
 
     const LikeUnlikeHandler = (postId: string) => {
-      if(source==="profile"){
+      if (source === "profile") {
         LikeUnlikeTimelinePost(postId);
         return; // Add return to prevent double execution
       }
-      
+
       if (
-        isSinglePost || !isTimeline  ? !data?.communityId : !data?.community?._id
+        isSinglePost || !isTimeline ? !data?.communityId : !data?.community?._id
       ) {
         LikeUnlikeTimelinePost(postId);
       } else if (
@@ -102,7 +106,6 @@ const PostCard = memo(
         LikeUnlikeGroupPost(postId);
       }
     };
-
 
     const handleDeletePost = () => {
       if (
@@ -133,7 +136,7 @@ const PostCard = memo(
         return () => {
           setShowInitial(false);
         };
-      }, [data, toShowInitial]),
+      }, [data, toShowInitial])
     );
 
     const postSourceText = useMemo(() => {
@@ -162,9 +165,15 @@ const PostCard = memo(
               ? data?.profile?.study_year || data?.userProfile?.study_year
               : data?.userProfile?.study_year || data?.profile?.study_year
           }
-          major={isSinglePost ? data?.profile?.major || data?.userProfile?.major : data?.userProfile?.major || data?.profile?.major}
+          major={
+            isSinglePost
+              ? data?.profile?.major || data?.userProfile?.major
+              : data?.userProfile?.major || data?.profile?.major
+          }
           degree={data?.userProfile?.degree || data?.profile?.degree}
-          university={data?.userProfile?.university_name || data?.profile?.university_name}
+          university={
+            data?.userProfile?.university_name || data?.profile?.university_name
+          }
           affiliation={
             isSinglePost
               ? data?.profile?.affiliation || data?.userProfile?.affiliation
@@ -182,7 +191,11 @@ const PostCard = memo(
           communityGroupName={
             isSinglePost ? data?.communityGroupName : data?.communityGroupName
           }
-          dp={data?.userProfile?.profile_dp?.imageUrl || data?.profile?.profile_dp?.imageUrl || " "}
+          dp={
+            data?.userProfile?.profile_dp?.imageUrl ||
+            data?.profile?.profile_dp?.imageUrl ||
+            " "
+          }
           postId={data?._id}
           type={resolvedPostType}
           isAdmin={
@@ -200,17 +213,16 @@ const PostCard = memo(
             <RenderHtml
               contentWidth={width}
               source={{ html: data?.content }}
-            tagsStyles={{
+              tagsStyles={{
                 body: {
                   margin: 0,
                   padding: 0,
-                  color: '#3A3B3C',
-                
+                  color: "#3A3B3C",
                 },
                 p: {
                   margin: 0,
                   padding: 0,
-                  fontSize:14
+                  fontSize: 14,
                 },
                 div: {
                   margin: 0,
@@ -223,13 +235,11 @@ const PostCard = memo(
         ) : (
           <View></View>
         )}
-        {
-            data?.imageUrl?.length > 0 ?
-            <View style={{ flex: 1 }}>
+        {data?.imageUrl?.length > 0 ? (
+          <View style={{ flex: 1 }}>
             <ImageGridLayout imagesData={data?.imageUrl || []} />
-          </View> : null
-        }
-      
+          </View>
+        ) : null}
 
         <View className="px-4">
           <RenderCreatedAt
@@ -238,7 +248,7 @@ const PostCard = memo(
           />
         </View>
 
-        <View  className="flex flex-row justify-end items-end pt-2 pb-4 px-4  border-b border-neutral-300">
+        <View className="flex flex-row justify-end items-end pt-2 pb-4 px-4  border-b border-neutral-300">
           <View className="flex flex-row  gap-4">
             <TouchableOpacity
               onPress={() => LikeUnlikeHandler(data?._id)}
@@ -272,22 +282,18 @@ const PostCard = memo(
               />
             </TouchableOpacity>
             <TouchableOpacity
-            onPress={() => sharePost()}
-            className="flex flex-row gap-2 items-center"
-          >
-             <Text className="text-2xs font-bold text-neutral-500">
-               Share
-              </Text>
-            <ShareAndroid
-              strokeWidth={2}
-              color="#6B7280"
-              height={16}
-              width={16}
-            />
-          </TouchableOpacity>
+              onPress={() => sharePost()}
+              className="flex flex-row gap-2 items-center"
+            >
+              <Text className="text-2xs font-bold text-neutral-500">Share</Text>
+              <ShareAndroid
+                strokeWidth={2}
+                color="#6B7280"
+                height={16}
+                width={16}
+              />
+            </TouchableOpacity>
           </View>
-
-        
         </View>
 
         <ActionSheet
@@ -296,9 +302,9 @@ const PostCard = memo(
           gestureEnabled={true}
           safeAreaInsets={insets}
           snapPoints={defaultBottomSheetSnapPoints}
-          
           containerStyle={{
             paddingTop: 10,
+            paddingBottom: 80,
           }}
         >
           <CommentBottomSheet
@@ -316,11 +322,7 @@ const PostCard = memo(
         </ActionSheet>
       </View>
     );
-  },
+  }
 );
 
 export default PostCard;
-
-
-
-

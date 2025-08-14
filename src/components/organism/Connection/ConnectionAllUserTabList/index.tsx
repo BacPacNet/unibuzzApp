@@ -35,23 +35,21 @@ const ConnectionAllUserTabList: React.FC<{
   const [name, setName] = useState("");
   const [isSearchQueryLoading, setIsSearchQueryLoading] = useState(false);
 
-  
   const isEmpty = (val: any): boolean => {
     if (val === "" || val === null) return true;
     if (Array.isArray(val)) {
       return val.length === 0;
     }
     if (typeof val === "object" && val !== null) {
-      return Object.values(val).every(isEmpty); 
+      return Object.values(val).every(isEmpty);
     }
     return false;
   };
-  
+
   const isFilterApplied = useMemo(() => {
     return Object.values(selectedFilters).some((value) => !isEmpty(value));
   }, [selectedFilters]);
 
-  
   const navigation = useNavigation<NavigationProp>();
   const {
     data: userProfilesData,
@@ -70,7 +68,7 @@ const ConnectionAllUserTabList: React.FC<{
     selectedFilters.studentYear,
     selectedFilters.major,
     selectedFilters.occupation,
-    selectedFilters.affiliation,
+    selectedFilters.affiliation
   );
 
   const userProfiles = useMemo(
@@ -78,7 +76,7 @@ const ConnectionAllUserTabList: React.FC<{
       userProfilesData?.pages
         ?.flatMap(({ users }) => users)
         .filter(({ _id }) => _id !== userProfileData?.users_id) ?? [],
-    [userProfilesData, userProfileData?.users_id],
+    [userProfilesData, userProfileData?.users_id]
   );
 
   const handleRefresh = useCallback(() => {
@@ -101,7 +99,7 @@ const ConnectionAllUserTabList: React.FC<{
   }, [hasNextPage, isFetchingNextPage, fetchNextPage]);
 
   useEffect(() => {
-    if (values ) {
+    if (values) {
       const { universityId, universityName, communityId, ...rest } = values;
 
       setSelectedFilters({
@@ -113,8 +111,8 @@ const ConnectionAllUserTabList: React.FC<{
         },
       });
     }
-    if(values == null){
-        handleRefresh()
+    if (values == null) {
+      handleRefresh();
     }
   }, [values]);
 
@@ -143,7 +141,7 @@ const ConnectionAllUserTabList: React.FC<{
             <SearchInput
               value={name}
               onChangeText={setName}
-           placeholder="Search User..."
+              placeholder="Search User..."
             />
           </View>
           <TouchableOpacity
@@ -152,7 +150,13 @@ const ConnectionAllUserTabList: React.FC<{
             }
             className="w-10 h-10 bg-secondary rounded-lg flex justify-center items-center"
           >
-            <Filter width={28} height={28} color={"#6744FF"} fill={isFilterApplied ? "#6744FF" : "#F3F2FF"} strokeWidth={2} />
+            <Filter
+              width={28}
+              height={28}
+              color={"#6744FF"}
+              fill={isFilterApplied ? "#6744FF" : "#F3F2FF"}
+              strokeWidth={2}
+            />
           </TouchableOpacity>
         </View>
       }

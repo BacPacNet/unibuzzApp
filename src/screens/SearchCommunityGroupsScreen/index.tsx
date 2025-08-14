@@ -157,7 +157,7 @@ const SearchCommunityGroupScreen = () => {
             value={searchQuery}
             onChangeText={setSearchQuery}
             placeholder="Search Group"
-            className="border border-neutral-200 p-2  rounded-lg"
+            className="border border-neutral-200 px-2  rounded-lg"
             style={styles.searchInput}
           />
           <Search
@@ -255,6 +255,7 @@ const styles = StyleSheet.create({
   },
   searchInput: {
     paddingEnd: 40,
+    height: 40,
   },
   searchIcon: {
     position: "absolute",

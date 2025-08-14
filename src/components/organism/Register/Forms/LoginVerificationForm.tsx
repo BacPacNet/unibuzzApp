@@ -11,6 +11,7 @@ import Title from "@/components/atoms/Title";
 import { OtpInput } from "react-native-otp-entry";
 import { useHandleLoginEmailVerificationGenerate } from "@/services/auth";
 import ReusableButton from "@/components/atoms/ReusableButton";
+import { ArrowLeft } from "iconoir-react-native";
 
 interface Props {
   isVerificationSuccess: boolean;
@@ -89,8 +90,8 @@ const LoginVerificationForm = ({
           <Title className="text-start">Verification</Title>
         </View>
         <Text className=" text-sm text-neutral-500">
-          We emailed you a six-digit code to {email}. Enter the code
-          below to confirm your email address.
+          We emailed you a six-digit code to {email}. Enter the code below to
+          confirm your email address.
         </Text>
         <View className="w-full flex  mb-4">
           <View>
@@ -163,9 +164,15 @@ const LoginVerificationForm = ({
           isLoading={verificationIsPending}
           height="large"
         />
+
         <ReusableButton
           onPress={handlePrev}
-          buttonText="Review Profile"
+          buttonContent={
+            <View className="flex flex-row items-center justify-center gap-2">
+              <ArrowLeft width={20} height={20} color="#6744FF" />
+              <Text className="text-primary-500"> Review Account</Text>
+            </View>
+          }
           variant="shade"
           height="large"
         />

@@ -89,7 +89,7 @@ export enum Sortby {
   DESC = "desc",
 }
 
-export const defaultBottomSheetSnapPoints = [50, 100];
+export const defaultBottomSheetSnapPoints = [50, 70];
 
 export interface PostInputData {
   content: string;

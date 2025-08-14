@@ -15,7 +15,6 @@ const Connections = () => {
     setFilterParams(paramValues?.values);
   }, [paramValues]);
 
-  
   const dummyTabs = [
     {
       label: "All",
@@ -44,7 +43,7 @@ const Connections = () => {
     },
   ];
   return (
-    <View className="flex-1 bg-white pb-20">
+    <View className="flex-1 bg-white ">
       <Tabs tabs={dummyTabs} onChange={() => {}} />
     </View>
   );
