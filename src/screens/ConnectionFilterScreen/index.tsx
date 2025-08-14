@@ -14,7 +14,7 @@ import { useNavigation, useRoute } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import React, { useEffect, useRef, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
-import { View, StyleSheet } from "react-native";
+import { View, StyleSheet, ScrollView } from "react-native";
 import ActionSheet, { ActionSheetRef } from "react-native-actions-sheet";
 import { Toast } from "react-native-toast-notifications";
 
@@ -102,12 +102,15 @@ const ConnectionsFilter = () => {
   };
 
   return (
-    <View style={styles.container}>
-      <View className="flex-row items-center justify-between ">
+    <ScrollView style={styles.container}>
+      <View
+        style={{ marginRight: 8 }}
+        className="flex-row items-center justify-between"
+      >
         <BackHeader label="Connections" />
         <ReusableButton
           containerStyle=""
-          size="small"
+          size={120}
           buttonText="Clear Filters"
           variant="shade"
           onPress={() => {
@@ -208,7 +211,10 @@ const ConnectionsFilter = () => {
             <MultiSelectDropdown
               options={Object.keys(degreeAndMajors)}
               value={field.value || []}
-              onChange={field.onChange}
+              onChange={(val) => {
+                field.onChange(val);
+                yearActionSheetRef.current?.hide();
+              }}
               placeholder="Select Year"
               err={false}
               multiSelect={false}
@@ -252,7 +258,10 @@ const ConnectionsFilter = () => {
             <MultiSelectDropdown
               options={Object.keys(occupationAndDepartment)}
               value={field.value || []}
-              onChange={field.onChange}
+              onChange={(val) => {
+                field.onChange(val);
+                occupationActionSheetRef.current?.hide();
+              }}
               placeholder="Add By Major"
               err={false}
               search={true}
@@ -283,7 +292,7 @@ const ConnectionsFilter = () => {
           )}
         />
       </ActionSheet>
-    </View>
+    </ScrollView>
   );
 };
 
@@ -310,7 +319,7 @@ const styles = StyleSheet.create({
     borderTopColor: "#E0E0E0",
     paddingTop: 32,
     marginHorizontal: 16,
-    marginTop: 64,
+    marginTop: 32,
   },
   actionSheetContainer: {
     height: "100%",

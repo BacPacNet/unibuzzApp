@@ -25,6 +25,7 @@ import { launchImageLibrary } from "react-native-image-picker";
 import { replaceImage } from "@/services/uploadImage";
 import SelectBottomSheet from "../../SelectBottomSheet";
 import { currYear, occupationAndDepartment, value } from "@/types/register";
+import BackHeader from "@/components/atoms/BackHeader";
 
 interface User {
   _id: string;
@@ -91,7 +92,7 @@ const CreateGroupChat = ({ setSelectedChat, setCurrTab }: Props) => {
   const handleClick = (userId: string) => {
     if (selectedUsers?.some((selectedUser) => selectedUser._id == userId)) {
       const filterd = selectedUsers.filter(
-        (selectedUser) => selectedUser._id !== userId,
+        (selectedUser) => selectedUser._id !== userId
       );
       setSelectedUsers(filterd);
     }
@@ -180,12 +181,16 @@ const CreateGroupChat = ({ setSelectedChat, setCurrTab }: Props) => {
         <View style={{ flex: 1 }}>
           {/* <BottomSheetModalProvider> */}
           <View className="flex-1">
-            <View className="flex flex-row gap-4 items-center border-b border-neutral-300 p-4">
+            {/* <View className="flex flex-row gap-4 items-center border-b border-neutral-300 p-4">
               <TouchableOpacity onPress={() => setCurrTab("Inbox")}>
                 <NavArrowLeft height={24} width={24} />
               </TouchableOpacity>
               <Text>Back to Inbox</Text>
-            </View>
+            </View> */}
+            <BackHeader
+              label="Back to Inbox"
+              onPress={() => setCurrTab("Inbox")}
+            />
 
             <View className="p-4 flex-1 gap-2">
               <Text className="text-neutral-700 font-semibold text-[18px]">
@@ -273,7 +278,9 @@ const CreateGroupChat = ({ setSelectedChat, setCurrTab }: Props) => {
                         borderRadius: 8,
                       }}
                     >
-                      <Text>+{selectedUsers?.length - 4}</Text>
+                      <Text className="text-primary-500">
+                        +{selectedUsers?.length - 4}
+                      </Text>
                     </View>
                   )}
                 </View>

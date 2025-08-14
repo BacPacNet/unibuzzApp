@@ -1,11 +1,12 @@
 import React from "react";
 import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 import { Xmark } from "iconoir-react-native";
+import { FONTS } from "@/constants/fonts";
 
 interface Props {
   selectedItem: string[];
   onRemove: (userId: string) => void;
-  variant?: "primary" | "border";
+  variant?: "primary" | "border" | "neutral-border";
 }
 
 const SelectedChip: React.FC<Props> = ({
@@ -22,13 +23,21 @@ const SelectedChip: React.FC<Props> = ({
           key={item}
           style={[
             styles.filterChip,
-            variant === "border" ? styles.borderChip : styles.primaryChip,
+            variant === "border"
+              ? styles.borderChip
+              : variant === "neutral-border"
+                ? styles.neutralBorderChip
+                : styles.primaryChip,
           ]}
         >
           <Text
             style={[
               styles.filterChipText,
-              variant === "border" ? styles.borderText : styles.primaryText,
+              variant === "border"
+                ? styles.borderText
+                : variant === "neutral-border"
+                  ? styles.neutralBorderText
+                  : styles.primaryText,
             ]}
           >
             {item}
@@ -37,7 +46,13 @@ const SelectedChip: React.FC<Props> = ({
             onPress={() => onRemove(item)}
             width={24}
             height={24}
-            color={variant === "border" ? "#6744FF" : "#fff"}
+            color={
+              variant === "border"
+                ? "#6744FF"
+                : variant === "neutral-border"
+                  ? "#9CA3AF"
+                  : "#fff"
+            }
           />
         </TouchableOpacity>
       ))}
@@ -73,10 +88,22 @@ const styles = StyleSheet.create({
     marginRight: 4,
   },
   borderText: {
+    fontSize: 12,
+    fontFamily: FONTS.inter.medium,
     color: "#6744FF",
   },
   primaryText: {
+    fontSize: 12,
+    fontFamily: FONTS.inter.medium,
     color: "#fff",
+  },
+  neutralBorderChip: {
+    borderColor: "#D1D5DB",
+    backgroundColor: "#fff",
+    height: 28,
+  },
+  neutralBorderText: {
+    color: "#242526",
   },
 });
 

@@ -24,14 +24,12 @@ const SinglePost = ({ route }: any) => {
   const { data, isFetching, isPending, isError, isLoading } = useGetPost(
     postID,
     type,
-    commentId || "",
+    commentId || ""
   );
 
   const item = data?.post;
   const comment = data?.comment;
 
- 
-  
   const handleBack = () => {
     if (from === screenName.notifications) {
       navigation.navigate("Notifications");
@@ -44,7 +42,7 @@ const SinglePost = ({ route }: any) => {
   if (isError) {
     return (
       <View style={styles.errContainer}>
-        <Text>Not Allowed</Text>
+        <Text className="text-neutral-500">Not Allowed</Text>
       </View>
     );
   }

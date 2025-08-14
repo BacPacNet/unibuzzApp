@@ -10,6 +10,7 @@ import {
   GROUP_TYPE_OPTIONS,
 } from "../../../../screens/NewCommunityGroupScreen/constants";
 import { WarningCircleSolid } from "iconoir-react-native";
+import { FONTS } from "@/constants/fonts";
 
 interface FormFieldsProps {
   control: any;
@@ -32,7 +33,7 @@ export const FormFields: React.FC<FormFieldsProps> = ({
 }) => (
   <>
     <View style={styles.section}>
-      <Text style={styles.required}>Required Fields *</Text>
+      <Text style={styles.requiredTop}>Required Fields *</Text>
       <FormInput
         placeholder="Enter Group Name"
         required
@@ -56,7 +57,6 @@ export const FormFields: React.FC<FormFieldsProps> = ({
         control={control}
         name="description"
         maxChars={160}
-        
       />
     </View>
 
@@ -121,7 +121,7 @@ export const FormFields: React.FC<FormFieldsProps> = ({
       )}
     </View>
 
-    <View style={styles.section}>
+    {/* <View style={styles.section}>
       <View style={styles.flexRowContainer}>
         <Text style={styles.inputLabels}>Group Category</Text>
         <Text style={styles.required}>*</Text>
@@ -134,22 +134,27 @@ export const FormFields: React.FC<FormFieldsProps> = ({
           onRemove={() => setCreateSelectedFilters([])}
         />
       ) : null}
-    </View>
+    </View> */}
   </>
 );
 
 const styles = StyleSheet.create({
   section: {
-    marginBottom: 12,
+    marginBottom: 32,
+  },
+  requiredTop: {
+    color: "#EF4444",
+    marginBottom: 16,
+    fontSize: 12,
   },
   inputLabels: {
     fontSize: 14,
-    fontWeight: "500",
-    color: "#1F2937",
+    fontFamily: FONTS.inter.medium,
+    color: "#171717",
   },
   required: {
     color: "#EF4444",
-    marginBottom: 16,
+    marginBottom: 0,
     fontSize: 12,
   },
   warningText: {

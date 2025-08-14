@@ -147,7 +147,9 @@ const SelectUniversityDropdownBottomSheet: React.FC<SelectDropdownProps> = ({
                       {isFetching ? (
                         <ActivityIndicator />
                       ) : (
-                        <Text>No University Found</Text>
+                        <Text style={styles.emptyListText}>
+                          No University Found
+                        </Text>
                       )}
                     </View>
                   }
@@ -257,5 +259,8 @@ const styles = StyleSheet.create({
   iconContainer: {
     flexDirection: "column",
     alignItems: "center",
+  },
+  emptyListText: {
+    color: "#6B7280",
   },
 });

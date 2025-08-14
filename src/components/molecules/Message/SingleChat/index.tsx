@@ -87,7 +87,7 @@ const SingleChat = ({ setCurrTab, setSelectedChat }: Props) => {
               </View>
             ) : (
               <View className="flex-1 justify-center items-center">
-                <Text>No Result Found</Text>
+                <Text className="text-neutral-500">No Result Found</Text>
               </View>
             )
           }

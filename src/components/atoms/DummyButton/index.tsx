@@ -1,3 +1,4 @@
+import { FONTS } from "@/constants/fonts";
 import { Xmark } from "iconoir-react-native";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
@@ -11,11 +12,11 @@ const DummyButton = ({
 }: any) => {
   return (
     <View>
-      <Text style={styles.label}>{label}</Text>
+      {label && <Text style={styles.label}>{label}</Text>}
 
       <TouchableOpacity onPress={onPress} style={styles.button}>
         <View style={styles.buttonContent}>
-          <Text>{text}</Text>
+          <Text style={styles.buttonText}>{text}</Text>
           {!toShowCross && icon && (
             <View style={styles.iconWrapper}>{icon}</View>
           )}
@@ -50,8 +51,11 @@ const styles = StyleSheet.create({
   },
   label: {
     fontSize: 14,
-    fontWeight: "500",
+    fontFamily: FONTS.inter.medium,
     color: "#3A3B3C",
     marginBottom: 8,
+  },
+  buttonText: {
+    color: "#6B7280",
   },
 });

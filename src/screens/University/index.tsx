@@ -18,7 +18,10 @@ import {
   Community,
 } from "iconoir-react-native";
 import CommunityLogo from "@/components/atoms/LogoHolder";
-import { getUserProfileStore, updateUserProfileCommunities } from "@/storage/user";
+import {
+  getUserProfileStore,
+  updateUserProfileCommunities,
+} from "@/storage/user";
 import { useJoinCommunityFromUniversity } from "@/services/university-community";
 import { Toast } from "react-native-toast-notifications";
 import { useNavigation } from "@react-navigation/native";
@@ -27,6 +30,7 @@ import { StackNavigationProp } from "@react-navigation/stack";
 import ActionSheet, { ActionSheetRef } from "react-native-actions-sheet";
 import UniversityLimitReachedBottomSheet from "@/components/molecules/University/UniversityLimitReachedBottomSheet.tsx";
 import BackHeader from "@/components/atoms/BackHeader";
+import { FONTS } from "@/constants/fonts";
 
 type NavigationProp = StackNavigationProp<RootStackParamList, "University">;
 
@@ -68,12 +72,12 @@ const University = ({
   const limitActionSheetRef = useRef<ActionSheetRef>(null);
   const userProfileData = getUserProfileStore();
   const [imageSrc, setImageSrc] = useState(
-    data?.campus || DEFAULT_CAMPUS_IMAGE,
+    data?.campus || DEFAULT_CAMPUS_IMAGE
   );
 
   const isCommunityAlreadyJoined = useMemo(() => {
     return userProfileData?.communities?.some(
-      (c) => c.communityId === data?.communityId,
+      (c) => c.communityId === data?.communityId
     );
   }, [data, userProfileData]);
 
@@ -86,13 +90,12 @@ const University = ({
   const handleJoinCommunity = () => {
     joinCommunityFromUniversity(data._id, {
       onSuccess: (response: any) => {
-        
         if (response.statusCode === 406) {
           limitActionSheetRef.current?.show();
         } else {
           Toast.show("Joined Community");
-          updateUserProfileCommunities(response.data.profile.communities)
-        
+          updateUserProfileCommunities(response.data.profile.communities);
+
           navigation.navigate("Community", {
             communityId: response.data.community._id,
           });
@@ -117,7 +120,7 @@ const University = ({
         onPress={() => navigation.goBack()}
       />
 
-      <View className="p-4">
+      <View style={styles.container}>
         <Image
           source={{ uri: imageSrc }}
           style={{ width: "100%", height: 220, borderRadius: 10 }}
@@ -211,14 +214,11 @@ const UniversityCard = ({ icon, title, info }: UniversityCardProps) => {
     <View className="flex">
       <View className="flex flex-row gap-2 items-center">
         <Icon style={styles.primarycolor} height={20} width={20} />
-        <Text style={styles.primarycolor} className="text-xs font-semibold">
-          {title}
-        </Text>
+        <Text style={styles.contactTitle}>{title}</Text>
       </View>
       <Pressable onPress={handlePress} className="flex flex-col">
         <Text
-          style={title === "Link" ? styles.primaryLink : styles.neutral}
-          className="text-neutral-900 text-sm"
+          style={title === "Link" ? styles.contactDesc : styles.contactDesc}
         >
           {info || "Not available"}
         </Text>
@@ -260,7 +260,10 @@ const UniversityContact = ({ data }: { data: UniversityData }) => {
       </Text>
 
       <View className="flex justify-between gap-5 flex-col">
-        <View className="bg-neutral-200 py-2 px-4 w-full rounded-lg flex flex-col gap-10">
+        <View
+          style={styles.contactContainer}
+          className="bg-neutral-200 w-full rounded-lg flex flex-col "
+        >
           {contactData.map((item, index) => (
             <UniversityCard
               key={index}
@@ -271,7 +274,10 @@ const UniversityContact = ({ data }: { data: UniversityData }) => {
           ))}
         </View>
 
-        <View className="bg-neutral-200 py-2 px-4 w-full rounded-lg flex flex-col gap-10">
+        <View
+          style={styles.contactContainer}
+          className="bg-neutral-200 w-full rounded-lg flex flex-col "
+        >
           {additionalData.map((item, index) => (
             <UniversityCard
               key={index}
@@ -305,5 +311,24 @@ const styles = StyleSheet.create({
     color: "#3A3B3C",
     fontFamily: "poppins",
     marginLeft: 12,
+  },
+
+  container: {
+    padding: 16,
+    paddingBottom: 64,
+  },
+  contactContainer: {
+    padding: 20,
+    gap: 32,
+  },
+  contactTitle: {
+    fontFamily: FONTS.inter.semiBold,
+    color: "#3A169C",
+    fontSize: 16,
+  },
+  contactDesc: {
+    fontFamily: FONTS.inter.semiBold,
+    color: "#3A3B3C",
+    fontSize: 16,
   },
 });

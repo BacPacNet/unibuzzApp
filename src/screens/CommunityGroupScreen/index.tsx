@@ -61,7 +61,7 @@ const CommunityGroupScreen = ({ route }: any) => {
 
   const { data: communityGroups } = useGetCommunityGroup(
     communityId,
-    communityGroupId,
+    communityGroupId
   );
 
   const { mutate: joinCommunityGroup, isPending: isJoinCommunityPending } =
@@ -83,17 +83,17 @@ const CommunityGroupScreen = ({ route }: any) => {
     dataUpdatedAt,
   } = useGetCommunityGroupPost(communityId, communityGroupId, true, 10);
   const [communityGroupPostDatas, setCommunityGroupPostDatas] = useState<any>(
-    [],
+    []
   );
 
   const [isGroupAdmin, setIsGroupAdmin] = useState(false);
   const [imageSrc, setImageSrc] = useState(
-    communityGroups?.communityGroupLogoCoverUrl?.imageUrl || "",
+    communityGroups?.communityGroupLogoCoverUrl?.imageUrl || ""
   );
   const [modalVisible, setModalVisible] = useState(false);
   const [ImageSrcErr, setImageSrcErr] = useState(false);
   const [logoSrc, setLogoSrc] = useState(
-    communityGroups?.communityGroupLogoUrl?.imageUrl || "",
+    communityGroups?.communityGroupLogoUrl?.imageUrl || ""
   );
   const [logoSrcErr, setLogoSrcErr] = useState(false);
   const [refreshing, setRefreshing] = React.useState(false);
@@ -108,19 +108,19 @@ const CommunityGroupScreen = ({ route }: any) => {
   const isUserVerifiedForCommunity = useMemo(() => {
     return (
       userProfileData?.email?.some(
-        (email) => email.communityId === communityGroups?.communityId?._id,
+        (email) => email.communityId === communityGroups?.communityId?._id
       ) || false
     );
   }, [userProfileData, communityGroups]);
 
   const userStatus = useMemo(() => {
     return communityGroups?.users?.find(
-      (user) => user._id === userProfileData?.users_id,
+      (user) => user._id === userProfileData?.users_id
     )?.status as status;
   }, [communityGroups, userProfileData]);
 
   const CommunityGroupMember = communityGroups?.users?.filter(
-    (user: { status: status }) => user.status === status.accepted,
+    (user: { status: status }) => user.status === status.accepted
   );
 
   useFocusEffect(
@@ -130,14 +130,14 @@ const CommunityGroupScreen = ({ route }: any) => {
       return () => {
         setCurrentCommunityId("");
       };
-    }, [communityId]),
+    }, [communityId])
   );
 
   useEffect(() => {
     if (communityGroups && userData) {
       const { id } = userData;
       setIsGroupAdmin(
-        communityGroups.adminUserId.toString() === id?.toString(),
+        communityGroups.adminUserId.toString() === id?.toString()
       );
     }
   }, [communityGroups, userData]);
@@ -147,8 +147,8 @@ const CommunityGroupScreen = ({ route }: any) => {
       setIsUserJoinedCommunityGroup(
         communityGroups?.users?.some(
           (item) =>
-            item?._id?.toString() === userData.id && item?.isRequestAccepted,
-        ),
+            item?._id?.toString() === userData.id && item?.isRequestAccepted
+        )
       );
     }
   }, [communityGroups, userData, setIsGroupAdmin]);
@@ -170,7 +170,7 @@ const CommunityGroupScreen = ({ route }: any) => {
 
   useEffect(() => {
     const communityDatas: any = communityGroupPost?.pages.flatMap(
-      (page) => page?.finalPost,
+      (page) => page?.finalPost
     );
     setCommunityGroupPostDatas(communityDatas);
   }, [communityGroupPost, dataUpdatedAt]);
@@ -232,16 +232,16 @@ const CommunityGroupScreen = ({ route }: any) => {
     });
   };
 
-
   const handleBack = () => {
     if (from === screenName.notifications) {
       navigation.navigate("Notifications");
-    } if(from === screenName.manageCommunityGroup){
-        navigation.navigate("manageGroupStack", {
-            screen: "SearchCommunityGroupScreen",
-      
-            params: { communityId: communityId },
-          });
+    }
+    if (from === screenName.manageCommunityGroup) {
+      navigation.navigate("manageGroupStack", {
+        screen: "SearchCommunityGroupScreen",
+
+        params: { communityId: communityId },
+      });
     } else {
       navigation.goBack();
     }

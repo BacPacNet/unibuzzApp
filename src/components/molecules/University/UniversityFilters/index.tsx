@@ -17,6 +17,7 @@ import ActionSheet, { ActionSheetRef } from "react-native-actions-sheet";
 import COUNTRY_TO_CITY from "@/content/country_to_city.json";
 import REGION_TO_COUNTRY from "@/content/region_to_country.json";
 import REGION_TO_CITY from "@/content/region_to_city.json";
+import { FONTS } from "@/constants/fonts";
 
 // Constants
 const FILTER_TYPES = ["Region", "Country", "City", "Type"];
@@ -269,10 +270,12 @@ const styles = StyleSheet.create({
   searchTag: {
     borderWidth: 1,
     borderColor: "#E2E8F0",
-    padding: 8,
+    textAlign: "center",
+    textAlignVertical: "center",
     borderRadius: 16,
-    fontSize: 14,
-    fontWeight: "500",
+    fontSize: 12,
+    fontFamily: FONTS.inter.medium,
+    color: "#3A3B3C",
     height: 36,
     paddingHorizontal: 16,
   },

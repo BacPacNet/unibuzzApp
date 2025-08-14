@@ -48,7 +48,7 @@ const ReusableButton: React.FC<ReusableButtonProps> = ({
   const variantClasses = {
     primary: "bg-primary-500 text-white",
     secondary: "bg-gray-500 text-white",
-    border: "border border-neutral-200 text-neutral-800 bg-white",
+    border: "border border-neutral-200 text-neutral-700 bg-white",
     border_primary: "border border-primary text-primary",
     danger: "bg-red-500 text-white",
     danger_outline: "border border-[#FEE2E2]  bg-[#FEF2F2]",
@@ -104,7 +104,7 @@ const ReusableButton: React.FC<ReusableButtonProps> = ({
         <>{buttonContent}</>
       ) : (
         <Text
-          style={styles.buttonText}
+          style={[styles.buttonText, { fontFamily: FONTS.inter.medium }]}
           className={`text-center font-medium  ${textSize} ${textColorClass}`}
         >
           {buttonText}

@@ -31,7 +31,7 @@ const SubscribedUniveristyBottomSheet: React.FC<
     setSelected((prevSelected) =>
       prevSelected.includes(item)
         ? prevSelected.filter((i) => i !== item)
-        : [...prevSelected, item],
+        : [...prevSelected, item]
     );
   };
 
@@ -55,9 +55,11 @@ const SubscribedUniveristyBottomSheet: React.FC<
         renderItem={renderItem}
         keyExtractor={(item) => item.UniversityName}
         style={styles.optionsList}
-        ListEmptyComponent={<View className="flex-1 justify-center items-center">
-          <Text>No data found</Text>
-        </View>}
+        ListEmptyComponent={
+          <View className="flex-1 justify-center items-center">
+            <Text className="text-neutral-500">No data found</Text>
+          </View>
+        }
       />
     </View>
   );

@@ -24,7 +24,7 @@ export const getChatBotMessages = (): ChatBotMessage[] | null => {
 };
 
 export const storeChatBotMessages = async (
-  newMessages: ChatBotMessage,
+  newMessages: ChatBotMessage
 ): Promise<void> => {
   try {
     const jsonMessages = storage.getString(StorageKeys.CHAT_BOT_MESSAGES);

@@ -1,6 +1,7 @@
 import React from "react";
 import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 import { Controller } from "react-hook-form";
+import { FONTS } from "@/constants/fonts";
 
 interface RadioOption {
   label: string;
@@ -50,7 +51,9 @@ const RadioInput: React.FC<RadioInputProps> = ({
                 >
                   {option.label}
                 </Text>
-                {option?.details && <Text>{option?.details}</Text>}
+                {option?.details && (
+                  <Text style={styles.detailsText}>{option?.details}</Text>
+                )}
               </View>
             </TouchableOpacity>
           ))}
@@ -63,7 +66,7 @@ const RadioInput: React.FC<RadioInputProps> = ({
 
 const styles = StyleSheet.create({
   container: {
-    marginVertical: 10,
+    marginVertical: 0,
   },
   radioOption: {
     flexDirection: "row",
@@ -85,24 +88,29 @@ const styles = StyleSheet.create({
     borderColor: "#6744FF",
   },
   radioInner: {
-    width: 12,
-    height: 12,
+    width: 8,
+    height: 8,
     borderRadius: 6,
     backgroundColor: "#6744FF",
   },
   label: {
     fontSize: 14,
-    color: "#3A3B3C",
-    fontWeight: "600",
+    color: "#18191A",
+    fontFamily: FONTS.inter.medium,
   },
   smallLabel: {
     fontSize: 14,
-    color: "#3A3B3C",
-    fontWeight: "500",
+    color: "#18191A",
+    fontFamily: FONTS.inter.medium,
   },
   errorText: {
-    color: "red",
+    color: "#EF4444",
     marginTop: 5,
+  },
+  detailsText: {
+    fontSize: 14,
+    color: "#9CA3AF",
+    fontFamily: FONTS.inter.medium,
   },
 });
 

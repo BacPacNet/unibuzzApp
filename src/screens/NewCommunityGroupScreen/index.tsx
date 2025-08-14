@@ -37,6 +37,7 @@ import { FormFields } from "@/components/molecules/CreateNewGroup/FormFields/For
 import { useImageUpload } from "@/hooks/useImageUpload";
 import { useGroupCreation } from "@/hooks/useGroupCreation";
 import { useNewCommunityGroupStatesContext } from "@/context/NewCommunityGroupStatesProvider/NewCommunityGroupStatesProvider";
+import SelectedChip from "@/components/molecules/CreateNewGroup/SelectedChip";
 
 type NavigationProp = StackNavigationProp<
   RootStackParamList,
@@ -205,17 +206,36 @@ const NewCommunityGroupScreen = () => {
 
             <View style={styles.section}>
               <View style={styles.buttonContainer}>
-                <ReusableButton
-                  buttonText="Select Group Category"
-                  variant="shade"
-                  onPress={handleNavigateToFilterScreen}
-                  height="large"
-                />
-                {showFilterError && (
-                  <Text style={{ color: "red" }}>
-                    Group category is required
-                  </Text>
-                )}
+                <View>
+                  <View style={styles.flexRowContainer}>
+                    <Text style={styles.inputLabels}>Group Category</Text>
+                    <Text style={styles.required}>*</Text>
+                  </View>
+
+                  <ReusableButton
+                    buttonText="Select Group Category"
+                    variant="shade"
+                    onPress={handleNavigateToFilterScreen}
+                    height="large"
+                  />
+                  {showFilterError && (
+                    <Text style={{ color: "red" }}>
+                      Group category is required
+                    </Text>
+                  )}
+
+                  <View style={styles.chipSection}>
+                    {Object.values(createSelectedFilters).flat()?.length ? (
+                      <SelectedChip
+                        selectedItem={[
+                          `${Object.values(createSelectedFilters).flat()?.length} Categories Selected`,
+                        ]}
+                        variant="neutral-border"
+                        onRemove={() => setCreateSelectedFilters([])}
+                      />
+                    ) : null}
+                  </View>
+                </View>
 
                 <View>
                   <View style={styles.flexRowContainer}>
@@ -268,6 +288,9 @@ const styles = StyleSheet.create({
   section: {
     marginBottom: 12,
   },
+  chipSection: {
+    marginTop: 16,
+  },
   inputLabels: {
     fontSize: 14,
     fontWeight: "500",
@@ -287,5 +310,8 @@ const styles = StyleSheet.create({
   },
   submitButtonContainer: {
     marginTop: 32,
+  },
+  required: {
+    color: "#EF4444",
   },
 });

@@ -70,7 +70,7 @@ const AllUniversities = () => {
             </View>
           ) : (
             <View style={styles.centered}>
-              <Text>No Result Found</Text>
+              <Text className="text-neutral-500">No Result Found</Text>
             </View>
           )
         }
@@ -104,7 +104,6 @@ const styles = StyleSheet.create({
     borderRadius: 30,
     elevation: 5,
   },
-
 });
 
 export default AllUniversities;

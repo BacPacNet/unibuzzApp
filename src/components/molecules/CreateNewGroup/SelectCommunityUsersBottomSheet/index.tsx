@@ -35,7 +35,7 @@ const SelectCommunityUsersBottomSheet = ({
       .filter(
         (user) =>
           user?.users_id !== myUserId &&
-          !selectedUserIds?.includes(user?.users_id || ""),
+          !selectedUserIds?.includes(user?.users_id || "")
       ) || [];
 
   const renderItem = ({ item }: { item: any }) => {
@@ -83,7 +83,7 @@ const SelectCommunityUsersBottomSheet = ({
             </View>
           ) : (
             <View className="flex-1 justify-center items-center">
-              <Text>No Result Found</Text>
+              <Text className="text-neutral-500">No Result Found</Text>
             </View>
           )
         }

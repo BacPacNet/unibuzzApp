@@ -154,7 +154,7 @@ const UserMessages = ({
       keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 0} // adjust for header height
     >
       <ScrollView
-        className="flex-1 px-4 h-full"
+        className="flex-1  h-full"
         contentContainerStyle={{ flexGrow: 1, padding: 16 }}
         keyboardShouldPersistTaps="handled"
         ref={scrollViewRef}

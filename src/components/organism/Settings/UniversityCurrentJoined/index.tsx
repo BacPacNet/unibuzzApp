@@ -91,7 +91,9 @@ const UniversityVerificationInfo = ({
             ))}
           </View>
         ) : (
-          <Text>You are not verified for any university.</Text>
+          <Text className="text-neutral-700">
+            You are not verified for any university.
+          </Text>
         )}
       </View>
 

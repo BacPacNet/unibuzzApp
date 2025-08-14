@@ -7,27 +7,28 @@ import {
   StyleSheet,
 } from "react-native";
 import { useState } from "react";
+import { FONTS } from "@/constants/fonts";
 
 const sortOptions = [
   {
     label: "User Count",
     value: "userCountAsc",
-    icon: <SortUp width={20} height={20} color="#6366f1" />,
+    icon: <SortUp width={20} height={20} color="#6744FF" strokeWidth={2} />,
   },
   {
     label: "User Count",
     value: "userCountDesc",
-    icon: <SortDown width={20} height={20} color="#6366f1" />,
+    icon: <SortDown width={20} height={20} color="#6744FF" strokeWidth={2} />,
   },
   {
     label: "Alphabet (A-Z)",
     value: "alphabetAsc",
-    icon: <SortUp width={20} height={20} color="#6366f1" />,
+    icon: <SortUp width={20} height={20} color="#6744FF" strokeWidth={2} />,
   },
   {
     label: "Alphabet (Z-A)",
     value: "alphabetDesc",
-    icon: <SortDown width={20} height={20} color="#6366f1" />,
+    icon: <SortDown width={20} height={20} color="#6744FF" strokeWidth={2} />,
   },
 ];
 
@@ -49,22 +50,23 @@ const SortCommunityBottomSheet = ({
 
   return (
     <View style={styles.h} className=" bg-white">
-      <View className="flex flex-col justify-between p-4">
+      <View style={styles.container}>
         {sortOptions.map(({ label, value, icon }) => (
           <TouchableOpacity
             key={value}
             onPress={() => handleSelect(value)}
-            className={`flex flex-row items-center gap-4 p-4 border-b border-neutral-200 rounded-lg mb-2 ${
+            className={`flex flex-row items-center gap-2 p-4 border-b border-neutral-200 rounded-lg mb-2 ${
               sort === value ? "bg-gray-200" : "bg-transparent"
             }`}
             activeOpacity={0.7}
           >
             <Text
-              className={`text-xs capitalize  ${
-                sort === value
-                  ? "text-primary-500 font-medium"
-                  : " text-neutral-700"
-              }`}
+              //   className={`text-xs capitalize  ${
+              //     sort === value
+              //       ? "text-primary-500 font-medium"
+              //       : " text-neutral-700"
+              //   }`}
+              style={styles.text}
             >
               {label}
             </Text>
@@ -81,5 +83,16 @@ export default SortCommunityBottomSheet;
 const styles = StyleSheet.create({
   h: {
     minHeight: "50%",
+  },
+  text: {
+    fontSize: 14,
+    fontFamily: FONTS.inter.semiBold,
+    color: "#3A3B3C",
+  },
+  container: {
+    paddingHorizontal: 32,
+    paddingVertical: 16,
+    display: "flex",
+    justifyContent: "space-between",
   },
 });
