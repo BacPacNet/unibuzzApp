@@ -16,7 +16,7 @@ import RoleSelectorWithFields from "@/components/molecules/SearchCommunity/UserS
 import { getUserProfileStore } from "@/storage/user";
 import SubscribedUniveristyBottomSheet from "@/components/molecules/SearchCommunity/SubscribedUniveristyBottomSheet";
 import DummyButton from "@/components/atoms/DummyButton";
-import { NavArrowDown, Search } from "iconoir-react-native";
+import { NavArrowDown, NavArrowUp, Search } from "iconoir-react-native";
 import { useGetCommunity } from "@/services/university-community";
 import {
   filterData,
@@ -26,6 +26,7 @@ import {
 import { useNewCommunityGroupStatesContext } from "@/context/NewCommunityGroupStatesProvider/NewCommunityGroupStatesProvider";
 import { useNavigation } from "@react-navigation/native";
 import { useCommunityUsers } from "@/services/community";
+import { FONTS } from "@/constants/fonts";
 
 const NewCommunityGroupUsersSelectScreen = ({ route }: any) => {
   const universityName = route?.params?.universityName || "";
@@ -189,7 +190,7 @@ const NewCommunityGroupUsersSelectScreen = ({ route }: any) => {
     <ScrollView style={styles.container}>
       <BackHeader label={isEditGroup ? "Edit Group" : "Create Group"} />
       <View style={styles.paddingContainer}>
-        <Text style={styles.inputLabels}>Individuals</Text>
+        <Text style={styles.inputLabels}>Add Individuals</Text>
 
         <View style={styles.individualsContainer}>
           <DummyButton
@@ -206,6 +207,26 @@ const NewCommunityGroupUsersSelectScreen = ({ route }: any) => {
         <ReusableButton
           onPress={() => setShowBulk(!showbulk)}
           buttonText="Bulk Add Members"
+          buttonContent={
+            <View style={styles.bulkButtonContent}>
+              <Text style={styles.bulkButtonText}>Bulk Add Members</Text>
+              {!showbulk ? (
+                <NavArrowDown
+                  width={20}
+                  height={20}
+                  color={"#6744FF"}
+                  strokeWidth={2}
+                />
+              ) : (
+                <NavArrowUp
+                  width={20}
+                  height={20}
+                  color={"#6744FF"}
+                  strokeWidth={2}
+                />
+              )}
+            </View>
+          }
           variant="border_primary"
           height="large"
         />
@@ -214,13 +235,7 @@ const NewCommunityGroupUsersSelectScreen = ({ route }: any) => {
           <View style={styles.bulkContainer}>
             <DummyButton
               label="University"
-              //   onPress={() => universityActionSheetRef.current?.show()}
               toShowCross={!!community.name}
-              //   text={
-              //     community.name
-              //       ? community.name
-              //       : "If you are a student choose your current year"
-              //   }
               text={universityName}
               icon={<NavArrowDown width={20} height={20} />}
             />
@@ -243,14 +258,14 @@ const NewCommunityGroupUsersSelectScreen = ({ route }: any) => {
                 ],
                 buttons: [
                   {
-                    text: "Add Year",
+                    text: "If you are a student choose your current year",
                     onPress: () => yearActionSheetRef.current?.show(),
-                    label: "Add Year",
+                    label: "Year",
                   },
                   {
-                    text: "Add Major",
+                    text: "If you are a student choose your major",
                     onPress: () => majorActionSheetRef.current?.show(),
-                    label: "Add Major",
+                    label: "Major",
                   },
                 ],
               }}
@@ -269,14 +284,14 @@ const NewCommunityGroupUsersSelectScreen = ({ route }: any) => {
                 ],
                 buttons: [
                   {
-                    text: "Add Occupation",
+                    text: "If you are a faculty choose your occupation",
                     onPress: () => occupationActionSheetRef.current?.show(),
-                    label: "Add Occupation",
+                    label: "Occupation",
                   },
                   {
-                    text: "Add Affiliation",
+                    text: "If you are a faculty choose your affiliation",
                     onPress: () => affiliationActionSheetRef.current?.show(),
-                    label: "Add Affiliation",
+                    label: "Affiliation",
                   },
                 ],
               }}
@@ -289,7 +304,7 @@ const NewCommunityGroupUsersSelectScreen = ({ route }: any) => {
         <View style={styles.addUsersContainer}>
           <ReusableButton
             onPress={() => handleAddUsers()}
-            buttonText="Add Users"
+            buttonText="Add Members"
             variant="primary"
             height="large"
           />
@@ -338,7 +353,10 @@ const NewCommunityGroupUsersSelectScreen = ({ route }: any) => {
             <MultiSelectDropdown
               options={Object.keys(degreeAndMajors)}
               value={field.value || []}
-              onChange={field.onChange}
+              onChange={(val) => {
+                field.onChange(val);
+                yearActionSheetRef.current?.hide();
+              }}
               placeholder="Select Year"
               label="Year (Students)"
               err={false}
@@ -362,7 +380,9 @@ const NewCommunityGroupUsersSelectScreen = ({ route }: any) => {
             <MultiSelectDropdown
               options={value}
               value={field.value || []}
-              onChange={field.onChange}
+              onChange={(val) => {
+                field.onChange(val);
+              }}
               placeholder="Add By Major"
               label="Major (Students)"
               err={false}
@@ -388,7 +408,10 @@ const NewCommunityGroupUsersSelectScreen = ({ route }: any) => {
             <MultiSelectDropdown
               options={Object.keys(occupationAndDepartment)}
               value={field.value || []}
-              onChange={field.onChange}
+              onChange={(val) => {
+                field.onChange(val);
+                occupationActionSheetRef.current?.hide();
+              }}
               placeholder="Add By Major"
               label="Occupation (Faculty)"
               err={false}
@@ -413,7 +436,9 @@ const NewCommunityGroupUsersSelectScreen = ({ route }: any) => {
             <MultiSelectDropdown
               options={value}
               value={field.value || []}
-              onChange={field.onChange}
+              onChange={(val) => {
+                field.onChange(val);
+              }}
               placeholder="Add By Major"
               label="Affiliation/Department (Faculty)"
               err={false}
@@ -439,108 +464,18 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     marginTop: 32,
   },
-  keyboardAvoid: {
-    flex: 1,
-  },
-  header: {
-    flexDirection: "row",
-    alignItems: "center",
-    height: 56,
-    paddingHorizontal: 16,
-    borderBottomWidth: 1,
-    borderBottomColor: "#E5E7EB",
-  },
-  backButton: {
-    padding: 8,
-  },
-  headerTitle: {
-    fontSize: 18,
-    fontWeight: "500",
-    marginLeft: 8,
-  },
-
-  content: {
-    padding: 16,
-  },
-  section: {
-    marginBottom: 12,
-  },
-  photoSection: {
-    alignItems: "flex-start",
-    marginBottom: 32,
-  },
-  sectionTitle: {
-    fontSize: 20,
-    fontWeight: "500",
-    marginBottom: 16,
-    color: "#1F2937",
-  },
-  profileImageContainer: {
-    display: "flex",
-    alignItems: "center",
-    width: "100%",
-  },
-  photoUpload: {
-    width: 160,
-    height: 160,
-    borderRadius: 200,
-    borderWidth: 2,
-    borderColor: "#9685FF",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  photoUploadText: {
-    fontSize: 14,
-    color: "#9CA3AF",
-    marginTop: 8,
-  },
-
-  bannerUpload: {
-    width: "100%",
-    height: 160,
-    borderRadius: 12,
-    borderWidth: 2,
-    borderColor: "#9685FF",
-    alignItems: "center",
-    justifyContent: "center",
-  },
 
   inputLabels: {
-    fontSize: 20,
-    fontWeight: "500",
-    marginBottom: 4,
-    color: "#1F2937",
-  },
-  selectedChipContainer: {
-    display: "flex",
-    flexDirection: "row",
-    alignItems: "center",
-    flexWrap: "wrap",
-  },
-  filterChip: {
-    flexDirection: "row",
-    alignItems: "center",
-    alignSelf: "flex-start",
+    fontSize: 14,
+    fontFamily: FONTS.inter.medium,
 
-    paddingHorizontal: 12,
-    borderRadius: 4,
-    borderWidth: 1,
-    borderColor: "#6744FF",
-    backgroundColor: "#6647FF",
-    marginRight: 8,
+    color: "#171717",
+  },
 
-    height: 28,
-    width: "auto",
-    marginVertical: 8,
-  },
-  filterChipText: {
-    color: "white",
-    marginRight: 4,
-  },
   individualsContainer: {
     display: "flex",
-    marginBottom: 16,
-    gap: 16,
+    marginBottom: 32,
+    paddingTop: 8,
   },
   bulkContainer: {
     display: "flex",
@@ -556,5 +491,15 @@ const styles = StyleSheet.create({
   },
   actionSheetContainer: {
     height: "100%",
+  },
+  bulkButtonText: {
+    fontSize: 16,
+    fontFamily: FONTS.inter.medium,
+    color: "#6744FF",
+  },
+  bulkButtonContent: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
   },
 });

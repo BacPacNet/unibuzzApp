@@ -41,7 +41,7 @@ const UsersScreen = ({ route }: any) => {
     "",
     userId,
     10,
-    listType.following.toString() == type,
+    listType.following.toString() == type
   );
 
   const {
@@ -54,12 +54,12 @@ const UsersScreen = ({ route }: any) => {
     "",
     userId,
     10,
-    listType.followers.toString() == type,
+    listType.followers.toString() == type
   );
 
   const userFollow = useMemo(() => {
     const followingIds = new Set(
-      userProfileData?.following?.map((f) => f.userId),
+      userProfileData?.following?.map((f) => f.userId)
     );
 
     return (
@@ -68,21 +68,19 @@ const UsersScreen = ({ route }: any) => {
           .filter((user) =>
             userProfileData?.users_id === userId
               ? user._id !== userProfileData?.users_id
-              : true,
+              : true
           )
           .map((user) => ({
             ...user,
             isFollowing: followingIds.has(user._id),
-          })),
+          }))
       ) || []
     );
   }, [userFollowData, userProfileData, userId]);
 
-
-
   const userFollowers = useMemo(() => {
     const followingIds = new Set(
-      userProfileData?.following?.map((f) => f.userId),
+      userProfileData?.following?.map((f) => f.userId)
     );
 
     return (
@@ -91,15 +89,15 @@ const UsersScreen = ({ route }: any) => {
           .filter((user) =>
             userProfileData?.users_id === userId
               ? user._id !== userProfileData?.users_id
-              : true,
+              : true
           )
           .map((user) => ({
             ...user,
             isFollowing: followingIds.has(user._id),
-          })),
+          }))
       ) || []
     );
-  }, [userFollowersData, userProfileData, userId,type]);
+  }, [userFollowersData, userProfileData, userId, type]);
 
   const handleBack = () => {
     navigate.navigate("ProfileStack", {
@@ -120,25 +118,28 @@ const UsersScreen = ({ route }: any) => {
       ? isFetchingFollowingNextPage
       : isFetchingFollowersNextPage;
 
-      
-
-      if(isFollowingLoading || isFollowersLoading){
-        return (
-            <View style={styles.emptyList}>
-              <ActivityIndicator />
-            </View>
-          );
-      }
+  if (isFollowingLoading || isFollowersLoading) {
+    return (
+      <View style={styles.emptyList}>
+        <ActivityIndicator />
+      </View>
+    );
+  }
   return (
     <View style={styles.container}>
       <BackHeader label="User Profile" onPress={() => handleBack()} />
- 
+
       <View style={styles.paddingContainer} className="   ">
         <FlatList
           data={userList}
           keyExtractor={(item) => item._id}
           renderItem={({ item }) => (
-            <UsersScreenUserCardItem isFollowing={listType.following.toString() == type} item={item} currentUserId={userId} myUserId={userProfileData?.users_id || ""} />
+            <UsersScreenUserCardItem
+              isFollowing={listType.following.toString() == type}
+              item={item}
+              currentUserId={userId}
+              myUserId={userProfileData?.users_id || ""}
+            />
           )}
           ListFooterComponent={() =>
             isFetchingNextPage ? (
@@ -150,7 +151,7 @@ const UsersScreen = ({ route }: any) => {
               {isLoading ? (
                 <ActivityIndicator />
               ) : (
-                <Text>No User Found</Text>
+                <Text className="text-neutral-500">No User Found</Text>
               )}
             </View>
           }

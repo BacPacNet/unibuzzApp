@@ -12,6 +12,7 @@ import { Chat } from "@/types/ChatType";
 import { getUserStore } from "@/storage/user";
 import UserChatCard from "../UserChatCard";
 import { MailOutSolid, Search } from "iconoir-react-native";
+import ChatIcon from "@/assets/icons/chatIcon.svg";
 import { useQueryClient } from "@tanstack/react-query";
 import { useNavigation } from "@react-navigation/native";
 
@@ -53,10 +54,10 @@ const UserChats = ({
           item.users.find(
             (user) =>
               user?.userId._id.toString() === userData?.id &&
-              user?.isRequestAccepted,
+              user?.isRequestAccepted
           ) ||
           item.isRequestAccepted ||
-          item.groupAdmin.toString() === userData?.id,
+          item.groupAdmin.toString() === userData?.id
       );
       if (isChatLoading) {
         return (
@@ -80,7 +81,8 @@ const UserChats = ({
             handleClick(item);
           }}
           key={item?._id}
-          className="flex  flex-col  gap-2 border-b border-neutral-200"
+          className="flex  flex-col  gap-2 border-b border-neutral-200 "
+          style={{ marginHorizontal: 16 }}
         >
           <UserChatCard
             profilePic={
@@ -92,7 +94,7 @@ const UserChats = ({
             isGroupChat={item?.isGroupChat}
             users={[item?.users]}
             isSeen={item?.latestMessage?.readByUsers?.includes(
-              userData?.id || " ",
+              userData?.id || " "
             )}
             lastMessage={item?.latestMessage?.content}
             date={item?.latestMessage?.createdAt}
@@ -107,10 +109,10 @@ const UserChats = ({
           ? item.users.some(
               (user) =>
                 user.userId._id.toString() === userData?.id &&
-                !user.isRequestAccepted,
+                !user.isRequestAccepted
             )
           : !item.isRequestAccepted &&
-            item.groupAdmin.toString() !== userData?.id,
+            item.groupAdmin.toString() !== userData?.id
       );
       if (filteredChats.length === 0) {
         return (
@@ -136,7 +138,7 @@ const UserChats = ({
             isGroupChat={item?.isGroupChat}
             users={[item?.users]}
             isSeen={item?.latestMessage?.readByUsers?.includes(
-              userData?.id || " ",
+              userData?.id || " "
             )}
             lastMessage={item?.latestMessage?.content}
             date={item?.latestMessage?.createdAt}
@@ -155,25 +157,17 @@ const UserChats = ({
           <TextInput
             placeholder="Search Messages"
             placeholderTextColor={"#6B7280"}
-            className="border border-neutral-200 p-2 text-neutral-500  rounded-lg h-10"
-            style={{ paddingEnd: 40 }}
+            className="border border-neutral-200 p-2 text-neutral-500  rounded-lg "
+            style={{ paddingEnd: 40, height: 40 }}
           />
           <Search
-            style={{ position: "absolute", top: 8, right: 8 }}
+            style={{ position: "absolute", top: 10, right: 8 }}
             height={20}
             width={20}
           />
         </View>
-        <TouchableOpacity
-          onPress={() => navigation.navigate("NewChatScreen")}
-          className="w-10 ps-2 h-10 bg-secondary rounded-lg flex justify-center items-center"
-        >
-          <MailOutSolid
-            width={28}
-            height={28}
-            color={"#6744FF"}
-            strokeWidth={2}
-          />
+        <TouchableOpacity onPress={() => navigation.navigate("NewChatScreen")}>
+          <ChatIcon width={40} height={40} color={"#6744FF"} strokeWidth={2} />
         </TouchableOpacity>
       </View>
 

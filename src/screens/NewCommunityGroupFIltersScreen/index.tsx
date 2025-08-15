@@ -1,6 +1,8 @@
 import BackHeader from "@/components/atoms/BackHeader";
 import CollapsibleMultiSelect from "@/components/atoms/CollapsibleMultiSelect";
 import ReusableButton from "@/components/atoms/ReusableButton";
+import { SafeScreen } from "@/components/template";
+import { FONTS } from "@/constants/fonts";
 import { useCommunityFilterContext } from "@/context/CommunityFilterProvider/CommunityFilterProvider";
 import { subCategories } from "@/types/CommunityFilter";
 import { useNavigation } from "@react-navigation/native";
@@ -31,7 +33,7 @@ const NewCommunityGroupFilterScreen = (props: Props) => {
       const categoryFilters = prev[category] || [];
       if (categoryFilters.includes(option)) {
         const updatedFilters = categoryFilters.filter(
-          (item: any) => item !== option,
+          (item: any) => item !== option
         );
         if (updatedFilters.length === 0) {
           const { [category]: _, ...rest } = prev;
@@ -77,11 +79,11 @@ const NewCommunityGroupFilterScreen = (props: Props) => {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
+    <View style={styles.container}>
       {/* Header */}
 
       <ScrollView style={styles.content}>
-        <BackHeader label="Create Group" />
+        <BackHeader label="Create Group" isLeftPadding={false} />
         <CollapsibleMultiSelect
           title="Academic"
           options={subCategories["Academic"]}
@@ -95,51 +97,41 @@ const NewCommunityGroupFilterScreen = (props: Props) => {
           title="Educational"
           options={subCategories["Educational"]}
           selectedOptions={selectedFilters["Educational"] || []}
-          onSelect={(value: string) =>
-            handleSelect("Educational", value)
-          }
+          onSelect={(value: string) => handleSelect("Educational", value)}
           handleSelectAll={() =>
-            handleSelectAll(
-              "Educational",
-              subCategories["Educational"],
-            )
+            handleSelectAll("Educational", subCategories["Educational"])
           }
         />
         <CollapsibleMultiSelect
           title="Interest"
           options={subCategories["Interest"]}
           selectedOptions={selectedFilters["Interest"] || []}
-          onSelect={(value: string) =>
-                handleSelect("Interest", value)
-          }
+          onSelect={(value: string) => handleSelect("Interest", value)}
           handleSelectAll={() =>
-            handleSelectAll(
-              "Interest",
-              subCategories["Interest"],
-            )
+            handleSelectAll("Interest", subCategories["Interest"])
           }
         />
         <CollapsibleMultiSelect
           title="Events & Activities"
           options={subCategories["Events & Activities"]}
           selectedOptions={selectedFilters["Events & Activities"] || []}
-          onSelect={(value: string) => handleSelect("Events & Activities", value)}
+          onSelect={(value: string) =>
+            handleSelect("Events & Activities", value)
+          }
           handleSelectAll={() =>
-            handleSelectAll("Events & Activities", subCategories["Events & Activities"])
+            handleSelectAll(
+              "Events & Activities",
+              subCategories["Events & Activities"]
+            )
           }
         />
         <CollapsibleMultiSelect
           title="Personal Growth"
           options={subCategories["Personal Growth"]}
           selectedOptions={selectedFilters["Personal Growth"] || []}
-          onSelect={(value: string) =>
-            handleSelect("Personal Growth", value)
-          }
+          onSelect={(value: string) => handleSelect("Personal Growth", value)}
           handleSelectAll={() =>
-            handleSelectAll(
-              "Personal Growth",
-              subCategories["Personal Growth"],
-            )
+            handleSelectAll("Personal Growth", subCategories["Personal Growth"])
           }
         />
         <CollapsibleMultiSelect
@@ -149,9 +141,8 @@ const NewCommunityGroupFilterScreen = (props: Props) => {
           onSelect={(value: string) =>
             handleSelect("Advocacy and Awareness", value)
           }
-     
         />
-     
+
         <CollapsibleMultiSelect
           title="Professional Development"
           options={subCategories["Professional Development"]}
@@ -172,7 +163,9 @@ const NewCommunityGroupFilterScreen = (props: Props) => {
         <View>
           {Object.keys(selectedFilters).length > 0 && (
             <View style={styles.selectedFiltersContainer}>
-              <Text style={styles.selectedFiltersTitle}>Apply Categories</Text>
+              <Text style={styles.selectedFiltersTitle}>
+                Selected Categories
+              </Text>
               <View style={styles.filtersRow}>
                 {Object.entries(selectedFilters).map(([category, filters]) =>
                   filters.map((filter) => (
@@ -184,22 +177,22 @@ const NewCommunityGroupFilterScreen = (props: Props) => {
                       <Text style={styles.filterChipText}>{filter}</Text>
                       <Xmark width={24} height={24} color="#6744FF" />
                     </TouchableOpacity>
-                  )),
+                  ))
                 )}
               </View>
             </View>
           )}
         </View>
+        <View style={styles.ButtonContainer}>
+          <ReusableButton
+            onPress={() => handleClick()}
+            buttonText="Apply Categories"
+            variant="primary"
+            height="large"
+          />
+        </View>
       </ScrollView>
-      <View style={styles.ButtonContainer}>
-        <ReusableButton
-          onPress={() => handleClick()}
-          buttonText="Apply Filter"
-          variant="primary"
-          height="large"
-        />
-      </View>
-    </SafeAreaView>
+    </View>
   );
 };
 
@@ -241,12 +234,17 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
   },
   selectedFiltersContainer: {
-    padding: 16,
+    paddingVertical: 32,
+    borderBottomWidth: 1,
+    borderBottomColor: "#E5E7EB",
+    marginHorizontal: 16,
   },
   selectedFiltersTitle: {
-    fontSize: 16,
-    color: "#666",
-    marginBottom: 12,
+    fontSize: 14,
+    color: "#3A3B3C",
+    marginBottom: 16,
+
+    fontFamily: FONTS.inter.semiBold,
   },
   filtersRow: {
     flexDirection: "row",
@@ -257,7 +255,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
 
-    paddingHorizontal: 12,
+    paddingHorizontal: 8,
     borderRadius: 4,
     borderWidth: 1,
     borderColor: "#6744FF",
@@ -269,13 +267,15 @@ const styles = StyleSheet.create({
   filterChipText: {
     color: "#6744FF",
     marginRight: 4,
+    fontSize: 12,
+    fontFamily: FONTS.inter.medium,
   },
   ButtonContainer: {
-    padding: 10,
-    paddingBottom: 0,
-    borderTopWidth: 1,
-    borderBottomWidth: 1,
-    borderColor: "#E5E7EB",
+    // padding: 10,
+    paddingTop: 32,
+    paddingHorizontal: 16,
+    paddingBottom: 62,
+
     display: "flex",
     justifyContent: "center",
     alignItems: "center",

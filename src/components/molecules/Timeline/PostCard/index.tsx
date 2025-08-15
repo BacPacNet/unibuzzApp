@@ -154,7 +154,7 @@ const PostCard = memo(
 
     return (
       <View
-        className={`relative  ${isSinglePost ? "flex-1 " : ""} flex   gap-4 my-4 z-1`}
+        className={`relative  ${isSinglePost ? "flex-1 " : ""} flex   gap-4 my-4 z-1 `}
       >
         <PostCardUserDetails
           visible={visible}

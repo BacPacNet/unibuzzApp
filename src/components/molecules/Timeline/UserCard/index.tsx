@@ -100,7 +100,7 @@ const UserCard: React.FC<UserCardProps> = ({
                 }}
               >
                 <BinMinusIn height={16} width={16} />
-                <Text>Delete</Text>
+                <Text className="text-neutral-700">Delete</Text>
               </TouchableOpacity>
             )}
           >

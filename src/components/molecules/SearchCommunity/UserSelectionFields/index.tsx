@@ -1,9 +1,10 @@
 import React from "react";
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 
-import { CheckSquareSolid, NavArrowDown } from "iconoir-react-native";
+import { Check, CheckSquareSolid, NavArrowDown } from "iconoir-react-native";
 import DummyButton from "@/components/atoms/DummyButton";
 import { Toast } from "react-native-toast-notifications";
+import { FONTS } from "@/constants/fonts";
 
 type Props = {
   selectedType: "student" | "faculty" | null;
@@ -43,9 +44,14 @@ const RoleSelectorWithFields: React.FC<Props> = ({
       //   onPress={() =>  setSelectedType(selectedType === type ? null : type)}
       onPress={() => handlePress(type)}
     >
-      <View style={styles.checkboxBox}>
+      <View
+        style={[
+          styles.checkbox,
+          selectedType === type && styles.checkboxSelected,
+        ]}
+      >
         {selectedType === type && (
-          <CheckSquareSolid width={20} height={20} color="#6744FF" />
+          <Check width={12} height={12} color={"white"} strokeWidth={4} />
         )}
       </View>
       <Text
@@ -62,49 +68,51 @@ const RoleSelectorWithFields: React.FC<Props> = ({
   const renderFields = (
     label: string,
     chips: Props["studentFields"]["chips"],
-    buttons: Props["studentFields"]["buttons"],
+    buttons: Props["studentFields"]["buttons"]
   ) => (
     <View style={styles.fieldSection}>
-      <View style={styles.chipContainer}>
-        {chips.flatMap((chip, chipIdx) =>
-          chip.value.map((val, valIdx) => {
-            const isFirstChip = chipIdx === 0 && valIdx === 0;
+      {chips.length > 0 && chips.some((chip) => chip.value.length > 0) ? (
+        <View style={styles.chipContainer}>
+          {chips.flatMap((chip, chipIdx) =>
+            chip.value.map((val, valIdx) => {
+              const isFirstChip = chipIdx === 0 && valIdx === 0;
 
-            return (
-              <View
-                key={`${chip.key}-${valIdx}`}
-                style={[
-                  styles.chip,
-                  isFirstChip ? styles.chipDefault : styles.chipPrimary,
-                ]}
-              >
-                <Text
+              return (
+                <View
+                  key={`${chip.key}-${valIdx}`}
                   style={[
-                    styles.chipText,
-                    isFirstChip
-                      ? styles.chipDefaultText
-                      : styles.chipPrimaryText,
+                    styles.chip,
+                    isFirstChip ? styles.chipDefault : styles.chipPrimary,
                   ]}
                 >
-                  {val}
-                </Text>
-                <TouchableOpacity onPress={() => chip.onRemove(val)}>
                   <Text
                     style={[
-                      styles.closeText,
+                      styles.chipText,
                       isFirstChip
                         ? styles.chipDefaultText
                         : styles.chipPrimaryText,
                     ]}
                   >
-                    {"  "}×
+                    {val}
                   </Text>
-                </TouchableOpacity>
-              </View>
-            );
-          }),
-        )}
-      </View>
+                  <TouchableOpacity onPress={() => chip.onRemove(val)}>
+                    <Text
+                      style={[
+                        styles.closeText,
+                        isFirstChip
+                          ? styles.chipDefaultText
+                          : styles.chipPrimaryText,
+                      ]}
+                    >
+                      {"  "}×
+                    </Text>
+                  </TouchableOpacity>
+                </View>
+              );
+            })
+          )}
+        </View>
+      ) : null}
 
       {buttons.map((btn, i) => (
         <View key={i}>
@@ -142,44 +150,45 @@ const RoleSelectorWithFields: React.FC<Props> = ({
 export default RoleSelectorWithFields;
 
 const styles = StyleSheet.create({
-  label: {
-    fontSize: 14,
-    fontWeight: "600",
-    color: "#111827",
-    marginVertical: 12,
-  },
   checkboxRow: {
     flexDirection: "row",
     alignItems: "center",
-    marginVertical: 8,
+    // marginVertical: 8,
+
+    paddingVertical: 12,
   },
-  checkboxBox: {
-    width: 20,
-    height: 20,
+
+  checkbox: {
+    width: 18,
+    height: 18,
     borderRadius: 4,
-    borderWidth: 1.5,
+    borderWidth: 1,
     borderColor: "#D1D5DB",
+    marginRight: 12,
     justifyContent: "center",
     alignItems: "center",
-    marginRight: 8,
+    backgroundColor: "white",
+  },
+  checkboxSelected: {
+    backgroundColor: "#6C5CE7",
+    // borderColor: "#6C5CE7",
+    borderWidth: 0,
+    borderRadius: 4,
   },
   checkboxLabel: {
-    fontSize: 16,
+    fontSize: 18,
     color: "#3A3B3C",
+    fontFamily: FONTS.inter.semiBold,
   },
   checkboxLabelActive: {
+    fontSize: 18,
     color: "#3A3B3C",
-    fontWeight: "500",
+    fontFamily: FONTS.inter.semiBold,
   },
   fieldSection: {
     display: "flex",
     flexDirection: "column",
-    gap: 16,
-  },
-  fieldLabel: {
-    fontSize: 16,
-    fontWeight: "600",
-    marginBottom: 8,
+    gap: 32,
   },
 
   chipContainer: {

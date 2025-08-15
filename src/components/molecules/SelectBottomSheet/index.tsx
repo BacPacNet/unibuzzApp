@@ -75,7 +75,7 @@ const SelectBottomSheet = ({
 
   useEffect(() => {
     const filtered = data.filter((item: any) =>
-      item.toLowerCase().includes(searchInput.toLowerCase()),
+      item.toLowerCase().includes(searchInput.toLowerCase())
     );
     setFilteredData(filtered);
   }, [searchInput, data]);
@@ -143,7 +143,7 @@ const SelectBottomSheet = ({
         windowSize={2}
         ListEmptyComponent={
           <View className="flex-1 justify-center items-center">
-            <Text>No Result Found</Text>
+            <Text className="text-neutral-500">No Result Found</Text>
           </View>
         }
       />

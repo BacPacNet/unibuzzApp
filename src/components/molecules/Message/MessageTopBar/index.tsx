@@ -1,6 +1,5 @@
 import React from "react";
 import { View, Text, TouchableOpacity } from "react-native";
-import { MailSolid, MultiBubbleSolid } from "iconoir-react-native";
 
 type Props = {
   setCurrTab: (value: string) => void;

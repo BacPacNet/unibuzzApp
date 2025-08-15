@@ -65,7 +65,8 @@ const TextAreaWithWordCount: React.FC<TextAreaWithWordCountProps> = ({
 
 const styles = StyleSheet.create({
   container: {
-    marginVertical: 10,
+    // marginVertical: 8,
+    marginTop: 8,
   },
   textarea: {
     borderWidth: 1,

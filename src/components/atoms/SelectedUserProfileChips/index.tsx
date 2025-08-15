@@ -45,7 +45,7 @@ const SelectedUserProfileChips = ({
           <Xmark width={18} height={18} color="#6744FF" strokeWidth={2} />
         </TouchableOpacity>
       </View>
-      <Text>{name}</Text>
+      <Text style={styles.name}>{name}</Text>
     </View>
   );
 };
@@ -142,5 +142,8 @@ const styles = StyleSheet.create({
     display: "flex",
     justifyContent: "center",
     alignItems: "center",
+  },
+  name: {
+    color: "#6B7280",
   },
 });

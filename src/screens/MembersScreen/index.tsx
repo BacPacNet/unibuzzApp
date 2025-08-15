@@ -19,6 +19,7 @@ const MembersScreen = ({ route }: any) => {
   const communityGroupId = route?.params?.communityGroupId ?? null;
   const communityId = route?.params?.communityId ?? null;
   const CommunityGroupMember = route?.params?.CommunityGroupMember ?? null;
+  const groupName = route?.params?.groupName ?? "Community";
   const adminId = route?.params?.adminId ?? null;
   const type = route?.params?.type ?? null;
   const userProfileData = getUserProfileStore();
@@ -34,11 +35,11 @@ const MembersScreen = ({ route }: any) => {
       {
         onSuccess: (response: any) => {
           const filteredMembers = response.data.communityGroup.users.filter(
-            (item: any) => item.status == "accepted",
+            (item: any) => item.status == "accepted"
           );
           setMembers(filteredMembers);
         },
-      },
+      }
     );
   };
 
@@ -47,20 +48,21 @@ const MembersScreen = ({ route }: any) => {
   }, [CommunityGroupMember]);
 
   const userFollowing = userProfileData?.following?.map(
-    (item: any) => item.userId,
+    (item: any) => item.userId
   );
 
   const handleBack = () => {
     navigate.navigate("CommunityGroup", {
       communityId: communityId._id,
       communityGroupId: communityGroupId,
+      from: "MembersScreen",
     });
   };
 
   useCustomBackHandler(handleBack);
   return (
     <View style={styles.container}>
-      <BackHeader label="Community" onPress={() => handleBack()} />
+      <BackHeader label={groupName} onPress={() => handleBack()} />
       <View style={styles.paddingContainer} className="   ">
         <FlatList
           data={members}

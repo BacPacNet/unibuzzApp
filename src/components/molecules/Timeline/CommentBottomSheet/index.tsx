@@ -181,7 +181,7 @@ const CommentBottomSheet = ({
                   <View>
                     <DropdownWrapper
                       position="bottom"
-                      extraBottom={-70}
+                      extraBottom={-50}
                       renderDropdown={(closeDropdown) => (
                         <CommentSortDropDownMenu
                           handleSelect={(option) => {
@@ -271,7 +271,7 @@ const CommentBottomSheet = ({
                 </View>
               ) : (
                 <View style={styles.emptyContainer}>
-                  <Text>No Result Found</Text>
+                  <Text className="text-neutral-500">No Result Found</Text>
                 </View>
               )
             }

@@ -19,13 +19,13 @@ export const UserSelectCard = ({
   setSelectedUsers,
   handleUserSelect,
   isRemoveAllowed,
-  handleRemoveUser
+  handleRemoveUser,
 }: Props) => {
   const [imageError, setImageError] = useState(false);
   const imageUri = item?.profile?.profile_dp?.imageUrl;
 
   const isSelected = selectedUsers?.some(
-    (selectedUser: any) => selectedUser._id == item._id,
+    (selectedUser: any) => selectedUser._id == item._id
   );
 
   const handleClick = () => {
@@ -48,8 +48,6 @@ export const UserSelectCard = ({
       }
     }
   };
-
-
 
   return (
     <TouchableOpacity
@@ -86,18 +84,17 @@ export const UserSelectCard = ({
               </Text>
             </View>
           </View>
-
-        
         </View>
       </View>
-      {isRemoveAllowed ? 
-      <View className="flex-row items-center justify-center"> 
-      <TouchableOpacity onPress={() => handleRemoveUser?.()}>
-        <Text>
-        <Xmark width={20} height={20} />
-        </Text>
-      </TouchableOpacity>
-      </View> : null}
+      {isRemoveAllowed ? (
+        <View className="flex-row items-center justify-center">
+          <TouchableOpacity onPress={() => handleRemoveUser?.()}>
+            <Text className="text-neutral-500">
+              <Xmark width={20} height={20} />
+            </Text>
+          </TouchableOpacity>
+        </View>
+      ) : null}
     </TouchableOpacity>
   );
 };

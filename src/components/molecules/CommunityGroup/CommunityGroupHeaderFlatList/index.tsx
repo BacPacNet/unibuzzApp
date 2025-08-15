@@ -25,6 +25,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { RootStackParamList } from "@/types/navigation";
+import { FONTS } from "@/constants/fonts";
 
 type CommunityGroup = {
   title: string;
@@ -85,18 +86,18 @@ const FlatListCommunityHeader: React.FC<Props> = ({
   const { navigate } = useNavigation<NavigationProp>();
   const onSettingsPress = useCallback(
     () => setModalVisible(true),
-    [setModalVisible],
+    [setModalVisible]
   );
 
   const onJoinPress = useCallback(
     () => handleToggleJoinCommunityGroup(),
-    [handleToggleJoinCommunityGroup],
+    [handleToggleJoinCommunityGroup]
   );
   const totalCommunityGroupMember = communityGroups?.users.filter(
-    (user: { status: status }) => user.status === status.accepted,
+    (user: { status: status }) => user.status === status.accepted
   ).length;
   const CommunityGroupMember = communityGroups?.users.filter(
-    (user: { status: status }) => user.status === status.accepted,
+    (user: { status: status }) => user.status === status.accepted
   );
 
   const handleNavigateToMembersScreen = useCallback(() => {
@@ -105,6 +106,7 @@ const FlatListCommunityHeader: React.FC<Props> = ({
       communityGroupId: communityGroups?._id,
       communityId: communityGroups?.communityId,
       adminId: adminId,
+      groupName: communityGroups?.title,
     });
   }, [CommunityGroupMember, communityGroups?.id, navigate]);
 
@@ -237,9 +239,9 @@ const FlatListCommunityHeader: React.FC<Props> = ({
           )}
           <ReusableButton
             onPress={() => handleNavigateToMembersScreen()}
-            variant="border_primary"
+            variant="border"
             size={120}
-            buttonText={` ${totalCommunityGroupMember} members`}
+            buttonText={` ${totalCommunityGroupMember} Members`}
             height="small"
           />
           {!isGroupPrivate ? (
@@ -289,6 +291,11 @@ const styles = StyleSheet.create({
 
   content: {
     padding: 16,
+    paddingBottom: 32,
+    marginBottom: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: "#E5E7EB",
+    gap: 16,
   },
   titleContainer: {
     display: "flex",
@@ -309,8 +316,8 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   title: {
-    fontSize: 16,
-    fontWeight: "bold",
+    fontSize: 14,
+    fontFamily: FONTS.inter.bold,
     color: "#3A3B3C",
     width: "60%",
     minWidth: 200,
@@ -318,9 +325,9 @@ const styles = StyleSheet.create({
   },
 
   description: {
-    marginVertical: 16,
     fontSize: 14,
     color: "#6B7280",
+    fontFamily: FONTS.inter.medium,
   },
   members: {
     fontWeight: "bold",

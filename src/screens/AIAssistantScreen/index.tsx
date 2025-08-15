@@ -52,7 +52,14 @@ const AI_Assistant = () => {
   useFocusEffect(
     useCallback(() => {
       if (chatBotMessages?.length !== chatMessages?.length) {
-        setChatMessages(chatBotMessages || []);
+        setChatMessages([
+          {
+            inserted_id: "1",
+            isNewThread: true,
+            response: "How can I help you today?",
+          },
+          ...(chatBotMessages || []),
+        ]);
       }
     }, [])
   );
@@ -82,7 +89,13 @@ const AI_Assistant = () => {
 
   const handleRefresh = () => {
     clearChatBotMessages();
-    setChatMessages([]);
+    setChatMessages([
+      {
+        inserted_id: "1",
+        isNewThread: true,
+        response: "How can I help you today?",
+      },
+    ]);
   };
 
   const renderEmptyState = () => (
@@ -94,9 +107,9 @@ const AI_Assistant = () => {
   );
 
   const renderChatMessages = () => {
-    if (chatMessages?.length === 0) {
-      return renderEmptyState();
-    }
+    // if (chatMessages?.length === 0) {
+    //   return renderEmptyState();
+    // }
     return chatMessages?.map((message, idx) => (
       <ChatMessage
         key={idx}
@@ -194,7 +207,6 @@ const styles = StyleSheet.create({
     paddingBottom: 16,
   },
   refreshButtonContainer: {
-    marginTop: 16,
     flexDirection: "row",
     alignItems: "center",
     gap: 16,

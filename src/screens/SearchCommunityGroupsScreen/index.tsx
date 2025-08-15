@@ -151,8 +151,8 @@ const SearchCommunityGroupScreen = () => {
       }
       className="flex-1 bg-white pb-20"
     >
-      <View className="p-4 flex-row items-center gap-2">
-        <View className="flex-1 relative">
+      <View className="p-4 flex-row items-center gap-2 ">
+        <View className="flex-1 relative ">
           <TextInput
             value={searchQuery}
             onChangeText={setSearchQuery}
@@ -169,7 +169,7 @@ const SearchCommunityGroupScreen = () => {
         </View>
         <TouchableOpacity
           onPress={() => filterBottomSheet.current?.show()}
-          className="w-10 h-10 bg-secondary rounded-lg flex justify-center items-center border border-[#E9E8FF]"
+          style={styles.iconContainer}
         >
           <Filter
             width={24}
@@ -178,12 +178,15 @@ const SearchCommunityGroupScreen = () => {
             fill={isFilterApplied ? "#6744FF" : "#F3F2FF"}
             strokeWidth={2}
           />
+          {isFilterApplied && <Text style={styles.dot}>.</Text>}
         </TouchableOpacity>
         <TouchableOpacity
           onPress={() => sortBottomSheet.current?.show()}
-          className="w-10 h-10 bg-secondary rounded-lg flex justify-center items-center border border-[#E9E8FF]"
+          className="  bg-secondary rounded-lg flex justify-center items-center border border-[#E9E8FF]"
+          style={styles.iconContainer}
         >
           <SortUp width={24} height={24} color={"#6744FF"} strokeWidth={2} />
+          {sort?.length > 0 && <Text style={styles.dot}>.</Text>}
         </TouchableOpacity>
       </View>
       <TouchableOpacity
@@ -212,7 +215,10 @@ const SearchCommunityGroupScreen = () => {
         containerStyle={styles.actionSheetContainer}
       >
         <SortCommunityBottomSheet
-          onSelect={(value: string) => setSort(value)}
+          onSelect={(value: string) => {
+            setSort(value);
+            sortBottomSheet.current?.hide();
+          }}
           initialValue={sort}
         />
       </ActionSheet>
@@ -256,6 +262,7 @@ const styles = StyleSheet.create({
   searchInput: {
     paddingEnd: 40,
     height: 40,
+    borderRadius: 8,
   },
   searchIcon: {
     position: "absolute",
@@ -265,5 +272,26 @@ const styles = StyleSheet.create({
   },
   actionSheetContainer: {
     paddingTop: 10,
+    paddingHorizontal: 16,
+  },
+  iconContainer: {
+    position: "relative",
+    height: 40,
+    width: 40,
+    backgroundColor: "#F3F2FF",
+    borderColor: "#E9E8FF",
+    borderWidth: 1,
+    borderRadius: 8,
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  dot: {
+    position: "absolute",
+    zIndex: 40,
+    fontSize: 60,
+    right: 0,
+    color: "#DC2626",
+    bottom: -10,
   },
 });
