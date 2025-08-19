@@ -1,3 +1,4 @@
+import { FONTS } from "@/constants/fonts";
 import React from "react";
 import { View, Text, StyleSheet } from "react-native";
 import { SvgProps } from "react-native-svg";
@@ -43,13 +44,14 @@ const styles = StyleSheet.create({
   title: {
     textAlign: "center",
     fontSize: 20,
-    fontWeight: "700",
+
     color: "#3A3B3C",
+    fontFamily: FONTS.poppins.bold,
   },
   description: {
     paddingTop: 8,
     fontSize: 16,
-    fontWeight: "400",
+    fontFamily: FONTS.inter.regular,
     color: "#3A3B3C",
     textAlign: "center",
   },

@@ -77,6 +77,7 @@ const styles = StyleSheet.create({
     maxHeight: 300,
     fontSize: 16,
     textAlignVertical: "top",
+    color: "#6B7280",
   },
   wordCount: {
     textAlign: "right",

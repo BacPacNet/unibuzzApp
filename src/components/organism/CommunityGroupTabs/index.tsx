@@ -14,6 +14,7 @@ type Props = {
   currSelectedGroup: Community | null;
   setCurrSelectedGroup: (group: Community | null) => void;
   userData: Partial<User>;
+  isCommunityGroup: boolean;
 };
 
 const CommunityGroupTabs = ({
@@ -26,6 +27,7 @@ const CommunityGroupTabs = ({
   setCurrSelectedGroup,
   userData,
   communityLogo,
+  isCommunityGroup,
 }: Props) => {
   const renderCurrentTabContent = () => {
     switch (currTab) {
@@ -38,6 +40,7 @@ const CommunityGroupTabs = ({
             setCurrSelectedGroup={setCurrSelectedGroup}
             userData={userData}
             communityLogo={communityLogo}
+            isCommunityGroup={isCommunityGroup}
           />
         );
       case "Joined":
@@ -49,6 +52,7 @@ const CommunityGroupTabs = ({
             setCurrSelectedGroup={setCurrSelectedGroup}
             userData={userData}
             communityLogo={communityLogo}
+            isCommunityGroup={isCommunityGroup}
           />
         );
       case "My":
@@ -60,6 +64,7 @@ const CommunityGroupTabs = ({
             setCurrSelectedGroup={setCurrSelectedGroup}
             userData={userData}
             communityLogo={communityLogo}
+            isCommunityGroup={isCommunityGroup}
           />
         );
       default:

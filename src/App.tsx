@@ -7,11 +7,11 @@ import { ThemeProvider } from "@/theme";
 import ApplicationNavigator from "./navigators/Application";
 import "./translations";
 import "../global.css";
-import { SafeAreaProvider } from "react-native-safe-area-context";
-import { DevToolsBubble } from "react-native-react-query-devtools";
+import {
+  SafeAreaProvider,
+  useSafeAreaInsets,
+} from "react-native-safe-area-context";
 import { ToastProvider } from "react-native-toast-notifications";
-import { getToken } from "./storage/token";
-import { SafeScreen } from "./components/template";
 import AuthProvider from "./context/AuthProvider/AuthProvider";
 import { UserPasswordResetProvider } from "./context/UserPasswordResetProvider/UserPasswordResetProvider";
 import { useFirebaseMessaging } from "./hooks/useFirebaseMessaging";
@@ -29,10 +29,7 @@ function App() {
           {/* <SafeScreen> */}
           <AuthProvider>
             <UserPasswordResetProvider>
-              <ToastProvider>
-                <ApplicationNavigator />
-                {/* <DevToolsBubble /> */}
-              </ToastProvider>
+              <InnerApp />
             </UserPasswordResetProvider>
           </AuthProvider>
           {/* </SafeScreen> */}
@@ -40,6 +37,17 @@ function App() {
       </ThemeProvider>
       {/*<ReactQueryDevtools initialIsOpen={false} />*/}
     </QueryClientProvider>
+  );
+}
+
+function InnerApp() {
+  const insets = useSafeAreaInsets();
+
+  return (
+    <ToastProvider offsetTop={insets.top} offsetBottom={insets.bottom}>
+      <ApplicationNavigator />
+      {/* <DevToolsBubble /> */}
+    </ToastProvider>
   );
 }
 

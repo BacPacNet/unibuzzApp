@@ -5,6 +5,8 @@ import {
   ActivityIndicator,
   FlatList,
   Image,
+  NativeScrollEvent,
+  NativeSyntheticEvent,
   Platform,
   RefreshControl,
   SafeAreaView,
@@ -33,6 +35,9 @@ import NoUniversityPost from "@/assets/placeHolder/noUniversityPost.svg";
 import BackHeader from "@/components/atoms/BackHeader";
 import { FONTS } from "@/constants/fonts";
 import ReusableButton from "@/components/atoms/ReusableButton";
+import DropdownWrapper from "@/components/molecules/SelectDropDownWrapper";
+import { Settings } from "iconoir-react-native";
+import { CommunityDropDownModal } from "@/components/molecules/Community/CommunityDropDownModal";
 type NavigationProp = StackNavigationProp<RootStackParamList, "Community">;
 
 const CommunityScreen = ({ route }: any) => {
@@ -66,6 +71,25 @@ const CommunityScreen = ({ route }: any) => {
   const [ImageSrcErr, setImageSrcErr] = useState(false);
   const [refreshing, setRefreshing] = React.useState(false);
   const queryClient = useQueryClient();
+  const [showCreatePostButton, setShowCreatePostButton] = useState(false);
+  const [lastScrollY, setLastScrollY] = useState(0);
+
+  const handleScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
+    const { contentOffset, layoutMeasurement, contentSize } = event.nativeEvent;
+
+    const isAtBottom =
+      contentOffset.y + layoutMeasurement.height >= contentSize.height - 20;
+    if (isAtBottom) {
+      setShowCreatePostButton(false);
+    } else if (contentOffset.y > 100) {
+      if (contentOffset.y < lastScrollY) {
+        setShowCreatePostButton(true);
+      } else if (contentOffset.y > lastScrollY) {
+        setShowCreatePostButton(false);
+      }
+    }
+    setLastScrollY(contentOffset.y);
+  };
 
   useFocusEffect(
     useCallback(() => {
@@ -142,41 +166,50 @@ const CommunityScreen = ({ route }: any) => {
         )}
 
         <View style={styles.content}>
-          <View style={styles.titleContainer}>
-            <CommunityLogo
-              logoUrl={communityData?.communityLogoUrl?.imageUrl || ""}
-            />
+          <View style={styles.headerContainer}>
+            <View style={styles.titleContainer}>
+              <CommunityLogo
+                logoUrl={communityData?.communityLogoUrl?.imageUrl || ""}
+              />
 
-            <Text style={styles.title}>{communityData?.name}</Text>
+              <Text style={styles.title}>{communityData?.name}</Text>
+            </View>
+
+            {isUserJoinedCommunity && (
+              <View>
+                <DropdownWrapper
+                  position="left"
+                  extraLeft={60}
+                  viewTopPosition={-40}
+                  renderDropdown={() => (
+                    <CommunityDropDownModal
+                      leaveCommunity={handleToggleJoinCommunity}
+                    />
+                  )}
+                >
+                  <TouchableOpacity style={styles.settingsGearContainer}>
+                    <Settings width={20} height={20} color="#6647ff" />
+                  </TouchableOpacity>
+                </DropdownWrapper>
+              </View>
+            )}
           </View>
           <Text style={styles.description}>{communityData?.about}</Text>
-
-          {/* <TouchableOpacity
-            disabled={isJoinLoading || isLeaveLoading || isFetching}
-            onPress={() => handleToggleJoinCommunity()}
-            style={styles.button}
-          >
-            <Text style={styles.buttonText}>
-              {isJoinLoading || isLeaveLoading || isFetching ? (
-                <ActivityIndicator />
-              ) : !isUserJoinedCommunity ? (
-                "Join Community"
-              ) : (
-                "Leave Community"
-              )}
-            </Text>
-          </TouchableOpacity> */}
-          <ReusableButton
-            variant={isUserJoinedCommunity ? "border" : "primary"}
-            isLoading={isJoinLoading || isLeaveLoading || isFetching}
-            disabled={isJoinLoading || isLeaveLoading || isFetching}
-            onPress={handleToggleJoinCommunity}
-            buttonText={
-              !isUserJoinedCommunity ? "Join Community" : "Leave Community"
-            }
-            size={isUserJoinedCommunity ? 132 : 126}
-            activityIndicatorColor={isUserJoinedCommunity ? "#3A3B3C" : "#fff"}
-          />
+          {!isUserJoinedCommunity && (
+            <ReusableButton
+              variant={isUserJoinedCommunity ? "border" : "primary"}
+              isLoading={isJoinLoading || isLeaveLoading || isFetching}
+              disabled={isJoinLoading || isLeaveLoading || isFetching}
+              onPress={handleToggleJoinCommunity}
+              buttonText={
+                !isUserJoinedCommunity ? "Join Community" : "Leave Community"
+              }
+              size={isUserJoinedCommunity ? 132 : 126}
+              activityIndicatorColor={
+                isUserJoinedCommunity ? "#3A3B3C" : "#fff"
+              }
+            />
+          )}
         </View>
       </View>
     );
@@ -193,16 +226,17 @@ const CommunityScreen = ({ route }: any) => {
   return (
     <>
       <SafeAreaView className="bg-white flex-1">
-        <CreatePostButton
-          isAllowed={communityData?.adminId == userData?.id}
-          onPress={() =>
-            navigation.navigate("NewGroupPost", {
-              communityId,
-            })
-          }
-        />
+        {(showCreatePostButton || lastScrollY == 0) && (
+          <CreatePostButton
+            isAllowed={communityData?.adminId == userData?.id}
+            onPress={() =>
+              navigation.navigate("NewGroupPost", {
+                communityId,
+              })
+            }
+          />
+        )}
         <FlatList
-          // data={communityDatas}
           data={
             isUserJoinedCommunity || communityPostError ? communityDatas : []
           }
@@ -213,6 +247,7 @@ const CommunityScreen = ({ route }: any) => {
           keyExtractor={(item, index) =>
             item?._id ? item._id.toString() : index.toString()
           }
+          onScroll={handleScroll}
           renderItem={({ item }) =>
             isUserJoinedCommunity ? (
               <PostCard data={item} isTimeline={false} isSinglePost={false} />
@@ -306,7 +341,6 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     gap: 12,
-    marginBottom: 16,
   },
   title: {
     fontSize: 14,
@@ -349,5 +383,24 @@ const styles = StyleSheet.create({
     display: "flex",
     justifyContent: "center",
     alignItems: "center",
+  },
+
+  settingsGearContainer: {
+    backgroundColor: "#F3F2FF",
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    position: "relative",
+  },
+  headerContainer: {
+    display: "flex",
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+
+    marginBottom: 16,
   },
 });

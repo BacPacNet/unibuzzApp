@@ -39,6 +39,21 @@ const UniversitySec = () => {
     setCurrSelectedGroup(community);
   };
 
+  const getCurrentStackInfo = () => {
+    const currentRoute =
+      navigation?.getState()?.routes[navigation?.getState()?.index];
+    const currentStackName = currentRoute?.name;
+
+    return {
+      currentStack: currentStackName,
+      currentScreen:
+        currentRoute?.state?.routes?.[currentRoute?.state?.index || 0]?.name ||
+        currentStackName,
+    };
+  };
+
+  const stackInfo = getCurrentStackInfo();
+
   const handleManageGroupNavigate = () => {
     resetFilters();
     navigation.navigate("manageGroupStack", {
@@ -110,7 +125,7 @@ const UniversitySec = () => {
       </View>
       <View>
         <View style={styles.communityImageContainer}>
-          <Text style={styles.groupHeaderText}>Groups</Text>
+          <Text style={styles.groupHeaderText}>GROUPS</Text>
 
           <CommunityLogo
             logoUrl={community?.communityLogoUrl?.imageUrl as string}
@@ -148,6 +163,7 @@ const UniversitySec = () => {
             subscribedCommunities?.[0]?.communityLogoUrl?.imageUrl ||
             ""
           }
+          isCommunityGroup={stackInfo?.currentScreen === "CommunityGroup"}
         />
       </View>
     </View>

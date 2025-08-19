@@ -29,7 +29,7 @@ const ConnectionFollowingUserTabList: React.FC<{}> = ({}) => {
       userFollowingData?.pages
         ?.flatMap(({ users }) => users)
         .filter(({ _id }) => _id !== userProfileData?.users_id) ?? [],
-    [userFollowingData, userProfileData?.users_id],
+    [userFollowingData, userProfileData?.users_id]
   );
 
   const handleRefresh = useCallback(() => {
@@ -64,11 +64,11 @@ const ConnectionFollowingUserTabList: React.FC<{}> = ({}) => {
       initialNumToRender={10}
       ListHeaderComponent={
         <View>
-          <View className="flex-1 relative p-4">
+          <View className="flex-1 relative py-4">
             <SearchInput
               value={name}
               onChangeText={setName}
-             placeholder="Search User..."
+              placeholder="Search User..."
             />
             {!isFetching && userProfiles?.length === 0 ? (
               <View className="py-4">
@@ -97,6 +97,9 @@ const ConnectionFollowingUserTabList: React.FC<{}> = ({}) => {
         />
       )}
       getItemLayout={(_, index) => ({ length: 80, offset: 80 * index, index })}
+      contentContainerStyle={{
+        paddingHorizontal: 16,
+      }}
       removeClippedSubviews
       refreshing={isUserProfilesLoading}
       refreshControl={

@@ -1,5 +1,5 @@
 import React from "react";
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { Alert, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import {
   BorderBottom,
   ChatBubbleEmpty,
@@ -40,9 +40,31 @@ const UserComment = ({
   const isStudent = role === userTypeEnum.Student;
   const handleDelete = () => {
     if (type === PostType.Community) {
-      deleteCommunityPost(item._id);
+      Alert.alert(
+        "Delete Comment",
+        "Are you sure you want to delete this comment?",
+        [
+          {
+            text: "Cancel",
+            style: "cancel",
+          },
+          { text: "Delete", onPress: () => deleteCommunityPost(item._id) },
+        ]
+      );
+      //   deleteCommunityPost(item._id);
     } else {
-      deleteUserPost(item._id);
+      Alert.alert(
+        "Delete Comment",
+        "Are you sure you want to delete this comment?",
+        [
+          {
+            text: "Cancel",
+            style: "cancel",
+          },
+          { text: "Delete", onPress: () => deleteUserPost(item._id) },
+        ]
+      );
+      //   deleteUserPost(item._id);
     }
   };
 

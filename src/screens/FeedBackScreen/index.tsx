@@ -1,9 +1,18 @@
 import React from "react";
-import { View, Text, StyleSheet, ScrollView } from "react-native";
+import {
+  View,
+  Text,
+  StyleSheet,
+  ScrollView,
+  TouchableWithoutFeedback,
+  Keyboard,
+} from "react-native";
 import { useForm } from "react-hook-form";
 import { FormInput } from "@/components/atoms/FormInput";
 import ReusableButton from "@/components/atoms/ReusableButton";
 import { useSendContactMessage } from "@/services/contact";
+import { SafeScreen } from "@/components/template";
+import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 
 const ContactForm = () => {
   const {
@@ -27,97 +36,107 @@ const ContactForm = () => {
   };
 
   return (
-    <ScrollView contentContainerStyle={styles.container}>
-      <Text style={styles.title}>Send us a message</Text>
-      <Text style={styles.subtitle}>
-        Contact us regarding any concerns or inquiries.
-      </Text>
+    <SafeScreen>
+      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+        <KeyboardAwareScrollView
+          enableOnAndroid={true}
+          extraScrollHeight={20}
+          keyboardShouldPersistTaps="handled"
+          contentContainerStyle={styles.container}
+        >
+          <Text style={styles.title}>Send us a message</Text>
+          <Text style={styles.subtitle}>
+            Contact us regarding any concerns or inquiries.
+          </Text>
 
-      <View style={styles.formContainer}>
-        <View style={styles.nameContainer}>
-          <View style={styles.nameInputContainer}>
+          <View style={styles.formContainer}>
+            <View style={styles.nameContainer}>
+              <View style={styles.nameInputContainer}>
+                <FormInput
+                  isLabelShown={true}
+                  label="First Name"
+                  placeholder="John"
+                  name="firstName"
+                  control={control}
+                  rules={{ required: "First name is required" }}
+                  isError={!!errors.firstName}
+                  errorMessage={errors.firstName?.message?.toString()}
+                />
+              </View>
+
+              <View style={styles.nameInputContainer}>
+                <FormInput
+                  isLabelShown={true}
+                  label="Last Name"
+                  placeholder="Dowry"
+                  name="lastName"
+                  control={control}
+                  rules={{ required: "Last name is required" }}
+                  isError={!!errors.lastName}
+                  errorMessage={errors.lastName?.message?.toString()}
+                />
+              </View>
+            </View>
+
             <FormInput
               isLabelShown={true}
-              label="First Name"
-              placeholder="John"
-              name="firstName"
+              label="University"
+              placeholder="Lorem University"
+              name="university"
               control={control}
-              rules={{ required: "First name is required" }}
-              isError={!!errors.firstName}
-              errorMessage={errors.firstName?.message?.toString()}
+              rules={{ required: "University is required" }}
+              isError={!!errors.university}
+              errorMessage={errors.university?.message?.toString()}
+            />
+
+            <FormInput
+              isLabelShown={true}
+              label="Email Address"
+              placeholder="john.dowry@example.com"
+              name="email"
+              control={control}
+              keyboardType="email-address"
+              rules={{
+                required: "Please enter your email!",
+                pattern: {
+                  value: /^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/,
+                  message: "Invalid email format",
+                },
+              }}
+              isError={!!errors.email}
+              errorMessage={errors.email?.message?.toString()}
+            />
+
+            <FormInput
+              label="Additional Message"
+              placeholder="Type a message here..."
+              name="message"
+              control={control}
+              isError={!!errors.message}
+              errorMessage={errors.message ? "bio  is required" : ""}
+              isTextArea={true}
             />
           </View>
 
-          <View style={styles.nameInputContainer}>
-            <FormInput
-              isLabelShown={true}
-              label="Last Name"
-              placeholder="Dowry"
-              name="lastName"
-              control={control}
-              rules={{ required: "Last name is required" }}
-              isError={!!errors.lastName}
-              errorMessage={errors.lastName?.message?.toString()}
-            />
-          </View>
-        </View>
+          <Text style={styles.disclaimer}>
+            By pressing the submit button, I agree to Unibuzz contacting me by
+            email and/or phone to share opportunities exclusively available to
+            Select or Enterprise customers. I also understand that any
+            information I've shared in this form is subject to Unibuzz Privacy
+            Policy.
+          </Text>
 
-        <FormInput
-          isLabelShown={true}
-          label="University"
-          placeholder="Lorem University"
-          name="university"
-          control={control}
-          rules={{ required: "University is required" }}
-          isError={!!errors.university}
-          errorMessage={errors.university?.message?.toString()}
-        />
-
-        <FormInput
-          isLabelShown={true}
-          label="Email Address"
-          placeholder="john.dowry@example.com"
-          name="email"
-          control={control}
-          keyboardType="email-address"
-          rules={{
-            required: "Please enter your email!",
-            pattern: {
-              value: /^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/,
-              message: "Invalid email format",
-            },
-          }}
-          isError={!!errors.email}
-          errorMessage={errors.email?.message?.toString()}
-        />
-
-        <FormInput
-          label="Additional Message"
-          placeholder="Type a message here..."
-          name="message"
-          control={control}
-          isError={!!errors.message}
-          errorMessage={errors.message ? "bio  is required" : ""}
-          isTextArea={true}
-        />
-      </View>
-
-      <Text style={styles.disclaimer}>
-        By pressing the submit button, I agree to Unibuzz contacting me by email
-        and/or phone to share opportunities exclusively available to Select or
-        Enterprise customers. I also understand that any information I've shared
-        in this form is subject to Unibuzz Privacy Policy.
-      </Text>
-
-      <ReusableButton
-        onPress={handleSubmit(onSubmit)}
-        buttonText="Submit"
-        variant="primary"
-        isLoading={isPending}
-        disabled={isPending}
-        height="large"
-      />
-    </ScrollView>
+          <ReusableButton
+            onPress={handleSubmit(onSubmit)}
+            buttonText="Submit"
+            variant="primary"
+            isLoading={isPending}
+            disabled={isPending}
+            height="large"
+          />
+        </KeyboardAwareScrollView>
+      </TouchableWithoutFeedback>
+    </SafeScreen>
   );
 };
 

@@ -1,6 +1,13 @@
 import { getMimeTypeFromUrl, imageMimeTypes } from "@/utils";
 import React, { useState } from "react";
-import { View, Text, TouchableOpacity, Image, StyleSheet, Linking } from "react-native";
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  Image,
+  StyleSheet,
+  Linking,
+} from "react-native";
 import ImageViewing from "react-native-image-viewing";
 import PDFModalWebView from "../PdfView";
 import ImageWithFallback from "@/components/atoms/ImageWithFallBack";
@@ -14,12 +21,11 @@ const ImageGallery = ({
 }) => {
   const imageItems =
     images?.filter((item: any) =>
-      imageMimeTypes.includes(getMimeTypeFromUrl(item.imageUrl)),
+      imageMimeTypes.includes(getMimeTypeFromUrl(item.imageUrl))
     ) || [];
   const fileItems =
     images?.filter(
-      (item: any) =>
-        !imageMimeTypes.includes(getMimeTypeFromUrl(item.imageUrl)),
+      (item: any) => !imageMimeTypes.includes(getMimeTypeFromUrl(item.imageUrl))
     ) || [];
 
   const [isOpen, setIsOpen] = useState(false);
@@ -60,9 +66,7 @@ const ImageGallery = ({
         );
       case 2:
         return (
-          <View
-            className="flex-1 flex flex-row gap-2  "
-          >
+          <View className="flex-1 flex flex-row gap-2  ">
             {formattedImages?.slice(0, 2).map((img: any, index: number) => (
               <View key={index} className="w-1/2">
                 <TouchableOpacity onPress={() => handleImageClick(index)}>
@@ -167,7 +171,7 @@ const ImageGallery = ({
           visible={isOpen}
           onRequestClose={() => setIsOpen(false)}
           FooterComponent={({ imageIndex }) => (
-            <View className="flex items-center justify-center">
+            <View className="flex items-center justify-center pb-4">
               <Text className="text-white">
                 {imageIndex + 1}/{imageCount}
               </Text>
@@ -183,13 +187,13 @@ const ImageGallery = ({
       <View className="flex gap-2">
         {fileItems.map((item: any, index: number) => (
           <TouchableOpacity
-          onPress={() => {
-            if (item.imageUrl.includes(".pdf")) {
-              handlePdfClick(item.imageUrl);
-            } else {
-              Linking.openURL(item.imageUrl);
-            }
-          }}
+            onPress={() => {
+              if (item.imageUrl.includes(".pdf")) {
+                handlePdfClick(item.imageUrl);
+              } else {
+                Linking.openURL(item.imageUrl);
+              }
+            }}
             key={index}
             className="border border-neutral-200 rounded-lg p-2 mt-1"
           >
@@ -200,8 +204,13 @@ const ImageGallery = ({
         ))}
       </View>
 
-      {isPdfOpen && <PDFModalWebView visible={isPdfOpen} onClose={() => setIsPdfOpen(false)} pdfUrl={pdfUrl} />}
-
+      {isPdfOpen && (
+        <PDFModalWebView
+          visible={isPdfOpen}
+          onClose={() => setIsPdfOpen(false)}
+          pdfUrl={pdfUrl}
+        />
+      )}
     </View>
   );
 };

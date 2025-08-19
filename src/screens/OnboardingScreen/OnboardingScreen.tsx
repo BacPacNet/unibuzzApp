@@ -13,7 +13,7 @@ const { width } = Dimensions.get("window");
 function OnboardingScreen({ navigation }: RootScreenProps<"OnboardingScreen">) {
   const [startOnboarding, setStartOnboarding] = useState(false);
   const inset = useSafeAreaInsets();
-  console.log(inset);
+
   return (
     <SafeScreen style={[styles.container]}>
       {!startOnboarding ? (

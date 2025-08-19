@@ -83,7 +83,7 @@ const NewCommunityGroupFilterScreen = (props: Props) => {
       {/* Header */}
 
       <ScrollView style={styles.content}>
-        <BackHeader label="Create Group" isLeftPadding={false} />
+        <BackHeader label="Create Group" isLeftPadding={true} />
         <CollapsibleMultiSelect
           title="Academic"
           options={subCategories["Academic"]}
@@ -175,7 +175,12 @@ const NewCommunityGroupFilterScreen = (props: Props) => {
                       onPress={() => handleSelect(category as any, filter)}
                     >
                       <Text style={styles.filterChipText}>{filter}</Text>
-                      <Xmark width={24} height={24} color="#6744FF" />
+                      <Xmark
+                        width={16}
+                        height={16}
+                        color="#4518BF"
+                        strokeWidth={2}
+                      />
                     </TouchableOpacity>
                   ))
                 )}

@@ -382,7 +382,7 @@ const UserMessageInput = ({
           placeholder="What's on your mind?"
           multiline
           style={styles.input}
-          className="text-base"
+          className="text-base "
         />
 
         <View style={styles.actionBar}>

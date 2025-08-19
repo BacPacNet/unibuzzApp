@@ -156,7 +156,7 @@ const styles = StyleSheet.create({
     width: "100%",
     display: "flex",
     flexDirection: "column",
-    justifyContent: "space-between",
+    justifyContent: "center",
     height: "100%",
   },
   titlemargin: {
@@ -172,6 +172,6 @@ const styles = StyleSheet.create({
     display: "flex",
     flexDirection: "column",
     gap: 16,
-    marginTop: 64,
+    marginTop: 48,
   },
 });

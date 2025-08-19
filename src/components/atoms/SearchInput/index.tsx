@@ -45,6 +45,7 @@ const styles = StyleSheet.create({
     paddingRight: 40,
     borderRadius: 8,
     height: 40,
+    color: "#6b7280",
   },
   icon: {
     position: "absolute",

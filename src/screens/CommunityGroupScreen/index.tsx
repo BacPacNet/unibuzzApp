@@ -11,6 +11,7 @@ import {
   ActivityIndicator,
   FlatList,
   RefreshControl,
+  SafeAreaView,
   StyleSheet,
   View,
 } from "react-native";
@@ -19,7 +20,7 @@ import ActionSheet, { ActionSheetRef } from "react-native-actions-sheet";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { getUserProfileStore, getUserStore } from "@/storage/user";
-import { SafeAreaView } from "react-native-safe-area-context";
+
 import PostCard from "@/components/molecules/Timeline/PostCard";
 import { useQueryClient } from "@tanstack/react-query";
 import {
@@ -46,6 +47,8 @@ import NotMember from "@/assets/placeHolder/notMember.svg";
 import NoPostFromGroup from "@/assets/placeHolder/NoPostFromGroup.svg";
 import { screenName } from "@/constant/screenName";
 import useCustomBackHandler from "@/hooks/useCustomBackHandler";
+import { NativeSyntheticEvent } from "react-native";
+import { NativeScrollEvent } from "react-native";
 
 type NavigationProp = StackNavigationProp<RootStackParamList, "CommunityGroup">;
 
@@ -97,7 +100,8 @@ const CommunityGroupScreen = ({ route }: any) => {
   );
   const [logoSrcErr, setLogoSrcErr] = useState(false);
   const [refreshing, setRefreshing] = React.useState(false);
-
+  const [showCreatePostButton, setShowCreatePostButton] = useState(false);
+  const [lastScrollY, setLastScrollY] = useState(0);
   const queryClient = useQueryClient();
 
   const isGroupOfficial =
@@ -122,6 +126,23 @@ const CommunityGroupScreen = ({ route }: any) => {
   const CommunityGroupMember = communityGroups?.users?.filter(
     (user: { status: status }) => user.status === status.accepted
   );
+
+  const handleScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
+    const { contentOffset, layoutMeasurement, contentSize } = event.nativeEvent;
+
+    const isAtBottom =
+      contentOffset.y + layoutMeasurement.height >= contentSize.height - 20;
+    if (isAtBottom) {
+      setShowCreatePostButton(false);
+    } else if (contentOffset.y > 100) {
+      if (contentOffset.y < lastScrollY) {
+        setShowCreatePostButton(true);
+      } else if (contentOffset.y > lastScrollY) {
+        setShowCreatePostButton(false);
+      }
+    }
+    setLastScrollY(contentOffset.y);
+  };
 
   useFocusEffect(
     useCallback(() => {
@@ -289,22 +310,28 @@ const CommunityGroupScreen = ({ route }: any) => {
 
   return (
     <SafeAreaView className="bg-white flex-1">
-      <CreatePostButton
-        isAllowed={isUserJoinedCommunityGroup || isGroupAdmin}
-        onPress={() =>
-          navigation.navigate("NewGroupPost", {
-            communityId,
-            communityGroupId,
-          })
-        }
-      />
+      {(showCreatePostButton || lastScrollY == 0) && (
+        <CreatePostButton
+          isAllowed={isUserJoinedCommunityGroup || isGroupAdmin}
+          onPress={() =>
+            navigation.navigate("NewGroupPost", {
+              communityId,
+              communityGroupId,
+            })
+          }
+        />
+      )}
       {isFetching ? (
         <Refresh />
       ) : (
         <FlatList
           data={communityGroupPostDatas}
-          style={styles.flatListStyle}
+          style={{
+            width: "100%",
+            height: "100%",
+          }}
           keyExtractor={(item, index) => item?._id + index}
+          onScroll={handleScroll}
           renderItem={({ item }) =>
             error ? (
               <View></View>
@@ -341,13 +368,15 @@ const CommunityGroupScreen = ({ route }: any) => {
                 <ActivityIndicator size="large" color="#7367f0" />
               </View>
             ) : error ? null : (
-              <EmptyStateCard
-                imageWidth={226}
-                imageHeight={158}
-                SvgComponent={NoPostFromGroup}
-                title="No Posts from Group."
-                description="No posts in this group yet. Once members start sharing, you’ll see them here."
-              />
+              <View className="flex-1 justify-center items-center">
+                <EmptyStateCard
+                  imageWidth={226}
+                  imageHeight={158}
+                  SvgComponent={NoPostFromGroup}
+                  title="No Posts from Group."
+                  description="No posts in this group yet. Once members start sharing, you’ll see them here."
+                />
+              </View>
             )
           }
         />

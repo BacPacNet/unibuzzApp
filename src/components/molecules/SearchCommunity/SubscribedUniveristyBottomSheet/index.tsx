@@ -21,7 +21,6 @@ const SubscribedUniveristyBottomSheet: React.FC<
 > = ({ options = [], value = [], err = false, onSelect }) => {
   const [selected, setSelected] = useState<string[]>(value);
 
-  console.log(options);
   const handleSelect = (university: any) => {
     onSelect({ name: university.UniversityName, id: university.communityId });
     toggleSelect(university.UniversityName);

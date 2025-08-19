@@ -31,6 +31,8 @@ import DropdownWrapper from "../../SelectDropDownWrapper";
 import CommentSortDropDownMenu from "../CommentSortDropDownMenu";
 import { Sortby } from "@/types/constant";
 import { SafeScreen } from "@/components/template";
+import { FONTS } from "@/constants/fonts";
+import CommentButtonIcon from "@/assets/icons/comment-button-icon.svg";
 
 type Props = {
   postId: string;
@@ -181,7 +183,8 @@ const CommentBottomSheet = ({
                   <View>
                     <DropdownWrapper
                       position="bottom"
-                      extraBottom={-50}
+                      extraBottom={-40}
+                      viewLeftPosition={2}
                       renderDropdown={(closeDropdown) => (
                         <CommentSortDropDownMenu
                           handleSelect={(option) => {
@@ -202,6 +205,7 @@ const CommentBottomSheet = ({
                           height={20}
                           width={20}
                           color={"#242526"}
+                          strokeWidth={2}
                         />
                       </TouchableOpacity>
                     </DropdownWrapper>
@@ -211,15 +215,19 @@ const CommentBottomSheet = ({
                       setReplyingTo(null), setModalVisible(true);
                     }}
                     buttonContent={
-                      <View className="flex flex-row items-center gap-2">
-                        <MessageTextSolid width={16} height={16} color="#fff" />
-                        <Text className="text-white">Comment</Text>
+                      <View className="flex flex-row items-center  justify-center gap-2">
+                        <CommentButtonIcon
+                          width={16}
+                          height={16}
+                          color="#fff"
+                        />
+                        <Text style={styles.commentButtonText}>Comment</Text>
                       </View>
                     }
                     variant="primary"
                     size={108}
                     height="small"
-                    containerStyle="mt-2 "
+                    containerStyle=" "
                   />
                 </View>
               )
@@ -325,23 +333,18 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
 
-  commentContainer: {
-    bottom: 0,
-    marginBottom: 6,
-    width: "95%",
-    position: "absolute",
-    backgroundColor: "white",
-    borderWidth: 1,
-    borderRadius: 8,
-    borderColor: "#d4d4d4",
-    paddingLeft: 10,
-  },
   commentHeader: {
     display: "flex",
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
     padding: 16,
+  },
+  commentButtonText: {
+    fontSize: 12,
+    color: "#FFF",
+    fontFamily: FONTS.inter.medium,
+    textAlignVertical: "center",
   },
 
   buttonContainer: {
@@ -359,15 +362,17 @@ const styles = StyleSheet.create({
     display: "flex",
     flexDirection: "row",
     alignItems: "center",
+    justifyContent: "center",
     gap: 8,
-    padding: 8,
+    paddingVertical: 8,
     borderWidth: 1,
-    borderColor: "#ccc",
+    borderColor: "#E5E7EB",
     borderRadius: 8,
+    width: 125,
   },
   dropDownText: {
     fontSize: 12,
-    fontWeight: "500",
+    fontFamily: FONTS.inter.medium,
     color: "#3A3B3C",
   },
 });

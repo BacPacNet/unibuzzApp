@@ -94,7 +94,7 @@ const MembersUserCard = ({
           onPress={() => membersBottomSheet.current?.show()}
           variant="border"
           buttonText="Settings"
-          height="medium"
+          height="small"
           size={100}
         />
       );
@@ -106,7 +106,7 @@ const MembersUserCard = ({
           onPress={() => handleNavigate(_id)}
           variant="border"
           buttonText="View Profile"
-          height="medium"
+          height="small"
           size={100}
         />
       );
@@ -118,7 +118,7 @@ const MembersUserCard = ({
           onPress={() => handleRemoveClick?.(_id)}
           variant="border"
           buttonText="Remove"
-          height="medium"
+          height="small"
           size={100}
           disabled={disabled}
           isLoading={isRemoving}
@@ -140,7 +140,7 @@ const MembersUserCard = ({
           </View>
         }
         onPress={() => handleFollowClick(_id)}
-        height="medium"
+        height="small"
         size={90}
         disabled={isProcessing}
         isLoading={isProcessing}

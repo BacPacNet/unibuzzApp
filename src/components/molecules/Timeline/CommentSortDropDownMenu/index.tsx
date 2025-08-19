@@ -41,7 +41,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     borderWidth: 1,
     borderColor: "#E5E7EB",
-    width: 144,
+    width: 123,
     height: 80,
   },
   textContainer: {

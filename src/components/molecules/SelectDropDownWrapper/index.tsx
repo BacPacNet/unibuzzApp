@@ -20,6 +20,7 @@ interface DropdownWrapperProps {
   extraLeft?: number;
   extraBottom?: number;
   viewTopPosition?: number;
+  viewLeftPosition?: number;
   renderDropdown: (closeDropdown: () => void) => ReactNode;
 }
 
@@ -30,11 +31,12 @@ const DropdownWrapper = ({
   extraLeft = 0,
   extraBottom = 0,
   viewTopPosition = 0,
+  viewLeftPosition = 0,
 }: DropdownWrapperProps) => {
   const triggerRef = useRef<TouchableOpacity>(null);
   const [show, setShow] = useState(false);
   const [triggerLayout, setTriggerLayout] = useState<LayoutRectangle | null>(
-    null,
+    null
   );
 
   const [modalTop, setModalTop] = useState(0);
@@ -102,7 +104,7 @@ const DropdownWrapper = ({
                 style={{
                   position: "absolute",
                   top: modalTop + viewTopPosition,
-                  left: modalLeft,
+                  left: modalLeft + viewLeftPosition,
                   minWidth: 160,
                 }}
               >

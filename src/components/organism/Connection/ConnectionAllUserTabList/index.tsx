@@ -7,11 +7,12 @@ import {
   RefreshControl,
   ActivityIndicator,
   TouchableOpacity,
+  StyleSheet,
 } from "react-native";
 
 import MembersUserCard from "@/components/molecules/MembersUserCard";
 import { useUsersProfileForConnections } from "@/services/users";
-import { Filter } from "iconoir-react-native";
+import FilterIcon from "@/assets/icons/filter.svg";
 import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { RootStackParamList } from "@/types/navigation";
@@ -148,21 +149,15 @@ const ConnectionAllUserTabList: React.FC<{
             onPress={() =>
               navigation.navigate("ConnectionsFilter", { Currvalues: values })
             }
-            className="w-10 h-10 bg-secondary rounded-lg flex justify-center items-center"
+            style={styles.filterButton}
+            className=""
           >
-            <Filter
-              width={28}
-              height={28}
-              color={"#6744FF"}
-              fill={isFilterApplied ? "#6744FF" : "#F3F2FF"}
-              strokeWidth={2}
-            />
+            <FilterIcon width={40} height={40} />
+            {isFilterApplied && <Text style={styles.dot}>.</Text>}
           </TouchableOpacity>
         </View>
       }
-      contentContainerStyle={{
-        paddingHorizontal: 16,
-      }}
+      contentContainerStyle={styles.container}
       renderItem={({ item }) => (
         <MembersUserCard
           _id={item._id}
@@ -211,3 +206,22 @@ const ConnectionAllUserTabList: React.FC<{
 };
 
 export default ConnectionAllUserTabList;
+
+const styles = StyleSheet.create({
+  filterButton: {
+    width: 40,
+    height: 40,
+  },
+  container: {
+    paddingBottom: 40,
+    paddingHorizontal: 16,
+  },
+  dot: {
+    position: "absolute",
+    zIndex: 40,
+    fontSize: 60,
+    right: 0,
+    color: "#DC2626",
+    bottom: -10,
+  },
+});
