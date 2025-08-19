@@ -34,6 +34,7 @@ import { useUploadToS3 } from "@/services/upload";
 import { Toast } from "react-native-toast-notifications";
 import SelectUniversityDropdownBottomSheet from "@/components/atoms/SelectUniversityDropDownBottomSheet";
 import CommunityLogo from "@/components/atoms/LogoHolder";
+import { FONTS } from "@/constants/fonts";
 
 type ImageAsset = {
   uri: string;
@@ -384,8 +385,7 @@ export default function ProfileEdit() {
                   What is your status? <Text style={styles.required}>*</Text>
                 </Text>
                 <Text style={styles.statusWarning}>
-                  You can update your status once every 6 months. After making a
-                  change, you’ll have 15 days to revert it if needed.
+                  You can only change your status twice within 14 days
                 </Text>
               </View>
 
@@ -491,6 +491,7 @@ const styles = StyleSheet.create({
   statusWarning: {
     fontSize: 14,
     color: "#EF4444",
+    fontFamily: FONTS.inter.semiBold,
     // marginBottom: 16,
   },
   statusOptions: {

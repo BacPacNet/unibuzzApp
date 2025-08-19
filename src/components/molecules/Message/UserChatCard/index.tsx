@@ -43,7 +43,7 @@ const UserChatCard = ({
   const userName = users?.flat().filter((item) => item.userId._id !== YourID);
 
   return (
-    <View className="flex flex-row justify-between p-4 ">
+    <View className="flex flex-row justify-between py-4 ">
       <View className="flex-1 flex-row items-center gap-4 relative">
         <View className="w-12 h-12 ">
           {isGroupChat && !profilePic ? (

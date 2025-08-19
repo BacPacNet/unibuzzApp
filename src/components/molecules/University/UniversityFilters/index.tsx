@@ -310,6 +310,7 @@ const styles = StyleSheet.create({
     borderColor: "#E2E8F0",
     borderRadius: 20,
     fontSize: 14,
+    color: "#6B7280",
   },
   searchIcon: {
     position: "absolute",

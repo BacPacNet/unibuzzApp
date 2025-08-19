@@ -7,6 +7,21 @@ interface AuthProviderProps {
   children: ReactNode;
 }
 
+let authStateChangeCallbacks: (() => void)[] = [];
+
+export const subscribeToAuthStateChange = (callback: () => void) => {
+  authStateChangeCallbacks.push(callback);
+  return () => {
+    authStateChangeCallbacks = authStateChangeCallbacks.filter(
+      (cb) => cb !== callback
+    );
+  };
+};
+
+export const triggerAuthStateChange = () => {
+  authStateChangeCallbacks.forEach((callback) => callback());
+};
+
 //const defaultUser: ZenotiTokenGuest = {
 //  authToken: '',
 //  centerId: '',
@@ -34,6 +49,14 @@ const AuthProvider = ({ children }: AuthProviderProps) => {
     removeUserProfileStore();
     setIsAuthenticated(false);
   };
+
+  useEffect(() => {
+    const unsubscribe = subscribeToAuthStateChange(() => {
+      deauthenticate();
+    });
+
+    return unsubscribe;
+  }, []);
 
   return (
     <AuthContext.Provider

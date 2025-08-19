@@ -50,7 +50,7 @@ const MultiSelectDropdown = ({
       setFilteredOptions(options);
     } else {
       const filtered = options.filter((option) =>
-        option.toLowerCase().includes(searchInput.toLowerCase()),
+        option.toLowerCase().includes(searchInput.toLowerCase())
       );
       setFilteredOptions(filtered);
     }
@@ -145,7 +145,7 @@ const styles = StyleSheet.create({
   container: {
     // padding: 12,
     paddingTop: 36,
-    paddingHorizontal:32,
+    paddingHorizontal: 32,
     height: "100%",
     gap: 8,
     width: "100%",
@@ -212,6 +212,7 @@ const styles = StyleSheet.create({
     paddingRight: 35,
     // marginVertical: 10,
     height: 40,
+    color: "#6B7280",
   },
   optionsList: {
     minHeight: 200,
@@ -229,7 +230,7 @@ const styles = StyleSheet.create({
     color: "#3A3B3C",
     fontSize: 14,
     fontWeight: 500,
-    fontFamily:FONTS.inter.medium
+    fontFamily: FONTS.inter.medium,
   },
   optionSelected: {
     // backgroundColor: "#f0f0f0",

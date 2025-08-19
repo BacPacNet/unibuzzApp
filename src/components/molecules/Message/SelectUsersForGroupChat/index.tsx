@@ -148,7 +148,7 @@ const SelectUsersForGroupChat = ({
         <TextInput
           style={{ paddingStart: 8 }}
           onChangeText={(text) => setSearchInput(text)}
-          className="border border-neutral-200 w-full   rounded-lg h-14 p-0"
+          className="border border-neutral-200 w-full text-neutral-500  rounded-lg h-14 p-0"
           placeholderTextColor="#a9a9a9"
           placeholder="Search User..."
         />

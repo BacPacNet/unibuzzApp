@@ -102,7 +102,7 @@ const ForgetPasswordOtpCheck = ({ navigation, setCurrStage }: Props) => {
             We emailed you a six-digit code to {resetEmail}. Enter the code
             below to confirm your email address.
           </Text>
-          <View className="w-full flex  mb-4">
+          <View className="w-full flex  ">
             <View>
               {/* otp  */}
               <KeyboardAvoidingView
@@ -202,21 +202,18 @@ const styles = StyleSheet.create({
     width: "100%",
     display: "flex",
     flexDirection: "column",
-    justifyContent: "space-between",
+    justifyContent: "center",
+    gap: 64,
   },
   titlemargin: {
     marginBottom: 32,
   },
-  mainContainer: {
-    display: "flex",
-    flexDirection: "column",
-    gap: 16,
-  },
+
   buttonContainer: {
     display: "flex",
     flexDirection: "column",
     gap: 16,
-    marginTop: 48,
+    // marginTop: 48,
   },
   marginTop: {
     marginTop: 32,

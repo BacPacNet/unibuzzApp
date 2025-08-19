@@ -74,7 +74,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     marginRight: 8,
     height: 28,
-    marginVertical: 8,
+    // marginVertical: 8,
   },
   primaryChip: {
     borderColor: "#6744FF",

@@ -91,7 +91,7 @@ const UserEmailChangeScreen = () => {
       return () => {
         changeHeaderShownStatus(true);
       };
-    }, []),
+    }, [])
   );
 
   const handleEmailSendCode = () => {
@@ -246,7 +246,7 @@ const UserEmailChangeScreen = () => {
                         secureTextEntry={
                           !passwordVisibility.showConfirmPassword
                         }
-                        className={`border    rounded-lg  ${errors.password ? "border-red-500" : "border-neutral-300"}`}
+                        className={`border  text-neutral-500  rounded-lg  ${errors.password ? "border-red-500" : "border-neutral-300"}`}
                         onBlur={onBlur}
                         onChangeText={(value) => onChange(value)}
                         value={value}

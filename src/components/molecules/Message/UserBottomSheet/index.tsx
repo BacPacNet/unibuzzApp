@@ -7,13 +7,18 @@ import { FlatList } from "react-native-actions-sheet";
 import { Users } from "@/types/connections";
 
 type Props = {
-  selectedUsers: Users[] | any,
-  setSelectedUsers: (users: Users | Users[] | any) => void,
-  isMultiAllowed: boolean,
-  hideBottomSheet?: () => void
+  selectedUsers: Users[] | any;
+  setSelectedUsers: (users: Users | Users[] | any) => void;
+  isMultiAllowed: boolean;
+  hideBottomSheet?: () => void;
 };
 
-export const AllUserSelectBottomSheet = ({ selectedUsers, setSelectedUsers, isMultiAllowed, hideBottomSheet }: Props) => {
+export const AllUserSelectBottomSheet = ({
+  selectedUsers,
+  setSelectedUsers,
+  isMultiAllowed,
+  hideBottomSheet,
+}: Props) => {
   const userProfileData = getUserProfileStore();
   const [searchInput, setSearchInput] = useState("");
 
@@ -28,9 +33,12 @@ export const AllUserSelectBottomSheet = ({ selectedUsers, setSelectedUsers, isMu
   const userProfiles =
     userProfilesData?.pages
       .flatMap((page) => page.users)
-      .filter((user) =>
-        user._id !== userProfileData?.users_id &&
-        !selectedUsers.some((selected:{_id: string}) => selected._id === user._id)
+      .filter(
+        (user) =>
+          user._id !== userProfileData?.users_id &&
+          !selectedUsers.some(
+            (selected: { _id: string }) => selected._id === user._id
+          )
       ) || [];
 
   const handleUserSelect = (user: Users) => {
@@ -48,7 +56,7 @@ export const AllUserSelectBottomSheet = ({ selectedUsers, setSelectedUsers, isMu
         <TextInput
           style={{ paddingStart: 8 }}
           onChangeText={setSearchInput}
-          className="border border-neutral-200 w-full rounded-lg h-14 p-0"
+          className="border border-neutral-200 w-full text-neutral-500 rounded-lg h-14 p-0"
           placeholderTextColor="#a9a9a9"
           placeholder="Search User..."
         />

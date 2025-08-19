@@ -90,7 +90,7 @@ const UserCard: React.FC<UserCardProps> = ({
           <DropdownWrapper
             position="left"
             extraLeft={10}
-            viewTopPosition={-15}
+            viewTopPosition={-40}
             renderDropdown={(closeDropdown) => (
               <TouchableOpacity
                 style={styles.dropdown}

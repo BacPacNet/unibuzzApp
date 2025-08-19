@@ -7,6 +7,8 @@ import {
   TouchableOpacityBase,
   TouchableOpacity,
   Image,
+  TouchableWithoutFeedback,
+  Keyboard,
 } from "react-native";
 import { useForm } from "react-hook-form";
 import { FormInput } from "@/components/atoms/FormInput";
@@ -14,7 +16,8 @@ import ReusableButton from "@/components/atoms/ReusableButton";
 import { launchImageLibrary } from "react-native-image-picker";
 import { ImageAsset } from "@/hooks/useImageUpload";
 import { useCreateReportBug } from "@/services/reportBug";
-
+import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
+import { SafeScreen } from "@/components/template";
 const BugReportScreen = () => {
   const {
     control,
@@ -42,73 +45,89 @@ const BugReportScreen = () => {
   };
 
   return (
-    <ScrollView contentContainerStyle={styles.container}>
-      <Text style={styles.title}>Report a Bug</Text>
-      <Text style={styles.subtitle}>
-        Help us improve by reporting any bugs you encounter.
-      </Text>
+    <SafeScreen>
+      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+        <KeyboardAwareScrollView
+          enableOnAndroid={true}
+          extraScrollHeight={20}
+          keyboardShouldPersistTaps="handled"
+          contentContainerStyle={styles.container}
+        >
+          <Text style={styles.title}>Report a Bug</Text>
+          <Text style={styles.subtitle}>
+            Help us improve by reporting any bugs you encounter.
+          </Text>
 
-      <View style={styles.formContainer}>
-        <FormInput
-          label="Description of the Bug *"
-          placeholder="Type a message here..."
-          name="description"
-          control={control}
-          isError={!!errors.description}
-          errorMessage={errors.description ? "description  is required" : ""}
-          isTextArea={true}
-          rules={{
-            required: {
-              value: true,
-              message: "description is required",
-            },
-          }}
-        />
-        <FormInput
-          label="Steps to Reproduce (optional)"
-          placeholder="Type a message here..."
-          name="steps"
-          control={control}
-          isError={!!errors.steps}
-          errorMessage={errors.steps ? "steps To Reproduce  is required" : ""}
-          isTextArea={true}
-        />
+          <View style={styles.formContainer}>
+            <FormInput
+              label="Description of the Bug *"
+              placeholder="Type a message here..."
+              name="description"
+              control={control}
+              isError={!!errors.description}
+              errorMessage={
+                errors.description ? "description  is required" : ""
+              }
+              isTextArea={true}
+              rules={{
+                required: {
+                  value: true,
+                  message: "description is required",
+                },
+              }}
+            />
+            <FormInput
+              label="Steps to Reproduce (optional)"
+              placeholder="Type a message here..."
+              name="steps"
+              control={control}
+              isError={!!errors.steps}
+              errorMessage={
+                errors.steps ? "steps To Reproduce  is required" : ""
+              }
+              isTextArea={true}
+            />
 
-        <View style={styles.Attactcontainer}>
-          <Text style={styles.label}>Attach a Screenshot (optional)</Text>
-          <TouchableOpacity onPress={handleImagePick} style={styles.button}>
-            <Text style={styles.buttonText}>Choose File</Text>
-          </TouchableOpacity>
-          {imageToUpload && (
-            <Image source={{ uri: imageToUpload?.uri }} style={styles.image} />
-          )}
-        </View>
+            <View style={styles.Attactcontainer}>
+              <Text style={styles.label}>Attach a Screenshot (optional)</Text>
+              <TouchableOpacity onPress={handleImagePick} style={styles.button}>
+                <Text style={styles.buttonText}>Choose File</Text>
+              </TouchableOpacity>
+              {imageToUpload && (
+                <Image
+                  source={{ uri: imageToUpload?.uri }}
+                  style={styles.image}
+                />
+              )}
+            </View>
 
-        <FormInput
-          isLabelShown={true}
-          label="Your Email (optional)"
-          placeholder="john.dowry@example.com"
-          name="email"
-          control={control}
-          keyboardType="email-address"
-          isError={!!errors.email}
-          errorMessage={errors.email?.message?.toString()}
-        />
-      </View>
+            <FormInput
+              isLabelShown={true}
+              label="Your Email (optional)"
+              placeholder="john.dowry@example.com"
+              name="email"
+              control={control}
+              keyboardType="email-address"
+              isError={!!errors.email}
+              errorMessage={errors.email?.message?.toString()}
+            />
+          </View>
 
-      <Text style={styles.disclaimer}>
-        By submitting this form, you agree to allow UniBuzz to contact you
-        regarding this bug report. Please refer to our Privacy Policy for
-        details.
-      </Text>
+          <Text style={styles.disclaimer}>
+            By submitting this form, you agree to allow UniBuzz to contact you
+            regarding this bug report. Please refer to our Privacy Policy for
+            details.
+          </Text>
 
-      <ReusableButton
-        onPress={handleSubmit(onSubmit)}
-        buttonText="Submit"
-        variant="primary"
-        height="large"
-      />
-    </ScrollView>
+          <ReusableButton
+            onPress={handleSubmit(onSubmit)}
+            buttonText="Submit"
+            variant="primary"
+            height="large"
+          />
+        </KeyboardAwareScrollView>
+      </TouchableWithoutFeedback>
+    </SafeScreen>
   );
 };
 

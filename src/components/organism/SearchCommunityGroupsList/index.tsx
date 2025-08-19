@@ -1,6 +1,8 @@
 // import UniversityLogoPlaceHolder from "@/assets/unibuzz_rounded.svg";
 import UniversityLogoPlaceHolder from "@/assets/avatarPlaceholder.png";
+import { CommunityGroupTypeEnum } from "@/types/CommunityGroup";
 import React, { useCallback, useState } from "react";
+import OfficailLogoPlaceHolder from "@/assets/community/official-logo.svg";
 import {
   View,
   Text,
@@ -26,22 +28,41 @@ const SearchCommunityGroupList: React.FC<{
     const [imageError, setImageError] = useState(false);
 
     const imageUrl = item?.communityGroupLogoUrl?.imageUrl;
+    const isGroupOfficial =
+      item?.communityGroupType === CommunityGroupTypeEnum.OFFICIAL;
 
     return (
       <TouchableOpacity
         onPress={() => handleNavigateToGroup(item)}
         style={styles.communityContainer}
       >
-        <View style={styles.innerContainer}>
-          <Image
-            source={
-              !imageUrl || imageError
-                ? UniversityLogoPlaceHolder
-                : { uri: imageUrl }
-            }
-            style={styles.communityImage}
-            onError={() => setImageError(true)}
-          />
+        <View style={[styles.innerContainer]}>
+          <View
+            style={[
+              styles.imageContainer,
+              isGroupOfficial && styles.officialBorder,
+            ]}
+          >
+            <Image
+              source={
+                !imageUrl || imageError
+                  ? UniversityLogoPlaceHolder
+                  : { uri: imageUrl }
+              }
+              style={styles.communityImage}
+              onError={() => setImageError(true)}
+            />
+            {isGroupOfficial && (
+              <View style={styles.badgeWrapper}>
+                <OfficailLogoPlaceHolder
+                  width={12}
+                  height={12}
+                  style={styles.badgeImage}
+                />
+              </View>
+            )}
+          </View>
+
           <View style={styles.textContainer}>
             <Text style={styles.communityName}>{item?.title}</Text>
           </View>
@@ -110,5 +131,37 @@ const styles = StyleSheet.create({
     color: "#6B7280",
     fontWeight: "500",
     lineHeight: 16,
+  },
+  officialBorder: {
+    borderWidth: 2,
+    borderColor: "#6647ff",
+  },
+  imageContainer: {
+    position: "relative",
+    width: 48,
+    height: 48,
+    justifyContent: "center",
+    alignItems: "center",
+    borderRadius: 360,
+  },
+  badgeWrapper: {
+    position: "absolute",
+    bottom: -10,
+    right: 12,
+    width: 20,
+    height: 20,
+    borderRadius: 10,
+    backgroundColor: "#fff",
+    borderWidth: 2,
+    borderColor: "#6647ff",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+
+  badgeImage: {
+    width: 12,
+    height: 12,
+    borderRadius: 6,
+    objectFit: "contain",
   },
 });

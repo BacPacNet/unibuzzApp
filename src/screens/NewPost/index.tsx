@@ -56,7 +56,7 @@ const NewPost = ({ navigation }: any) => {
   const [images, setImages] = useState<ImageAsset[]>([]);
   const [files, setFiles] = useState<fileType[]>([]);
   const editor = useEditorBridge({
-    autofocus: false,
+    autofocus: true,
     avoidIosKeyboard: true,
     // initialContent: "test",
     bridgeExtensions: [
@@ -301,7 +301,7 @@ const NewPost = ({ navigation }: any) => {
             </View>
           )}
 
-          <View className="flex flex-row gap-2 items-center p-2">
+          <View className="flex flex-row gap-2 items-center px-2">
             <Toolbar editor={editor} />
           </View>
         </View>
@@ -315,6 +315,7 @@ export default NewPost;
 const styles = StyleSheet.create({
   editorHeight: {
     flex: 1,
+
     marginBottom: 20,
     // height: 200,
     paddingHorizontal: 8,

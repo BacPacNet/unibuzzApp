@@ -1,18 +1,71 @@
 import CollapsibleMultiSelect from "@/components/atoms/CollapsibleMultiSelect";
 import { useCommunityFilterContext } from "@/context/CommunityFilterProvider/CommunityFilterProvider";
-import { GroupAccess, GroupLabel, GroupType, subCategories } from "@/types/CommunityFilter";
+import {
+  GroupAccess,
+  GroupLabel,
+  GroupType,
+  subCategories,
+} from "@/types/CommunityFilter";
 import { useFocusEffect } from "@react-navigation/native";
 import { useCallback, useEffect, useState } from "react";
-import { View } from "react-native";
+import { StyleSheet, TouchableOpacity, View } from "react-native";
 import { ScrollView } from "react-native-actions-sheet";
-const SearchCommunityFilterBottomSheet = () => {
-  const { selectedFiltersMain, setSelectedFiltersMain,selectedTypeMain,setSelectedTypeMain,setSelectedLabelMain } =
-    useCommunityFilterContext();
+import SelectedChip from "../../CreateNewGroup/SelectedChip";
+import { Refresh, RefreshCircle } from "iconoir-react-native";
+const SearchCommunityFilterBottomSheet = ({
+  onClose,
+}: {
+  onClose?: () => void;
+}) => {
+  const {
+    selectedFiltersMain,
+    setSelectedFiltersMain,
+    selectedTypeMain,
+    setSelectedTypeMain,
+    setSelectedLabelMain,
+  } = useCommunityFilterContext();
   const [selectedFilters, setSelectedFilters] = useState<
     Record<string, string[]>
   >({});
-  const [selectedType, setSelectedType] = useState<string[]>([])
-  const [selectedLabel, setSelectedLabel] = useState<string[]>([])
+  const [selectedType, setSelectedType] = useState<string[]>([]);
+  const [selectedLabel, setSelectedLabel] = useState<string[]>([]);
+
+  const allSelectedItems = [
+    ...selectedType,
+    ...selectedLabel,
+    ...Object.values(selectedFilters).flat(),
+  ];
+
+  const handleRemoveItem = (itemToRemove: string) => {
+    if (selectedType.includes(itemToRemove)) {
+      setSelectedType((prev) => prev.filter((item) => item !== itemToRemove));
+      return;
+    }
+
+    if (selectedLabel.includes(itemToRemove)) {
+      setSelectedLabel((prev) => prev.filter((item) => item !== itemToRemove));
+      return;
+    }
+
+    for (const [category, items] of Object.entries(selectedFilters)) {
+      if (items.includes(itemToRemove)) {
+        setSelectedFilters((prev) => {
+          const updatedItems = prev[category].filter(
+            (item) => item !== itemToRemove
+          );
+          if (updatedItems.length === 0) {
+            const { [category]: _, ...rest } = prev;
+            return rest;
+          }
+          return {
+            ...prev,
+            [category]: updatedItems,
+          };
+        });
+        return;
+      }
+    }
+  };
 
   useEffect(() => {
     if (Object.keys(selectedFilters)?.length >= 0) {
@@ -22,38 +75,44 @@ const SearchCommunityFilterBottomSheet = () => {
 
   useEffect(() => {
     if (selectedType?.length >= 0) {
-        setSelectedTypeMain(selectedType);
+      setSelectedTypeMain(selectedType);
     }
   }, [selectedType]);
   useEffect(() => {
     if (selectedLabel?.length >= 0) {
-        setSelectedLabelMain(selectedLabel);
+      setSelectedLabelMain(selectedLabel);
     }
   }, [selectedLabel]);
 
-  
   useFocusEffect(
     useCallback(() => {
       setSelectedFilters(selectedFiltersMain);
-      setSelectedType(selectedTypeMain)
-    }, []),
+      setSelectedType(selectedTypeMain);
+    }, [])
   );
 
-
   const handleSelectLabel = (label: string) => {
-    setSelectedLabel((prev) => (prev.includes(label) ? prev.filter((item) => item !== label) : [...prev, label]))
-  }
+    setSelectedLabel((prev) =>
+      prev.includes(label)
+        ? prev.filter((item) => item !== label)
+        : [...prev, label]
+    );
+  };
 
   const handleSelectTypes = (type: string) => {
-    setSelectedType((prev) => (prev.includes(type) ? prev.filter((item) => item !== type) : [...prev, type]))
-  }
-  
+    setSelectedType((prev) =>
+      prev.includes(type)
+        ? prev.filter((item) => item !== type)
+        : [...prev, type]
+    );
+  };
+
   const handleSelect = (category: string, option: string) => {
     setSelectedFilters((prev: any) => {
       const categoryFilters = prev[category] || [];
       if (categoryFilters.includes(option)) {
         const updatedFilters = categoryFilters.filter(
-          (item: any) => item !== option,
+          (item: any) => item !== option
         );
         if (updatedFilters.length === 0) {
           const { [category]: _, ...rest } = prev;
@@ -96,28 +155,46 @@ const SearchCommunityFilterBottomSheet = () => {
           flexShrink: 1,
         }}
       >
-          <CollapsibleMultiSelect
+        <View style={styles.selectedItemsContainer}>
+          {allSelectedItems?.length > 0 && (
+            <TouchableOpacity
+              onPress={() => {
+                setSelectedFilters({});
+                setSelectedType([]);
+                setSelectedLabel([]);
+                onClose?.();
+              }}
+              style={styles.refreshButton}
+            >
+              <Refresh width={20} height={20} color={"#FFF"} />
+            </TouchableOpacity>
+          )}
+
+          <SelectedChip
+            variant="border"
+            selectedItem={allSelectedItems}
+            onRemove={handleRemoveItem}
+          />
+        </View>
+        <CollapsibleMultiSelect
           title="Group Access"
           options={GroupAccess}
-          selectedOptions={ selectedType}
-          onSelect={(value: string) => handleSelectTypes( value)}
-        
+          selectedOptions={selectedType}
+          onSelect={(value: string) => handleSelectTypes(value)}
         />
-          <CollapsibleMultiSelect
+        <CollapsibleMultiSelect
           title="Group Type"
           options={GroupType}
-          selectedOptions={ selectedType}
-          onSelect={(value: string) => handleSelectTypes( value)}
-        
+          selectedOptions={selectedType}
+          onSelect={(value: string) => handleSelectTypes(value)}
         />
-          <CollapsibleMultiSelect
+        <CollapsibleMultiSelect
           title="Group Label"
           options={GroupLabel}
-          selectedOptions={ selectedLabel}
-          onSelect={(value: string) => handleSelectLabel( value)}
-        
+          selectedOptions={selectedLabel}
+          onSelect={(value: string) => handleSelectLabel(value)}
         />
-         <CollapsibleMultiSelect
+        <CollapsibleMultiSelect
           title="Academic"
           options={subCategories["Academic"]}
           selectedOptions={selectedFilters["Academic"] || []}
@@ -130,51 +207,41 @@ const SearchCommunityFilterBottomSheet = () => {
           title="Educational"
           options={subCategories["Educational"]}
           selectedOptions={selectedFilters["Educational"] || []}
-          onSelect={(value: string) =>
-            handleSelect("Educational", value)
-          }
+          onSelect={(value: string) => handleSelect("Educational", value)}
           handleSelectAll={() =>
-            handleSelectAll(
-              "Educational",
-              subCategories["Educational"],
-            )
+            handleSelectAll("Educational", subCategories["Educational"])
           }
         />
         <CollapsibleMultiSelect
           title="Interest"
           options={subCategories["Interest"]}
           selectedOptions={selectedFilters["Interest"] || []}
-          onSelect={(value: string) =>
-                handleSelect("Interest", value)
-          }
+          onSelect={(value: string) => handleSelect("Interest", value)}
           handleSelectAll={() =>
-            handleSelectAll(
-              "Interest",
-              subCategories["Interest"],
-            )
+            handleSelectAll("Interest", subCategories["Interest"])
           }
         />
         <CollapsibleMultiSelect
           title="Events & Activities"
           options={subCategories["Events & Activities"]}
           selectedOptions={selectedFilters["Events & Activities"] || []}
-          onSelect={(value: string) => handleSelect("Events & Activities", value)}
+          onSelect={(value: string) =>
+            handleSelect("Events & Activities", value)
+          }
           handleSelectAll={() =>
-            handleSelectAll("Events & Activities", subCategories["Events & Activities"])
+            handleSelectAll(
+              "Events & Activities",
+              subCategories["Events & Activities"]
+            )
           }
         />
         <CollapsibleMultiSelect
           title="Personal Growth"
           options={subCategories["Personal Growth"]}
           selectedOptions={selectedFilters["Personal Growth"] || []}
-          onSelect={(value: string) =>
-            handleSelect("Personal Growth", value)
-          }
+          onSelect={(value: string) => handleSelect("Personal Growth", value)}
           handleSelectAll={() =>
-            handleSelectAll(
-              "Personal Growth",
-              subCategories["Personal Growth"],
-            )
+            handleSelectAll("Personal Growth", subCategories["Personal Growth"])
           }
         />
         <CollapsibleMultiSelect
@@ -184,9 +251,8 @@ const SearchCommunityFilterBottomSheet = () => {
           onSelect={(value: string) =>
             handleSelect("Advocacy and Awareness", value)
           }
-     
         />
-     
+
         <CollapsibleMultiSelect
           title="Professional Development"
           options={subCategories["Professional Development"]}
@@ -209,3 +275,23 @@ const SearchCommunityFilterBottomSheet = () => {
 };
 
 export default SearchCommunityFilterBottomSheet;
+
+const styles = StyleSheet.create({
+  selectedItemsContainer: {
+    paddingTop: 16,
+    paddingHorizontal: 16,
+    display: "flex",
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
+  },
+  refreshButton: {
+    backgroundColor: "#6744FF",
+    borderRadius: 40,
+    padding: 6,
+    width: 32,
+    height: 32,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+});

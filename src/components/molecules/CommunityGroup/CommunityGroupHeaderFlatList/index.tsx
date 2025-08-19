@@ -186,7 +186,8 @@ const FlatListCommunityHeader: React.FC<Props> = ({
             <View>
               <DropdownWrapper
                 position="left"
-                extraLeft={100}
+                extraLeft={70}
+                viewTopPosition={-40}
                 renderDropdown={() => (
                   <CommunityGroupSettingPopMenu
                     isPending={groupStatus === status.pending}
@@ -220,12 +221,6 @@ const FlatListCommunityHeader: React.FC<Props> = ({
         </View>
 
         <Text style={styles.description}>{communityGroups?.description}</Text>
-
-        {/* <TouchableOpacity onPress={() => membersBottomSheet.current?.show()}>
-          <Text style={styles.members}>
-            {totalCommunityGroupMember} members
-          </Text>
-        </TouchableOpacity> */}
 
         <View style={styles.buttonContainer}>
           {!isUserJoinedCommunityGroup && (

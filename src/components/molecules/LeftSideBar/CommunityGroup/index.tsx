@@ -22,12 +22,14 @@ type Props = {
   data: any;
   currSelectedGroup: Community | null;
   setCurrSelectedGroup: (value: Community) => void;
+  isCommunityGroup: boolean;
 };
 const GroupSelectors = ({
   currSelectedGroup,
   setCurrSelectedGroup,
   communityLogo,
   data,
+  isCommunityGroup,
 }: Props) => {
   const navigation = useNavigation<NavigationProp>();
 
@@ -36,6 +38,7 @@ const GroupSelectors = ({
     navigation.navigate("CommunityGroup", {
       communityId: data?.communityId,
       communityGroupId: data?._id,
+      from: isCommunityGroup ? "CommunityGroup" : "Community",
     });
   };
 
@@ -46,7 +49,10 @@ const GroupSelectors = ({
   return (
     <TouchableOpacity
       onPress={handleGroupNavigate}
-      style={[styles.container, isSelected && styles.selected]}
+      style={[
+        styles.container,
+        isSelected && isCommunityGroup && styles.selected,
+      ]}
     >
       <View style={styles.innerContainer}>
         <View style={styles.imageContainer}>

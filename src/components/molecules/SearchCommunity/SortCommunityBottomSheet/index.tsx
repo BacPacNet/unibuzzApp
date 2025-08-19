@@ -55,7 +55,7 @@ const SortCommunityBottomSheet = ({
           <TouchableOpacity
             key={value}
             onPress={() => handleSelect(value)}
-            className={`flex flex-row items-center gap-2 p-4 border-b border-neutral-200 rounded-lg mb-2 ${
+            className={`flex flex-row items-center gap-2 py-4 border-b border-neutral-200 rounded-lg mb-2 ${
               sort === value ? "bg-gray-200" : "bg-transparent"
             }`}
             activeOpacity={0.7}
@@ -88,9 +88,9 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontFamily: FONTS.inter.semiBold,
     color: "#3A3B3C",
+    marginLeft: 8,
   },
   container: {
-    paddingHorizontal: 32,
     paddingVertical: 16,
     display: "flex",
     justifyContent: "space-between",

@@ -13,6 +13,8 @@ import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { RootStackParamList } from "@/types/navigation";
 import useCustomBackHandler from "@/hooks/useCustomBackHandler";
+import QuiteHere from "@/assets/placeHolder/quiteHere.svg";
+import EmptyStateCard from "@/components/molecules/EmptyStateCard";
 
 type NavigationProp = StackNavigationProp<RootStackParamList, "SinglePost">;
 
@@ -70,8 +72,6 @@ const Profile = ({ route }: ProfileProps) => {
   }, [queryClient, userId]);
 
   const handleBack = () => {
-    console.log("sss", from);
-
     if (from === screenName.notifications) {
       navigation.navigate("Notifications");
     }
@@ -106,9 +106,18 @@ const Profile = ({ route }: ProfileProps) => {
     if (isFetching) {
       return <LoadingState />;
     }
+
     return (
-      <View style={styles.emptyContainer}>
-        <Text className="text-neutral-500">No Result Found</Text>
+      <View className="flex-1 justify-center items-center">
+        {userSelfPostData && userSelfPostData.length < 1 && (
+          <EmptyStateCard
+            imageWidth={226}
+            imageHeight={158}
+            SvgComponent={QuiteHere}
+            title="It’s a little quiet in here..."
+            description="Your timeline’s looking a little quiet. Share a post to let others know what you’re up to or what matters to you!"
+          />
+        )}
       </View>
     );
   };

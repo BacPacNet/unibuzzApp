@@ -55,7 +55,7 @@ function LoginScreen() {
         >
           <View
             style={styles.container}
-            className="flex-1 p-4 bg-white justify-between h-full"
+            className="flex-1 p-4 bg-white justify-center h-full"
           >
             <View></View>
             <View>
@@ -65,7 +65,7 @@ function LoginScreen() {
                 <View style={styles.inputContainer}>
                   <FormInput
                     isLabelShown={true}
-                    label="  Email Address/Username"
+                    label="Email Address/Username"
                     placeholder="john.dowry@example.com"
                     name="email"
                     control={control}
@@ -114,7 +114,7 @@ function LoginScreen() {
             </View>
             {/* </Card> */}
 
-            <View className="flex gap-4">
+            <View className="flex gap-4 ">
               <ReusableButton
                 onPress={handleSubmitLogin(onSubmit)}
                 buttonText="Log in"
@@ -156,6 +156,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "white",
+    gap: 64,
   },
   formContainer: {
     marginTop: 32,
@@ -169,11 +170,11 @@ const styles = StyleSheet.create({
     gap: 16,
   },
   passwordContainer: {
-    marginBottom: 16,
+    // marginBottom: 16,
   },
 
   forgotPasswordContainer: {
-    marginBottom: 16,
+    // marginBottom: 16,
   },
   forgotPasswordText: {
     fontSize: 14,

@@ -1,4 +1,4 @@
-import { View, KeyboardAvoidingView, Platform } from "react-native";
+import { View, KeyboardAvoidingView, Platform, StyleSheet } from "react-native";
 
 import { useState } from "react";
 
@@ -46,7 +46,7 @@ function ForgetPasswordScreen({ route }: any) {
         behavior={Platform.OS === "ios" ? "padding" : "height"}
         className="flex-1"
       >
-        <View className="flex-1 p-4 bg-white justify-center">
+        <View style={styles.main} className="flex-1  bg-white justify-center">
           {currStage === ForgetPasswordStep.ResetPassword ? (
             <SetResetPassword
               navigation={navigation}
@@ -73,3 +73,9 @@ function ForgetPasswordScreen({ route }: any) {
 }
 
 export default ForgetPasswordScreen;
+
+const styles = StyleSheet.create({
+  main: {
+    padding: 32,
+  },
+});

@@ -1,3 +1,4 @@
+import { FONTS } from "@/constants/fonts";
 import { useDeleteCommunityGroup } from "@/services/community-group";
 import { useGetFilteredSubscribedCommunities } from "@/services/university-community";
 import { RootStackParamList } from "@/types/navigation";
@@ -24,10 +25,7 @@ type CommunityGroupSettingPopMenuProps = {
   communityId: string;
 };
 
-
 type NavigationProp = StackNavigationProp<RootStackParamList, "CommunityGroup">;
-
-
 
 const CommunityGroupSettingPopMenu: React.FC<
   CommunityGroupSettingPopMenuProps
@@ -37,39 +35,36 @@ const CommunityGroupSettingPopMenu: React.FC<
   leaveCommunityGroup,
   handleNavigateToEditCommunityGroupScreen,
   communityGroupId,
-  communityId
+  communityId,
 }) => {
-    const { navigate } = useNavigation<NavigationProp>();
-    const { mutate: deleteCommunityGroup, isPending: isDeleteCommunityGroupPending } = useDeleteCommunityGroup()
-    const {
-        mutate,
-   
-        
-      } = useGetFilteredSubscribedCommunities(communityId);
-    const handleDeleteCommunityGroup = () => {
+  const { navigate } = useNavigation<NavigationProp>();
+  const {
+    mutate: deleteCommunityGroup,
+    isPending: isDeleteCommunityGroupPending,
+  } = useDeleteCommunityGroup();
+  const { mutate } = useGetFilteredSubscribedCommunities(communityId);
+  const handleDeleteCommunityGroup = () => {
+    const data = {
+      selectedType: [],
+      selectedFilters: [],
+      sort: "",
+    };
 
-        const data = {
-            selectedType: [],
-            selectedFilters: [],
-            sort: "",
-          };
+    deleteCommunityGroup(communityGroupId as string, {
+      onSuccess: () => {
+        mutate(data);
+        navigate("manageGroupStack", {
+          screen: "SearchCommunityGroupScreen",
 
-        deleteCommunityGroup(communityGroupId as string,{
-         
-            onSuccess:()=>{
-                mutate(data)
-                navigate("manageGroupStack", {
-                    screen: "SearchCommunityGroupScreen",
-          
-                    params: { communityId: communityId },
-                  });
-            }
-        })
-    
-        // router.push(`/community/${communityId}`)
-      }
-  
-    return (
+          params: { communityId: communityId },
+        });
+      },
+    });
+
+    // router.push(`/community/${communityId}`)
+  };
+
+  return (
     <View style={styles.container}>
       {isGroupAdmin && (
         <TouchableOpacity
@@ -77,32 +72,35 @@ const CommunityGroupSettingPopMenu: React.FC<
           onPress={handleNavigateToEditCommunityGroupScreen}
         >
           <Edit height={16} width={16} color={"#6744FF"} />
-          <Text className="text-neutral-700"> Edit Group</Text>
+          <Text style={styles.text}> Edit Group</Text>
           {isPending && (
-            <WarningCircleSolid width={16} height={16} color="#F59E0B" />
+            <WarningCircleSolid
+              width={16}
+              height={16}
+              color="#F59E0B"
+              strokeWidth={2}
+            />
           )}
         </TouchableOpacity>
       )}
 
-{
-    isGroupAdmin ?
-    <TouchableOpacity
-    onPress={handleDeleteCommunityGroup}
-    style={styles.textContainer}
-  >
-    <LogIn height={16} width={16} color={"#EF4444"} />
-    <Text className="text-neutral-700">Delete Group</Text>
-  </TouchableOpacity>
-   :
-  <TouchableOpacity
-  onPress={leaveCommunityGroup}
-  style={styles.textContainer}
->
-  <LogIn height={16} width={16} color={"#EF4444"} />
-  <Text className="text-neutral-700"> Leave</Text>
-</TouchableOpacity>
-}
-    
+      {isGroupAdmin ? (
+        <TouchableOpacity
+          onPress={handleDeleteCommunityGroup}
+          style={styles.textContainer}
+        >
+          <LogIn height={16} width={16} color={"#EF4444"} strokeWidth={2} />
+          <Text style={styles.text}>Delete Group</Text>
+        </TouchableOpacity>
+      ) : (
+        <TouchableOpacity
+          onPress={leaveCommunityGroup}
+          style={styles.textContainer}
+        >
+          <LogIn height={16} width={16} color={"#EF4444"} strokeWidth={2} />
+          <Text style={styles.text}> Leave</Text>
+        </TouchableOpacity>
+      )}
     </View>
   );
 };
@@ -122,5 +120,10 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     gap: 4,
+  },
+  text: {
+    color: "#3A3B3C",
+    fontFamily: FONTS.inter.medium,
+    fontSize: 12,
   },
 });

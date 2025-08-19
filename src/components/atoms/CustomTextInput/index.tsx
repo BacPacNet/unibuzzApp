@@ -23,7 +23,7 @@ const CustomTextInput: React.FC<CustomTextInputProps> = ({
 }) => {
   return (
     <TextInput
-      className={`border rounded-lg  p-3 text-base ${
+      className={`border rounded-lg text-neutral-500 p-3 text-base ${
         error ? "border-red-500" : "border-neutral-300"
       } ${inputClassName}`}
       placeholder={placeholder}

@@ -13,10 +13,13 @@ const SidebarMenuSectionThree = () => {
   const { deauthenticate } = useAuth();
   const { mutateAsync: deletePushNotificationToken } =
     useHandleDeletePushNotificationToken();
-  const handleLogout = async() => {
-   await deletePushNotificationToken();
-    deauthenticate();
-    
+  const handleLogout = async () => {
+    try {
+      await deletePushNotificationToken();
+      deauthenticate();
+    } catch {
+      deauthenticate();
+    }
   };
   return (
     <View style={styles.container}>

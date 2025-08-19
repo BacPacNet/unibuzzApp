@@ -53,7 +53,7 @@ const SingleChat = ({ setCurrTab, setSelectedChat }: Props) => {
         <View className="relative">
           <TextInput
             placeholder="Search People"
-            className="border border-neutral-200 p-2  rounded-lg"
+            className="border border-neutral-200 p-2 text-neutral-500 rounded-lg"
             style={{ paddingEnd: 40 }}
             onChangeText={(text) => setSearchInput(text)}
           />

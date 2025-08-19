@@ -4,16 +4,13 @@ import ReusableButton from "@/components/atoms/ReusableButton";
 import { NewGroupUserListItem } from "@/components/molecules/CreateNewGroup/UserList";
 import MessageNewGroupFormContainer from "@/components/molecules/Message/MessageTopBar/MessageNewGroupFormContainer";
 import { ImageAsset } from "@/hooks/useImageUpload";
-import {
-
-  useEditGroupChat,
-} from "@/services/Messages";
+import { useEditGroupChat } from "@/services/Messages";
 import { useUploadToS3 } from "@/services/upload";
 import { useUsersProfileForConnections } from "@/services/users";
 import { getUserProfileStore } from "@/storage/user";
 import { defaultBottomSheetSnapPoints } from "@/types/constant";
 import { UPLOAD_CONTEXT } from "@/types/uploads";
-import {  User } from "iconoir-react-native";
+import { User } from "iconoir-react-native";
 import { useRef, useState } from "react";
 import {
   View,
@@ -194,7 +191,7 @@ export default function EditChatScreen({ route }: any) {
             <TextInput
               style={{ paddingStart: 8 }}
               onChangeText={(text) => setSearchInput(text)}
-              className="border border-neutral-200 w-full   rounded-lg h-14 p-0"
+              className="border border-neutral-200 w-full text-neutral-500  rounded-lg h-14 p-0"
               placeholderTextColor="#a9a9a9"
               placeholder="Search User..."
             />
@@ -269,7 +266,7 @@ const styles = StyleSheet.create({
   },
   required: {
     color: "#EF4444",
-marginBottom:16,
+    marginBottom: 16,
     fontSize: 12,
   },
 });

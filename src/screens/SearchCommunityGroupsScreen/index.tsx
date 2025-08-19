@@ -9,7 +9,9 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import { Filter, Search, SortUp } from "iconoir-react-native";
+import { Search, SortUp } from "iconoir-react-native";
+import FilterIcon from "@/assets/icons/filter.svg";
+import SortIcon from "@/assets/icons/sort.svg";
 import {
   useGetFilteredSubscribedCommunities,
   useGetSubscribedCommunities,
@@ -27,6 +29,7 @@ import SortCommunityBottomSheet from "@/components/molecules/SearchCommunity/Sor
 import { getUserProfileStore } from "@/storage/user";
 import { Community } from "@/types/Community";
 import { Toast } from "react-native-toast-notifications";
+import { CommunityGroupTypeEnum } from "@/types/CommunityGroup";
 
 type NavigationProp = StackNavigationProp<
   RootStackParamList,
@@ -157,7 +160,7 @@ const SearchCommunityGroupScreen = () => {
             value={searchQuery}
             onChangeText={setSearchQuery}
             placeholder="Search Group"
-            className="border border-neutral-200 px-2  rounded-lg"
+            className="border border-neutral-200 px-2 text-neutral-500 rounded-lg"
             style={styles.searchInput}
           />
           <Search
@@ -171,13 +174,7 @@ const SearchCommunityGroupScreen = () => {
           onPress={() => filterBottomSheet.current?.show()}
           style={styles.iconContainer}
         >
-          <Filter
-            width={24}
-            height={24}
-            color={"#6744FF"}
-            fill={isFilterApplied ? "#6744FF" : "#F3F2FF"}
-            strokeWidth={2}
-          />
+          <FilterIcon width={40} height={40} />
           {isFilterApplied && <Text style={styles.dot}>.</Text>}
         </TouchableOpacity>
         <TouchableOpacity
@@ -185,7 +182,7 @@ const SearchCommunityGroupScreen = () => {
           className="  bg-secondary rounded-lg flex justify-center items-center border border-[#E9E8FF]"
           style={styles.iconContainer}
         >
-          <SortUp width={24} height={24} color={"#6744FF"} strokeWidth={2} />
+          <SortIcon width={40} height={40} />
           {sort?.length > 0 && <Text style={styles.dot}>.</Text>}
         </TouchableOpacity>
       </View>
@@ -231,7 +228,9 @@ const SearchCommunityGroupScreen = () => {
         // snapPoints={[70, 100]}
         containerStyle={styles.actionSheetContainer}
       >
-        <SearchCommunityFilterBottomSheet />
+        <SearchCommunityFilterBottomSheet
+          onClose={() => filterBottomSheet.current?.hide()}
+        />
       </ActionSheet>
     </ScrollView>
   );

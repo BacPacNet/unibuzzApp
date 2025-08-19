@@ -20,11 +20,11 @@ const ImageGridLayout = ({ imagesData }: Props) => {
   const [pdfUrl, setPdfUrl] = useState("");
 
   const imageItems = imagesData.filter((item) =>
-    imageMimeTypes.includes(getMimeTypeFromUrl(item.imageUrl)),
+    imageMimeTypes.includes(getMimeTypeFromUrl(item.imageUrl))
   );
 
   const fileItems = imagesData.filter(
-    (item) => !imageMimeTypes.includes(getMimeTypeFromUrl(item.imageUrl)),
+    (item) => !imageMimeTypes.includes(getMimeTypeFromUrl(item.imageUrl))
   );
   const handleImageClick = (index: number) => {
     setPhotoIndex(index);
@@ -158,7 +158,7 @@ const ImageGridLayout = ({ imagesData }: Props) => {
     }
   };
 
-  if (imagesData?.length == 0 ) {
+  if (imagesData?.length == 0) {
     return;
   }
 
@@ -171,7 +171,7 @@ const ImageGridLayout = ({ imagesData }: Props) => {
           visible={isOpen}
           onRequestClose={() => setIsOpen(false)}
           FooterComponent={({ imageIndex }) => (
-            <View className="flex items-center justify-center">
+            <View className="flex items-center justify-center pb-4">
               <Text className="text-white">
                 {imageIndex + 1}/{formattedImages?.length}
               </Text>
@@ -213,7 +213,7 @@ const ImageGridLayout = ({ imagesData }: Props) => {
                 style={{ flex: 1 }}
               >
                 {decodeURIComponent(
-                  item.imageUrl.split("/").pop() || "Unknown File",
+                  item.imageUrl.split("/").pop() || "Unknown File"
                 )}
               </Text>
             </TouchableOpacity>
@@ -221,7 +221,13 @@ const ImageGridLayout = ({ imagesData }: Props) => {
         </View>
       )}
 
-      {isPdfOpen && <PDFModal visible={isPdfOpen} onClose={() => setIsPdfOpen(false)} pdfUrl={pdfUrl} />}
+      {isPdfOpen && (
+        <PDFModal
+          visible={isPdfOpen}
+          onClose={() => setIsPdfOpen(false)}
+          pdfUrl={pdfUrl}
+        />
+      )}
     </View>
   );
 };

@@ -1,5 +1,6 @@
+import { FONTS } from "@/constants/fonts";
 import React from "react";
-import { View, Text, TouchableOpacity } from "react-native";
+import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 
 type Props = {
   setCurrTab: (value: string) => void;
@@ -17,19 +18,23 @@ const MessageTopBar = ({
   unreadChatsCount,
 }: Props) => {
   return (
-    <View className=" border-b border-neutral-200 bg-white">
+    <View
+      style={styles.container}
+      className=" border-b border-neutral-200 bg-white "
+    >
       <View className="flex flex-row items-center justify-between ">
         <TouchableOpacity
           onPress={() => {
             setCurrTab("Inbox");
             setSelectedChat(undefined);
           }}
-          className={`flex flex-row items-center ${currTab == "Inbox" && "border-b border-primary-500"} w-1/2 px-4 py-4 `}
+          style={[styles.tab, currTab == "Inbox" && styles.activeTab]}
+          className={`flex flex-row items-center  w-1/2 px-4 py-4 `}
         >
           <View className="flex flex-row items-center gap-2 justify-center w-full">
             {/* <MailSolid height={24} width={24} /> */}
             <Text
-              className={`text-sm text-center   font-medium ${currTab === "Inbox" ? "text-primary-500 font-semibold" : "text-neutral-500"}`}
+              style={[styles.text, currTab === "Inbox" && styles.activeText]}
             >
               Inbox
             </Text>
@@ -48,12 +53,13 @@ const MessageTopBar = ({
             setCurrTab("Requests");
             setSelectedChat(undefined);
           }}
-          className={`flex flex-row items-center  ${currTab == "Requests" && "border-b border-primary-500"} w-1/2 px-4 py-4 `}
+          style={[styles.tab, currTab == "Requests" && styles.activeTab]}
+          className={`flex flex-row items-center  w-1/2 px-4 py-4 `}
         >
           <View className="flex flex-row items-center justify-center gap-2 w-full">
             {/* <MultiBubbleSolid height={24} width={24} /> */}
             <Text
-              className={`text-sm text-center font-medium ${currTab === "Requests" ? "text-primary-500" : "text-neutral-500"}`}
+              style={[styles.text, currTab === "Requests" && styles.activeText]}
             >
               Requests
             </Text>
@@ -85,3 +91,23 @@ const MessageTopBar = ({
 };
 
 export default MessageTopBar;
+
+const styles = StyleSheet.create({
+  container: {
+    marginHorizontal: 16,
+  },
+  text: {
+    fontFamily: FONTS.inter.extraBold,
+    fontSize: 14,
+  },
+  activeText: {
+    color: "#3A169C",
+  },
+  tab: {
+    borderBottomWidth: 2,
+    borderBottomColor: "#D1D5DB",
+  },
+  activeTab: {
+    borderBottomColor: "#3A169C",
+  },
+});

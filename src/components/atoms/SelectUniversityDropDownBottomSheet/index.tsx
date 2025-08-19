@@ -229,6 +229,7 @@ const styles = StyleSheet.create({
     padding: 8,
     borderRadius: 8,
     marginTop: 8,
+    color: "#6B7280",
   },
   optionItem: {
     flexDirection: "row",

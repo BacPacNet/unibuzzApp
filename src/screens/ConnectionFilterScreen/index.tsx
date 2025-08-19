@@ -3,6 +3,7 @@ import MultiSelectDropdown from "@/components/atoms/MultiSelectDropDown";
 import ReusableButton from "@/components/atoms/ReusableButton";
 import SelectUniversityDropdownBottomSheet from "@/components/atoms/SelectUniversityDropDownBottomSheet";
 import RoleSelectorWithFields from "@/components/molecules/SearchCommunity/UserSelectionFields";
+import { FONTS } from "@/constants/fonts";
 import { defaultBottomSheetSnapPoints } from "@/types/constant";
 import { RootStackParamList } from "@/types/navigation";
 import {
@@ -12,9 +13,16 @@ import {
 } from "@/types/register";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
+import { Refresh } from "iconoir-react-native";
 import React, { useEffect, useRef, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
-import { View, StyleSheet, ScrollView } from "react-native";
+import {
+  View,
+  StyleSheet,
+  ScrollView,
+  Text,
+  TouchableOpacity,
+} from "react-native";
 import ActionSheet, { ActionSheetRef } from "react-native-actions-sheet";
 import { Toast } from "react-native-toast-notifications";
 
@@ -108,15 +116,16 @@ const ConnectionsFilter = () => {
         className="flex-row items-center justify-between"
       >
         <BackHeader label="Connections" />
-        <ReusableButton
-          containerStyle=""
-          size={120}
-          buttonText="Clear Filters"
-          variant="shade"
+
+        <TouchableOpacity
           onPress={() => {
             resetFilters();
           }}
-        />
+          style={styles.refreshButton}
+        >
+          <Refresh width={20} height={20} color={"#6744FF"} />
+          <Text style={styles.refreshButtonText}>Refresh</Text>
+        </TouchableOpacity>
       </View>
 
       <View style={styles.bulkContainer}>
@@ -323,5 +332,22 @@ const styles = StyleSheet.create({
   },
   actionSheetContainer: {
     height: "100%",
+  },
+  refreshButton: {
+    display: "flex",
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
+    backgroundColor: "#F3F2FF",
+    borderWidth: 1,
+    borderColor: "#E9E8FF",
+    paddingHorizontal: 16,
+    height: 36,
+    borderRadius: 8,
+  },
+  refreshButtonText: {
+    color: "#6744FF",
+    fontSize: 12,
+    fontFamily: FONTS.inter.medium,
   },
 });

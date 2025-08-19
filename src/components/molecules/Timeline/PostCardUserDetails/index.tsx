@@ -129,7 +129,8 @@ const PostCardUserDetails = ({
 
       <DropdownWrapper
         position="left"
-        extraLeft={100}
+        extraLeft={60}
+        viewTopPosition={-90}
         renderDropdown={(closeDropdown) => (
           <PostCardOption
             handleDeletePost={() => {

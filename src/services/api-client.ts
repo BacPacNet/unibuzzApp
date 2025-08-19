@@ -2,6 +2,27 @@
 import { RequestData, ServerResponse } from "@/models/api-client";
 import axios, { AxiosRequestConfig, AxiosResponse } from "axios";
 import { NEXT_PUBLIC_CUSTOM_BASE_URL, NEXT_PUBLIC_API_BASE_URL } from "@env";
+import { useAuth } from "@/context/AuthProvider/AuthContext";
+import { forceDeauthenticate } from "@/hooks/Auth/forceDeautenticate";
+
+const api = axios.create({
+  baseURL: NEXT_PUBLIC_API_BASE_URL,
+});
+
+api.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (
+      error.response?.data?.message === "jwt expired" ||
+      error.response?.data?.message == "jwt malformed"
+    ) {
+      console.log("done");
+
+      return forceDeauthenticate();
+    }
+    return Promise.reject(error);
+  }
+);
 
 /**
  * Handle Network Requests.
@@ -58,11 +79,13 @@ const client = async <T, U>(
   };
 
   try {
-    const response: AxiosResponse<ServerResponse<T>> = await axios(config);
+    console.log("config", config);
+    const response: AxiosResponse<ServerResponse<T>> = await api(config);
     const { data: resData } = response;
     return resData;
-  } catch (err) {
-    console.log(err, "errerrerrerr");
+  } catch (err: any) {
+    console.log(err.response.data.message === "jwt expired");
+
     return Promise.reject(err);
   }
 };
