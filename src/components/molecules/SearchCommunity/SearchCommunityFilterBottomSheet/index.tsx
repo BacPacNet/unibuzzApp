@@ -162,7 +162,6 @@ const SearchCommunityFilterBottomSheet = ({
                 setSelectedFilters({});
                 setSelectedType([]);
                 setSelectedLabel([]);
-                onClose?.();
               }}
               style={styles.refreshButton}
             >

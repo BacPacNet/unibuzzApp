@@ -4,6 +4,8 @@ import { Text, View, StyleSheet, ScrollView } from "react-native";
 import BackHeader from "@/components/atoms/BackHeader";
 import ReusableButton from "@/components/atoms/ReusableButton";
 import CommunityLogo from "@/components/atoms/LogoHolder";
+import { useHandleUniversityEmailVerificationGenerate } from "@/services/auth";
+import { useWatch } from "react-hook-form";
 
 interface Props {
   control: any;
@@ -26,6 +28,23 @@ const UniversitySelect = ({
   logoUrl,
   universityName,
 }: Props) => {
+  const email = useWatch({ control, name: "email" });
+
+  const {
+    mutateAsync: generateUniversityEmailOTP,
+    isPending: isResendPending,
+    isError,
+  } = useHandleUniversityEmailVerificationGenerate();
+
+  const handleUniversityEmailSendCode = async () => {
+    try {
+      const data = { email: email };
+      await generateUniversityEmailOTP(data);
+      handleSubmit(onValidSubmit)();
+    } catch (error) {
+      console.log(error);
+    }
+  };
   return (
     <ScrollView
       contentContainerStyle={styles.container}
@@ -46,7 +65,7 @@ const UniversitySelect = ({
         />
 
         <FormInput
-          label="Email"
+          label="University Email"
           placeholder="Enter your email"
           control={control}
           name="email"
@@ -70,10 +89,11 @@ const UniversitySelect = ({
       </View>
       <View style={styles.buttonContainer}>
         <ReusableButton
-          onPress={handleSubmit(onValidSubmit)}
+          onPress={() => handleUniversityEmailSendCode()}
           buttonText="Verify"
           variant="primary"
           height="large"
+          isLoading={isResendPending && !isError}
         />
       </View>
     </ScrollView>
@@ -87,7 +107,7 @@ const styles = StyleSheet.create({
   },
   paddingContainer: {
     padding: 16,
-    marginTop: 32,
+
     display: "flex",
     flexDirection: "column",
     gap: 16,

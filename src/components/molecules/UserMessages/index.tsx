@@ -111,6 +111,7 @@ const UserMessages = ({
 
   isRequestNotAccepted,
   setCurrTab,
+  isGroupChat,
 }: Props) => {
   const { data: chatMessages, isFetching } = useGetUserMessages(chatId);
 
@@ -206,6 +207,7 @@ const UserMessages = ({
           isRequestNotAccepted={isRequestNotAccepted}
           setCurrTab={setCurrTab}
           setChanged={setChanged}
+          isGroupChat={isGroupChat}
         />
       </View>
     </KeyboardAvoidingView>

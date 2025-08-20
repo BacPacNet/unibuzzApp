@@ -11,6 +11,7 @@ import { useHandleUniversityEmailVerificationGenerate } from "@/services/auth";
 import ReusableButton from "@/components/atoms/ReusableButton";
 import { Controller } from "react-hook-form";
 import BackHeader from "@/components/atoms/BackHeader";
+import { FONTS } from "@/constants/fonts";
 
 interface Props {
   control: any;
@@ -40,7 +41,7 @@ const UniversityOtpVerification = ({
   setError,
 }: Props) => {
   const [countdown, setCountdown] = useState(30);
-  const [isCounting, setIsCounting] = useState(false);
+  const [isCounting, setIsCounting] = useState(true);
   const [isResend, setIsResend] = useState(false);
   const otpRef = useRef<any>(null);
 
@@ -130,9 +131,7 @@ const UniversityOtpVerification = ({
             buttonText={
               isCounting
                 ? `Resend Available after ${countdown}s`
-                : isResend
-                  ? "Resend Code"
-                  : "Send Code"
+                : "Resend Code"
             }
             variant="border_primary"
             activityIndicatorColor="#6744FF"
@@ -167,20 +166,19 @@ const styles = StyleSheet.create({
   },
   paddingContainer: {
     padding: 16,
-    marginTop: 16,
+    // marginTop: 16,
     display: "flex",
     flexDirection: "column",
     gap: 16,
   },
   title: {
     fontSize: 20,
-    fontWeight: "700",
+    fontFamily: FONTS.poppins.bold,
     color: "#3A3B3C",
-    marginBottom: 4,
   },
   desc: {
     fontSize: 14,
-    fontWeight: "500",
+    fontFamily: FONTS.inter.regular,
     marginTop: 8,
     color: "#6B7280",
   },

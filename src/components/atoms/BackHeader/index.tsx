@@ -48,7 +48,7 @@ const styles = StyleSheet.create({
   label: {
     color: "#6744FF",
     fontSize: 16,
-    fontFamily:FONTS.poppins.medium
+    fontFamily: FONTS.poppins.medium,
   },
 });
 

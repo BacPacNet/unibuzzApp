@@ -1,4 +1,4 @@
-import { View, ActivityIndicator, SafeAreaView } from "react-native";
+import { View, ActivityIndicator } from "react-native";
 import React, { useEffect, useMemo, useState } from "react";
 import MessageTopBar from "@/components/molecules/Message/MessageTopBar";
 import UserChats from "@/components/molecules/Message/UserChats";
@@ -29,6 +29,7 @@ const Messages = ({ route }: any) => {
   const [currTab, setCurrTab] = useState("Inbox");
   const [selectedChat, setSelectedChat] = useState<any>(undefined);
   const selectedUserId = route?.params?.selectedUserId ?? null;
+  const [toSetChat, setToSetChat] = useState<boolean>(true);
   const {
     data: chatsData,
     isLoading: isChatLoading,
@@ -264,6 +265,7 @@ const Messages = ({ route }: any) => {
         (item) => item._id.toString() == selectedUserId
       );
       if (selectedChatBySearchQuery) {
+        setToSetChat(false);
         setSelectedChat(selectedChatBySearchQuery);
       }
     }
@@ -356,6 +358,7 @@ const Messages = ({ route }: any) => {
               (id: string) => id.toString() == userData?.id
             )}
             communitySelected={selectedChat?.community as CommunityChat}
+            selectedUserId={selectedUserId}
           />
           <UserMessages
             chatId={selectedChat._id}
@@ -371,7 +374,7 @@ const Messages = ({ route }: any) => {
             isRequest={isRequest}
             isGroupChat={selectedChat?.isGroupChat}
             yourID={userData?.id || ""}
-            isRequestNotAccepted={currTab == "Message Requests"}
+            isRequestNotAccepted={currTab == "Requests"}
             setCurrTab={setCurrTab}
           />
         </SafeScreen>

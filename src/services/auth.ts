@@ -10,7 +10,6 @@ import { removeRegisterData } from "@/storage/register";
 import { MESSAGES } from "@/content/constant";
 import { useUserPasswordReset } from "@/context/UserPasswordResetProvider/UserPasswordResetProvider";
 
-
 const login = async (data: LoginForm): Promise<UserResponseType> => {
   const result = await client<UserResponseType, LoginForm>("auth/login", {
     data,
@@ -19,7 +18,7 @@ const login = async (data: LoginForm): Promise<UserResponseType> => {
 };
 
 const register = async (
-  data: Omit<RegisterForm, "confirmPassword" | "tnc">,
+  data: Omit<RegisterForm, "confirmPassword" | "tnc">
 ): Promise<UserResponseType> => {
   const result = await client<
     UserResponseType,
@@ -119,14 +118,14 @@ async function userNameAndEmailAvailability(data: {
 }) {
   const response: { isAvailable: boolean } = await client(
     `/users/checkAvailability`,
-    { method: "POST", data },
+    { method: "POST", data }
   );
   return response;
 }
 async function emailAvailability(data: { email: string }) {
   const response: { isAvailable: boolean } = await client(
     `/users/check-email-availability`,
-    { method: "POST", data },
+    { method: "POST", data }
   );
   console.log("response", response);
   return response;
@@ -177,7 +176,7 @@ async function loginEmailVerification(data: {
 }) {
   const response: { isAvailable: boolean } = await client(
     `/useremailverification`,
-    { method: "PUT", data },
+    { method: "PUT", data }
   );
   return response;
 }
@@ -207,7 +206,10 @@ export const useHandleUniversityEmailVerificationGenerate = () => {
     mutationFn: (data: { email: string }) =>
       universityEmailVerificationCodeGenerate(data),
     onError: (error: any) => {
-      Toast.show(error.response.data.message || MESSAGES.SOMETHING_WENT_WRONG);
+      Toast.show(error.response.data.message || MESSAGES.SOMETHING_WENT_WRONG, {
+        type: "warning",
+        placement: "top",
+      });
     },
   });
 };
@@ -221,7 +223,7 @@ async function universityEmailVerification(data: {
 }) {
   const response: { isAvailable: boolean } = await client(
     `/universityemailverification`,
-    { method: "PUT", data },
+    { method: "PUT", data }
   );
   return response;
 }
@@ -240,7 +242,7 @@ export const useHandleUniversityEmailVerification = () => {
 async function resetPasswordCodeGenerate(data: { email: string }) {
   const response: any = await client(
     `/auth/send-reset-password-otp?email=${data.email}`,
-    { method: "POST", data },
+    { method: "POST", data }
   );
   return response;
 }

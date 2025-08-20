@@ -11,7 +11,11 @@ import {
 } from "react-native";
 import DocumentPicker from "react-native-document-picker";
 import { useQueryClient } from "@tanstack/react-query";
-import { useCreateChatMessage } from "@/services/Messages";
+import {
+  useAcceptGroupRequest,
+  useAcceptRequest,
+  useCreateChatMessage,
+} from "@/services/Messages";
 import { MediaImage, PagePlus, SendSolid } from "iconoir-react-native";
 import { LatestMessage } from "@/types/ChatType";
 import { SocketEnums } from "@/types/SocketType";
@@ -24,6 +28,8 @@ import { validateUploadedFiles } from "@/utils";
 import MediaPreviewList from "../../MediaPreview";
 import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import { useTabBarVisibility } from "@/hooks/useTabBarVisibility";
+import { StackNavigationProp } from "@react-navigation/stack";
+import { RootStackParamList } from "@/types/navigation";
 
 // Types
 type Props = {
@@ -32,6 +38,7 @@ type Props = {
   isRequestNotAccepted: boolean;
   setCurrTab: (value: string) => void;
   setChanged: (value: string) => void;
+  isGroupChat: boolean;
 };
 
 type ImageAsset = {
@@ -162,6 +169,8 @@ const prepareMediaFiles = (
   return [...imageFiles, ...documentFiles];
 };
 
+type NavigationProp = StackNavigationProp<RootStackParamList, "Messages">;
+
 // Main component
 const UserMessageInput = ({
   chatId,
@@ -169,13 +178,21 @@ const UserMessageInput = ({
   isRequestNotAccepted,
   setCurrTab,
   setChanged,
+  isGroupChat,
 }: Props) => {
   const inputRef = useRef<TextInput>(null);
-  const navigation = useNavigation();
+  const navigation = useNavigation<NavigationProp>();
   const queryClient = useQueryClient();
   const { socket } = useSocket();
   const { mutateAsync: uploadToS3 } = useUploadToS3();
   const { mutate: createNewMessage, isPending } = useCreateChatMessage();
+  const {
+    mutateAsync: acceptRequest,
+    data: chatStatus,
+    isError,
+  } = useAcceptRequest();
+  const { mutateAsync: acceptGroupRequest, isError: groupErr } =
+    useAcceptGroupRequest();
 
   const {
     text,
@@ -297,6 +314,26 @@ const UserMessageInput = ({
       setIsImageUploading(true);
 
       try {
+        // Check if request needs to be accepted first
+        if (isRequestNotAccepted) {
+          if (isGroupChat) {
+            const response: any = await acceptGroupRequest({ chatId });
+            if (groupErr) {
+              Toast.show("Request not accepted. Unable to proceed.", {
+                placement: "top",
+                type: "warning",
+              });
+              return;
+            }
+          } else {
+            const response: any = await acceptRequest({ chatId });
+            if (!response?.isRequestAccepted || isError) {
+              console.error("Request not accepted. Unable to proceed.");
+              return;
+            }
+          }
+        }
+
         const mediaData = await uploadMedia();
 
         const messagePayload = {
@@ -326,6 +363,7 @@ const UserMessageInput = ({
           },
         });
 
+        setCurrTab("Inbox");
         resetState();
         setChanged("");
       } catch (err) {
@@ -346,6 +384,12 @@ const UserMessageInput = ({
       chatId,
       userProfileId,
       setIsImageUploading,
+      isRequestNotAccepted,
+      isGroupChat,
+      acceptGroupRequest,
+      acceptRequest,
+      groupErr,
+      isError,
     ]
   );
 
@@ -353,6 +397,7 @@ const UserMessageInput = ({
     if (!text.trim() && images.length === 0 && files.length === 0) {
       return;
     }
+
     handleNewMessage(text);
   }, [text, images.length, files.length, handleNewMessage]);
 

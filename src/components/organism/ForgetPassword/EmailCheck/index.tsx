@@ -80,7 +80,7 @@ const ForgetPasswordEmailCheck: React.FC<Props> = ({
           <View style={styles.titlemargin} className="flex items-start  w-full">
             <Title>Reset Password</Title>
           </View>
-          <View className="bg-green-600">
+          <View className="">
             <FormInput
               isLabelShown={true}
               label="Email Address"

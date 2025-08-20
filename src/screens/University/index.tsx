@@ -31,6 +31,7 @@ import ActionSheet, { ActionSheetRef } from "react-native-actions-sheet";
 import UniversityLimitReachedBottomSheet from "@/components/molecules/University/UniversityLimitReachedBottomSheet.tsx";
 import BackHeader from "@/components/atoms/BackHeader";
 import { FONTS } from "@/constants/fonts";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 type NavigationProp = StackNavigationProp<RootStackParamList, "University">;
 
@@ -66,7 +67,7 @@ const University = ({
 }) => {
   const navigation = useNavigation<NavigationProp>();
   const { data } = route.params;
-
+  const insets = useSafeAreaInsets();
   const { mutate: joinCommunityFromUniversity, isPending: isJoinLoading } =
     useJoinCommunityFromUniversity();
   const limitActionSheetRef = useRef<ActionSheetRef>(null);
@@ -172,7 +173,11 @@ const University = ({
         <UniversityContact data={data} />
       </View>
 
-      <ActionSheet ref={limitActionSheetRef} gestureEnabled={true}>
+      <ActionSheet
+        ref={limitActionSheetRef}
+        gestureEnabled={true}
+        safeAreaInsets={insets}
+      >
         <UniversityLimitReachedBottomSheet />
       </ActionSheet>
     </ScrollView>
