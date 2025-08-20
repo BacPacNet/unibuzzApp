@@ -126,7 +126,8 @@ const UserChats = ({
         <TouchableOpacity
           onPress={() => setSelectedChat(item)}
           key={item?._id}
-          className="flex flex-col gap-2 border-t py-5 border-neutral-300"
+          className="flex  flex-col  gap-2 border-b border-neutral-200 "
+          style={{ marginHorizontal: 16 }}
         >
           <UserChatCard
             profilePic={

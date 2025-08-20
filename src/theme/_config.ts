@@ -4,7 +4,7 @@ import type { ThemeConfiguration } from "@/types/theme/config";
 
 const colorsLight = {
   primary: "#6744FF",
-  text: "#111827",
+  text: "#9CA3AF",
   red500: "#C13333",
   gray800: "#303030",
   gray400: "#4D4D4D",
@@ -17,7 +17,7 @@ const colorsLight = {
 } as const;
 
 const colorsDark = {
-  text: "#111827",
+  text: "#9CA3AF",
   red500: "#C13333",
   gray800: "#E0E0E0",
   gray400: "#969696",

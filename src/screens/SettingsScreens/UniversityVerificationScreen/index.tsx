@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { StyleSheet, KeyboardAvoidingView, Platform } from "react-native";
+import { StyleSheet, KeyboardAvoidingView, Platform, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { getUserProfileStore } from "@/storage/user";
 import UniversityVerificationInfo from "@/components/organism/Settings/UniversityCurrentJoined";
@@ -10,6 +10,7 @@ import { useNavigation } from "@react-navigation/native";
 import UniversitySelect from "@/components/organism/Settings/UniversitySelect";
 import UniversityOtpVerification from "@/components/organism/Settings/UniversityOtpVerification";
 import { useAddUniversityEmail } from "@/services/edit-Profile";
+import { SafeScreen } from "@/components/template";
 
 type FormDataType = {
   UniversityOtp: string;
@@ -38,7 +39,7 @@ const UniversityVerificationScreen = () => {
   const userProfileData = getUserProfileStore();
   const email: any = userProfileData?.email || [];
   const [currScreen, setCurrScreen] = useState(
-    universitySettingsScreen.currentJoined,
+    universitySettingsScreen.currentJoined
   );
   const {
     mutateAsync: mutateAddUniversity,
@@ -64,7 +65,7 @@ const UniversityVerificationScreen = () => {
   };
 
   return (
-    <SafeAreaView style={styles.containerMain}>
+    <View style={styles.containerMain}>
       <KeyboardAvoidingView
         behavior={Platform.OS === "ios" ? "padding" : "height"}
         style={styles.keyboardAvoid}
@@ -107,7 +108,7 @@ const UniversityVerificationScreen = () => {
           />
         )}
       </KeyboardAvoidingView>
-    </SafeAreaView>
+    </View>
   );
 };
 

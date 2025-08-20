@@ -1,23 +1,21 @@
 import BackHeader from "@/components/atoms/BackHeader";
-import { FormInput } from "@/components/atoms/FormInput";
 import { FormInputPassword } from "@/components/atoms/FormInputPassword";
 import FullScreenLoader from "@/components/atoms/FullScreenLoader";
 import ReusableButton from "@/components/atoms/ReusableButton";
+import { FONTS } from "@/constants/fonts";
 import { useHeader } from "@/context/HeaderProvider/Header";
 import { useChangeUserPassword } from "@/services/user";
 import { RootStackParamList } from "@/types/navigation";
-import { useFocusEffect, useNavigation } from "@react-navigation/native";
+import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
-import { Eye, EyeClosed, NavArrowLeft } from "iconoir-react-native";
-import React, { useCallback, useState } from "react";
-import { Controller, useForm } from "react-hook-form";
+import React, { useState } from "react";
+import { useForm } from "react-hook-form";
 import {
   KeyboardAvoidingView,
   Platform,
   ScrollView,
   StyleSheet,
   Text,
-  TextInput,
   TouchableOpacity,
   View,
 } from "react-native";
@@ -83,7 +81,7 @@ const UserPasswordChangeScreen = () => {
         onError: () => {
           setShowLoader(false);
         },
-      },
+      }
     );
   };
 
@@ -92,7 +90,8 @@ const UserPasswordChangeScreen = () => {
   }
 
   return (
-    <SafeAreaView style={styles.containerMain}>
+    // <SafeAreaView style={styles.containerMain}>
+    <View style={styles.containerMain}>
       <KeyboardAvoidingView
         behavior={Platform.OS === "ios" ? "padding" : "height"}
         style={styles.keyboardAvoid}
@@ -175,7 +174,7 @@ const UserPasswordChangeScreen = () => {
           </View>
         </ScrollView>
       </KeyboardAvoidingView>
-    </SafeAreaView>
+    </View>
   );
 };
 
@@ -199,14 +198,14 @@ const styles = StyleSheet.create({
 
   title: {
     fontSize: 20,
-    fontWeight: 700,
+    fontFamily: FONTS.poppins.bold,
     color: "#3A3B3C",
-    marginBottom: 4,
   },
   desc: {
     fontSize: 14,
-    fontWeight: 500,
+    fontFamily: FONTS.inter.regular,
     marginTop: 8,
+    color: "#6B7280",
   },
 
   inputContainer: {
@@ -217,7 +216,7 @@ const styles = StyleSheet.create({
 
   buttonContainer: {
     marginTop: 64,
-    paddingBottom: "8%",
+    paddingBottom: 36,
     paddingHorizontal: 16,
   },
   forgotPassword: {
@@ -225,5 +224,6 @@ const styles = StyleSheet.create({
     fontWeight: 500,
 
     color: "#6744FF",
+    marginBottom: 16,
   },
 });

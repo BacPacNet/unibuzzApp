@@ -93,7 +93,7 @@ const styles = StyleSheet.create({
   label: {
     fontSize: 14,
     fontFamily: FONTS.inter.medium,
-    color: "#3A3B3C",
+    color: "#18191A",
   },
   required: {
     color: "#EF4444",

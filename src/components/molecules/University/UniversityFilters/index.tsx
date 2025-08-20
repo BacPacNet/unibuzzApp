@@ -225,7 +225,7 @@ const UniversitySearchFilters: React.FC<Props> = ({ setQuery }) => {
               <TextInput
                 style={styles.searchInput}
                 placeholder="Search"
-                placeholderTextColor="#9ca3af"
+                placeholderTextColor="#9CA3AF"
                 onChangeText={(text) => {
                   onChange(text);
                   handleSearch(text);

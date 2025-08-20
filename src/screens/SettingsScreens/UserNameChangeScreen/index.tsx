@@ -3,6 +3,7 @@ import { FormInput } from "@/components/atoms/FormInput";
 import { FormInputPassword } from "@/components/atoms/FormInputPassword";
 import FullScreenLoader from "@/components/atoms/FullScreenLoader";
 import ReusableButton from "@/components/atoms/ReusableButton";
+import { FONTS } from "@/constants/fonts";
 import { useHeader } from "@/context/HeaderProvider/Header";
 import { useChangeUserName } from "@/services/user";
 import { getUserStore } from "@/storage/user";
@@ -71,7 +72,7 @@ const UserNameChangeScreen = (props: Props) => {
         onError: () => {
           setShowLoader(false);
         },
-      },
+      }
     );
   };
 
@@ -80,7 +81,7 @@ const UserNameChangeScreen = (props: Props) => {
   }
 
   return (
-    <SafeAreaView style={styles.containerMain}>
+    <View style={styles.containerMain}>
       {/* Header */}
 
       <KeyboardAvoidingView
@@ -164,7 +165,7 @@ const UserNameChangeScreen = (props: Props) => {
           </View>
         </ScrollView>
       </KeyboardAvoidingView>
-    </SafeAreaView>
+    </View>
   );
 };
 
@@ -180,7 +181,6 @@ const styles = StyleSheet.create({
   },
 
   container: {
-    flexGrow: 1,
     backgroundColor: "white",
     justifyContent: "space-between",
   },
@@ -190,19 +190,18 @@ const styles = StyleSheet.create({
 
   title: {
     fontSize: 20,
-    fontWeight: 700,
+    fontFamily: FONTS.poppins.bold,
     color: "#3A3B3C",
-    marginBottom: 4,
   },
   desc: {
     fontSize: 14,
-    fontWeight: 500,
+    fontFamily: FONTS.inter.regular,
     marginTop: 8,
+    color: "#6B7280",
   },
   forgotPassword: {
     fontSize: 14,
-    fontWeight: 500,
-
+    fontFamily: FONTS.inter.regular,
     color: "#6744FF",
   },
   inputContainer: {

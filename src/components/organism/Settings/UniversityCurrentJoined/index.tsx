@@ -7,25 +7,26 @@ import CommunityLogo from "@/components/atoms/LogoHolder";
 import { CheckCircleSolid, PlusCircleSolid } from "iconoir-react-native";
 import { FormInput } from "@/components/atoms/FormInput";
 import { universitySettingsScreen } from "@/screens/SettingsScreens/UniversityVerificationScreen";
+import { FONTS } from "@/constants/fonts";
 
 const FeatureList = () => (
   <View style={{ marginTop: 32 }}>
     <View className="flex gap-1 my-2">
       <View className="flex-row gap-2 items-center">
         <CheckCircleSolid color={"#6744FF"} height={24} width={24} />
-        <Text className="text-xs text-neutral-600">
+        <Text style={styles.featureListText}>
           Join multiple university communities.
         </Text>
       </View>
       <View className="flex-row gap-2 items-center">
         <CheckCircleSolid color={"#6744FF"} height={24} width={24} />
-        <Text className="text-xs text-neutral-600">
+        <Text style={styles.featureListText}>
           Create your own groups within your university network.
         </Text>
       </View>
       <View className="flex-row gap-2 items-center">
         <CheckCircleSolid color={"#6744FF"} height={24} width={24} />
-        <Text className="text-xs text-neutral-600">
+        <Text style={styles.featureListText}>
           Get full access to private groups and exclusive discussions.
         </Text>
       </View>
@@ -65,7 +66,7 @@ const UniversityVerificationInfo = ({
         {email?.length > 0 ? (
           <View>
             <View style={{ marginVertical: 32 }}>
-              <Text className="text-sm text-neutral-700">
+              <Text style={styles.emailText}>
                 You are currently verified for the following universities.
               </Text>
             </View>
@@ -123,19 +124,19 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
   },
   paddingContainer: {
-    padding: 16,
+    paddingHorizontal: 16,
     marginTop: 16,
   },
   title: {
     fontSize: 20,
-    fontWeight: "700",
+    fontFamily: FONTS.poppins.bold,
     color: "#3A3B3C",
-    marginBottom: 4,
   },
   desc: {
     fontSize: 14,
-    fontWeight: "400",
+    fontFamily: FONTS.inter.regular,
     marginTop: 8,
+    color: "#6B7280",
   },
   buttonContainer: {
     marginTop: 64,
@@ -145,5 +146,15 @@ const styles = StyleSheet.create({
   badge: {
     width: 16,
     height: 16,
+  },
+  featureListText: {
+    fontFamily: FONTS.inter.regular,
+    color: "#4B5563",
+    fontSize: 14,
+  },
+  emailText: {
+    fontFamily: FONTS.inter.regular,
+    color: "#3A3B3C",
+    fontSize: 16,
   },
 });

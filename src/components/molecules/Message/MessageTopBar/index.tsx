@@ -99,6 +99,7 @@ const styles = StyleSheet.create({
   text: {
     fontFamily: FONTS.inter.extraBold,
     fontSize: 14,
+    color: "#9CA3AF",
   },
   activeText: {
     color: "#3A169C",

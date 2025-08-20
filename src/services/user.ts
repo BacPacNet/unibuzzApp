@@ -24,12 +24,11 @@ export async function getAllUserPosts(
   token: string,
   userId: string,
   page: number,
-  limit: number,
+  limit: number
 ) {
-    
   const response: any = await client(
     `/userpost?userId=${userId}&page=${page}&limit=${limit}`,
-    { headers: { Authorization: `Bearer ${token}` } },
+    { headers: { Authorization: `Bearer ${token}` } }
   );
 
   return response;
@@ -133,7 +132,10 @@ export const useDeActivateUserAccount = () => {
     mutationFn: (data: any) => deActivateUserAccount(data, cookieValue),
 
     onError: (res: any) => {
-      console.log(res.response.data.message, "res");
+      Toast.show(res.response.data.message, {
+        placement: "top",
+        type: "warning",
+      });
     },
   });
 };

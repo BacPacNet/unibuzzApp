@@ -90,10 +90,10 @@ const MessageNewGroupFormContainer = forwardRef((props, ref) => {
     setValue(fieldName, updatedValue);
   };
 
-
-  
   const removeUser = (userId: string) => {
-    setIndividualsUsers((prev: any[]) => prev.filter((u) => u.profile?.users_id !== userId));
+    setIndividualsUsers((prev: any[]) =>
+      prev.filter((u) => u.profile?.users_id !== userId)
+    );
   };
 
   const handleAddUsers = () => {
@@ -119,15 +119,17 @@ const MessageNewGroupFormContainer = forwardRef((props, ref) => {
     setFilterFacultyUsers(filtered);
   }, [occupation, affiliation]);
 
-
   const openUniversityActionSheet = () => {
-    if(userProiledata?.communities?.length && userProiledata?.communities?.length > 0){
+    if (
+      userProiledata?.communities?.length &&
+      userProiledata?.communities?.some((community) => community.isVerified)
+    ) {
       universityActionSheetRef.current?.show();
-    }else{
-        return Toast.show("Please add a university", {
-            type: "warning",
-            placement: "top",
-          });
+    } else {
+      return Toast.show("Please add a university", {
+        type: "warning",
+        placement: "top",
+      });
     }
   };
 
@@ -143,8 +145,8 @@ const MessageNewGroupFormContainer = forwardRef((props, ref) => {
             text={"Search Name"}
             icon={<Search width={20} height={20} />}
           />
-       
-           <SelectUserProfileChips
+
+          <SelectUserProfileChips
             individualsUsers={individualsUsers}
             isAllUsers={true}
             onRemove={(id) => removeUser(id as string)}
@@ -163,11 +165,7 @@ const MessageNewGroupFormContainer = forwardRef((props, ref) => {
               label="University"
               onPress={() => openUniversityActionSheet()}
               toShowCross={!!community.name}
-              text={
-                community.name
-                  ? community.name
-                  : "Select University"
-              }
+              text={community.name ? community.name : "Select University"}
               icon={<NavArrowDown width={20} height={20} />}
             />
             <RoleSelectorWithFields
@@ -260,7 +258,11 @@ const MessageNewGroupFormContainer = forwardRef((props, ref) => {
           communityId={community.id}
           myUserId={userProiledata?.users_id || ""}
         /> */}
-          <AllUserSelectBottomSheet selectedUsers={individualsUsers} setSelectedUsers={setIndividualsUsers} isMultiAllowed={true} />
+        <AllUserSelectBottomSheet
+          selectedUsers={individualsUsers}
+          setSelectedUsers={setIndividualsUsers}
+          isMultiAllowed={true}
+        />
       </ActionSheet>
       <ActionSheet
         ref={yearActionSheetRef}

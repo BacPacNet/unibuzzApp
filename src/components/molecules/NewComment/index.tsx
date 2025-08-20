@@ -9,7 +9,8 @@ import {
 } from "@10play/tentap-editor";
 
 import { MediaImage } from "iconoir-react-native";
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useState, useEffect, useRef } from "react";
+import { useFocusEffect } from "@react-navigation/native";
 import {
   KeyboardAvoidingView,
   Platform,
@@ -18,6 +19,8 @@ import {
   Text,
   TouchableOpacity,
   View,
+  Keyboard,
+  TextInput,
 } from "react-native";
 import { launchImageLibrary } from "react-native-image-picker";
 import { PostCommentData, Sortby } from "@/types/constant";
@@ -40,6 +43,7 @@ import {
 } from "@/services/timeline";
 import BackHeader from "@/components/atoms/BackHeader";
 import ReusableButton from "@/components/atoms/ReusableButton";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 type ImageAsset = {
   uri: string;
@@ -90,6 +94,9 @@ const NewComment = ({
   const userProfileData = getUserProfileStore();
   const [images, setImages] = useState<ImageAsset[]>([]);
   const [files, setFiles] = useState<fileType[]>([]);
+  const [keyboardVisible, setKeyboardVisible] = useState(false);
+  const hiddenInputRef = useRef<TextInput>(null);
+  const insets = useSafeAreaInsets();
   const editor = useEditorBridge({
     autofocus: true,
     avoidIosKeyboard: true,
@@ -222,8 +229,52 @@ const NewComment = ({
     setModalVisible(false);
   };
 
+  useEffect(() => {
+    const showSub = Keyboard.addListener("keyboardDidShow", () =>
+      setKeyboardVisible(true)
+    );
+    const hideSub = Keyboard.addListener("keyboardDidHide", () =>
+      setKeyboardVisible(false)
+    );
+
+    return () => {
+      showSub.remove();
+      hideSub.remove();
+    };
+  }, []);
+
+  useFocusEffect(
+    useCallback(() => {
+      const timer = setTimeout(() => {
+        try {
+          if (hiddenInputRef.current) {
+            hiddenInputRef.current.focus();
+            setTimeout(() => {
+              if (hiddenInputRef.current) {
+                hiddenInputRef.current.blur();
+              }
+              if (editor && typeof editor.focus === "function") {
+                editor.focus();
+              }
+            }, 100);
+          }
+        } catch (error) {
+          console.log("Focus error:", error);
+        }
+      }, 500);
+
+      return () => clearTimeout(timer);
+    }, [])
+  );
+
   return (
     <View className="flex-1 bg-white relative">
+      <TextInput
+        ref={hiddenInputRef}
+        style={{ position: "absolute", top: -1000, left: -1000 }}
+        autoFocus={false}
+      />
+
       <View className="  flex flex-row gap-4 items-center justify-between border-b border-neutral-300 ">
         <BackHeader
           label={postAuthorName + " post"}
@@ -250,36 +301,46 @@ const NewComment = ({
           : `Commenting on ${postAuthorName} post`}
       </Text>
 
-      {images.length > 0 && (
-        <View style={{ height: 100 }}>
-          <MediaPreviewList
-            files={[...images, ...files]}
-            onRemove={(index: any, isImage: boolean) =>
-              handleImageRemove(index, isImage)
-            }
-          />
-        </View>
-      )}
-
-      <View style={styles.editorHeight}>
-        <RichText editor={editor} />
-      </View>
-
       <KeyboardAvoidingView
+        style={{ flex: 1 }}
         behavior={Platform.OS === "ios" ? "padding" : "height"}
-        style={{
-          position: "absolute",
-          width: "100%",
-          bottom: 0,
-        }}
+        keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 0}
       >
-        <View className="flex flex-row gap-2 items-center border-t border-neutral-300 p-2">
-          <TouchableOpacity onPress={handleImagePick}>
-            <MediaImage height={20} width={20} color={"#a3a3a3"} />
-          </TouchableOpacity>
+        <View style={{ flex: 1 }}>
+          {images.length > 0 && (
+            <View style={{ height: 100 }}>
+              <MediaPreviewList
+                files={[...images, ...files]}
+                onRemove={(index: any, isImage: boolean) =>
+                  handleImageRemove(index, isImage)
+                }
+              />
+            </View>
+          )}
+
+          <View style={styles.editorHeight}>
+            <RichText editor={editor} focusable={true} />
+          </View>
         </View>
 
-        <Toolbar editor={editor} />
+        <View
+          style={[
+            keyboardVisible && styles.bottomBar,
+            { marginBottom: insets.bottom },
+          ]}
+        >
+          {keyboardVisible && (
+            <View className="flex flex-row gap-2 items-center p-2">
+              <TouchableOpacity onPress={handleImagePick}>
+                <MediaImage height={20} width={20} color={"#a3a3a3"} />
+              </TouchableOpacity>
+            </View>
+          )}
+
+          <View className="flex flex-row gap-2 items-center px-2">
+            <Toolbar editor={editor} />
+          </View>
+        </View>
       </KeyboardAvoidingView>
     </View>
   );
@@ -296,5 +357,10 @@ const styles = StyleSheet.create({
   editorHeight: {
     flex: 1,
     paddingHorizontal: 8,
+  },
+  bottomBar: {
+    backgroundColor: "white",
+    borderTopWidth: 1,
+    borderTopColor: "#e5e5e5",
   },
 });

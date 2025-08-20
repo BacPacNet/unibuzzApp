@@ -26,6 +26,7 @@ const SearchInput: React.FC<SearchInputProps> = ({
         onChangeText={onChangeText}
         placeholder={placeholder}
         style={styles.input}
+        placeholderTextColor="#9CA3AF"
         {...rest}
       />
       <Search style={styles.icon} strokeWidth={2} height={20} width={20} />
