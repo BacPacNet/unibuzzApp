@@ -14,7 +14,7 @@ interface ServerResponse<T> {
 const apiKey = "k31pqE4wiHaDYf2ZsrPG4ebNuXK9wf2soWj7Ps20";
 
 export async function makeBaseApiCall<T>(
-  data: any,
+  data: any
 ): Promise<ServerResponse<T>> {
   const baseURL =
     NODE_ENV === "development"
@@ -50,16 +50,15 @@ export const useCreateChatBotMessage = () => {
       storeChatBotMessages(res);
     },
     onError: (res: any) => {
- 
       storeChatBotMessages({
         message: {
           prompt: "Sorry, I encountered an error. Please try again.",
-          
         },
         inserted_id: "",
         isNewThread: false,
         response: "",
       });
+      Toast.hideAll();
       Toast.show(res.response?.data.message || "Something went wrong");
     },
   });

@@ -6,7 +6,7 @@ import {
   Text,
   View,
 } from "react-native";
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 
 import PostCard from "@/components/molecules/Timeline/PostCard";
 import { useGetTimelinePosts } from "@/services/timeline";
@@ -21,15 +21,21 @@ import CreatePostButton from "@/components/atoms/CreatePostButton";
 import OnboardingPlaceholder from "@/components/molecules/OnboardingPlaceHolder";
 import EmptyStateCard from "@/components/molecules/EmptyStateCard";
 import QuiteHere from "@/assets/placeHolder/quiteHere.svg";
-import { getUserProfileStore } from "@/storage/user";
+import { getUserProfileStore, getUserStore } from "@/storage/user";
+import ActionSheet, { ActionSheetRef } from "react-native-actions-sheet";
+import UserGuideLineBottomSheet from "@/components/molecules/UserGuideLineBottomSheet";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 type NavigationProp = StackNavigationProp<RootStackParamList, "Timeline">;
 const Timeline = () => {
   const userProfileData = getUserProfileStore();
+  const userData = getUserStore();
   const [refreshing, setRefreshing] = useState(false);
 
   const [showCreatePostButton, setShowCreatePostButton] = useState(false);
   const [lastScrollY, setLastScrollY] = useState(0);
+  const guideLineActionSheetRef = useRef<ActionSheetRef>(null);
+  const insets = useSafeAreaInsets();
 
   const navigation = useNavigation<NavigationProp>();
   const {
@@ -72,6 +78,12 @@ const Timeline = () => {
 
     setLastScrollY(contentOffset.y);
   };
+
+  useEffect(() => {
+    if (userData?.isNewUser) {
+      guideLineActionSheetRef.current?.show();
+    }
+  }, [userData?.isNewUser]);
 
   if (isPending) {
     return (
@@ -141,6 +153,16 @@ const Timeline = () => {
           )
         }
       />
+
+      <ActionSheet
+        ref={guideLineActionSheetRef}
+        gestureEnabled={true}
+        safeAreaInsets={insets}
+      >
+        <UserGuideLineBottomSheet
+          onClose={() => guideLineActionSheetRef.current?.hide()}
+        />
+      </ActionSheet>
     </View>
   );
 };

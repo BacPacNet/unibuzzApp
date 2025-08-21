@@ -27,6 +27,7 @@ const CustomTextInput: React.FC<CustomTextInputProps> = ({
         error ? "border-red-500" : "border-neutral-300"
       } ${inputClassName}`}
       placeholder={placeholder}
+      placeholderTextColor={"#9CA3AF"}
       onBlur={onBlur}
       onChangeText={onChangeText}
       value={value}

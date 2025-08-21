@@ -92,6 +92,7 @@ const SearchCommunityGroupScreen = () => {
 
   const handleNavigateToNewCommunityGroupScreen = () => {
     if (!canUserCreateGroup) {
+      Toast.hideAll();
       return Toast.show("Verify Account to Create Groups", {
         type: "warning",
         placement: "top",
@@ -162,6 +163,7 @@ const SearchCommunityGroupScreen = () => {
             placeholder="Search Group"
             className="border border-neutral-200 px-2 text-neutral-500 rounded-lg"
             style={styles.searchInput}
+            placeholderTextColor="#9CA3AF"
           />
           <Search
             style={styles.searchIcon}

@@ -379,6 +379,7 @@ function ApplicationNavigator() {
             width: 284,
           },
           swipeEnabled: false,
+
           headerLeft: () => (
             <View className="flex flex-row gap-4 items-center">
               <Pressable

@@ -68,7 +68,7 @@ export const useHandleRegister = () => {
     // },
 
     onError(error: any) {
-      console.log("Axios error:", error.response?.data.message);
+      Toast.hideAll();
       toast.show(error.response?.data.message || "Something went wrong");
     },
   });
@@ -104,7 +104,7 @@ export const useHandleRegister_v2 = () => {
   return useMutation({
     mutationFn: (data: data) => register_v2(data),
     onError: (error: any) => {
-      console.log(error);
+      Toast.hideAll();
       Toast.show(error.response.data.message || MESSAGES.SOMETHING_WENT_WRONG);
     },
   });
@@ -206,6 +206,7 @@ export const useHandleUniversityEmailVerificationGenerate = () => {
     mutationFn: (data: { email: string }) =>
       universityEmailVerificationCodeGenerate(data),
     onError: (error: any) => {
+      Toast.hideAll();
       Toast.show(error.response.data.message || MESSAGES.SOMETHING_WENT_WRONG, {
         type: "warning",
         placement: "top",
@@ -251,9 +252,11 @@ export const useResetPasswordCodeGenerate = () => {
   return useMutation({
     mutationFn: (data: { email: string }) => resetPasswordCodeGenerate(data),
     onSuccess: () => {
+      Toast.hideAll();
       Toast.show("OTP sent successfully");
     },
     onError: (error: any) => {
+      Toast.hideAll();
       Toast.show(error.response.data.message || MESSAGES.SOMETHING_WENT_WRONG);
     },
   });
@@ -276,6 +279,7 @@ export const useVerifyResetPasswordOtp = () => {
       setResetPasswordToken(res.resetToken);
     },
     onError: (error: any) => {
+      Toast.hideAll();
       Toast.show(error.response.data.message || MESSAGES.SOMETHING_WENT_WRONG);
     },
   });
@@ -294,6 +298,7 @@ export const useResetPassword = () => {
   return useMutation({
     mutationFn: (data: any) => resetPassword(data),
     onSuccess: () => {
+      Toast.hideAll();
       Toast.show("Password has been reset");
       resetPasswordResetData();
     },
@@ -301,6 +306,7 @@ export const useResetPassword = () => {
       if (error.response.data.message == "Password reset failed") {
         resetPasswordResetData();
       }
+      Toast.hideAll();
       Toast.show(error.response.data.message || MESSAGES.SOMETHING_WENT_WRONG);
     },
   });

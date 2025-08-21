@@ -23,7 +23,7 @@ export interface S3UploadRequest {
 
 async function uploadToS3WithRNFetchBlob(
   uploadPayload: S3UploadRequest,
-  cookieValue: string,
+  cookieValue: string
 ): Promise<S3UploadResponse> {
   const body: any[] = [];
 
@@ -53,7 +53,7 @@ async function uploadToS3WithRNFetchBlob(
         Authorization: `Bearer ${cookieValue}`,
         "Content-Type": "multipart/form-data",
       },
-      body,
+      body
     );
 
     return response.json();
@@ -72,9 +72,9 @@ export const useUploadToS3 = () => {
     },
     onSuccess: () => {},
     onError: (error: any) => {
-      console.log("Upload Error:", error.response?.data || error.message);
+      Toast.hideAll();
       Toast.show(
-        error.response?.data?.message || MESSAGES.SOMETHING_WENT_WRONG,
+        error.response?.data?.message || MESSAGES.SOMETHING_WENT_WRONG
       );
     },
   });

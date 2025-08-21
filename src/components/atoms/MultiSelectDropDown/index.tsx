@@ -125,6 +125,7 @@ const MultiSelectDropdown = ({
             value={searchInput}
             onChangeText={setSearchInput}
             style={styles.searchInput}
+            placeholderTextColor="#9CA3AF"
           />
         </View>
       )}

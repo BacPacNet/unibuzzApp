@@ -137,6 +137,7 @@ export function SelectInputWithSearch({
                             placeholder="Search..."
                             onChangeText={handleSearch}
                             ref={searchRef}
+                            placeholderTextColor="#9CA3AF"
                           />
                           <Text style={styles.desc}>{desc}</Text>
                         </View>

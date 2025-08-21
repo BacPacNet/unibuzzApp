@@ -66,6 +66,7 @@ const AI_Assistant = () => {
 
   const handleSendMessage = () => {
     if (watchText.trim() === "") {
+      Toast.hideAll();
       return Toast.show("Please enter a message", {
         type: "warning",
         placement: "top",
@@ -179,6 +180,7 @@ const AI_Assistant = () => {
           <TextInput
             {...register("text")}
             placeholder="Type a message"
+            placeholderTextColor="#9CA3AF"
             multiline
             style={styles.input}
             value={watchText}

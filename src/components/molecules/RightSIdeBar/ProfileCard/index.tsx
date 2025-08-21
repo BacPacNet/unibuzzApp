@@ -68,7 +68,7 @@ const ProfileCard = ({
     userProfile && userProfile?.following?.map((following) => following.userId);
   const { navigate } = useNavigation<NavigationProp>();
   const { mutate: toggleFollow, isPending } = useToggleFollow(
-    userFollowingIDs?.includes(userId as string) ? "Following" : "Followers",
+    userFollowingIDs?.includes(userId as string) ? "Following" : "Followers"
   );
   const { mutateAsync: mutateCreateUserChat, isPending: userChatPending } =
     useCreateUserChat();
@@ -103,11 +103,12 @@ const ProfileCard = ({
             : affiliation;
 
   const sharePost = async (
-    message = `Hey, check out ${name} profile ${NEXT_PUBLIC_API_BASE_URL}/${userId}`,
+    message = `Hey, check out ${name} profile ${NEXT_PUBLIC_API_BASE_URL}/${userId}`
   ) => {
     try {
       await Share.share({ message });
     } catch (error: any) {
+      Toast.hideAll();
       Toast.show(error || "Something went wrong");
     }
   };
@@ -192,7 +193,10 @@ const ProfileCard = ({
         <View style={styles.profilePicWrapper}>
           {(isSideBar && !userProfile?.profile_dp?.imageUrl) ||
           (!isSideBar && !avatarUrl) ? (
-            <Ava width={ProfileSize === "large" ? 80 : 48} height={ProfileSize === "large" ? 80 : 48} />
+            <Ava
+              width={ProfileSize === "large" ? 80 : 48}
+              height={ProfileSize === "large" ? 80 : 48}
+            />
           ) : (
             <Image
               source={
@@ -205,7 +209,7 @@ const ProfileCard = ({
                 {
                   width: ProfileSize === "large" ? 80 : 48,
                   height: ProfileSize === "large" ? 80 : 48,
-                }
+                },
               ]}
             />
           )}
@@ -222,12 +226,31 @@ const ProfileCard = ({
         </View>
         <View style={styles.info}>
           <View className="flex   justify-between">
-            <Text style={[styles.name, { fontSize: ProfileSize === "large" ? 16 : 12 }]}>
+            <Text
+              style={[
+                styles.name,
+                { fontSize: ProfileSize === "large" ? 16 : 12 },
+              ]}
+            >
               {name ? name : user?.firstName + " " + user?.lastName}
             </Text>
             <View style={styles.universityContainer}>
-              <Text style={[styles.year, { fontSize: ProfileSize === "large" ? 14 : 10 }]}>{first}</Text>
-              <Text style={[styles.year, { fontSize: ProfileSize === "large" ? 14 : 10 }]}>{second}</Text>
+              <Text
+                style={[
+                  styles.year,
+                  { fontSize: ProfileSize === "large" ? 14 : 10 },
+                ]}
+              >
+                {first}
+              </Text>
+              <Text
+                style={[
+                  styles.year,
+                  { fontSize: ProfileSize === "large" ? 14 : 10 },
+                ]}
+              >
+                {second}
+              </Text>
             </View>
           </View>
         </View>

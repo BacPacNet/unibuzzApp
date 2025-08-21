@@ -126,7 +126,8 @@ const MessageNewGroupFormContainer = forwardRef((props, ref) => {
     ) {
       universityActionSheetRef.current?.show();
     } else {
-      return Toast.show("Please add a university", {
+      Toast.hideAll();
+      return Toast.show("You dont have a verified university", {
         type: "warning",
         placement: "top",
       });

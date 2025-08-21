@@ -67,6 +67,7 @@ const UserNameChangeScreen = (props: Props) => {
         onSuccess: () => {
           reset();
           setShowLoader(false);
+          Toast.hideAll();
           Toast.show("Username changed successfully");
         },
         onError: () => {

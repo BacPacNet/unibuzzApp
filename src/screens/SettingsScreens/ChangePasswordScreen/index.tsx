@@ -74,6 +74,7 @@ const UserPasswordChangeScreen = () => {
       {
         onSuccess: () => {
           reset();
+          Toast.hideAll();
           Toast.show("Password changed successfully");
 
           setShowLoader(false);

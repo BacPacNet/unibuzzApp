@@ -13,11 +13,11 @@ import { getUserStore } from "@/storage/user";
 export async function getAllTimelinePosts(
   token: string,
   page: number,
-  limit: number,
+  limit: number
 ) {
   const response: any = await client(
     `/userpost/timeline?page=${page}&limit=${limit}`,
-    { headers: { Authorization: `Bearer ${token}` } },
+    { headers: { Authorization: `Bearer ${token}` } }
   );
 
   return response;
@@ -59,10 +59,11 @@ export const useCreateUserPost = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["userPosts"] });
       queryClient.invalidateQueries({ queryKey: ["timelinePosts"] });
-
+      Toast.hideAll();
       Toast.show("Post created successfully");
     },
     onError: (error: any) => {
+      Toast.hideAll();
       Toast.show(error.response?.data.message || "Something went wrong");
     },
   });
@@ -84,12 +85,14 @@ export const useDeleteUserPost = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["userPosts"] });
       queryClient.invalidateQueries({ queryKey: ["timelinePosts"] });
+      Toast.hideAll();
       Toast.show("Post deleted successfully", {
         type: "success",
         placement: "top",
       });
     },
     onError: (error: any) => {
+      Toast.hideAll();
       Toast.show(error.response?.data.message || "Something went wrong", {
         type: "danger",
         placement: "top",
@@ -105,11 +108,11 @@ export async function getUserPostComments(
   token: string,
   page: number,
   limit: number,
-  sortby: Sortby,
+  sortby: Sortby
 ) {
   const response: any = await client(
     `/userpostcomment/${postId}?page=${page}&limit=${limit}&sortBy=${sortby}`,
-    { headers: { Authorization: `Bearer ${token}` } },
+    { headers: { Authorization: `Bearer ${token}` } }
   );
   return response;
 }
@@ -118,13 +121,13 @@ export function useGetUserPostComments(
   postId: string,
   isTimeline: boolean,
   limit: number,
-  sortby: Sortby,
+  sortby: Sortby
 ) {
   {
     const cookieValue = getToken() as string;
 
     return useInfiniteQuery({
-      queryKey: ["userPostComments",sortby],
+      queryKey: ["userPostComments", sortby],
       queryFn: ({ pageParam = 1 }) =>
         getUserPostComments(postId, cookieValue, pageParam, limit, sortby),
       getNextPageParam: (lastPage) => {
@@ -150,7 +153,7 @@ export async function LikeUnilikeUserPost(postId: string, token: string) {
 export const useLikeUnlikeTimelinePost = (
   source: string,
   adminId: string,
-  isSinglePost: boolean,
+  isSinglePost: boolean
 ) => {
   const cookieValue = getToken() as string;
   const userData = getUserStore();
@@ -159,59 +162,76 @@ export const useLikeUnlikeTimelinePost = (
   return useMutation({
     mutationFn: (postId: string) => LikeUnilikeUserPost(postId, cookieValue),
     onMutate: async (postId: string) => {
-        const queryKey = isSinglePost ? ['getPost', postId] : source === 'profile' ? ['userPosts', adminId] : ['timelinePosts']
-        await queryClient.cancelQueries({ queryKey })
-  
-        queryClient.setQueryData(queryKey, (oldData: any) => {
-          if (!oldData) return
-  
-          console.log(oldData, 'oldData')
-          const toggleLike = (likeCount: any[]) => {
-            const hasLiked = likeCount.some((like: any) => like.userId === userData?.id)
-            return hasLiked
-              ? likeCount.filter((like: any) => like.userId !== userData?.id)
-              : [...likeCount, { userId: userData?.id, _id: 'temp-like-id' }]
-          }
-  
-          if (isSinglePost) {
-            return {
-              post: {
-                ...oldData.post,
-                likeCount: toggleLike(oldData.post.likeCount),
-              },
-            }
-          }
-  
-          const updatePosts = (posts: any[], key: string) => {
-            return posts.map((post: any) => {
-              if (post._id !== postId) return post
-              return {
-                ...post,
-                likeCount: toggleLike(post.likeCount),
-              }
-            })
-          }
-  
+      const queryKey = isSinglePost
+        ? ["getPost", postId]
+        : source === "profile"
+          ? ["userPosts", adminId]
+          : ["timelinePosts"];
+      await queryClient.cancelQueries({ queryKey });
+
+      queryClient.setQueryData(queryKey, (oldData: any) => {
+        if (!oldData) return;
+
+        console.log(oldData, "oldData");
+        const toggleLike = (likeCount: any[]) => {
+          const hasLiked = likeCount.some(
+            (like: any) => like.userId === userData?.id
+          );
+          return hasLiked
+            ? likeCount.filter((like: any) => like.userId !== userData?.id)
+            : [...likeCount, { userId: userData?.id, _id: "temp-like-id" }];
+        };
+
+        if (isSinglePost) {
           return {
-            ...oldData,
-            pages: oldData.pages.map((page: any) => ({
-              ...page,
-              ...(source === 'profile' ? { data: updatePosts(page.data, 'data') } : { allPosts: updatePosts(page.allPosts, 'allPosts') }),
-            })),
-          }
-        })
-      },
+            post: {
+              ...oldData.post,
+              likeCount: toggleLike(oldData.post.likeCount),
+            },
+          };
+        }
+
+        const updatePosts = (posts: any[], key: string) => {
+          return posts.map((post: any) => {
+            if (post._id !== postId) return post;
+            return {
+              ...post,
+              likeCount: toggleLike(post.likeCount),
+            };
+          });
+        };
+
+        return {
+          ...oldData,
+          pages: oldData.pages.map((page: any) => ({
+            ...page,
+            ...(source === "profile"
+              ? { data: updatePosts(page.data, "data") }
+              : { allPosts: updatePosts(page.allPosts, "allPosts") }),
+          })),
+        };
+      });
+    },
     onSuccess: (data, postId) => {
       // Invalidate queries to ensure data consistency
-      const queryKey = isSinglePost ? ['getPost', postId] : source === 'profile' ? ['userPosts', adminId] : ['timelinePosts']
-      queryClient.invalidateQueries({ queryKey })
+      const queryKey = isSinglePost
+        ? ["getPost", postId]
+        : source === "profile"
+          ? ["userPosts", adminId]
+          : ["timelinePosts"];
+      queryClient.invalidateQueries({ queryKey });
     },
     onSettled: (data, error, postId) => {
       // Additional invalidation to ensure UI is updated
-      const queryKey = isSinglePost ? ['getPost', postId] : source === 'profile' ? ['userPosts', adminId] : ['timelinePosts']
-      queryClient.invalidateQueries({ queryKey })
+      const queryKey = isSinglePost
+        ? ["getPost", postId]
+        : source === "profile"
+          ? ["userPosts", adminId]
+          : ["timelinePosts"];
+      queryClient.invalidateQueries({ queryKey });
     },
     onError: (res: any) => {
+      Toast.hideAll();
       return Toast.show(res.response.data.message);
     },
   });
@@ -237,10 +257,10 @@ export const useCreateUserPostComment = (sortby: Sortby) => {
       const currUserComments = queryClient.getQueryData<{
         pages: any[];
         pageParams: any[];
-      }>(["userPostComments",sortby]);
+      }>(["userPostComments", sortby]);
 
       if (currUserComments) {
-        queryClient.setQueryData(["userPostComments",sortby], {
+        queryClient.setQueryData(["userPostComments", sortby], {
           ...currUserComments,
           pages: currUserComments.pages.map((page, index) => {
             if (index === 0) {
@@ -266,14 +286,14 @@ export const useCreateUserPostComment = (sortby: Sortby) => {
 export async function LikeUnlikeUserPostComment(
   UserPostCommentId: string,
   token: string,
-  sortby: Sortby,
+  sortby: Sortby
 ) {
   const response = await client(
     `/userpostcomment/likeUnlike/${UserPostCommentId}?sortBy=${sortby}`,
     {
       method: "PUT",
       headers: { Authorization: `Bearer ${token}` },
-    },
+    }
   );
   return response;
 }
@@ -281,7 +301,7 @@ export async function LikeUnlikeUserPostComment(
 export const useLikeUnlikeUserPostComment = (
   showInitial: boolean,
   postId: string,
-  sortby: Sortby,
+  sortby: Sortby
 ) => {
   const cookieValue = getToken() as string;
   const userData = getUserStore();
@@ -299,29 +319,27 @@ export const useLikeUnlikeUserPostComment = (
       const currUserComments = queryClient.getQueryData<{
         pages: any[];
         pageParams: any[];
-      }>(["userPostComments",sortby]);
-   
+      }>(["userPostComments", sortby]);
+
       if (showInitial) {
         const singlePostData: any = queryClient.getQueryData([
           "getPost",
           postId,
         ]);
 
-     
-        
         if (singlePostData?.comment) {
           const comment = singlePostData.comment;
 
           if (level === "0" && comment._id === userPostCommentId) {
             const hasLiked = comment.likeCount.some(
-              (like: any) => like.userId === userData?.id,
+              (like: any) => like.userId === userData?.id
             );
 
             const updatedComment = {
               ...comment,
               likeCount: hasLiked
                 ? comment.likeCount.filter(
-                    (like: any) => like.userId !== userData?.id,
+                    (like: any) => like.userId !== userData?.id
                   )
                 : [...comment.likeCount, { userId: userData?.id }],
             };
@@ -336,14 +354,14 @@ export const useLikeUnlikeUserPostComment = (
             const updatedReplies = comment.replies.map((reply: any) => {
               if (reply._id === userPostCommentId) {
                 const hasLiked = reply.likeCount.some(
-                  (like: any) => like.userId === userData?.id,
+                  (like: any) => like.userId === userData?.id
                 );
 
                 return {
                   ...reply,
                   likeCount: hasLiked
                     ? reply.likeCount.filter(
-                        (like: any) => like.userId !== userData?.id,
+                        (like: any) => like.userId !== userData?.id
                       )
                     : [...reply.likeCount, { userId: userData?.id }],
                 };
@@ -364,7 +382,7 @@ export const useLikeUnlikeUserPostComment = (
 
       //   single end
       if (currUserComments) {
-        queryClient.setQueryData(["userPostComments",sortby], {
+        queryClient.setQueryData(["userPostComments", sortby], {
           ...currUserComments,
           pages: currUserComments.pages.map((page) => {
             return {
@@ -372,14 +390,14 @@ export const useLikeUnlikeUserPostComment = (
               finalComments: page.finalComments.map((comment: any) => {
                 if (level === "0" && comment._id === userPostCommentId) {
                   const hasLiked = comment.likeCount.some(
-                    (like: any) => like.userId === userData?.id,
+                    (like: any) => like.userId === userData?.id
                   );
 
                   return {
                     ...comment,
                     likeCount: hasLiked
                       ? comment.likeCount.filter(
-                          (like: any) => like.userId !== userData?.id,
+                          (like: any) => like.userId !== userData?.id
                         )
                       : [...comment.likeCount, { userId: userData?.id }],
                   };
@@ -391,14 +409,14 @@ export const useLikeUnlikeUserPostComment = (
                     replies: comment.replies.map((reply: any) => {
                       if (reply._id === userPostCommentId) {
                         const hasLiked = reply.likeCount.some(
-                          (like: any) => like.userId === userData?.id,
+                          (like: any) => like.userId === userData?.id
                         );
 
                         return {
                           ...reply,
                           likeCount: hasLiked
                             ? reply.likeCount.filter(
-                                (like: any) => like.userId !== userData?.id,
+                                (like: any) => like.userId !== userData?.id
                               )
                             : [...reply.likeCount, { userId: userData?.id }],
                         };
@@ -446,7 +464,7 @@ export const useCreateUserPostCommentReply = (
       const currUserComments = queryClient.getQueryData<{
         pages: any[];
         pageParams: any[];
-      }>(["userPostComments",sortby]);
+      }>(["userPostComments", sortby]);
       if (showInitial) {
         queryClient.setQueryData(["getPost", postId], (oldData: any) => {
           if (!oldData) return oldData;
@@ -479,7 +497,7 @@ export const useCreateUserPostCommentReply = (
           };
         });
 
-        queryClient.setQueryData(["userPostComments",sortby], {
+        queryClient.setQueryData(["userPostComments", sortby], {
           ...currUserComments,
           pages: updatedPages,
         });
@@ -509,10 +527,11 @@ export function useDeleteUserPostComment() {
       queryClient.invalidateQueries({
         queryKey: ["userPostComments"],
       });
+      Toast.hideAll();
       Toast.show("comment deleted successfully");
     },
     onError: (error) => {
-      console.error("Failed to delete comment:", error);
+      Toast.hideAll();
       Toast.show(error.message);
     },
   });

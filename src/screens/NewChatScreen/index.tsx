@@ -43,7 +43,7 @@ export default function NewChatScreen() {
     handleSubmit,
     formState: { errors },
     getValues,
-    setError
+    setError,
   } = useForm({
     defaultValues: {
       groupName: "",
@@ -53,7 +53,7 @@ export default function NewChatScreen() {
   const formRef = useRef<any>(null);
 
   const [selectedType, setSelectedType] = useState<"single" | "group" | null>(
-    null,
+    null
   );
   const [searchInput, setSearchInput] = useState("");
   const [selectedUsers, setSelectedUsers] = useState<any>([]);
@@ -76,10 +76,6 @@ export default function NewChatScreen() {
   const { mutateAsync: createGroupChat, isPending: groupChatPending } =
     useCreateGroupChat();
 
-
-
-
-
   const handleIndividualUserClick = async () => {
     if (selectedType === "group") {
       const formValues = formRef.current?.getFormValues();
@@ -87,10 +83,10 @@ export default function NewChatScreen() {
       const filteredStudents = formRef.current.getFilteredUsers();
       const individualUsers = formRef.current.getIndividualsUsers();
 
-    //   if(formValues?.groupName.length < 1){
-    //     setError("groupName", { message: "Group Name is required!" });
-    //     return;
-    //   }
+      //   if(formValues?.groupName.length < 1){
+      //     setError("groupName", { message: "Group Name is required!" });
+      //     return;
+      //   }
       let ImageData;
       if (imageToUpload) {
         const uploadPayload = {
@@ -105,7 +101,6 @@ export default function NewChatScreen() {
           },
         };
       }
-
 
       const mergedUsers = [
         ...individualUsers.map((user: { _id: string }) => user._id),
@@ -171,10 +166,10 @@ export default function NewChatScreen() {
                       item={selectedUsers[0]}
                       selectedUsers={selectedUsers}
                       setSelectedUsers={() => {}}
-                     isRemoveAllowed={true}
-                     handleRemoveUser={() => {
-                      setSelectedUsers([]);
-                     }}
+                      isRemoveAllowed={true}
+                      handleRemoveUser={() => {
+                        setSelectedUsers([]);
+                      }}
                     />
                   )}
                 </View>
@@ -234,6 +229,7 @@ export default function NewChatScreen() {
           variant="primary"
           height={"large"}
           isLoading={userChatPending || groupChatPending}
+          disabled={userChatPending || groupChatPending}
         />
       </View>
 
@@ -242,9 +238,12 @@ export default function NewChatScreen() {
         gestureEnabled={true}
         snapPoints={defaultBottomSheetSnapPoints}
       >
-
-        <AllUserSelectBottomSheet hideBottomSheet={()=> userActionSheetRef.current?.hide()} selectedUsers={selectedUsers} setSelectedUsers={setSelectedUsers} isMultiAllowed={false} />
-
+        <AllUserSelectBottomSheet
+          hideBottomSheet={() => userActionSheetRef.current?.hide()}
+          selectedUsers={selectedUsers}
+          setSelectedUsers={setSelectedUsers}
+          isMultiAllowed={false}
+        />
       </ActionSheet>
     </ScrollView>
   );
@@ -301,6 +300,6 @@ const styles = StyleSheet.create({
     color: "#EF4444",
 
     fontSize: 12,
-    marginBottom:16
+    marginBottom: 16,
   },
 });

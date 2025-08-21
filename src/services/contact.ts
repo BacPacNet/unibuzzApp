@@ -23,12 +23,14 @@ export const useSendContactMessage = () => {
   return useMutation({
     mutationFn: (data: data) => contact(data),
     onSuccess: () => {
+      Toast.hideAll();
       Toast.show(
         "Your form has been submitted. We will get back to you as soon as we can!",
-        { type: "success", placement: "top" },
+        { type: "success", placement: "top" }
       );
     },
     onError: (error: any) => {
+      Toast.hideAll();
       Toast.show(error.response.data.message || MESSAGES.SOMETHING_WENT_WRONG, {
         type: "danger",
         placement: "top",

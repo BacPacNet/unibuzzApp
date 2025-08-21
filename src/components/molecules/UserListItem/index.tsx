@@ -58,7 +58,7 @@ const UserListItem: React.FC<Props> = ({
   isViewerAdmin,
 }) => {
   const navigation = useNavigation<NavigationProp>();
-  const { mutateAsync: toggleFollow, isPending } = useToggleFollow();
+  const { mutateAsync: toggleFollow, isPending } = useToggleFollow(id);
   const [isFollowingState, setIsFollowingState] = useState(isFollowing);
   const [isProcessing, setIsProcessing] = useState(false);
 
@@ -70,6 +70,7 @@ const UserListItem: React.FC<Props> = ({
       await toggleFollow(id);
     } catch (err) {
       setIsFollowingState(false);
+      Toast.hideAll();
       Toast.show("Failed to follow");
     } finally {
       setIsProcessing(false);

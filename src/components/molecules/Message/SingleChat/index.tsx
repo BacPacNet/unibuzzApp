@@ -56,6 +56,7 @@ const SingleChat = ({ setCurrTab, setSelectedChat }: Props) => {
             className="border border-neutral-200 p-2 text-neutral-500 rounded-lg"
             style={{ paddingEnd: 40 }}
             onChangeText={(text) => setSearchInput(text)}
+            placeholderTextColor="#9CA3AF"
           />
           <Search
             style={{ position: "absolute", top: 10, right: 8 }}
