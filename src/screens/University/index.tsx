@@ -94,6 +94,7 @@ const University = ({
         if (response.statusCode === 406) {
           limitActionSheetRef.current?.show();
         } else {
+          Toast.hideAll();
           Toast.show("Joined Community");
           updateUserProfileCommunities(response.data.profile.communities);
 

@@ -26,11 +26,13 @@ export const useEditProfile = () => {
       editProfile(data, userProfileData?._id || "", cookieValue),
     onSuccess: async (response: any) => {
       storeUserProfile(response.data);
+      Toast.hideAll();
       Toast.show("Profile Updated", { type: "success", placement: "top" });
 
       queryClient.invalidateQueries({ queryKey: ["getRefetchUserData"] });
     },
     onError: (res: any) => {
+      Toast.hideAll();
       Toast.show(res.response?.data.message || "Something went wrong", {
         type: "danger",
         placement: "top",
@@ -55,12 +57,14 @@ export const useAddUniversityEmail = (redirect: boolean = false) => {
     mutationFn: (data: any) => addUniversityEmail(data, cookieValue),
     onSuccess: (response: any, variables) => {
       storeUserProfile(response);
+      Toast.hideAll();
       Toast.show("University Verification Complete", {
         type: "success",
         placement: "top",
       });
     },
     onError: (res: any) => {
+      Toast.hideAll();
       return Toast.show(res.response.data.message, {
         type: "danger",
         placement: "top",

@@ -43,7 +43,7 @@ export function useGetSubscribedCommunities() {
 export async function getUserFilteredSubscribedCommunities(
   communityId: string,
   token: string,
-  data: any,
+  data: any
 ) {
   const response: any = await client(`/community/filtered/${communityId}`, {
     method: "POST",
@@ -61,11 +61,11 @@ export function useGetFilteredSubscribedCommunities(communityId: string = "") {
       getUserFilteredSubscribedCommunities(communityId, cookieValue, data),
 
     onError: (res: any) => {
+      Toast.hideAll();
       Toast.show(res.response?.data.message || "Something went wrong");
     },
   });
 }
-
 
 export async function joinCommunity(communityId: string, token: string) {
   const response = await client(`/community/${communityId}/join`, {
@@ -90,9 +90,11 @@ export const useJoinCommunity = () => {
         queryKey: ["community"],
       });
       updateUserProfileCommunities(response.user.communities);
+      Toast.hideAll();
       Toast.show(`Joined Community `);
     },
     onError: (res: any) => {
+      Toast.hideAll();
       Toast.show(res.response?.data.message || "Something went wrong");
     },
   });
@@ -120,9 +122,11 @@ export const useLeaveCommunity = () => {
         queryKey: ["community"],
       });
       updateUserProfileCommunities(response.data.community);
+      Toast.hideAll();
       Toast.show(`Left Community`);
     },
     onError: (res: any) => {
+      Toast.hideAll();
       Toast.show(res.response?.data.message || "Something went wrong");
     },
   });
@@ -130,14 +134,14 @@ export const useLeaveCommunity = () => {
 
 export async function joinCommunityFromUniversityAPI(
   universityId: string,
-  token: string,
+  token: string
 ) {
   const response = await client(
     `/community/join?universityId=${universityId}`,
     {
       method: "POST",
       headers: { Authorization: `Bearer ${token}` },
-    },
+    }
   );
   return response;
 }
@@ -150,7 +154,7 @@ export const useJoinCommunityFromUniversity = () => {
     mutationFn: (universityId: string) =>
       joinCommunityFromUniversityAPI(universityId, cookieValue),
     onSuccess: (response: any) => {
-        queryClient.invalidateQueries({ queryKey: ["communityGroupsPost"] });
+      queryClient.invalidateQueries({ queryKey: ["communityGroupsPost"] });
       queryClient.invalidateQueries({
         queryKey: ["useGetSubscribedCommunties"],
       });
@@ -166,13 +170,13 @@ export async function getAllCommunityGroupPost(
   communityGroupId: string,
   token: any,
   page: number,
-  limit: number,
+  limit: number
 ) {
   const response: any = await client(
     `/communitypost/group?communityId=${communityId}&communityGroupId=${communityGroupId}&page=${page}&limit=${limit}`,
     {
       headers: { Authorization: `Bearer ${token}` },
-    },
+    }
   );
   return response;
 }
@@ -181,7 +185,7 @@ export function useGetCommunityGroupPost(
   communityId: string,
   communityGroupID: string,
   isCommunity: boolean,
-  limit: number,
+  limit: number
 ) {
   const cookieValue = getToken() as string;
   return useInfiniteQuery({
@@ -192,7 +196,7 @@ export function useGetCommunityGroupPost(
         communityGroupID,
         cookieValue,
         pageParam,
-        limit,
+        limit
       ),
     getNextPageParam: (lastPage) => {
       if (lastPage.currentPage < lastPage.totalPages) {
@@ -209,20 +213,20 @@ export async function getAllCommunityPost(
   communityId: string,
   token: any,
   page: number,
-  limit: number,
+  limit: number
 ) {
   const response: any = await client(
     `/communitypost/timelinePost?communityId=${communityId}&page=${page}&limit=${limit}`,
     {
       headers: { Authorization: `Bearer ${token}` },
-    },
+    }
   );
   return response;
 }
 export function useGetCommunityPost(
   communityId: string,
   isCommunity: boolean,
-  limit: number,
+  limit: number
 ) {
   const cookieValue = getToken() as string;
   return useInfiniteQuery({
@@ -245,13 +249,13 @@ export async function getPost(
   postID: string,
   isType: string | null,
   commentId: string,
-  token: string,
+  token: string
 ) {
   const response: any = await client(
     `/communitypost/post/${postID}?isType=${isType}&commentId=${commentId}`,
     {
       headers: { Authorization: `Bearer ${token}` },
-    },
+    }
   );
   return response;
 }
@@ -259,7 +263,7 @@ export async function getPost(
 export function useGetPost(
   postId: string,
   isType: string | null = "userPost",
-  commentId: string = " ",
+  commentId: string = " "
 ) {
   const cookieValue = getToken() as string;
 

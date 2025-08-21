@@ -107,12 +107,14 @@ const NewGroupPost = ({ navigation }: any) => {
           const validationResult = validateUploadedFiles(images);
 
           if (!validationResult.isValid) {
+            Toast.hideAll();
             Toast.show(validationResult.message);
             return;
           }
 
           const totalFiles = files.length + images.length;
           if (totalFiles > 4) {
+            Toast.hideAll();
             Toast.show("You can upload a maximum of 4 files.");
             return;
           }
@@ -153,12 +155,14 @@ const NewGroupPost = ({ navigation }: any) => {
       );
 
       if (!validationResult.isValid) {
+        Toast.hideAll();
         Toast.show(validationResult.message);
         return;
       }
 
       const totalFiles = files.length + images.length;
       if (totalFiles > 4) {
+        Toast.hideAll();
         Toast.show("You can upload a maximum of 4 files.");
         return;
       }
@@ -179,6 +183,7 @@ const NewGroupPost = ({ navigation }: any) => {
 
     const cleanedText = isEmpty ? "" : text;
     if (!cleanedText && !images?.length && !files?.length) {
+      Toast.hideAll();
       Toast.show("Post must contain text or at least one file.");
       return;
     }

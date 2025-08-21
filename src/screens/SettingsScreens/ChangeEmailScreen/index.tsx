@@ -256,6 +256,7 @@ const UserEmailChangeScreen = () => {
                           height: 40,
                           paddingEnd: 50,
                         }}
+                        placeholderTextColor="#9CA3AF"
                       />
                     )}
                     name="confirmPassword"

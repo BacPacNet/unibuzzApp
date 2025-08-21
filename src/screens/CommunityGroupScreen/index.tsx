@@ -208,6 +208,7 @@ const CommunityGroupScreen = ({ route }: any) => {
   const handleToggleJoinCommunityGroup = () => {
     if (communityGroups?.adminUserId == userData?.id) {
       setModalVisible(false);
+      Toast.hideAll();
       return Toast.show("You are Admin!");
     }
 

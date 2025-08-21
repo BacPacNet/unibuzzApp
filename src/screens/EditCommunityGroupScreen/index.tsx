@@ -151,6 +151,7 @@ const EditCommunityGroupScreen = () => {
 
   const onSubmit = async (data: CreateCommunityGroupType) => {
     if (Object.values(createSelectedFilters).flat()?.length < 1) {
+      Toast.hideAll();
       return Toast.show("At least one group category is required.");
     }
     setIsProfileLoading(true);

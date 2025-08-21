@@ -218,6 +218,7 @@ const CreateGroupChat = ({ setSelectedChat, setCurrTab }: Props) => {
                     placeholder="Enter group name"
                     className="border border-neutral-200 p-2 rounded-lg text-neutral-500"
                     onChangeText={(text) => setValue("title", text)}
+                    placeholderTextColor="#9CA3AF"
                   />
                   {GroupChatRegisterErr.title && (
                     <Text className="text-red-500">

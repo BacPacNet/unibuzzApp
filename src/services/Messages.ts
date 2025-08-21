@@ -32,20 +32,18 @@ export function useGetUserChats() {
   return { ...state, error: errorMessage };
 }
 
-
 export async function getChatMembers(token: any, chatId: string) {
-    const response:any = await client(`/chat/group/${chatId}/members`, {
-      headers: { Authorization: `Bearer ${token}` },
-    });
-  
-    return response;
-  }
+  const response: any = await client(`/chat/group/${chatId}/members`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+
+  return response;
+}
 export function useGetChatMembers(chatId: string) {
   const cookieValue = getToken();
 
-
   const state = useQuery({
-    queryKey: ["chatMembers",chatId],
+    queryKey: ["chatMembers", chatId],
     queryFn: () => getChatMembers(cookieValue, chatId),
     enabled: !!cookieValue,
   });
@@ -61,7 +59,7 @@ export function useGetChatMembers(chatId: string) {
 export async function userFollowingAndFollowers(name: string, token: any) {
   const response: any = await client(
     `/userprofile/following_and_followers?name=${name}`,
-    { headers: { Authorization: `Bearer ${token}` } },
+    { headers: { Authorization: `Bearer ${token}` } }
   );
   return response;
 }
@@ -102,6 +100,7 @@ export const useCreateUserChat = () => {
       queryClient.invalidateQueries({ queryKey: ["userChats"] });
     },
     onError: (error: any) => {
+      Toast.hideAll();
       Toast.show(error.response?.data.message || "Something went wrong");
     },
   });
@@ -145,7 +144,7 @@ export const useCreateChatMessage = () => {
     mutationFn: (data: any) => createChatMessage(cookieValue, data),
     onSuccess: () => {},
     onError: (error: any) => {
-      //   console.log(error.response.data.message, "res");
+      Toast.hideAll();
       Toast.show(error.response?.data.message || "Something went wrong");
     },
   });
@@ -190,7 +189,7 @@ export const useUpdateMessageIsSeen = () => {
                 latestMessage: response,
                 unreadMessagesCount: 0,
               }
-            : chat,
+            : chat
         );
         queryClient.setQueryData(["userChats"], updatedChatData);
       }
@@ -198,6 +197,7 @@ export const useUpdateMessageIsSeen = () => {
       //   queryClient.invalidateQueries({ queryKey: ["message_notification"] });
     },
     onError: (error: any) => {
+      Toast.hideAll();
       Toast.show(error.response?.data.message || "Something went wrong");
     },
   });
@@ -221,6 +221,7 @@ export const useAcceptRequest = () => {
       queryClient.invalidateQueries({ queryKey: ["userChats"] });
     },
     onError: (error: any) => {
+      Toast.hideAll();
       Toast.show(error.response?.data.message || "Something went wrong");
     },
   });
@@ -244,7 +245,7 @@ export const useAcceptGroupRequest = () => {
       queryClient.invalidateQueries({ queryKey: ["userChats"] });
     },
     onError: (error: any) => {
-      // console.log(error.response.data.message, 'res')
+      Toast.hideAll();
       Toast.show(error.response?.data.message || "Something went wrong");
     },
   });
@@ -253,7 +254,7 @@ export const useAcceptGroupRequest = () => {
 export async function toggleMessageBlock(
   token: any,
   data: any,
-  userToBlockId: string,
+  userToBlockId: string
 ) {
   const response = await client(`/chat/block/${userToBlockId}`, {
     headers: { Authorization: `Bearer ${token}` },
@@ -265,7 +266,7 @@ export async function toggleMessageBlock(
 
 export const useToggleBlockMessages = (
   userToBlockID: string,
-  isBlockedByYou: boolean,
+  isBlockedByYou: boolean
 ) => {
   const cookieValue = getToken() as string;
   const queryClient = useQueryClient();
@@ -275,11 +276,13 @@ export const useToggleBlockMessages = (
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["userChats"] });
       if (isBlockedByYou) {
+        Toast.hideAll();
         Toast.show("you have un-blocked the user", {
           placement: "top",
           type: "success",
         });
       } else {
+        Toast.hideAll();
         Toast.show("you have blocked the user", {
           placement: "top",
           type: "danger",
@@ -287,6 +290,7 @@ export const useToggleBlockMessages = (
       }
     },
     onError: (res: any) => {
+      Toast.hideAll();
       Toast.show(res.response.data.message, {
         placement: "top",
         type: "warning",
@@ -313,7 +317,7 @@ export const useCreateGroupChat = () => {
       queryClient.invalidateQueries({ queryKey: ["userChats"] });
     },
     onError: (error: any) => {
-      // console.log(res.response.data.message, 'res')
+      Toast.hideAll();
       Toast.show(error.response?.data.message || "Something went wrong");
     },
   });
@@ -322,7 +326,7 @@ export const useCreateGroupChat = () => {
 export async function removeGroupMember(
   token: string,
   chatId: string,
-  data: any,
+  data: any
 ) {
   const response = await client(`/chat/group/${chatId}`, {
     headers: { Authorization: `Bearer ${token}` },
@@ -341,6 +345,7 @@ export const useRemoveGroupChatMember = (chatId: string) => {
       //   console.log('data', res)
     },
     onError: (res: any) => {
+      Toast.hideAll();
       Toast.show(res.response?.data.message || "Something went wrong");
     },
   });
@@ -361,10 +366,11 @@ export const useLeaveGroup = (chatId: string) => {
     mutationFn: () => leaveGroup(cookieValue, chatId),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["userChats"] });
+      Toast.hideAll();
       Toast.show("You left the group");
     },
     onError: (res: any) => {
-      //   console.log(res.response.data.message, 'res')
+      Toast.hideAll();
       Toast.show(res.response.data.message, {
         placement: "top",
         type: "warning",
@@ -376,7 +382,7 @@ export const useLeaveGroup = (chatId: string) => {
 export async function editGroupMember(
   token: string,
   chatId: string,
-  data: any,
+  data: any
 ) {
   const response = await client(`/chat/edit-group/${chatId}`, {
     headers: { Authorization: `Bearer ${token}` },
@@ -392,12 +398,14 @@ export const useEditGroupChat = (chatId: string) => {
     mutationFn: (data: any) => editGroupMember(cookieValue, chatId, data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["userChats"] });
+      Toast.hideAll();
       Toast.show("Changes Applied Successfully", {
         placement: "top",
         type: "success",
       });
     },
     onError: (res: any) => {
+      Toast.hideAll();
       Toast.show(res.response.data.message, {
         placement: "top",
         type: "warning",
@@ -406,31 +414,33 @@ export const useEditGroupChat = (chatId: string) => {
   });
 };
 
-
-
-
 export async function deleteChatGroupByAdmin(token: string, chatId: any) {
-    const response = await client(`/chat/group/${chatId}`, { headers: { Authorization: `Bearer ${token}` }, method: 'DELETE' })
-    return response
-  }
+  const response = await client(`/chat/group/${chatId}`, {
+    headers: { Authorization: `Bearer ${token}` },
+    method: "DELETE",
+  });
+  return response;
+}
 
 export const useDeleteChatGroup = (chatId: string) => {
-    const cookieValue = getToken() as string
-    const queryClient = useQueryClient()
-    return useMutation({
-      mutationFn: () => deleteChatGroupByAdmin(cookieValue, chatId),
-      onSuccess: () => {
-        queryClient.invalidateQueries({ queryKey: ['userChats'] })
-        Toast.show('Group Deleted Successfully', {
-            placement: "top",
-            type: "success",
-          });
-      },
-      onError: (res: any) => {
-        Toast.show(res.response.data.message, {
-            placement: "top",
-            type: "warning",
-          });
-      },
-    })
-  }
+  const cookieValue = getToken() as string;
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: () => deleteChatGroupByAdmin(cookieValue, chatId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["userChats"] });
+      Toast.hideAll();
+      Toast.show("Group Deleted Successfully", {
+        placement: "top",
+        type: "success",
+      });
+    },
+    onError: (res: any) => {
+      Toast.hideAll();
+      Toast.show(res.response.data.message, {
+        placement: "top",
+        type: "warning",
+      });
+    },
+  });
+};

@@ -38,7 +38,10 @@ const SelectUniversityDropdown: React.FC<SelectDropdownProps> = ({
   const [modalPosition, setModalPosition] = useState(0);
   const [modalWidth, setModalWidth] = useState(0);
   const { data: universities, isFetching } = useUniversitySearch(
-    searchTerm || " ",
+    show,
+    searchTerm || "",
+    1,
+    10
   );
 
   const toggleDropdown = () => {
@@ -112,6 +115,7 @@ const SelectUniversityDropdown: React.FC<SelectDropdownProps> = ({
                     placeholder="Search..."
                     onChangeText={(text) => setSearchTerm(text)}
                     value={searchTerm}
+                    placeholderTextColor="#9CA3AF"
                   />
                 )}
                 {isFetching ? (

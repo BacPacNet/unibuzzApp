@@ -52,8 +52,8 @@ const SelectDropdown = ({
       searchValue === ""
         ? options
         : options.filter((option: string) =>
-            option.toLowerCase().includes(searchValue.toLowerCase()),
-          ),
+            option.toLowerCase().includes(searchValue.toLowerCase())
+          )
     );
   };
 
@@ -137,6 +137,7 @@ const SelectDropdown = ({
                     placeholder="Search..."
                     onChangeText={handleSearch}
                     className="p-3 border-b border-neutral-200 text-neutral-700"
+                    placeholderTextColor="#9CA3AF"
                   />
                 )}
                 <FlatList

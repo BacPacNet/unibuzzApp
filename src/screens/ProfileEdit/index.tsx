@@ -193,8 +193,10 @@ export default function ProfileEdit() {
       typeof firstError === "object" &&
       "message" in firstError
     ) {
+      Toast.hideAll();
       Toast.show(firstError.message as string);
     } else {
+      Toast.hideAll();
       Toast.show("Form has errors. Please check.");
     }
   };

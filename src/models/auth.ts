@@ -42,6 +42,7 @@ export interface User {
   userVerifiedCommunities: verifiedInterface[];
   userUnVerifiedCommunities: unverifiedInterface[];
   userName: string;
+  isNewUser: boolean;
 }
 
 export interface UserProfile {

@@ -28,17 +28,22 @@ interface Users {
 interface Props {
   item: any;
   currentUserId: string;
-  myUserId:string;
-  isFollowing:boolean;
+  myUserId: string;
+  isFollowing: boolean;
 }
 
-const UsersScreenUserCardItem = ({ item, currentUserId,myUserId,isFollowing }: Props) => {
+const UsersScreenUserCardItem = ({
+  item,
+  currentUserId,
+  myUserId,
+  isFollowing,
+}: Props) => {
   const navigate = useNavigation() as any;
   const { mutateAsync: toggleFollow, isPending } = useToggleFollow("Following");
   const [isFollowingState, setIsFollowingState] = useState(item?.isFollowing);
   const [isProcessing, setIsProcessing] = useState(false);
 
-//   console.log("item",item._id,myUserId);
+  //   console.log("item",item._id,myUserId);
   const handleFollowClick = async (id: string) => {
     setIsFollowingState(true);
     setIsProcessing(true);
@@ -47,6 +52,7 @@ const UsersScreenUserCardItem = ({ item, currentUserId,myUserId,isFollowing }: P
       await toggleFollow(id);
     } catch (err) {
       setIsFollowingState(false);
+      Toast.hideAll();
       Toast.show("Failed to follow");
     } finally {
       setIsProcessing(false);
@@ -60,32 +66,33 @@ const UsersScreenUserCardItem = ({ item, currentUserId,myUserId,isFollowing }: P
     });
   };
 
-//   if (item?._id === myUserId) return null;
+  //   if (item?._id === myUserId) return null;
 
-  const renderCTA = item?._id === myUserId ? null : (isFollowing || isFollowingState) ? (
-    <ReusableButton
-      onPress={() => handleNavigate(item._id)}
-      variant="border"
-      buttonText="View Profile"
-      height="medium"
-      size={100}
-    />
-  ) : (
-    <ReusableButton
-      variant="primary"
-      buttonContent={
-        <View className="flex-row items-center justify-center gap-1">
-          <Text className="text-white font-bold text-2xs">Follow</Text>
-          <UserPlus height={16} width={16} color={"white"} fill={"white"} />
-        </View>
-      }
-      onPress={() => handleFollowClick(item._id)}
-      height="medium"
-      size={90}
-      disabled={isProcessing}
-      isLoading={isProcessing}
-    />
-  );
+  const renderCTA =
+    item?._id === myUserId ? null : isFollowing || isFollowingState ? (
+      <ReusableButton
+        onPress={() => handleNavigate(item._id)}
+        variant="border"
+        buttonText="View Profile"
+        height="medium"
+        size={100}
+      />
+    ) : (
+      <ReusableButton
+        variant="primary"
+        buttonContent={
+          <View className="flex-row items-center justify-center gap-1">
+            <Text className="text-white font-bold text-2xs">Follow</Text>
+            <UserPlus height={16} width={16} color={"white"} fill={"white"} />
+          </View>
+        }
+        onPress={() => handleFollowClick(item._id)}
+        height="medium"
+        size={90}
+        disabled={isProcessing}
+        isLoading={isProcessing}
+      />
+    );
 
   const isStudent = item?.profile?.role === "student";
   const profile = item?.profile ?? {};

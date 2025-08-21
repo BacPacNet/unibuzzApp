@@ -51,6 +51,7 @@ const TextAreaWithWordCount: React.FC<TextAreaWithWordCountProps> = ({
               }}
               value={value}
               placeholder={placeholder}
+              placeholderTextColor="#9CA3AF"
             />
             <Text style={styles.wordCount}>
               {words.length} / {maxChars}

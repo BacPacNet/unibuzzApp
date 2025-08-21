@@ -13,13 +13,13 @@ import { Toast } from "react-native-toast-notifications";
 export async function getUserMainNotification(
   token: string,
   page: number,
-  limit: number,
+  limit: number
 ) {
   const response: UserMainNotificationsProps = await client(
     `/notification/user?page=${page}&limit=${limit}`,
     {
       headers: { Authorization: `Bearer ${token}` },
-    },
+    }
   );
   return response;
 }
@@ -70,7 +70,7 @@ export async function getMessageNotificationTotalCount(token: string) {
     `/chat/notification-count`,
     {
       headers: { Authorization: `Bearer ${token}` },
-    },
+    }
   );
   return response;
 }
@@ -92,7 +92,7 @@ export function useGetUserUnreadMessagesTotalCount() {
 
 export async function JoinCommunityGroup(
   data: { groupId: string; id: string },
-  token: string,
+  token: string
 ) {
   const response = await client(`/notification/join/`, {
     method: "PUT",
@@ -115,6 +115,7 @@ export const useJoinCommunityGroup = () => {
       });
     },
     onError: (res: any) => {
+      Toast.hideAll();
       Toast.show(res.response.data.message);
     },
   });

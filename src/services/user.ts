@@ -65,6 +65,7 @@ export const useChangeUserPassword = () => {
   return useMutation({
     mutationFn: (data: any) => changeUserPassword(data, cookieValue),
     onError: (res: any) => {
+      Toast.hideAll();
       Toast.show(res.response?.data.message || "Something went wrong");
     },
   });
@@ -107,12 +108,10 @@ export const useChangeUserName = () => {
   return useMutation({
     mutationFn: (data: any) => changeUserName(data, cookieValue),
     onSuccess: (response: any) => {
-      console.log("response", response);
       storeUser(response);
-      // setUserData(response)
     },
     onError: (res: any) => {
-      console.log(res.response.data.message, "res");
+      Toast.hideAll();
       Toast.show(res.response.data.message);
     },
   });
@@ -132,6 +131,35 @@ export const useDeActivateUserAccount = () => {
     mutationFn: (data: any) => deActivateUserAccount(data, cookieValue),
 
     onError: (res: any) => {
+      Toast.hideAll();
+      Toast.show(res.response.data.message, {
+        placement: "top",
+        type: "warning",
+      });
+    },
+  });
+};
+
+const newUserTrue = async (token: string) => {
+  const res = await client(`/users/new-user`, {
+    method: "PUT",
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  return res;
+};
+
+export const useNewUserTrue = () => {
+  const cookieValue = getToken() as string;
+
+  return useMutation({
+    mutationFn: () => newUserTrue(cookieValue),
+
+    onSuccess: async (response: any) => {
+      await storeUser(response.UserData);
+    },
+
+    onError: (res: any) => {
+      Toast.hideAll();
       Toast.show(res.response.data.message, {
         placement: "top",
         type: "warning",

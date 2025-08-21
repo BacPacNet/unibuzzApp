@@ -230,12 +230,14 @@ const UserMessageInput = ({
 
         const validationResult = validateUploadedFiles(imagesLib);
         if (!validationResult.isValid) {
+          Toast.hideAll();
           Toast.show(validationResult.message);
           return;
         }
 
         const totalFiles = files.length + imagesLib.length;
         if (totalFiles > MAX_FILES) {
+          Toast.hideAll();
           Toast.show(`You can upload a maximum of ${MAX_FILES} files.`);
           return;
         }
@@ -265,12 +267,14 @@ const UserMessageInput = ({
       );
 
       if (!validationResult.isValid) {
+        Toast.hideAll();
         Toast.show(validationResult.message);
         return;
       }
 
       const totalFiles = res.length + images.length;
       if (totalFiles > MAX_FILES) {
+        Toast.hideAll();
         Toast.show(`You can upload a maximum of ${MAX_FILES} files.`);
         return;
       }
@@ -319,6 +323,7 @@ const UserMessageInput = ({
           if (isGroupChat) {
             const response: any = await acceptGroupRequest({ chatId });
             if (groupErr) {
+              Toast.hideAll();
               Toast.show("Request not accepted. Unable to proceed.", {
                 placement: "top",
                 type: "warning",
@@ -423,7 +428,7 @@ const UserMessageInput = ({
           ref={inputRef}
           value={text}
           onChangeText={handleTextChange}
-          placeholderTextColor={"#6B7280"}
+          placeholderTextColor="#9CA3AF"
           placeholder="What's on your mind?"
           multiline
           style={styles.input}

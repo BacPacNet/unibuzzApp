@@ -25,12 +25,14 @@ export const useDeleteCommunityPost = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["communityGroupsPost"] });
       queryClient.invalidateQueries({ queryKey: ["timelinePosts"] });
+      Toast.hideAll();
       Toast.show("Post deleted successfully", {
         type: "success",
         placement: "top",
       });
     },
     onError: (res: any) => {
+      Toast.hideAll();
       Toast.show(res.response?.data.message || "Something went wrong", {
         type: "danger",
         placement: "top",
@@ -44,11 +46,11 @@ export async function getCommunityPostComments(
   token: any,
   page: number,
   limit: number,
-  sortby: Sortby,
+  sortby: Sortby
 ) {
   const response: any = await client(
     `/communitypostcomment/${postId}?page=${page}&limit=${limit}&sortBy=${sortby}`,
-    { headers: { Authorization: `Bearer ${token}` } },
+    { headers: { Authorization: `Bearer ${token}` } }
   );
   return response;
 }
@@ -57,13 +59,13 @@ export function useGetCommunityPostComments(
   postId: string,
   isCommunity: boolean,
   limit: number,
-  sortby: Sortby,
+  sortby: Sortby
 ) {
   {
     const cookieValue = getToken();
 
     return useInfiniteQuery({
-      queryKey: ["communityPostComments",sortby],
+      queryKey: ["communityPostComments", sortby],
       queryFn: ({ pageParam = 1 }) =>
         getCommunityPostComments(postId, cookieValue, pageParam, limit, sortby),
       getNextPageParam: (lastPage) => {
@@ -80,11 +82,11 @@ export function useGetCommunityPostComments(
 
 export async function LikeUnilikeGroupPost(
   communityGroupPostId: string,
-  token: any,
+  token: any
 ) {
   const response = await client(
     `/communitypost/likeunlike/${communityGroupPostId}`,
-    { method: "PUT", headers: { Authorization: `Bearer ${token}` } },
+    { method: "PUT", headers: { Authorization: `Bearer ${token}` } }
   );
   return response;
 }
@@ -94,7 +96,7 @@ export const useLikeUnilikeGroupPost = (
   communityGroupId: string = "",
   isTimeline: boolean,
   isSinglePost: boolean,
-  isProfile: boolean,
+  isProfile: boolean
 ) => {
   const cookieValue = getToken() as string;
   const userData = getUserStore();
@@ -113,13 +115,12 @@ export const useLikeUnilikeGroupPost = (
       LikeUnilikeGroupPost(communityGroupPostId, cookieValue),
 
     onMutate: async (postId: string) => {
-
       if (isSinglePost) {
         queryClient.setQueryData(["getPost", postId], (oldData: any) => {
           if (!oldData || !oldData.post) return oldData;
 
           const hasLiked = oldData.post.likeCount.some(
-            (like: any) => like.userId === userData?.id,
+            (like: any) => like.userId === userData?.id
           );
 
           return {
@@ -128,7 +129,7 @@ export const useLikeUnilikeGroupPost = (
               ...oldData.post,
               likeCount: hasLiked
                 ? oldData.post.likeCount.filter(
-                    (like: any) => like.userId !== userData?.id,
+                    (like: any) => like.userId !== userData?.id
                   )
                 : [
                     ...oldData.post.likeCount,
@@ -156,14 +157,14 @@ export const useLikeUnilikeGroupPost = (
                 if (post._id !== postId) return post;
 
                 const hasLiked = post.likeCount.some(
-                  (like: any) => like.userId === userData?.id,
+                  (like: any) => like.userId === userData?.id
                 );
 
                 return {
                   ...post,
                   likeCount: hasLiked
                     ? post.likeCount.filter(
-                        (like: any) => like.userId !== userData?.id,
+                        (like: any) => like.userId !== userData?.id
                       )
                     : [
                         ...post.likeCount,
@@ -182,14 +183,14 @@ export const useLikeUnilikeGroupPost = (
                 if (post._id !== postId) return post;
 
                 const hasLiked = post.likeCount.some(
-                  (like: any) => like.userId === userData?.id,
+                  (like: any) => like.userId === userData?.id
                 );
 
                 return {
                   ...post,
                   likeCount: hasLiked
                     ? post.likeCount.filter(
-                        (like: any) => like.userId !== userData?.id,
+                        (like: any) => like.userId !== userData?.id
                       )
                     : [
                         ...post.likeCount,
@@ -205,7 +206,7 @@ export const useLikeUnilikeGroupPost = (
     },
 
     onError: (res: any) => {
-      console.log(res.response.data.message, "res");
+      Toast.hideAll();
       Toast.show(res.response.data.message);
     },
   });
@@ -229,10 +230,10 @@ export const useCreateGroupPostComment = (sortby: Sortby) => {
       const currUserComments = queryClient.getQueryData<{
         pages: any[];
         pageParams: any[];
-      }>(["communityPostComments",sortby]);
+      }>(["communityPostComments", sortby]);
 
       if (currUserComments) {
-        queryClient.setQueryData(["communityPostComments",sortby], {
+        queryClient.setQueryData(["communityPostComments", sortby], {
           ...currUserComments,
           pages: currUserComments.pages.map((page, index) => {
             if (index === 0) {
@@ -252,7 +253,7 @@ export const useCreateGroupPostComment = (sortby: Sortby) => {
       queryClient.invalidateQueries({ queryKey: ["getPost"] });
     },
     onError: (res: any) => {
-      // console.log(res.response.data.message, 'res')
+      Toast.hideAll();
       Toast.show(res.response?.data.message || "Something went wrong");
     },
   });
@@ -261,14 +262,14 @@ export const useCreateGroupPostComment = (sortby: Sortby) => {
 export async function LikeUnilikeGroupPostCommnet(
   communityGroupPostCommentId: string,
   token: any,
-  sortby: Sortby,
+  sortby: Sortby
 ) {
   const response = await client(
     `/communitypostcomment/likeUnlike/${communityGroupPostCommentId}?sortBy=${sortby}`,
     {
       method: "PUT",
       headers: { Authorization: `Bearer ${token}` },
-    },
+    }
   );
   return response;
 }
@@ -276,7 +277,7 @@ export async function LikeUnilikeGroupPostCommnet(
 export const useLikeUnlikeGroupPostComment = (
   showInitial: boolean,
   postId: string,
-  sortby: Sortby,
+  sortby: Sortby
 ) => {
   const cookieValue = getToken();
   const queryClient = useQueryClient();
@@ -292,14 +293,14 @@ export const useLikeUnlikeGroupPostComment = (
       LikeUnilikeGroupPostCommnet(
         communityGroupPostCommentId,
         cookieValue,
-        sortby,
+        sortby
       ),
     onSuccess: (_, variables) => {
       const { communityGroupPostCommentId, level } = variables;
       const currUserComments = queryClient.getQueryData<{
         pages: any[];
         pageParams: any[];
-      }>(["communityPostComments",sortby]);
+      }>(["communityPostComments", sortby]);
 
       if (showInitial) {
         const singlePostData: any = queryClient.getQueryData([
@@ -312,14 +313,14 @@ export const useLikeUnlikeGroupPostComment = (
 
           if (level === "0" && comment._id === communityGroupPostCommentId) {
             const hasLiked = comment.likeCount.some(
-              (like: any) => like.userId === userData?.id,
+              (like: any) => like.userId === userData?.id
             );
 
             const updatedComment = {
               ...comment,
               likeCount: hasLiked
                 ? comment.likeCount.filter(
-                    (like: any) => like.userId !== userData?.id,
+                    (like: any) => like.userId !== userData?.id
                   )
                 : [...comment.likeCount, { userId: userData?.id }],
             };
@@ -334,14 +335,14 @@ export const useLikeUnlikeGroupPostComment = (
             const updatedReplies = comment.replies.map((reply: any) => {
               if (reply._id === communityGroupPostCommentId) {
                 const hasLiked = reply.likeCount.some(
-                  (like: any) => like.userId === userData?.id,
+                  (like: any) => like.userId === userData?.id
                 );
 
                 return {
                   ...reply,
                   likeCount: hasLiked
                     ? reply.likeCount.filter(
-                        (like: any) => like.userId !== userData?.id,
+                        (like: any) => like.userId !== userData?.id
                       )
                     : [...reply.likeCount, { userId: userData?.id }],
                 };
@@ -362,7 +363,7 @@ export const useLikeUnlikeGroupPostComment = (
 
       //   single end
       if (currUserComments) {
-        queryClient.setQueryData(["communityPostComments",sortby], {
+        queryClient.setQueryData(["communityPostComments", sortby], {
           ...currUserComments,
           pages: currUserComments.pages.map((page) => {
             return {
@@ -373,14 +374,14 @@ export const useLikeUnlikeGroupPostComment = (
                   comment._id === communityGroupPostCommentId
                 ) {
                   const hasLiked = comment.likeCount.some(
-                    (like: any) => like.userId === userData?.id,
+                    (like: any) => like.userId === userData?.id
                   );
 
                   return {
                     ...comment,
                     likeCount: hasLiked
                       ? comment.likeCount.filter(
-                          (like: any) => like.userId !== userData?.id,
+                          (like: any) => like.userId !== userData?.id
                         )
                       : [...comment.likeCount, { userId: userData?.id }],
                   };
@@ -392,14 +393,14 @@ export const useLikeUnlikeGroupPostComment = (
                     replies: comment.replies.map((reply: any) => {
                       if (reply._id === communityGroupPostCommentId) {
                         const hasLiked = reply.likeCount.some(
-                          (like: any) => like.userId === userData?.id,
+                          (like: any) => like.userId === userData?.id
                         );
 
                         return {
                           ...reply,
                           likeCount: hasLiked
                             ? reply.likeCount.filter(
-                                (like: any) => like.userId !== userData?.id,
+                                (like: any) => like.userId !== userData?.id
                               )
                             : [...reply.likeCount, { userId: userData?.id }],
                         };
@@ -417,6 +418,7 @@ export const useLikeUnlikeGroupPostComment = (
       }
     },
     onError: (res: any) => {
+      Toast.hideAll();
       Toast.show(res.response?.data.message || "Something went wrong");
     },
   });
@@ -429,7 +431,7 @@ export async function CreateGroupPostCommentReply(data: any, token: any) {
       method: "POST",
       headers: { Authorization: `Bearer ${token}` },
       data,
-    },
+    }
   );
   return response;
 }
@@ -448,7 +450,7 @@ export const useCreateGroupPostCommentReply = (
       const currUserComments = queryClient.getQueryData<{
         pages: any[];
         pageParams: any[];
-      }>(["communityPostComments",sortby]);
+      }>(["communityPostComments", sortby]);
 
       if (showInitial) {
         queryClient.setQueryData(["getPost", postId], (oldData: any) => {
@@ -483,7 +485,7 @@ export const useCreateGroupPostCommentReply = (
           };
         });
 
-        queryClient.setQueryData(["communityPostComments",sortby], {
+        queryClient.setQueryData(["communityPostComments", sortby], {
           ...currUserComments,
           pages: updatedPages,
         });
@@ -497,7 +499,7 @@ export const useCreateGroupPostCommentReply = (
 
 export async function deleteCommunityPostComment(
   postId: string,
-  token: string,
+  token: string
 ) {
   const response = await client(`/communitypostcomment/${postId}`, {
     method: "DELETE",
@@ -518,10 +520,11 @@ export function useDeleteCommunityPostComment() {
       queryClient.invalidateQueries({
         queryKey: ["communityPostComments"],
       });
+      Toast.hideAll();
       Toast.show("comment deleted successfully");
     },
     onError: (error) => {
-      console.error("Failed to delete comment:", error);
+      Toast.hideAll();
       Toast.show(error.message);
     },
   });

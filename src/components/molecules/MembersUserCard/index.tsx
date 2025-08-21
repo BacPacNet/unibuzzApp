@@ -65,6 +65,7 @@ const MembersUserCard = ({
       await toggleFollow(id);
     } catch (err) {
       setIsFollowingState(false);
+      Toast.hideAll();
       Toast.show("Failed to follow");
     } finally {
       setIsProcessing(false);

@@ -59,6 +59,7 @@ const UserAccountDeactivationScreen = () => {
   const isSelected = watch("isSelected");
   const onSubmit = (formData: any) => {
     if (!isSelected) {
+      Toast.hideAll();
       Toast.show("Please select the checkbox", {
         placement: "top",
         type: "warning",
@@ -75,6 +76,7 @@ const UserAccountDeactivationScreen = () => {
       {
         onSuccess: () => {
           reset();
+          Toast.hideAll();
           Toast.show("Account has been Deactivated");
         },
       }

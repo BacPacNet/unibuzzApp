@@ -95,7 +95,7 @@ const NewComment = ({
   const [images, setImages] = useState<ImageAsset[]>([]);
   const [files, setFiles] = useState<fileType[]>([]);
   const [keyboardVisible, setKeyboardVisible] = useState(false);
-  const hiddenInputRef = useRef<TextInput>(null);
+
   const insets = useSafeAreaInsets();
   const editor = useEditorBridge({
     autofocus: true,
@@ -146,12 +146,14 @@ const NewComment = ({
           const validationResult = validateUploadedFiles(images);
 
           if (!validationResult.isValid) {
+            Toast.hideAll();
             Toast.show(validationResult.message);
             return;
           }
 
           const totalFiles = files.length + images.length;
           if (totalFiles > 4) {
+            Toast.hideAll();
             Toast.show("You can upload a maximum of 4 files.");
             return;
           }
@@ -180,6 +182,7 @@ const NewComment = ({
     const cleanedText = isEmpty ? "" : text;
 
     if (!cleanedText && !images?.length) {
+      Toast.hideAll();
       Toast.show("Post must contain text or at least one file.");
       return;
     }
@@ -243,38 +246,8 @@ const NewComment = ({
     };
   }, []);
 
-  useFocusEffect(
-    useCallback(() => {
-      const timer = setTimeout(() => {
-        try {
-          if (hiddenInputRef.current) {
-            hiddenInputRef.current.focus();
-            setTimeout(() => {
-              if (hiddenInputRef.current) {
-                hiddenInputRef.current.blur();
-              }
-              if (editor && typeof editor.focus === "function") {
-                editor.focus();
-              }
-            }, 100);
-          }
-        } catch (error) {
-          console.log("Focus error:", error);
-        }
-      }, 500);
-
-      return () => clearTimeout(timer);
-    }, [])
-  );
-
   return (
     <View className="flex-1 bg-white relative">
-      <TextInput
-        ref={hiddenInputRef}
-        style={{ position: "absolute", top: -1000, left: -1000 }}
-        autoFocus={false}
-      />
-
       <View className="  flex flex-row gap-4 items-center justify-between border-b border-neutral-300 ">
         <BackHeader
           label={postAuthorName + " post"}
@@ -323,12 +296,7 @@ const NewComment = ({
           </View>
         </View>
 
-        <View
-          style={[
-            keyboardVisible && styles.bottomBar,
-            { marginBottom: insets.bottom },
-          ]}
-        >
+        <View style={[keyboardVisible && styles.bottomBar]}>
           {keyboardVisible && (
             <View className="flex flex-row gap-2 items-center p-2">
               <TouchableOpacity onPress={handleImagePick}>

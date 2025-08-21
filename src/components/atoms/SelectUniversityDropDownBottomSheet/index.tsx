@@ -121,6 +121,7 @@ const SelectUniversityDropdownBottomSheet: React.FC<SelectDropdownProps> = ({
                       onChangeText={setSearchTerm}
                       value={searchTerm}
                       ref={searchRef}
+                      placeholderTextColor={"#9CA3AF"}
                     />
                   )}
                 </View>

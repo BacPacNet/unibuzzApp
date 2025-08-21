@@ -29,6 +29,7 @@ const RoleSelectorWithFields: React.FC<Props> = ({
 }) => {
   const handlePress = (type: "student" | "faculty" | null) => {
     if (disabled) {
+      Toast.hideAll();
       return Toast.show("Select a university first", {
         type: "warning",
         placement: "top",

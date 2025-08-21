@@ -26,9 +26,11 @@ export const useCreateReportBug = () => {
   return useMutation({
     mutationFn: (data: FormData) => reportBugAPI(data),
     onSuccess: (response: any) => {
+      Toast.hideAll();
       Toast.show(response.message, { type: "success", placement: "top" });
     },
     onError: (error: any) => {
+      Toast.hideAll();
       Toast.show(error.response.data.message || MESSAGES.SOMETHING_WENT_WRONG, {
         type: "danger",
         placement: "top",

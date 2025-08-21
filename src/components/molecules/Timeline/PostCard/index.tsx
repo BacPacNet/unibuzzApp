@@ -29,6 +29,7 @@ import { StackNavigationProp } from "@react-navigation/stack";
 import { RootStackParamList } from "@/types/navigation";
 import { RenderCreatedAt } from "@/components/atoms/CreatedAt";
 import { defaultBottomSheetSnapPoints } from "@/types/constant";
+import { NEXT_PUBLIC_SOCKET_URL } from "@env";
 
 type ScreenNavigationProp = StackNavigationProp<RootStackParamList, "Home">;
 
@@ -81,7 +82,11 @@ const PostCard = memo(
       );
 
     const sharePost = async (
-      message = "Hey, check out this amazing post! https://example.com/post/123"
+      message = `Hey, check out this amazing post! ${NEXT_PUBLIC_SOCKET_URL}/post/${data?._id}?isType=${
+        data?.communityId || data?.community?._id
+          ? PostType.Community
+          : PostType.Timeline
+      }`
     ) => {
       try {
         await Share.share({ message });

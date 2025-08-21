@@ -81,6 +81,7 @@ const ConnectionsFilter = () => {
     const { logoUrl, ...filteredValues } = getValues();
 
     if (!filteredValues?.universityName) {
+      Toast.hideAll();
       Toast.show("Please select a filter to apply");
       return;
     }
