@@ -9,6 +9,7 @@ interface ImageUploadSectionProps {
   previewProfileImage: string | null;
   previewBannerImage: string | null;
   onImagePick: (type: "profile" | "banner") => void;
+  onLogoPick?: () => void;
 }
 
 export const ImageUploadSection: React.FC<ImageUploadSectionProps> = ({
@@ -17,14 +18,12 @@ export const ImageUploadSection: React.FC<ImageUploadSectionProps> = ({
   previewProfileImage,
   previewBannerImage,
   onImagePick,
+  onLogoPick,
 }) => (
   <>
     {/* Profile Photo */}
     <View style={styles.photoSection}>
-      <TouchableOpacity
-        onPress={() => onImagePick("profile")}
-        style={styles.photoUpload}
-      >
+      <TouchableOpacity onPress={onLogoPick} style={styles.photoUpload}>
         {(imageToUpload || previewProfileImage) && (
           <Image
             source={{ uri: imageToUpload?.uri || previewProfileImage! }}

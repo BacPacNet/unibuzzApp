@@ -11,13 +11,13 @@ export type ImageAsset = {
 };
 
 export const useImageUpload = () => {
-  const [imageToUpload, setImageToUpload] = useState<ImageAsset | null>(null);
+  //   const [imageToUpload, setImageToUpload] = useState<ImageAsset | null>(null);
   const [bannerToUpload, setBannerToUpload] = useState<ImageAsset | null>(null);
   const [previewProfileImage, setPreviewProfileImage] = useState<string | null>(
-    null,
+    null
   );
   const [previewBannerImage, setPreviewBannerImage] = useState<string | null>(
-    null,
+    null
   );
 
   const handleImagePick = (type: "profile" | "banner") => {
@@ -25,7 +25,8 @@ export const useImageUpload = () => {
       if (!response.didCancel && !response.errorCode) {
         const imageObject = response.assets[0];
         if (type === "profile") {
-          setImageToUpload(imageObject);
+          return;
+          //   setImageToUpload(imageObject);
         } else {
           setBannerToUpload(imageObject);
         }
@@ -34,7 +35,7 @@ export const useImageUpload = () => {
   };
 
   return {
-    imageToUpload,
+    // imageToUpload,
     bannerToUpload,
     previewProfileImage,
     previewBannerImage,

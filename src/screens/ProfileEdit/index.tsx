@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   View,
   Text,
@@ -13,14 +13,13 @@ import {
 import { NavArrowLeft, User } from "iconoir-react-native";
 import { FormInput } from "@/components/atoms/FormInput";
 
-import { useFocusEffect, useNavigation } from "@react-navigation/native";
+import { useNavigation } from "@react-navigation/native";
 import { useForm } from "react-hook-form";
 import { editProfileInputs, GenderOptions } from "@/types/Profile";
 import { SelectInputWithSearch } from "@/components/atoms/SelectInputWithSearch";
 import { City, Country } from "country-state-city";
 
 import StatusOptions from "@/components/organism/EditProfile/StatusSec";
-import { launchImageLibrary } from "react-native-image-picker";
 import { useGetUserData } from "@/services/user";
 import { getUserProfileStore } from "@/storage/user";
 
@@ -35,6 +34,11 @@ import { Toast } from "react-native-toast-notifications";
 import SelectUniversityDropdownBottomSheet from "@/components/atoms/SelectUniversityDropDownBottomSheet";
 import CommunityLogo from "@/components/atoms/LogoHolder";
 import { FONTS } from "@/constants/fonts";
+import ImagePicker from "react-native-image-crop-picker";
+import ActionSheet, { ActionSheetRef } from "react-native-actions-sheet";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+import ImageOptionSelectBottomSheet from "@/components/molecules/ImageOptionSelectBottomSheet";
+import { handleTakePhoto, pickImage } from "@/utils";
 
 type ImageAsset = {
   uri: string;
@@ -87,6 +91,9 @@ export default function ProfileEdit() {
   const [isProfileLoading, setIsProfileLoading] = useState(false);
   const [imageToUpload, setImageToUpload] = useState<ImageAsset | null>(null);
 
+  const imageOptionActionSheetRef = useRef<ActionSheetRef>(null);
+  const insets = useSafeAreaInsets();
+
   const { data: userProfile } = useGetUserData(
     userProfileData?.users_id as string
   );
@@ -135,15 +142,6 @@ export default function ProfileEdit() {
       );
       setValue("city", "");
     }
-  };
-
-  const handleImagePick = async () => {
-    launchImageLibrary({ mediaType: "photo" }, (response: any) => {
-      if (!response.didCancel && !response.errorCode) {
-        const imageObject = response.assets[0];
-        setImageToUpload(imageObject);
-      }
-    });
   };
 
   useEffect(() => {
@@ -222,7 +220,7 @@ export default function ProfileEdit() {
             {/* Profile Photo */}
             <View style={styles.photoSection}>
               <TouchableOpacity
-                onPress={() => handleImagePick()}
+                onPress={() => imageOptionActionSheetRef.current?.show()}
                 style={styles.photoUpload}
               >
                 {imageToUpload ? (
@@ -411,6 +409,19 @@ export default function ProfileEdit() {
           </View>
         </ScrollView>
       </KeyboardAvoidingView>
+
+      <ActionSheet
+        ref={imageOptionActionSheetRef}
+        gestureEnabled={true}
+        safeAreaInsets={insets}
+      >
+        <ImageOptionSelectBottomSheet
+          onTakePhoto={() => handleTakePhoto(setImageToUpload)}
+          onUploadFromPhotos={() => pickImage(setImageToUpload)}
+          onClose={() => imageOptionActionSheetRef.current?.hide()}
+          title="Add Profile Photo "
+        />
+      </ActionSheet>
     </SafeAreaView>
   );
 }

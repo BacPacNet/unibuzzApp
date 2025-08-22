@@ -11,6 +11,7 @@ import {
   parse,
 } from "date-fns";
 import { getUserProfileStore } from "@/storage/user";
+import ImagePicker from "react-native-image-crop-picker";
 
 dayjs.extend(relativeTime);
 dayjs.locale("en");
@@ -50,7 +51,7 @@ export const validateUploadedFiles = (
   options: {
     maxFiles?: number;
     maxSize?: number;
-  } = {},
+  } = {}
 ): { isValid: boolean; message: string } => {
   const {
     maxFiles = 4,
@@ -137,7 +138,62 @@ export const IsUniversityVerified = (): boolean => {
   return (
     userProfileData?.email?.some(
       (university) =>
-        university.UniversityName === userProfileData.university_name,
+        university.UniversityName === userProfileData.university_name
     ) || false
   );
+};
+
+export const pickImage = async (
+  setState: (image: {
+    uri: string;
+    width: number;
+    height: number;
+    mime: string;
+  }) => void
+) => {
+  try {
+    const image = await ImagePicker.openPicker({
+      cropping: true,
+      mediaType: "photo",
+      cropperCircleOverlay: true,
+    });
+
+    const imageObject = {
+      uri: image.path,
+      width: image.width,
+      height: image.height,
+      mime: image.mime,
+    };
+
+    setState(imageObject);
+  } catch (error: any) {
+    console.error("ImagePicker error:", error);
+  }
+};
+
+export const handleTakePhoto = async (
+  setState: (image: {
+    uri: string;
+    width: number;
+    height: number;
+    mime: string;
+  }) => void
+) => {
+  try {
+    const photo = await ImagePicker.openCamera({
+      cropping: true,
+      mediaType: "photo",
+      cropperCircleOverlay: true,
+    });
+
+    const imageObject = {
+      uri: photo.path,
+      width: photo.width,
+      height: photo.height,
+      mime: photo.mime,
+    };
+    setState(imageObject);
+  } catch (error: any) {
+    console.error("Camera error:", error);
+  }
 };
