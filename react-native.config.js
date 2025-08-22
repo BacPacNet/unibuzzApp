@@ -3,5 +3,6 @@ module.exports = {
     ios: {},
     android: {},
   },
-  assets: ["./src/assets/fonts"],
+  // Temporarily disable fonts to resolve duplicate font copy issue
+  // assets: ["./src/assets/fonts"],
 };

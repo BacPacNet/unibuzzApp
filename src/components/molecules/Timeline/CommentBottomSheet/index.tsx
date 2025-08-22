@@ -286,27 +286,25 @@ const CommentBottomSheet = ({
           />
         </View>
       </View>
-      <SafeScreen>
-        <Modal
-          visible={isModalVisible}
-          animationType="slide"
-          transparent={true}
-          onRequestClose={() => setModalVisible(false)}
-        >
-          <NewComment
-            setModalVisible={setModalVisible}
-            showInitial={showInitial}
-            type={type}
-            postId={postId}
-            adminID={adminID}
-            level={replyingTo?.commentId?.length ? true : false}
-            commentData={replyingTo}
-            postAuthorName={postAuthorName || ""}
-            setShowReply={setShowReply}
-            sortby={selectedSortValue}
-          />
-        </Modal>
-      </SafeScreen>
+      <Modal
+        visible={isModalVisible}
+        animationType="slide"
+        transparent={true}
+        onRequestClose={() => setModalVisible(false)}
+      >
+        <NewComment
+          setModalVisible={setModalVisible}
+          showInitial={showInitial}
+          type={type}
+          postId={postId}
+          adminID={adminID}
+          level={replyingTo?.commentId?.length ? true : false}
+          commentData={replyingTo}
+          postAuthorName={postAuthorName || ""}
+          setShowReply={setShowReply}
+          sortby={selectedSortValue}
+        />
+      </Modal>
     </SafeAreaView>
   );
 };

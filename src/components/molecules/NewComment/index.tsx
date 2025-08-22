@@ -247,7 +247,12 @@ const NewComment = ({
   }, []);
 
   return (
-    <View className="flex-1 bg-white relative">
+    <View
+      style={{
+        paddingTop: Platform.OS === "ios" ? insets.top : 0,
+      }}
+      className="flex-1 bg-white relative"
+    >
       <View className="  flex flex-row gap-4 items-center justify-between border-b border-neutral-300 ">
         <BackHeader
           label={postAuthorName + " post"}
@@ -274,41 +279,38 @@ const NewComment = ({
           : `Commenting on ${postAuthorName} post`}
       </Text>
 
+      {images.length > 0 && (
+        <View style={{ height: 100 }}>
+          <MediaPreviewList
+            files={[...images, ...files]}
+            onRemove={(index: any, isImage: boolean) =>
+              handleImageRemove(index, isImage)
+            }
+          />
+        </View>
+      )}
+
+      <View style={styles.editorHeight}>
+        <RichText editor={editor} />
+      </View>
+
       <KeyboardAvoidingView
-        style={{ flex: 1 }}
         behavior={Platform.OS === "ios" ? "padding" : "height"}
-        keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 0}
+        style={{
+          position: "absolute",
+          width: "100%",
+          bottom: 0,
+        }}
       >
-        <View style={{ flex: 1 }}>
-          {images.length > 0 && (
-            <View style={{ height: 100 }}>
-              <MediaPreviewList
-                files={[...images, ...files]}
-                onRemove={(index: any, isImage: boolean) =>
-                  handleImageRemove(index, isImage)
-                }
-              />
-            </View>
-          )}
-
-          <View style={styles.editorHeight}>
-            <RichText editor={editor} focusable={true} />
+        {keyboardVisible && (
+          <View className="flex flex-row gap-2 items-center border-t border-neutral-300 p-2">
+            <TouchableOpacity onPress={handleImagePick}>
+              <MediaImage height={20} width={20} color={"#a3a3a3"} />
+            </TouchableOpacity>
           </View>
-        </View>
+        )}
 
-        <View style={[keyboardVisible && styles.bottomBar]}>
-          {keyboardVisible && (
-            <View className="flex flex-row gap-2 items-center p-2">
-              <TouchableOpacity onPress={handleImagePick}>
-                <MediaImage height={20} width={20} color={"#a3a3a3"} />
-              </TouchableOpacity>
-            </View>
-          )}
-
-          <View className="flex flex-row gap-2 items-center px-2">
-            <Toolbar editor={editor} />
-          </View>
-        </View>
+        <Toolbar editor={editor} />
       </KeyboardAvoidingView>
     </View>
   );
