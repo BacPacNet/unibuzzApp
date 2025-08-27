@@ -14,28 +14,22 @@ import {
 import { ToastProvider } from "react-native-toast-notifications";
 import AuthProvider from "./context/AuthProvider/AuthProvider";
 import { UserPasswordResetProvider } from "./context/UserPasswordResetProvider/UserPasswordResetProvider";
-import { useFirebaseMessaging } from "./hooks/useFirebaseMessaging";
 
 export const queryClient = new QueryClient();
-
 export const storage = new MMKV();
 
 function App() {
-  // useFirebaseMessaging();
   return (
     <QueryClientProvider client={queryClient}>
       <ThemeProvider storage={storage}>
         <SafeAreaProvider>
-          {/* <SafeScreen> */}
           <AuthProvider>
             <UserPasswordResetProvider>
               <InnerApp />
             </UserPasswordResetProvider>
           </AuthProvider>
-          {/* </SafeScreen> */}
         </SafeAreaProvider>
       </ThemeProvider>
-      {/*<ReactQueryDevtools initialIsOpen={false} />*/}
     </QueryClientProvider>
   );
 }
@@ -46,7 +40,6 @@ function InnerApp() {
   return (
     <ToastProvider offsetTop={insets.top} offsetBottom={insets.bottom}>
       <ApplicationNavigator />
-      {/* <DevToolsBubble /> */}
     </ToastProvider>
   );
 }

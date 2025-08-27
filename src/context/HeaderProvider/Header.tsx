@@ -25,7 +25,7 @@ export const HeaderProvider: React.FC<HeaderProviderProps> = ({ children }) => {
   const [showHeader, setShowHeader] = useState(true);
   const [currScreen, setCurrScreen] = useState("");
   const [isTabBarVisible, setIsTabBarVisible] = useState(true);
-  // useFirebaseMessaging();
+  useFirebaseMessaging();
 
   const changeHeaderShownStatus = (value: boolean) => {
     setShowHeader(value);

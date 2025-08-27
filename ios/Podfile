@@ -10,9 +10,12 @@ prepare_react_native_project!
 
 linkage = ENV['USE_FRAMEWORKS']
 if linkage != nil
-  Pod::UI.puts "Configuring Pod with #{linkage}ally linked Frameworks".green
-  use_frameworks! :linkage => linkage.to_sym
+ Pod::UI.puts "Configuring Pod with #{linkage}ally linked Frameworks".green
+ use_frameworks! :linkage => linkage.to_sym
 end
+
+# use_frameworks! :linkage => :static
+# $RNFirebaseAsStaticFramework = true
 
 target 'UnibuzzApp' do
   config = use_native_modules!
@@ -24,6 +27,7 @@ target 'UnibuzzApp' do
   pod 'FirebaseInstallations', :modular_headers => true
   pod 'FirebaseMessaging', :modular_headers => true
   pod 'GoogleDataTransport', :modular_headers => true
+  pod 'Firebase/Analytics', :modular_headers => true
 
   use_react_native!(
     :path => config[:reactNativePath],

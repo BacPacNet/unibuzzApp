@@ -1,9 +1,13 @@
 import { useEffect } from "react";
 import messaging, {
+  AuthorizationStatus,
   FirebaseMessagingTypes,
 } from "@react-native-firebase/messaging";
-import { Alert, PermissionsAndroid, Platform, ToastAndroid } from "react-native";
-import { storeNotificationToken } from "@/storage/NotificationToken";
+import { PermissionsAndroid, Platform } from "react-native";
+import {
+  getNotificationToken,
+  storeNotificationToken,
+} from "@/storage/NotificationToken";
 import { useHandleSavePushNotificationToken } from "@/services/pushNotification";
 import { notificationRoleAccess } from "@/types/notifications";
 import { screenName } from "@/constant/screenName";
@@ -73,176 +77,79 @@ export const useFirebaseMessaging = (): void => {
     }
   };
 
-//   useEffect(() => {
-//     const getToken = async (): Promise<void> => {
-//       try {
-//         const token = await messaging().getToken();
-//         storeNotificationToken(token);
-//         savePushNotificationToken({ token });
-//       } catch (error) {
-//         console.error("Failed to get FCM token", error);
-//       }
-//     };
+  useEffect(() => {
+    const getTokenFromStorage = getNotificationToken();
+    console.log("getTokenFromStorage", getTokenFromStorage);
+    const getToken = async (): Promise<void> => {
+      try {
+        const token = await messaging().getToken();
+        storeNotificationToken(token);
+        savePushNotificationToken({ token });
+      } catch (error) {
+        console.error("Failed to get FCM token", error);
+      }
+    };
 
-//     const checkAndRequestPermission = async (): Promise<void> => {
-//       if (Platform.OS === "ios") {
-//         const status = await messaging().hasPermission();
-//         if (
-//           status === messaging.AuthorizationStatus.NOT_DETERMINED ||
-//           status === messaging.AuthorizationStatus.DENIED
-//         ) {
-//           const requestStatus = await messaging().requestPermission();
-//           const granted =
-//             requestStatus === messaging.AuthorizationStatus.AUTHORIZED ||
-//             requestStatus === messaging.AuthorizationStatus.PROVISIONAL;
+    const checkAndRequestPermission = async (): Promise<void> => {
+      if (Platform.OS === "ios") {
+        const authStatus = await messaging().requestPermission();
+        const enabled =
+          authStatus === AuthorizationStatus.AUTHORIZED ||
+          authStatus === AuthorizationStatus.PROVISIONAL;
 
-//           if (granted) {
-//             await getToken();
-//           }
-//         } else if (
-//           status === messaging.AuthorizationStatus.AUTHORIZED ||
-//           status === messaging.AuthorizationStatus.PROVISIONAL
-//         ) {
-//           await getToken();
-//         }
-//       } else if (Platform.OS === "android") {
-//         if (Platform.Version >= 33) {
-//           const result = await PermissionsAndroid.request(
-//             PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS,
-//           );
-//           if (result === PermissionsAndroid.RESULTS.GRANTED) {
-//             await getToken();
-//           } else {
-//             console.warn("Android notification permission denied");
-//           }
-//         } else {
-//           console.log("Android notification permission granted");
-//           await getToken();
-//         }
-//       }
-//     };
+        if (!enabled) {
+          console.log("Notification permission not granted.");
+          return;
+        }
+        await messaging().registerDeviceForRemoteMessages();
+        await getToken();
+      } else if (Platform.OS === "android") {
+        if (Platform.Version >= 33) {
+          const result = await PermissionsAndroid.request(
+            PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS
+          );
 
-//     const unsubscribeOnNotificationOpenedApp =
-//       messaging().onNotificationOpenedApp(
-//         async (remoteMessage: FirebaseMessagingTypes.RemoteMessage | null) => {
-//           if (remoteMessage?.data) {
-//             await handleUpdateIsRead(remoteMessage.data);
-//           }
-//         },
-//       );
-
-//     messaging()
-//       .getInitialNotification()
-//       .then((remoteMessage) => {
-//         if (remoteMessage?.data) {
-//           handleUpdateIsRead(remoteMessage.data);
-//         }
-//       });
-
-//     const unsubscribe = messaging().onMessage(
-//       async (remoteMessage: FirebaseMessagingTypes.RemoteMessage) => {
-//         // Optional: show local alert/toast if needed
-//         // Alert.alert("New message", remoteMessage.notification?.body);
-  
-//         // ToastAndroid.show(`New message: ${remoteMessage.notification?.body}`, ToastAndroid.LONG);
-//       },
-//     );
-
-//     void checkAndRequestPermission();
-
-//     return () => {
-//       unsubscribe();
-//       unsubscribeOnNotificationOpenedApp();
-//     };
-//   }, []);
-
-
-useEffect(() => {
-  const getToken = async (): Promise<void> => {
-    try {
-      const token = await messaging().getToken();
-      storeNotificationToken(token);
-      savePushNotificationToken({ token });
-    } catch (error) {
-      console.error("Failed to get FCM token", error);
-    }
-  };
-
-  const checkAndRequestPermission = async (): Promise<void> => {
-    if (Platform.OS === "ios") {
-      const status = await messaging().hasPermission();
-      
-      if (
-        status === messaging.AuthorizationStatus.NOT_DETERMINED ||
-        status === messaging.AuthorizationStatus.DENIED
-      ) {
-
-        const requestStatus = await messaging().requestPermission();
-        
-        const granted =
-          requestStatus === messaging.AuthorizationStatus.AUTHORIZED ||
-          requestStatus === messaging.AuthorizationStatus.PROVISIONAL;
-
-        if (granted) {
-
+          if (result === PermissionsAndroid.RESULTS.GRANTED) {
+            await getToken();
+          }
+        } else {
           await getToken();
         }
-      } else if (
-        status === messaging.AuthorizationStatus.AUTHORIZED ||
-        status === messaging.AuthorizationStatus.PROVISIONAL
-      ) {
-   
-        await getToken();
       }
-    } else if (Platform.OS === "android") {
-      if (Platform.Version >= 33) {
-     
-        const result = await PermissionsAndroid.request(
-          PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS,
-        );
+    };
 
-        
-        if (result === PermissionsAndroid.RESULTS.GRANTED) {
+    const unsubscribeOnNotificationOpenedApp =
+      messaging().onNotificationOpenedApp(
+        async (remoteMessage: FirebaseMessagingTypes.RemoteMessage | null) => {
+          if (remoteMessage?.data) {
+            console.log("remoteMessage", remoteMessage);
+            await handleUpdateIsRead(remoteMessage.data);
+          }
+        }
+      );
 
-          await getToken();
-        } 
-      } else {
-
-        await getToken();
-      }
-    }
-  };
-
-  const unsubscribeOnNotificationOpenedApp =
-    messaging().onNotificationOpenedApp(
-      async (remoteMessage: FirebaseMessagingTypes.RemoteMessage | null) => {
+    messaging()
+      .getInitialNotification()
+      .then((remoteMessage) => {
         if (remoteMessage?.data) {
-          await handleUpdateIsRead(remoteMessage.data);
+          console.log("remoteMessage 2", remoteMessage);
+          handleUpdateIsRead(remoteMessage.data);
         }
-      },
+      });
+
+    const unsubscribe = messaging().onMessage(
+      async (remoteMessage: FirebaseMessagingTypes.RemoteMessage) => {
+        // Optional: show local alert/toast if needed
+        // Alert.alert("New message", remoteMessage.notification?.body);
+        // ToastAndroid.show(`New message: ${remoteMessage.notification?.body}`, ToastAndroid.LONG);
+      }
     );
 
-  messaging()
-    .getInitialNotification()
-    .then((remoteMessage) => {
-      if (remoteMessage?.data) {
-        handleUpdateIsRead(remoteMessage.data);
-      }
-    });
+    void checkAndRequestPermission();
 
-  const unsubscribe = messaging().onMessage(
-    async (remoteMessage: FirebaseMessagingTypes.RemoteMessage) => {
-      // Optional: show local alert/toast if needed
-      // Alert.alert("New message", remoteMessage.notification?.body);
-      // ToastAndroid.show(`New message: ${remoteMessage.notification?.body}`, ToastAndroid.LONG);
-    },
-  );
-
-  void checkAndRequestPermission();
-
-  return () => {
-    unsubscribe();
-    unsubscribeOnNotificationOpenedApp();
-  };
-}, []);
+    return () => {
+      unsubscribe();
+      unsubscribeOnNotificationOpenedApp();
+    };
+  }, []);
 };

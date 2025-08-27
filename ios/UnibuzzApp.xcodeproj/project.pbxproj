@@ -11,9 +11,13 @@
 		13B07FBC1A68108700A75B9A /* AppDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB01A68108700A75B9A /* AppDelegate.mm */; };
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
-		1FAE20BE62F2AA24DD10C338 /* libPods-UnibuzzApp.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F3970D3968D5D89E1D904842 /* libPods-UnibuzzApp.a */; };
+		6152ACC02E5B86730064FD91 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 6152ACBF2E5B86730064FD91 /* GoogleService-Info.plist */; };
+		6152ACC12E5B86730064FD91 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 6152ACBF2E5B86730064FD91 /* GoogleService-Info.plist */; };
+		61984FAC2E5CC2CE00697EBF /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 61984FAB2E5CC2CE00697EBF /* GoogleService-Info.plist */; };
+		61984FAD2E5CC2CE00697EBF /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 61984FAB2E5CC2CE00697EBF /* GoogleService-Info.plist */; };
 		81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */; };
-		D46E56AEDBB9F0C807C7FA80 /* libPods-UnibuzzApp-UnibuzzAppTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5D216E859669ABAC9FE2AA9C /* libPods-UnibuzzApp-UnibuzzAppTests.a */; };
+		8E8EE5BD305DF1ABD2D482F8 /* libPods-UnibuzzApp-UnibuzzAppTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 19FEE1F0A65D30EA60ECAF29 /* libPods-UnibuzzApp-UnibuzzAppTests.a */; };
+		D0C008557E42830F7DDF25EE /* libPods-UnibuzzApp.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F6EAA24ADD2C843645ED906A /* libPods-UnibuzzApp.a */; };
 		F571B3882BD7A3F80014213C /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = F571B3872BD7A3F80014213C /* PrivacyInfo.xcprivacy */; };
 /* End PBXBuildFile section */
 
@@ -48,6 +52,7 @@
 		15029E2A02E44A47B5ABEA7D /* Inter_24pt-ExtraLightItalic.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Inter_24pt-ExtraLightItalic.ttf"; path = "../src/assets/fonts/Inter_24pt-ExtraLightItalic.ttf"; sourceTree = "<group>"; };
 		164680FC4DB94F88BA287F8A /* Inter_24pt-ExtraLight.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Inter_24pt-ExtraLight.ttf"; path = "../src/assets/fonts/Inter_24pt-ExtraLight.ttf"; sourceTree = "<group>"; };
 		1930D10C448F468088C0AD08 /* Inter_24pt-Italic.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Inter_24pt-Italic.ttf"; path = "../src/assets/fonts/Inter_24pt-Italic.ttf"; sourceTree = "<group>"; };
+		19FEE1F0A65D30EA60ECAF29 /* libPods-UnibuzzApp-UnibuzzAppTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-UnibuzzApp-UnibuzzAppTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		1BA769976C0247DEB583034C /* Inter_24pt-MediumItalic.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Inter_24pt-MediumItalic.ttf"; path = "../src/assets/fonts/Inter_24pt-MediumItalic.ttf"; sourceTree = "<group>"; };
 		1F7032DBA6F54FB2A739F35D /* Inter_24pt-Bold.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Inter_24pt-Bold.ttf"; path = "../src/assets/fonts/Inter_24pt-Bold.ttf"; sourceTree = "<group>"; };
 		2286520EED6E4AD0997D7342 /* Inter_18pt-ExtraLight.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Inter_18pt-ExtraLight.ttf"; path = "../src/assets/fonts/Inter_18pt-ExtraLight.ttf"; sourceTree = "<group>"; };
@@ -74,8 +79,10 @@
 		5714168D4F024BEE9D7397C6 /* Poppins-ExtraLightItalic.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Poppins-ExtraLightItalic.ttf"; path = "../src/assets/fonts/Poppins-ExtraLightItalic.ttf"; sourceTree = "<group>"; };
 		583D9AF71E504499823E18ED /* Inter_28pt-MediumItalic.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Inter_28pt-MediumItalic.ttf"; path = "../src/assets/fonts/Inter_28pt-MediumItalic.ttf"; sourceTree = "<group>"; };
 		5C3C04221B6B4F27B6384DF1 /* Inter_28pt-ExtraBold.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Inter_28pt-ExtraBold.ttf"; path = "../src/assets/fonts/Inter_28pt-ExtraBold.ttf"; sourceTree = "<group>"; };
-		5D216E859669ABAC9FE2AA9C /* libPods-UnibuzzApp-UnibuzzAppTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-UnibuzzApp-UnibuzzAppTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		5D6C09E7FC2447EFA9A8B7E0 /* Poppins-MediumItalic.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Poppins-MediumItalic.ttf"; path = "../src/assets/fonts/Poppins-MediumItalic.ttf"; sourceTree = "<group>"; };
+		6152ACBF2E5B86730064FD91 /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
+		61984FAB2E5CC2CE00697EBF /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
+		61984FAE2E5D730000697EBF /* UnibuzzApp.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = UnibuzzApp.entitlements; path = UnibuzzApp/UnibuzzApp.entitlements; sourceTree = "<group>"; };
 		6A25D3BCFE2047AFD345298A /* Pods-UnibuzzApp-UnibuzzAppTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-UnibuzzApp-UnibuzzAppTests.release.xcconfig"; path = "Target Support Files/Pods-UnibuzzApp-UnibuzzAppTests/Pods-UnibuzzApp-UnibuzzAppTests.release.xcconfig"; sourceTree = "<group>"; };
 		6CBDB921A47BA85CA8CC00EB /* Pods-UnibuzzApp.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-UnibuzzApp.debug.xcconfig"; path = "Target Support Files/Pods-UnibuzzApp/Pods-UnibuzzApp.debug.xcconfig"; sourceTree = "<group>"; };
 		72300F3654D643D28EB635AA /* Inter_18pt-Medium.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Inter_18pt-Medium.ttf"; path = "../src/assets/fonts/Inter_18pt-Medium.ttf"; sourceTree = "<group>"; };
@@ -113,8 +120,8 @@
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
 		EE61DA9906BD4E4A80BD8B5E /* Inter_24pt-Thin.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Inter_24pt-Thin.ttf"; path = "../src/assets/fonts/Inter_24pt-Thin.ttf"; sourceTree = "<group>"; };
 		F383F97C3EE740469AAFA0E4 /* Inter_18pt-BlackItalic.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Inter_18pt-BlackItalic.ttf"; path = "../src/assets/fonts/Inter_18pt-BlackItalic.ttf"; sourceTree = "<group>"; };
-		F3970D3968D5D89E1D904842 /* libPods-UnibuzzApp.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-UnibuzzApp.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		F571B3872BD7A3F80014213C /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
+		F6EAA24ADD2C843645ED906A /* libPods-UnibuzzApp.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-UnibuzzApp.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		F781B0B5E4EE45CD93839805 /* Inter_18pt-Regular.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Inter_18pt-Regular.ttf"; path = "../src/assets/fonts/Inter_18pt-Regular.ttf"; sourceTree = "<group>"; };
 		FBE066642A6446DEAE582C22 /* Inter_28pt-Regular.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Inter_28pt-Regular.ttf"; path = "../src/assets/fonts/Inter_28pt-Regular.ttf"; sourceTree = "<group>"; };
 		FDADF6317E0743EF858DCAD8 /* Inter_18pt-ExtraBold.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Inter_18pt-ExtraBold.ttf"; path = "../src/assets/fonts/Inter_18pt-ExtraBold.ttf"; sourceTree = "<group>"; };
@@ -125,7 +132,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				D46E56AEDBB9F0C807C7FA80 /* libPods-UnibuzzApp-UnibuzzAppTests.a in Frameworks */,
+				8E8EE5BD305DF1ABD2D482F8 /* libPods-UnibuzzApp-UnibuzzAppTests.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -133,7 +140,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				1FAE20BE62F2AA24DD10C338 /* libPods-UnibuzzApp.a in Frameworks */,
+				D0C008557E42830F7DDF25EE /* libPods-UnibuzzApp.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -160,6 +167,8 @@
 		13B07FAE1A68108700A75B9A /* UnibuzzApp */ = {
 			isa = PBXGroup;
 			children = (
+				61984FAE2E5D730000697EBF /* UnibuzzApp.entitlements */,
+				6152ACBF2E5B86730064FD91 /* GoogleService-Info.plist */,
 				F571B3872BD7A3F80014213C /* PrivacyInfo.xcprivacy */,
 				13B07FAF1A68108700A75B9A /* AppDelegate.h */,
 				13B07FB01A68108700A75B9A /* AppDelegate.mm */,
@@ -167,6 +176,7 @@
 				13B07FB61A68108700A75B9A /* Info.plist */,
 				81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */,
 				13B07FB71A68108700A75B9A /* main.m */,
+				61984FAB2E5CC2CE00697EBF /* GoogleService-Info.plist */,
 			);
 			name = UnibuzzApp;
 			sourceTree = "<group>";
@@ -175,8 +185,8 @@
 			isa = PBXGroup;
 			children = (
 				ED297162215061F000B7C4FE /* JavaScriptCore.framework */,
-				F3970D3968D5D89E1D904842 /* libPods-UnibuzzApp.a */,
-				5D216E859669ABAC9FE2AA9C /* libPods-UnibuzzApp-UnibuzzAppTests.a */,
+				F6EAA24ADD2C843645ED906A /* libPods-UnibuzzApp.a */,
+				19FEE1F0A65D30EA60ECAF29 /* libPods-UnibuzzApp-UnibuzzAppTests.a */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -376,6 +386,9 @@
 				Base,
 			);
 			mainGroup = 83CBB9F61A601CBA00E9B192;
+			packageReferences = (
+				6152ACBE2E58A0960064FD91 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
+			);
 			productRefGroup = 83CBBA001A601CBA00E9B192 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -391,6 +404,8 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6152ACC12E5B86730064FD91 /* GoogleService-Info.plist in Resources */,
+				61984FAD2E5CC2CE00697EBF /* GoogleService-Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -399,6 +414,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				F571B3882BD7A3F80014213C /* PrivacyInfo.xcprivacy in Resources */,
+				6152ACC02E5B86730064FD91 /* GoogleService-Info.plist in Resources */,
+				61984FAC2E5CC2CE00697EBF /* GoogleService-Info.plist in Resources */,
 				81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */,
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
 			);
@@ -655,6 +672,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_ENTITLEMENTS = UnibuzzApp/UnibuzzApp.entitlements;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = UT26763RU9;
 				ENABLE_BITCODE = NO;
@@ -683,6 +701,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_ENTITLEMENTS = UnibuzzApp/UnibuzzApp.entitlements;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = UT26763RU9;
 				INFOPLIST_FILE = UnibuzzApp/Info.plist;
@@ -755,6 +774,17 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					"${PODS_CONFIGURATION_BUILD_DIR}/ReactCommon/ReactCommon.framework/Headers",
+					"${PODS_CONFIGURATION_BUILD_DIR}/ReactCommon/ReactCommon.framework/Headers/react/nativemodule/core",
+					"${PODS_CONFIGURATION_BUILD_DIR}/ReactCommon-Samples/ReactCommon_Samples.framework/Headers",
+					"${PODS_CONFIGURATION_BUILD_DIR}/ReactCommon-Samples/ReactCommon_Samples.framework/Headers/platform/ios",
+					"${PODS_CONFIGURATION_BUILD_DIR}/React-Fabric/React_Fabric.framework/Headers/react/renderer/components/view/platform/cxx",
+					"${PODS_CONFIGURATION_BUILD_DIR}/React-NativeModulesApple/React_NativeModulesApple.framework/Headers",
+					"${PODS_CONFIGURATION_BUILD_DIR}/React-graphics/React_graphics.framework/Headers",
+					"${PODS_CONFIGURATION_BUILD_DIR}/React-graphics/React_graphics.framework/Headers/react/renderer/graphics/platform/ios",
+				);
 				IPHONEOS_DEPLOYMENT_TARGET = 12.4;
 				LD = "";
 				LDPLUSPLUS = "";
@@ -835,6 +865,17 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					"${PODS_CONFIGURATION_BUILD_DIR}/ReactCommon/ReactCommon.framework/Headers",
+					"${PODS_CONFIGURATION_BUILD_DIR}/ReactCommon/ReactCommon.framework/Headers/react/nativemodule/core",
+					"${PODS_CONFIGURATION_BUILD_DIR}/ReactCommon-Samples/ReactCommon_Samples.framework/Headers",
+					"${PODS_CONFIGURATION_BUILD_DIR}/ReactCommon-Samples/ReactCommon_Samples.framework/Headers/platform/ios",
+					"${PODS_CONFIGURATION_BUILD_DIR}/React-Fabric/React_Fabric.framework/Headers/react/renderer/components/view/platform/cxx",
+					"${PODS_CONFIGURATION_BUILD_DIR}/React-NativeModulesApple/React_NativeModulesApple.framework/Headers",
+					"${PODS_CONFIGURATION_BUILD_DIR}/React-graphics/React_graphics.framework/Headers",
+					"${PODS_CONFIGURATION_BUILD_DIR}/React-graphics/React_graphics.framework/Headers/react/renderer/graphics/platform/ios",
+				);
 				IPHONEOS_DEPLOYMENT_TARGET = 12.4;
 				LD = "";
 				LDPLUSPLUS = "";
@@ -898,6 +939,17 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		6152ACBE2E58A0960064FD91 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/firebase/firebase-ios-sdk";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 12.1.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
 	};
 	rootObject = 83CBB9F71A601CBA00E9B192 /* Project object */;
 }

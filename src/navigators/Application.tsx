@@ -142,7 +142,7 @@ function ApplicationNavigator() {
           tabBarInactiveTintColor: "black",
           tabBarStyle: {
             backgroundColor: "white",
-            height: 70 + (Platform.OS === "android" ? insets.bottom : 0),
+            height: 70 + (Platform.OS === "android" ? insets.bottom : 16),
             display: isTabBarVisible ? "flex" : "none",
             flexDirection: "row",
             alignItems: "center",
