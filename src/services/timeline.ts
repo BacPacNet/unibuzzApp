@@ -127,7 +127,7 @@ export function useGetUserPostComments(
     const cookieValue = getToken() as string;
 
     return useInfiniteQuery({
-      queryKey: ["userPostComments", sortby],
+      queryKey: ["userPostComments", sortby, postId],
       queryFn: ({ pageParam = 1 }) =>
         getUserPostComments(postId, cookieValue, pageParam, limit, sortby),
       getNextPageParam: (lastPage) => {
@@ -246,7 +246,7 @@ export async function CreateUserPostComment(data: any, token: string) {
   return response;
 }
 
-export const useCreateUserPostComment = (sortby: Sortby) => {
+export const useCreateUserPostComment = (sortby: Sortby, postId: string) => {
   const cookieValue = getToken() as string;
   const queryClient = useQueryClient();
   return useMutation({
@@ -257,10 +257,10 @@ export const useCreateUserPostComment = (sortby: Sortby) => {
       const currUserComments = queryClient.getQueryData<{
         pages: any[];
         pageParams: any[];
-      }>(["userPostComments", sortby]);
+      }>(["userPostComments", sortby, postId]);
 
       if (currUserComments) {
-        queryClient.setQueryData(["userPostComments", sortby], {
+        queryClient.setQueryData(["userPostComments", sortby, postId], {
           ...currUserComments,
           pages: currUserComments.pages.map((page, index) => {
             if (index === 0) {
@@ -319,7 +319,7 @@ export const useLikeUnlikeUserPostComment = (
       const currUserComments = queryClient.getQueryData<{
         pages: any[];
         pageParams: any[];
-      }>(["userPostComments", sortby]);
+      }>(["userPostComments", sortby, postId]);
 
       if (showInitial) {
         const singlePostData: any = queryClient.getQueryData([
@@ -382,7 +382,7 @@ export const useLikeUnlikeUserPostComment = (
 
       //   single end
       if (currUserComments) {
-        queryClient.setQueryData(["userPostComments", sortby], {
+        queryClient.setQueryData(["userPostComments", sortby, postId], {
           ...currUserComments,
           pages: currUserComments.pages.map((page) => {
             return {
@@ -464,7 +464,7 @@ export const useCreateUserPostCommentReply = (
       const currUserComments = queryClient.getQueryData<{
         pages: any[];
         pageParams: any[];
-      }>(["userPostComments", sortby]);
+      }>(["userPostComments", sortby, postId]);
       if (showInitial) {
         queryClient.setQueryData(["getPost", postId], (oldData: any) => {
           if (!oldData) return oldData;
@@ -497,7 +497,7 @@ export const useCreateUserPostCommentReply = (
           };
         });
 
-        queryClient.setQueryData(["userPostComments", sortby], {
+        queryClient.setQueryData(["userPostComments", sortby, postId], {
           ...currUserComments,
           pages: updatedPages,
         });

@@ -200,7 +200,7 @@ export default function ProfileEdit() {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
+    <View style={styles.container}>
       <KeyboardAvoidingView
         behavior={Platform.OS === "ios" ? "padding" : "height"}
         style={styles.keyboardAvoid}
@@ -422,7 +422,7 @@ export default function ProfileEdit() {
           title="Add Profile Photo "
         />
       </ActionSheet>
-    </SafeAreaView>
+    </View>
   );
 }
 

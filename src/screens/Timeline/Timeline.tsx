@@ -156,7 +156,9 @@ const Timeline = () => {
 
       <ActionSheet
         ref={guideLineActionSheetRef}
-        gestureEnabled={true}
+        gestureEnabled={false}
+        closeOnPressBack={false}
+        closeOnTouchBackdrop={false}
         safeAreaInsets={insets}
       >
         <UserGuideLineBottomSheet

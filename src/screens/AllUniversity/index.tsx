@@ -12,11 +12,16 @@ import {
 import { ArrowUp } from "iconoir-react-native";
 import DiscoverUniversityCard from "@/components/molecules/University/UniversityCard";
 import { useGetFilteredUniversity } from "@/services/universitySearch";
-import UniversitySearchFilters from "@/components/molecules/University/UniversityFilters";
+import UniversitySearchFilters, {
+  UniversitySearchFiltersRef,
+} from "@/components/molecules/University/UniversityFilters";
+import { RefreshControl } from "react-native";
 
 const AllUniversities = () => {
   const [query, setQuery] = useState<any>();
   const [showScrollTop, setShowScrollTop] = useState(false);
+  const [refreshing, setRefreshing] = React.useState(false);
+  const universityFiltersRef = React.useRef<UniversitySearchFiltersRef>(null);
 
   const {
     data,
@@ -41,6 +46,15 @@ const AllUniversities = () => {
     flatListRef.current?.scrollToOffset({ offset: 0, animated: true });
   };
 
+  const onRefresh = React.useCallback(() => {
+    setRefreshing(true);
+
+    universityFiltersRef.current?.handleReset();
+
+    setQuery("");
+    setRefreshing(false);
+  }, []);
+
   return (
     <View style={styles.container}>
       <FlatList
@@ -55,7 +69,12 @@ const AllUniversities = () => {
         }}
         onScroll={handleScroll}
         scrollEventThrottle={16}
-        ListHeaderComponent={<UniversitySearchFilters setQuery={setQuery} />}
+        ListHeaderComponent={
+          <UniversitySearchFilters
+            ref={universityFiltersRef}
+            setQuery={setQuery}
+          />
+        }
         ListFooterComponent={
           isFetchingNextPage && !isLoading && hasNextPage ? (
             <View style={styles.centered}>
@@ -73,6 +92,9 @@ const AllUniversities = () => {
               <Text className="text-neutral-500">No Result Found</Text>
             </View>
           )
+        }
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
         }
       />
 

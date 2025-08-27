@@ -1,5 +1,6 @@
 import React, { memo, useCallback, useMemo, useRef, useState } from "react";
 import {
+  Alert,
   Share,
   Text,
   TouchableOpacity,
@@ -113,17 +114,54 @@ const PostCard = memo(
     };
 
     const handleDeletePost = () => {
-      if (
-        isSinglePost || !isTimeline ? data?.communityId : data?.community?._id
-      ) {
-        mutateDeleteCommunityPost(data?._id);
+      if (resolvedPostType === PostType.Community) {
+        Alert.alert(
+          "Delete Community Post",
+          "Are you sure you want to delete this Post?",
+          [
+            {
+              text: "Cancel",
+              style: "cancel",
+            },
+            {
+              text: "Delete",
+              onPress: () => {
+                mutateDeleteCommunityPost(data?._id, {
+                  onSuccess: () => {
+                    setVisible(false);
+                    if (isSinglePost) {
+                      navigation.goBack();
+                    }
+                  },
+                });
+              },
+            },
+          ]
+        );
       } else {
-        mutateDeletePost(data?._id);
-      }
-
-      setVisible(false);
-      if (isSinglePost) {
-        navigation.goBack();
+        Alert.alert(
+          "Delete Post",
+          "Are you sure you want to delete this Post?",
+          [
+            {
+              text: "Cancel",
+              style: "cancel",
+            },
+            {
+              text: "Delete",
+              onPress: () => {
+                mutateDeletePost(data?._id, {
+                  onSuccess: () => {
+                    setVisible(false);
+                    if (isSinglePost) {
+                      navigation.goBack();
+                    }
+                  },
+                });
+              },
+            },
+          ]
+        );
       }
     };
 
@@ -305,12 +343,15 @@ const PostCard = memo(
           useBottomSafeAreaPadding
           ref={commentBottomSheet}
           gestureEnabled={true}
-          safeAreaInsets={insets}
+          //   safeAreaInsets={insets}
+          safeAreaInsets={{ top: 0, bottom: 0, left: 0, right: 0 }}
           snapPoints={defaultBottomSheetSnapPoints}
-          containerStyle={{
-            paddingTop: 10,
-            paddingBottom: 80,
-          }}
+          containerStyle={
+            {
+              // paddingTop: 10,
+              // backgroundColor: "red",
+            }
+          }
         >
           <CommentBottomSheet
             postId={data?._id}

@@ -47,12 +47,11 @@ const SelectUniversityDropdownBottomSheet: React.FC<SelectDropdownProps> = ({
   const actionSheetRef = useRef<ActionSheetRef>(null);
   const insets = useSafeAreaInsets();
 
-  const { data: universitiesData, isFetching } = useUniversitySearch(
-    show,
-    searchTerm,
-    1,
-    10
-  );
+  const {
+    data: universitiesData,
+    isFetching,
+    refetch,
+  } = useUniversitySearch(true, searchTerm, 1, 10);
   const universities = universitiesData?.result?.universities;
 
   return (
@@ -69,7 +68,7 @@ const SelectUniversityDropdownBottomSheet: React.FC<SelectDropdownProps> = ({
               style={[styles.selectButton, error && styles.selectButtonError]}
               //   onPress={() => setShow(!show)}
               onPress={() => {
-                actionSheetRef.current?.show(), setShow(true);
+                actionSheetRef.current?.show(), refetch();
               }}
             >
               <Text style={[styles.selectText, !value && styles.placeholder]}>
@@ -100,6 +99,7 @@ const SelectUniversityDropdownBottomSheet: React.FC<SelectDropdownProps> = ({
               gestureEnabled={true}
               safeAreaInsets={insets}
               snapPoints={[100]}
+              keyboardHandlerEnabled={false}
               onClose={() => setShow(false)}
             >
               {/* <TouchableOpacity
@@ -128,6 +128,7 @@ const SelectUniversityDropdownBottomSheet: React.FC<SelectDropdownProps> = ({
                 <FlatList
                   data={universities}
                   keyExtractor={(item) => item._id}
+                  keyboardShouldPersistTaps="handled"
                   renderItem={({ item }) => (
                     <TouchableOpacity
                       style={styles.optionItem}
