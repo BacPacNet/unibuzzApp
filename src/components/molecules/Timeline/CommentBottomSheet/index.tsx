@@ -154,7 +154,6 @@ const CommentBottomSheet = ({
       refetchCommunityPostComment();
     }
   };
-  console.log("insets", insets);
 
   return (
     <View style={{ paddingBottom: insets.bottom }}>

@@ -65,7 +65,10 @@ export async function toggleFollow(id: string, token: any) {
   return response;
 }
 
-export const useToggleFollow = (type: boolean, isProfile: boolean = false) => {
+export const useToggleFollow = (
+  isFollowing: boolean,
+  isProfile: boolean = false
+) => {
   const cookieValue = getToken() as string;
 
   const queryClient = useQueryClient();
@@ -75,27 +78,16 @@ export const useToggleFollow = (type: boolean, isProfile: boolean = false) => {
     onSuccess: (response: any, userId: string) => {
       updateUserProfileFollowing(response.following);
 
-      if (type) {
-        console.log("iss", isProfile);
-
-        if (isProfile) {
-          queryClient.invalidateQueries({
-            queryKey: ["getRefetchUserData"],
-          });
-        }
+      if (isProfile) {
         queryClient.invalidateQueries({
-          queryKey: ["getUserFollowing"],
-        });
-      } else {
-        if (isProfile) {
-          queryClient.invalidateQueries({
-            queryKey: ["getRefetchUserData"],
-          });
-        }
-        queryClient.invalidateQueries({
-          queryKey: ["getUserFollowers"],
+          queryKey: ["getRefetchUserData"],
         });
       }
+
+      const queryKey = isFollowing ? "getUserFollowing" : "getUserFollowers";
+      queryClient.invalidateQueries({
+        queryKey: [queryKey],
+      });
     },
     onError: (res: any) => {
       console.log(res.response.data.message, "res");

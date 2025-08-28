@@ -114,55 +114,44 @@ const PostCard = memo(
     };
 
     const handleDeletePost = () => {
-      if (resolvedPostType === PostType.Community) {
-        Alert.alert(
-          "Delete Community Post",
-          "Are you sure you want to delete this Post?",
-          [
-            {
-              text: "Cancel",
-              style: "cancel",
-            },
-            {
-              text: "Delete",
-              onPress: () => {
-                mutateDeleteCommunityPost(data?._id, {
-                  onSuccess: () => {
-                    setVisible(false);
-                    if (isSinglePost) {
-                      navigation.goBack();
-                    }
-                  },
-                });
-              },
-            },
-          ]
-        );
-      } else {
-        Alert.alert(
-          "Delete Post",
-          "Are you sure you want to delete this Post?",
-          [
-            {
-              text: "Cancel",
-              style: "cancel",
-            },
-            {
-              text: "Delete",
-              onPress: () => {
-                mutateDeletePost(data?._id, {
-                  onSuccess: () => {
-                    setVisible(false);
-                    if (isSinglePost) {
-                      navigation.goBack();
-                    }
-                  },
-                });
-              },
-            },
-          ]
-        );
-      }
+      const isCommunityPost = resolvedPostType === PostType.Community;
+      const title = isCommunityPost ? "Delete Community Post" : "Delete Post";
+      const message = "Are you sure you want to delete this Post?";
+
+      const onDeleteConfirm = () => {
+        const deleteMutation = isCommunityPost
+          ? () =>
+              mutateDeleteCommunityPost(data?._id, {
+                onSuccess: () => {
+                  setVisible(false);
+                  if (isSinglePost) {
+                    navigation.goBack();
+                  }
+                },
+              })
+          : () =>
+              mutateDeletePost(data?._id, {
+                onSuccess: () => {
+                  setVisible(false);
+                  if (isSinglePost) {
+                    navigation.goBack();
+                  }
+                },
+              });
+
+        deleteMutation();
+      };
+
+      Alert.alert(title, message, [
+        {
+          text: "Cancel",
+          style: "cancel",
+        },
+        {
+          text: "Delete",
+          onPress: onDeleteConfirm,
+        },
+      ]);
     };
 
     const hideBottomBar = () => {

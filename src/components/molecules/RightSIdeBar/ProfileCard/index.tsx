@@ -68,7 +68,8 @@ const ProfileCard = ({
     userProfile && userProfile?.following?.map((following) => following.userId);
   const { navigate } = useNavigation<NavigationProp>();
   const { mutate: toggleFollow, isPending } = useToggleFollow(
-    userFollowingIDs?.includes(userId as string) ? "Following" : "Followers"
+    userFollowingIDs?.includes(userId as string) || false,
+    true
   );
   const { mutateAsync: mutateCreateUserChat, isPending: userChatPending } =
     useCreateUserChat();

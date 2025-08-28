@@ -58,7 +58,10 @@ const UserListItem: React.FC<Props> = ({
   isViewerAdmin,
 }) => {
   const navigation = useNavigation<NavigationProp>();
-  const { mutateAsync: toggleFollow, isPending } = useToggleFollow(id);
+  const { mutateAsync: toggleFollow, isPending } = useToggleFollow(
+    isFollowing,
+    false
+  );
   const [isFollowingState, setIsFollowingState] = useState(isFollowing);
   const [isProcessing, setIsProcessing] = useState(false);
 
