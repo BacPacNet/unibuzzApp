@@ -13,6 +13,7 @@ import Badge from "@/assets/badge.svg";
 import { IsUniversityVerified } from "@/utils";
 import { userTypeEnum } from "@/types/register";
 import ReusableButton from "@/components/atoms/ReusableButton";
+import { screenName } from "@/constant/screenName";
 
 type Props = {
   firstName: string;
@@ -75,9 +76,10 @@ export const FlatListProfileHeaderPart = ({
       navigate("UsersScreen", {
         userId,
         type,
+        from: screenName.profile,
       });
     },
-    [navigate, userId],
+    [navigate, userId]
   );
 
   return (
@@ -136,7 +138,7 @@ export const FlatListProfileHeaderPart = ({
             </Text>
           </TouchableOpacity>
 
-       <TouchableOpacity
+          <TouchableOpacity
             onPress={() => handleNavigate("followers")}
             style={styles.followButton}
           >
@@ -160,11 +162,10 @@ export const FlatListProfileHeaderPart = ({
 
 const styles = StyleSheet.create({
   bottomMargin: {
-
-    paddingBottom:32,
+    paddingBottom: 32,
     borderBottomWidth: 1,
     borderBottomColor: "#E5E7EB",
-    marginBottom:32
+    marginBottom: 32,
   },
   padding: {
     paddingHorizontal: 16,

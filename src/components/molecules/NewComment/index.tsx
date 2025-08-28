@@ -117,7 +117,7 @@ const NewComment = ({
   const {
     mutateAsync: mutateUserPostComment,
     isPending: isUserPostCommentPending,
-  } = useCreateUserPostComment(sortby);
+  } = useCreateUserPostComment(sortby, postId);
   const {
     mutateAsync: CreateUserPostCommentReply,
     isPending: CreateUserPostCommentReplyLoading,
@@ -126,7 +126,7 @@ const NewComment = ({
   const {
     mutateAsync: mutateGroupPostComment,
     isPending: isGroupPostCommentPending,
-  } = useCreateGroupPostComment(sortby);
+  } = useCreateGroupPostComment(sortby, postId);
   const {
     mutateAsync: CreateGroupPostCommentReply,
     isPending: useCreateGroupPostCommentReplyLoading,

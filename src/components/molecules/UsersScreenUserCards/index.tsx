@@ -6,6 +6,7 @@ import { UserPlus } from "iconoir-react-native";
 import { useToggleFollow } from "@/services/connection";
 import { useNavigation } from "@react-navigation/native";
 import { Toast } from "react-native-toast-notifications";
+import { screenName } from "@/constant/screenName";
 
 interface UserProfile {
   profile_dp?: { imageUrl?: string };
@@ -30,6 +31,7 @@ interface Props {
   currentUserId: string;
   myUserId: string;
   isFollowing: boolean;
+  from: string;
 }
 
 const UsersScreenUserCardItem = ({
@@ -37,9 +39,13 @@ const UsersScreenUserCardItem = ({
   currentUserId,
   myUserId,
   isFollowing,
+  from,
 }: Props) => {
   const navigate = useNavigation() as any;
-  const { mutateAsync: toggleFollow, isPending } = useToggleFollow("Following");
+  const { mutateAsync: toggleFollow, isPending } = useToggleFollow(
+    isFollowing,
+    from == screenName.profile
+  );
   const [isFollowingState, setIsFollowingState] = useState(item?.isFollowing);
   const [isProcessing, setIsProcessing] = useState(false);
 

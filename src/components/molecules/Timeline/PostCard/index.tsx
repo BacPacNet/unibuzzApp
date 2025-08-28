@@ -1,5 +1,6 @@
 import React, { memo, useCallback, useMemo, useRef, useState } from "react";
 import {
+  Alert,
   Share,
   Text,
   TouchableOpacity,
@@ -113,18 +114,44 @@ const PostCard = memo(
     };
 
     const handleDeletePost = () => {
-      if (
-        isSinglePost || !isTimeline ? data?.communityId : data?.community?._id
-      ) {
-        mutateDeleteCommunityPost(data?._id);
-      } else {
-        mutateDeletePost(data?._id);
-      }
+      const isCommunityPost = resolvedPostType === PostType.Community;
+      const title = isCommunityPost ? "Delete Community Post" : "Delete Post";
+      const message = "Are you sure you want to delete this Post?";
 
-      setVisible(false);
-      if (isSinglePost) {
-        navigation.goBack();
-      }
+      const onDeleteConfirm = () => {
+        const deleteMutation = isCommunityPost
+          ? () =>
+              mutateDeleteCommunityPost(data?._id, {
+                onSuccess: () => {
+                  setVisible(false);
+                  if (isSinglePost) {
+                    navigation.goBack();
+                  }
+                },
+              })
+          : () =>
+              mutateDeletePost(data?._id, {
+                onSuccess: () => {
+                  setVisible(false);
+                  if (isSinglePost) {
+                    navigation.goBack();
+                  }
+                },
+              });
+
+        deleteMutation();
+      };
+
+      Alert.alert(title, message, [
+        {
+          text: "Cancel",
+          style: "cancel",
+        },
+        {
+          text: "Delete",
+          onPress: onDeleteConfirm,
+        },
+      ]);
     };
 
     const hideBottomBar = () => {
@@ -305,12 +332,15 @@ const PostCard = memo(
           useBottomSafeAreaPadding
           ref={commentBottomSheet}
           gestureEnabled={true}
-          safeAreaInsets={insets}
+          //   safeAreaInsets={insets}
+          safeAreaInsets={{ top: 0, bottom: 0, left: 0, right: 0 }}
           snapPoints={defaultBottomSheetSnapPoints}
-          containerStyle={{
-            paddingTop: 10,
-            paddingBottom: 80,
-          }}
+          containerStyle={
+            {
+              // paddingTop: 10,
+              // backgroundColor: "red",
+            }
+          }
         >
           <CommentBottomSheet
             postId={data?._id}

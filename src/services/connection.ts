@@ -15,13 +15,13 @@ export async function getUserMututal(
   page: number,
   limit: number,
   name: string,
-  userId: string,
+  userId: string
 ) {
   const response: ProfileConnection = await client(
     `/userprofile/mutuals?page=${page}&limit=${limit}&name=${name}&userId=${userId}`,
     {
       headers: { Authorization: `Bearer ${token}` },
-    },
+    }
   );
   return response;
 }
@@ -31,13 +31,13 @@ export async function getUserFollowing(
   page: number,
   limit: number,
   name: string,
-  userId: string,
+  userId: string
 ) {
   const response: ProfileConnection = await client(
     `/userprofile/following?page=${page}&limit=${limit}&name=${name}&userId=${userId}`,
     {
       headers: { Authorization: `Bearer ${token}` },
-    },
+    }
   );
   return response;
 }
@@ -46,13 +46,13 @@ export async function getUserFollowers(
   page: number,
   limit: number,
   name: string,
-  userId: string,
+  userId: string
 ) {
   const response: ProfileConnection = await client(
     `/userprofile/followers?page=${page}&limit=${limit}&name=${name}&userId=${userId}`,
     {
       headers: { Authorization: `Bearer ${token}` },
-    },
+    }
   );
   return response;
 }
@@ -65,7 +65,10 @@ export async function toggleFollow(id: string, token: any) {
   return response;
 }
 
-export const useToggleFollow = (type: string) => {
+export const useToggleFollow = (
+  isFollowing: boolean,
+  isProfile: boolean = false
+) => {
   const cookieValue = getToken() as string;
 
   const queryClient = useQueryClient();
@@ -74,15 +77,17 @@ export const useToggleFollow = (type: string) => {
 
     onSuccess: (response: any, userId: string) => {
       updateUserProfileFollowing(response.following);
-      if (type == "Following") {
+
+      if (isProfile) {
         queryClient.invalidateQueries({
-          queryKey: ["getUserFollowing"],
-        });
-      } else {
-        queryClient.invalidateQueries({
-          queryKey: ["getUserFollowers"],
+          queryKey: ["getRefetchUserData"],
         });
       }
+
+      const queryKey = isFollowing ? "getUserFollowing" : "getUserFollowers";
+      queryClient.invalidateQueries({
+        queryKey: [queryKey],
+      });
     },
     onError: (res: any) => {
       console.log(res.response.data.message, "res");
@@ -94,7 +99,7 @@ export function useGetUserMutuals(
   name: string,
   userId: string,
   limit: number,
-  enabled: boolean,
+  enabled: boolean
 ) {
   const cookieValue = getToken() as string;
   const debouncedSearchTerm = useDebounce(name, 1000);
@@ -107,7 +112,7 @@ export function useGetUserMutuals(
         pageParam,
         limit,
         debouncedSearchTerm,
-        userId,
+        userId
       ),
     getNextPageParam: (lastPage) => {
       if (lastPage.currentPage < lastPage.totalPages) {
@@ -124,20 +129,20 @@ export function useGetUserFollowing(
   name: string,
   userId: string,
   limit: number,
-  enabled: boolean,
+  enabled: boolean
 ) {
   const cookieValue = getToken() as string;
   const debouncedSearchTerm = useDebounce(name, 1000);
 
   return useInfiniteQuery({
-    queryKey: ["getUserFollowing", debouncedSearchTerm,userId],
+    queryKey: ["getUserFollowing", debouncedSearchTerm, userId],
     queryFn: ({ pageParam = 1 }) =>
       getUserFollowing(
         cookieValue,
         pageParam,
         limit,
         debouncedSearchTerm,
-        userId,
+        userId
       ),
     getNextPageParam: (lastPage) => {
       if (lastPage.currentPage < lastPage.totalPages) {
@@ -154,20 +159,20 @@ export function useGetUserFollowers(
   name: string,
   userId: string,
   limit: number,
-  enabled: boolean,
+  enabled: boolean
 ) {
   const cookieValue = getToken() as string;
   const debouncedSearchTerm = useDebounce(name, 1000);
 
   return useInfiniteQuery({
-    queryKey: ["getUserFollower", debouncedSearchTerm,userId],
+    queryKey: ["getUserFollower", debouncedSearchTerm, userId],
     queryFn: ({ pageParam = 1 }) =>
       getUserFollowers(
         cookieValue,
         pageParam,
         limit,
         debouncedSearchTerm,
-        userId,
+        userId
       ),
     getNextPageParam: (lastPage) => {
       if (lastPage.currentPage < lastPage.totalPages) {

@@ -45,6 +45,7 @@ const UserChats = ({
     setRefreshing(true);
 
     queryClient.invalidateQueries({ queryKey: ["userChats"] });
+    setRefreshing(false);
   }, []);
 
   const RenderChats = () => {

@@ -72,6 +72,7 @@ const styles = StyleSheet.create({
   text: {
     fontSize: 14,
     color: "#374151",
+    fontFamily: FONTS.inter.regular,
   },
 
   checkText: {

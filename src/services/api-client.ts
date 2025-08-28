@@ -16,8 +16,6 @@ api.interceptors.response.use(
       error.response?.data?.message === "jwt expired" ||
       error.response?.data?.message == "jwt malformed"
     ) {
-      console.log("done");
-
       return forceDeauthenticate();
     }
     return Promise.reject(error);

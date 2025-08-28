@@ -1,5 +1,5 @@
 import BackHeader from "@/components/atoms/BackHeader";
-import { useNavigation } from "@react-navigation/native";
+import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import {
   View,
   Text,
@@ -8,7 +8,7 @@ import {
   ActivityIndicator,
 } from "react-native";
 import UsersScreenUserCardItem from "@/components/molecules/UsersScreenUserCards";
-import { useMemo } from "react";
+import { useEffect, useMemo } from "react";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { RootStackParamList } from "@/types/navigation";
 import {
@@ -17,6 +17,8 @@ import {
 } from "@/services/connection";
 import { getUserProfileStore } from "@/storage/user";
 import useCustomBackHandler from "@/hooks/useCustomBackHandler";
+import { screenName } from "@/constant/screenName";
+import { useQueryClient } from "@tanstack/react-query";
 
 type NavigationProp = StackNavigationProp<RootStackParamList, "UsersScreen">;
 
@@ -30,7 +32,8 @@ const UsersScreen = ({ route }: any) => {
   const userId = route?.params?.userId ?? null;
   const type = route?.params?.type ?? null;
   const userProfileData = getUserProfileStore();
-
+  const from = route?.params?.from || "";
+  const queryClient = useQueryClient();
   const {
     data: userFollowData,
     isLoading: isFollowingLoading,
@@ -50,6 +53,7 @@ const UsersScreen = ({ route }: any) => {
     fetchNextPage: fetchNextFollowers,
     isFetchingNextPage: isFetchingFollowersNextPage,
     hasNextPage: hasFollowersNextPage,
+    refetch: refetchUserFollowers,
   } = useGetUserFollowers(
     "",
     userId,
@@ -99,6 +103,19 @@ const UsersScreen = ({ route }: any) => {
     );
   }, [userFollowersData, userProfileData, userId, type]);
 
+  useFocusEffect(() => {
+    if (
+      type == listType.followers &&
+      from == screenName.profile &&
+      !isFetchingFollowersNextPage
+    ) {
+      queryClient.invalidateQueries({
+        queryKey: ["getRefetchUserData"],
+      });
+      refetchUserFollowers();
+    }
+  });
+
   const handleBack = () => {
     navigate.navigate("ProfileStack", {
       screen: "Profile",
@@ -139,8 +156,24 @@ const UsersScreen = ({ route }: any) => {
               item={item}
               currentUserId={userId}
               myUserId={userProfileData?.users_id || ""}
+              from={from}
             />
           )}
+          onEndReached={() => {
+            if (
+              hasFollowingNextPage &&
+              !isFetchingFollowingNextPage &&
+              type == listType.following
+            ) {
+              fetchNextFollowing();
+            } else if (
+              hasFollowersNextPage &&
+              !isFetchingFollowersNextPage &&
+              type == listType.followers
+            ) {
+              fetchNextFollowers();
+            }
+          }}
           ListFooterComponent={() =>
             isFetchingNextPage ? (
               <ActivityIndicator size="large" color="#0000ff" />

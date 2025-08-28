@@ -163,7 +163,7 @@ const MessageUserStickyBar = ({
         </TouchableOpacity>
       </View>
       <View className="flex flex-row gap-4 items-center">
-        {isRequestNotAccepted && (
+        {/* {isRequestNotAccepted && (
           <ReusableButton
             buttonText="Move to inbox"
             onPress={handleMoveToInbox}
@@ -172,7 +172,7 @@ const MessageUserStickyBar = ({
             height="small"
             isRounded={false}
           />
-        )}
+        )} */}
 
         <View className="relative">
           <TouchableOpacity

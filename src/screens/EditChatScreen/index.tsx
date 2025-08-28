@@ -25,11 +25,13 @@ import ActionSheet, {
   ActionSheetRef,
   FlatList,
 } from "react-native-actions-sheet";
-import { launchImageLibrary } from "react-native-image-picker";
 import { useForm } from "react-hook-form";
 import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { RootStackParamList } from "@/types/navigation";
+import ImageOptionSelectBottomSheet from "@/components/molecules/ImageOptionSelectBottomSheet";
+import { handleTakePhoto, pickImage } from "@/utils";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 type NavigationProp = StackNavigationProp<RootStackParamList, "EditChatScreen">;
 
@@ -59,6 +61,9 @@ export default function EditChatScreen({ route }: any) {
   const [selectedUsers, setSelectedUsers] = useState<any>([]);
 
   const [imageToUpload, setImageToUpload] = useState<ImageAsset | null>(null);
+  const imageOptionActionSheetRef = useRef<ActionSheetRef>(null);
+  const insets = useSafeAreaInsets();
+
   const {
     data: userProfilesData,
     fetchNextPage,
@@ -118,15 +123,6 @@ export default function EditChatScreen({ route }: any) {
 
   const userActionSheetRef = useRef<ActionSheetRef>(null);
 
-  const handleImagePick = async () => {
-    launchImageLibrary({ mediaType: "photo" }, (response: any) => {
-      if (!response.didCancel && !response.errorCode) {
-        const imageObject = response.assets[0];
-        setImageToUpload(imageObject);
-      }
-    });
-  };
-
   return (
     <ScrollView style={styles.container}>
       <BackHeader label="Messages" />
@@ -134,7 +130,7 @@ export default function EditChatScreen({ route }: any) {
         <View>
           <View style={styles.photoSection}>
             <TouchableOpacity
-              onPress={() => handleImagePick()}
+              onPress={() => imageOptionActionSheetRef.current?.show()}
               style={styles.photoUpload}
             >
               {groupLogo && !imageToUpload ? (
@@ -212,6 +208,18 @@ export default function EditChatScreen({ route }: any) {
           />
         </View>
         {/* <Text>User</Text> */}
+      </ActionSheet>
+      <ActionSheet
+        ref={imageOptionActionSheetRef}
+        gestureEnabled={true}
+        safeAreaInsets={insets}
+      >
+        <ImageOptionSelectBottomSheet
+          onTakePhoto={() => handleTakePhoto(setImageToUpload)}
+          onUploadFromPhotos={() => pickImage(setImageToUpload)}
+          onClose={() => imageOptionActionSheetRef.current?.hide()}
+          title="Add Group Logo "
+        />
       </ActionSheet>
     </ScrollView>
   );

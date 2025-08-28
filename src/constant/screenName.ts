@@ -4,4 +4,5 @@ export const screenName = {
   community: "Community",
   manageCommunityGroup: "manageCommunityGroup",
   message: "message",
+  profile: "profile",
 };

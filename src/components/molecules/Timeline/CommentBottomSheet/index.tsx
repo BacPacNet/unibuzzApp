@@ -33,6 +33,7 @@ import { Sortby } from "@/types/constant";
 import { SafeScreen } from "@/components/template";
 import { FONTS } from "@/constants/fonts";
 import CommentButtonIcon from "@/assets/icons/comment-button-icon.svg";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 type Props = {
   postId: string;
@@ -65,7 +66,7 @@ const CommentBottomSheet = ({
   const [selectedOption, setSelectedOption] = useState<string>("Newest First");
   const [selectedSortValue, setSelectedSortValue] = useState(Sortby.DESC);
   const [isModalVisible, setModalVisible] = useState(false);
-
+  const insets = useSafeAreaInsets();
   const navigate = useNavigation<any>();
 
   const {
@@ -155,7 +156,7 @@ const CommentBottomSheet = ({
   };
 
   return (
-    <SafeAreaView>
+    <View style={{ paddingBottom: insets.bottom }}>
       <View style={styles.fullHeight}>
         <View>
           <FlatList
@@ -305,7 +306,7 @@ const CommentBottomSheet = ({
           sortby={selectedSortValue}
         />
       </Modal>
-    </SafeAreaView>
+    </View>
   );
 };
 

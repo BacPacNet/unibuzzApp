@@ -4,7 +4,13 @@ import { cities } from "@/content/city";
 import { REGION } from "@/content/constant";
 import { COUNTRY } from "@/content/country";
 import { Refresh, Search } from "iconoir-react-native";
-import React, { useRef, useState, useCallback } from "react";
+import React, {
+  useRef,
+  useState,
+  useCallback,
+  forwardRef,
+  useImperativeHandle,
+} from "react";
 import { Controller, useForm } from "react-hook-form";
 import {
   StyleSheet,
@@ -40,216 +46,230 @@ interface Props {
   setQuery: (value: string) => void;
 }
 
-const UniversitySearchFilters: React.FC<Props> = ({ setQuery }) => {
-  const { control, watch, reset, setValue } = useForm<FilterFormData>();
+export interface UniversitySearchFiltersRef {
+  handleReset: () => void;
+}
 
-  const [cityOptions, setCityOptions] = useState<string[]>(cities);
-  const [countryOptions, setCountryOptions] = useState<string[]>(COUNTRY);
+const UniversitySearchFilters = forwardRef<UniversitySearchFiltersRef, Props>(
+  ({ setQuery }, ref) => {
+    const { control, watch, reset, setValue } = useForm<FilterFormData>();
 
-  const regionSheetRef = useRef<ActionSheetRef>(null);
-  const countrySheetRef = useRef<ActionSheetRef>(null);
-  const citySheetRef = useRef<ActionSheetRef>(null);
-  const typeSheetRef = useRef<ActionSheetRef>(null);
+    const [cityOptions, setCityOptions] = useState<string[]>(cities);
+    const [countryOptions, setCountryOptions] = useState<string[]>(COUNTRY);
 
-  const sheetRefs: Record<FilterType, React.RefObject<ActionSheetRef>> = {
-    Region: regionSheetRef,
-    Country: countrySheetRef,
-    City: citySheetRef,
-    Type: typeSheetRef,
-  };
+    const regionSheetRef = useRef<ActionSheetRef>(null);
+    const countrySheetRef = useRef<ActionSheetRef>(null);
+    const citySheetRef = useRef<ActionSheetRef>(null);
+    const typeSheetRef = useRef<ActionSheetRef>(null);
 
-  const currentFormData = watch();
+    const sheetRefs: Record<FilterType, React.RefObject<ActionSheetRef>> = {
+      Region: regionSheetRef,
+      Country: countrySheetRef,
+      City: citySheetRef,
+      Type: typeSheetRef,
+    };
 
-  // Handlers
-  const handleBottomSheet = useCallback(
-    (filterType: FilterType) => {
-      sheetRefs[filterType].current?.show();
-    },
-    [sheetRefs]
-  );
+    const currentFormData = watch();
 
-  const closeAllSheets = useCallback(() => {
-    Object.values(sheetRefs).forEach((ref) => ref.current?.hide());
-  }, [sheetRefs]);
+    // Handlers
+    const handleBottomSheet = useCallback(
+      (filterType: FilterType) => {
+        sheetRefs[filterType].current?.show();
+      },
+      [sheetRefs]
+    );
 
-  const handleRegionChange = useCallback(
-    (selectedRegion: string[], field: any) => {
-      const region = selectedRegion?.[0];
+    const closeAllSheets = useCallback(() => {
+      Object.values(sheetRefs).forEach((ref) => ref.current?.hide());
+    }, [sheetRefs]);
 
-      if (region) {
-        field.onChange(region);
-        setCountryOptions((REGION_TO_COUNTRY as any)[region].sort());
-        setCityOptions((REGION_TO_CITY as any)[region].sort());
-      } else {
-        setValue("region", "");
-        setCountryOptions(COUNTRY);
-        setCityOptions(cities);
-      }
+    const handleRegionChange = useCallback(
+      (selectedRegion: string[], field: any) => {
+        const region = selectedRegion?.[0];
 
-      closeAllSheets();
+        if (region) {
+          field.onChange(region);
+          setCountryOptions((REGION_TO_COUNTRY as any)[region].sort());
+          setCityOptions((REGION_TO_CITY as any)[region].sort());
+        } else {
+          setValue("region", "");
+          setCountryOptions(COUNTRY);
+          setCityOptions(cities);
+        }
+
+        closeAllSheets();
+        setQuery(JSON.stringify(watch()));
+      },
+      [setValue, closeAllSheets, setQuery, watch]
+    );
+
+    const handleCountryChange = useCallback(
+      (selectedCountry: string[], field: any) => {
+        const country = selectedCountry?.[0];
+
+        if (country) {
+          setCityOptions((COUNTRY_TO_CITY as any)[country].sort());
+          field.onChange(country);
+          setValue("city", "");
+        } else {
+          setValue("country", "");
+          setCityOptions(cities);
+        }
+
+        closeAllSheets();
+        setQuery(JSON.stringify(watch()));
+      },
+      [setValue, closeAllSheets, setQuery, watch]
+    );
+
+    const handleCityChange = useCallback(
+      (selectedCity: string[], field: any) => {
+        field.onChange(selectedCity?.[0]);
+        closeAllSheets();
+        setQuery(JSON.stringify(watch()));
+      },
+      [closeAllSheets, setQuery, watch]
+    );
+
+    const handleTypeChange = useCallback(
+      (selectedType: string[], field: any) => {
+        field.onChange(selectedType?.[0]);
+        closeAllSheets();
+        setQuery(JSON.stringify(watch()));
+      },
+      [closeAllSheets, setQuery, watch]
+    );
+
+    const handleSearch = useCallback(
+      (text: string) => {
+        const finalData = { ...currentFormData, Search: text };
+        setQuery(JSON.stringify(finalData));
+      },
+      [currentFormData, setQuery]
+    );
+
+    const handleReset = useCallback(() => {
+      reset();
+      setCityOptions(cities);
+      setCountryOptions(COUNTRY);
       setQuery(JSON.stringify(watch()));
-    },
-    [setValue, closeAllSheets, setQuery, watch]
-  );
+    }, [reset, setQuery, watch]);
 
-  const handleCountryChange = useCallback(
-    (selectedCountry: string[], field: any) => {
-      const country = selectedCountry?.[0];
+    useImperativeHandle(
+      ref,
+      () => ({
+        handleReset,
+      }),
+      [handleReset]
+    );
 
-      if (country) {
-        setCityOptions((COUNTRY_TO_CITY as any)[country].sort());
-        field.onChange(country);
-        setValue("city", "");
-      } else {
-        setValue("country", "");
-        setCityOptions(cities);
-      }
+    // Render helpers
+    const renderFilterTag = useCallback(
+      (filterType: FilterType) => {
+        const key = filterType.toLowerCase() as keyof FilterFormData;
+        const value = currentFormData[key];
 
-      closeAllSheets();
-      setQuery(JSON.stringify(watch()));
-    },
-    [setValue, closeAllSheets, setQuery, watch]
-  );
+        return (
+          <Text
+            key={filterType}
+            onPress={() => handleBottomSheet(filterType)}
+            style={styles.searchTag}
+          >
+            {value?.length ? value : filterType}
+          </Text>
+        );
+      },
+      [currentFormData, handleBottomSheet]
+    );
 
-  const handleCityChange = useCallback(
-    (selectedCity: string[], field: any) => {
-      field.onChange(selectedCity?.[0]);
-      closeAllSheets();
-      setQuery(JSON.stringify(watch()));
-    },
-    [closeAllSheets, setQuery, watch]
-  );
-
-  const handleTypeChange = useCallback(
-    (selectedType: string[], field: any) => {
-      field.onChange(selectedType?.[0]);
-      closeAllSheets();
-      setQuery(JSON.stringify(watch()));
-    },
-    [closeAllSheets, setQuery, watch]
-  );
-
-  const handleSearch = useCallback(
-    (text: string) => {
-      const finalData = { ...currentFormData, Search: text };
-      setQuery(JSON.stringify(finalData));
-    },
-    [currentFormData, setQuery]
-  );
-
-  const handleReset = useCallback(() => {
-    reset();
-    setCityOptions(cities);
-    setCountryOptions(COUNTRY);
-    setQuery(JSON.stringify(watch()));
-  }, [reset, setQuery, watch]);
-
-  // Render helpers
-  const renderFilterTag = useCallback(
-    (filterType: FilterType) => {
-      const key = filterType.toLowerCase() as keyof FilterFormData;
-      const value = currentFormData[key];
-
-      return (
-        <Text
-          key={filterType}
-          onPress={() => handleBottomSheet(filterType)}
-          style={styles.searchTag}
+    const renderActionSheet = useCallback(
+      (
+        filterType: FilterType,
+        options: string[],
+        onChange: (selected: string[], field: any) => void,
+        placeholder: string,
+        search = false
+      ) => (
+        <ActionSheet
+          ref={sheetRefs[filterType]}
+          gestureEnabled={true}
+          snapPoints={ACTION_SHEET_SNAP_POINTS}
         >
-          {value?.length ? value : filterType}
-        </Text>
-      );
-    },
-    [currentFormData, handleBottomSheet]
-  );
-
-  const renderActionSheet = useCallback(
-    (
-      filterType: FilterType,
-      options: string[],
-      onChange: (selected: string[], field: any) => void,
-      placeholder: string,
-      search = false
-    ) => (
-      <ActionSheet
-        ref={sheetRefs[filterType]}
-        gestureEnabled={true}
-        snapPoints={ACTION_SHEET_SNAP_POINTS}
-      >
-        <Controller
-          name={filterType.toLowerCase() as keyof FilterFormData}
-          control={control}
-          render={({ field }) => (
-            <MultiSelectDropdown
-              options={options}
-              value={Array.isArray(field.value) ? field.value : []}
-              onChange={(selected: string[]) => onChange(selected, field)}
-              placeholder={placeholder}
-              err={false}
-              multiSelect={false}
-              setCityOptions={search ? setCityOptions : undefined}
-              search={search}
-            />
-          )}
-        />
-      </ActionSheet>
-    ),
-    [sheetRefs, control, setCityOptions]
-  );
-
-  return (
-    <>
-      <View style={styles.container}>
-        <Title height={36}>Discover</Title>
-
-        <View style={styles.searchTagContainer}>
-          {FILTER_TYPES.map(renderFilterTag)}
-          {/* <TouchableOpacity style={styles.resetButton} onPress={handleReset}>
-            <Refresh width={20} height={20} color="white" />
-          </TouchableOpacity> */}
-        </View>
-
-        <View style={styles.searchContainer}>
-          <Search
-            style={styles.searchIcon}
-            width={24}
-            height={24}
-            color="#d4d4d4"
-            className="absolute z-30"
-          />
-
           <Controller
+            name={filterType.toLowerCase() as keyof FilterFormData}
             control={control}
-            name="Search"
-            render={({ field: { onChange, value } }) => (
-              <TextInput
-                style={styles.searchInput}
-                placeholder="Search"
-                placeholderTextColor="#9CA3AF"
-                onChangeText={(text) => {
-                  onChange(text);
-                  handleSearch(text);
-                }}
-                value={value}
+            render={({ field }) => (
+              <MultiSelectDropdown
+                options={options}
+                value={Array.isArray(field.value) ? field.value : []}
+                onChange={(selected: string[]) => onChange(selected, field)}
+                placeholder={placeholder}
+                err={false}
+                multiSelect={false}
+                setCityOptions={search ? setCityOptions : undefined}
+                search={search}
               />
             )}
           />
-        </View>
-      </View>
+        </ActionSheet>
+      ),
+      [sheetRefs, control, setCityOptions]
+    );
 
-      {renderActionSheet("Region", REGION, handleRegionChange, "Region")}
-      {renderActionSheet(
-        "Country",
-        countryOptions,
-        handleCountryChange,
-        "Country",
-        true
-      )}
-      {renderActionSheet("City", cityOptions, handleCityChange, "City", true)}
-      {renderActionSheet("Type", UNIVERSITY_TYPES, handleTypeChange, "Type")}
-    </>
-  );
-};
+    return (
+      <>
+        <View style={styles.container}>
+          <Title height={36}>Discover</Title>
+
+          <View style={styles.searchTagContainer}>
+            {FILTER_TYPES.map(renderFilterTag)}
+            {/* <TouchableOpacity style={styles.resetButton} onPress={handleReset}>
+            <Refresh width={20} height={20} color="white" />
+          </TouchableOpacity> */}
+          </View>
+
+          <View style={styles.searchContainer}>
+            <Search
+              style={styles.searchIcon}
+              width={24}
+              height={24}
+              color="#d4d4d4"
+              className="absolute z-30"
+            />
+
+            <Controller
+              control={control}
+              name="Search"
+              render={({ field: { onChange, value } }) => (
+                <TextInput
+                  style={styles.searchInput}
+                  placeholder="Search"
+                  placeholderTextColor="#9CA3AF"
+                  onChangeText={(text) => {
+                    onChange(text);
+                    handleSearch(text);
+                  }}
+                  value={value}
+                />
+              )}
+            />
+          </View>
+        </View>
+
+        {renderActionSheet("Region", REGION, handleRegionChange, "Region")}
+        {renderActionSheet(
+          "Country",
+          countryOptions,
+          handleCountryChange,
+          "Country",
+          true
+        )}
+        {renderActionSheet("City", cityOptions, handleCityChange, "City", true)}
+        {renderActionSheet("Type", UNIVERSITY_TYPES, handleTypeChange, "Type")}
+      </>
+    );
+  }
+);
 
 export default UniversitySearchFilters;
 

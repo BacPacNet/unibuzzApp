@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
@@ -11,7 +11,10 @@ import {
   Text,
   View,
 } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+import {
+  SafeAreaView,
+  useSafeAreaInsets,
+} from "react-native-safe-area-context";
 
 // Components
 import BackHeader from "@/components/atoms/BackHeader";
@@ -34,10 +37,13 @@ import { RootStackParamList } from "@/types/navigation";
 
 import { ImageUploadSection } from "@/components/molecules/CreateNewGroup/ImageUploadSection/ImageUploadSection";
 import { FormFields } from "@/components/molecules/CreateNewGroup/FormFields/FormFields";
-import { useImageUpload } from "@/hooks/useImageUpload";
+import { ImageAsset, useImageUpload } from "@/hooks/useImageUpload";
 import { useGroupCreation } from "@/hooks/useGroupCreation";
 import { useNewCommunityGroupStatesContext } from "@/context/NewCommunityGroupStatesProvider/NewCommunityGroupStatesProvider";
 import SelectedChip from "@/components/molecules/CreateNewGroup/SelectedChip";
+import ActionSheet, { ActionSheetRef } from "react-native-actions-sheet";
+import ImageOptionSelectBottomSheet from "@/components/molecules/ImageOptionSelectBottomSheet";
+import { handleTakePhoto, pickImage } from "@/utils";
 
 type NavigationProp = StackNavigationProp<
   RootStackParamList,
@@ -76,7 +82,7 @@ const NewCommunityGroupScreen = () => {
 
   // Custom hooks
   const {
-    imageToUpload,
+    // imageToUpload,
     bannerToUpload,
     previewProfileImage,
     previewBannerImage,
@@ -94,13 +100,16 @@ const NewCommunityGroupScreen = () => {
   // Local state
   const [isProfileLoading, setIsProfileLoading] = useState(false);
   const [showFilterError, setShowFilterError] = useState(false);
-
+  const [imageToUpload, setImageToUpload] = useState<ImageAsset | null>(null);
   const isFilterSelectionValid = (filters: Record<string, string[]>) => {
     return (
       Object.keys(filters).length > 0 &&
       Object.values(filters).some((arr) => arr.length > 0)
     );
   };
+
+  const imageOptionActionSheetRef = useRef<ActionSheetRef>(null);
+  const insets = useSafeAreaInsets();
 
   const isSelectedUsersEmpty = selectedUsersState.length === 0;
 
@@ -194,6 +203,7 @@ const NewCommunityGroupScreen = () => {
               previewProfileImage={previewProfileImage}
               previewBannerImage={previewBannerImage}
               onImagePick={handleImagePick}
+              onLogoPick={() => imageOptionActionSheetRef.current?.show()}
             />
 
             <FormFields
@@ -263,6 +273,18 @@ const NewCommunityGroupScreen = () => {
           </View>
         </ScrollView>
       </KeyboardAvoidingView>
+      <ActionSheet
+        ref={imageOptionActionSheetRef}
+        gestureEnabled={true}
+        safeAreaInsets={insets}
+      >
+        <ImageOptionSelectBottomSheet
+          onTakePhoto={() => handleTakePhoto(setImageToUpload)}
+          onUploadFromPhotos={() => pickImage(setImageToUpload)}
+          onClose={() => imageOptionActionSheetRef.current?.hide()}
+          title="Add Group Logo "
+        />
+      </ActionSheet>
     </View>
   );
 };

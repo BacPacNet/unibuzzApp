@@ -28,8 +28,11 @@ const Profile = ({ route }: ProfileProps) => {
   const [refreshing, setRefreshing] = useState(false);
   const [lastOffset, setLastOffset] = useState(0);
 
-  const { data: userProfileData, isLoading: isUserProfileDataLoading } =
-    useGetUserData(userId);
+  const {
+    data: userProfileData,
+    isLoading: isUserProfileDataLoading,
+    refetch: refetchUserProfileData,
+  } = useGetUserData(userId);
 
   const {
     isLoading,
@@ -68,6 +71,7 @@ const Profile = ({ route }: ProfileProps) => {
   const onRefresh = useCallback(() => {
     setRefreshing(true);
     queryClient.invalidateQueries({ queryKey: ["userPosts", userId] });
+    refetchUserProfileData();
     setRefreshing(false);
   }, [queryClient, userId]);
 

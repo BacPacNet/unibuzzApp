@@ -3,7 +3,6 @@ import DummyButton from "@/components/atoms/DummyButton";
 import ExpandableRadioGroup from "@/components/atoms/ExpandableRadioGroup";
 import { FormInput } from "@/components/atoms/FormInput";
 import ReusableButton from "@/components/atoms/ReusableButton";
-import { NewGroupUserListItem } from "@/components/molecules/CreateNewGroup/UserList";
 import MessageNewGroupFormContainer from "@/components/molecules/Message/MessageTopBar/MessageNewGroupFormContainer";
 import { ImageAsset } from "@/hooks/useImageUpload";
 import { useCreateGroupChat, useCreateUserChat } from "@/services/Messages";
@@ -18,22 +17,20 @@ import {
   View,
   Text,
   StyleSheet,
-  TextInput,
   ScrollView,
   TouchableOpacity,
   Image,
 } from "react-native";
-import ActionSheet, {
-  ActionSheetRef,
-  FlatList,
-} from "react-native-actions-sheet";
-import { launchImageLibrary } from "react-native-image-picker";
+import ActionSheet, { ActionSheetRef } from "react-native-actions-sheet";
 import { useForm } from "react-hook-form";
 import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { RootStackParamList } from "@/types/navigation";
 import { UserSelectCard } from "@/components/molecules/Message/UserSelectCard";
 import { AllUserSelectBottomSheet } from "@/components/molecules/Message/UserBottomSheet";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+import ImageOptionSelectBottomSheet from "@/components/molecules/ImageOptionSelectBottomSheet";
+import { handleTakePhoto, pickImage } from "@/utils";
 
 type NavigationProp = StackNavigationProp<RootStackParamList, "NewChatScreen">;
 export default function NewChatScreen() {
@@ -58,6 +55,10 @@ export default function NewChatScreen() {
   const [searchInput, setSearchInput] = useState("");
   const [selectedUsers, setSelectedUsers] = useState<any>([]);
   const [imageToUpload, setImageToUpload] = useState<ImageAsset | null>(null);
+
+  const imageOptionActionSheetRef = useRef<ActionSheetRef>(null);
+  const insets = useSafeAreaInsets();
+
   const {
     data: userProfilesData,
     fetchNextPage,
@@ -130,15 +131,6 @@ export default function NewChatScreen() {
 
   const userActionSheetRef = useRef<ActionSheetRef>(null);
 
-  const handleImagePick = async () => {
-    launchImageLibrary({ mediaType: "photo" }, (response: any) => {
-      if (!response.didCancel && !response.errorCode) {
-        const imageObject = response.assets[0];
-        setImageToUpload(imageObject);
-      }
-    });
-  };
-
   return (
     <ScrollView style={styles.container}>
       <BackHeader label="Messages" />
@@ -182,7 +174,7 @@ export default function NewChatScreen() {
                 <View>
                   <View style={styles.photoSection}>
                     <TouchableOpacity
-                      onPress={() => handleImagePick()}
+                      onPress={() => imageOptionActionSheetRef.current?.show()}
                       style={styles.photoUpload}
                     >
                       {imageToUpload ? (
@@ -243,6 +235,19 @@ export default function NewChatScreen() {
           selectedUsers={selectedUsers}
           setSelectedUsers={setSelectedUsers}
           isMultiAllowed={false}
+        />
+      </ActionSheet>
+
+      <ActionSheet
+        ref={imageOptionActionSheetRef}
+        gestureEnabled={true}
+        safeAreaInsets={insets}
+      >
+        <ImageOptionSelectBottomSheet
+          onTakePhoto={() => handleTakePhoto(setImageToUpload)}
+          onUploadFromPhotos={() => pickImage(setImageToUpload)}
+          onClose={() => imageOptionActionSheetRef.current?.hide()}
+          title="Add Group Logo "
         />
       </ActionSheet>
     </ScrollView>
