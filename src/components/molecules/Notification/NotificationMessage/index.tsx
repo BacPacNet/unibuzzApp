@@ -1,5 +1,9 @@
+import { screenName } from "@/constant/screenName";
 import { RootStackParamList } from "@/types/navigation";
-import { notificationRoleAccess } from "@/types/notifications";
+import {
+  notificationRoleAccess,
+  notificationStatus,
+} from "@/types/notifications";
 import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import React from "react";
@@ -19,6 +23,7 @@ export const NotificationMessage = ({ data }: NotificationMessageProps) => {
     return navigation.navigate("CommunityGroup", {
       communityId: data.communityGroupId?.communityId,
       communityGroupId: data.communityGroupId?._id,
+      from: screenName.notifications,
     });
   };
 
@@ -96,9 +101,12 @@ export const NotificationMessage = ({ data }: NotificationMessageProps) => {
     case notificationRoleAccess.OFFICIAL_GROUP_REQUEST:
       return (
         <Text style={styles.text}>
-          <Text style={styles.bold}>{data?.communityGroupId?.title}</Text> in{" "}
-          {data?.communityDetails?.name} has sent a request to become an
-          official group.
+          {data?.message} has sent a request to become an official group.
+          {data?.status == notificationStatus.default && (
+            <Text className="text-neutral-500 mt-2 font-inter text-2xs">
+              You will be automatically added to the group if you accept.
+            </Text>
+          )}
         </Text>
       );
 
@@ -114,18 +122,20 @@ export const NotificationMessage = ({ data }: NotificationMessageProps) => {
     case notificationRoleAccess.REJECTED_OFFICIAL_GROUP_REQUEST:
       return (
         <Text style={styles.text}>
-          Your request to make{" "}
-          <Text style={styles.bold}>{data?.communityGroupId?.title}</Text> in{" "}
-          {data?.communityDetails?.name} official has been rejected.
+          {data?.message}
+          <Text className="text-[#EF4444] mt-2 font-inter text-2xs">
+            Your group has been deleted.
+          </Text>
         </Text>
       );
 
     case notificationRoleAccess.ACCEPTED_OFFICIAL_GROUP_REQUEST:
       return (
         <Text style={styles.text}>
-          Your request to make{" "}
-          <Text style={styles.bold}>{data?.communityGroupId?.title}</Text> in{" "}
-          {data?.communityDetails?.name} official has been accepted.
+          {data?.message}
+          <Text className="text-[#15803D] mt-2 font-inter text-2xs">
+            Your group is now visible to other members in the community.
+          </Text>
         </Text>
       );
 

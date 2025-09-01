@@ -52,12 +52,17 @@ const addUniversityEmail = async (data: any, token: string) => {
 
 export const useAddUniversityEmail = (redirect: boolean = false) => {
   const cookieValue = getToken() as string;
+  const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: (data: any) => addUniversityEmail(data, cookieValue),
     onSuccess: (response: any, variables) => {
       storeUserProfile(response);
       Toast.hideAll();
+      //   queryKey: ["useGetSubscribedCommunties"],
+      queryClient.invalidateQueries({
+        queryKey: ["useGetSubscribedCommunties"],
+      });
       Toast.show("University Verification Complete", {
         type: "success",
         placement: "top",

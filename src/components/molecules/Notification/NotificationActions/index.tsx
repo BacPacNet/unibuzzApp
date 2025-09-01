@@ -18,10 +18,10 @@ type NotificationActionsProps = {
 export const NotificationActions = ({ data }: NotificationActionsProps) => {
   const { mutate: joinGroup } = useJoinCommunityGroup();
   const { mutate: changeGroupStatus } = useChangeCommunityGroupStatus(
-    data?.communityGroupId?._id || "",
+    data?.communityGroupId?._id || ""
   );
   const { mutate: handleJoinCommunityRequest } = useJoinRequestPrivateGroup(
-    data?.communityGroupId?._id || "",
+    data?.communityGroupId?._id || ""
   );
 
   const handleAcceptInvite = () => {
@@ -46,6 +46,10 @@ export const NotificationActions = ({ data }: NotificationActionsProps) => {
           communityGroupId: data?.communityGroupId?._id,
           adminId: data?.receiverId,
           userId: data?.sender_id?._id,
+          text:
+            status == notificationStatus.accepted
+              ? `Congratulations! ${data?.communityGroupId?.title} is now officially recognized by ${data?.communityDetails?.name}.`
+              : `Your request to create ${data?.communityGroupId?.title} as an official group at ${data?.communityDetails?.name} was not approved.`,
         });
         break;
 

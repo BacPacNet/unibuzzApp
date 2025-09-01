@@ -55,6 +55,7 @@ type Props = {
   groupStatus: string;
   adminId: string;
   leaveCommunityGroup: () => void;
+  isCommunityGroupNotLive: boolean;
 };
 type NavigationProp = StackNavigationProp<RootStackParamList, "CommunityGroup">;
 
@@ -80,6 +81,7 @@ const FlatListCommunityHeader: React.FC<Props> = ({
   groupStatus,
   adminId,
   leaveCommunityGroup,
+  isCommunityGroupNotLive,
 }) => {
   const groupInfoBottomSheet = useRef<ActionSheetRef>(null);
   const insets = useSafeAreaInsets();
@@ -223,7 +225,7 @@ const FlatListCommunityHeader: React.FC<Props> = ({
         <Text style={styles.description}>{communityGroups?.description}</Text>
 
         <View style={styles.buttonContainer}>
-          {!isUserJoinedCommunityGroup && (
+          {!isUserJoinedCommunityGroup && !isCommunityGroupNotLive && (
             <JoinGroupButton
               isPrivate={isGroupPrivate}
               isVerified={isUserVerifiedForCommunity}
