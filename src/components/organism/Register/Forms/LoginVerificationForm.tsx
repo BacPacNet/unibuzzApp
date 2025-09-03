@@ -25,7 +25,7 @@ const LoginVerificationForm = ({
   isPending: verificationIsPending,
   handlePrev,
 }: Props) => {
-  const [countdown, setCountdown] = useState(30);
+  const [countdown, setCountdown] = useState(120);
   const [isCounting, setIsCounting] = useState(true);
   const [isResend, setIsResend] = useState(false);
   const {
@@ -118,6 +118,7 @@ const LoginVerificationForm = ({
                           theme={{
                             containerStyle: { width: 300, gap: 10 },
                             pinCodeContainerStyle: { height: 50 },
+                            pinCodeTextStyle: { color: "#3A3B3C" },
                           }}
                         />
                       );

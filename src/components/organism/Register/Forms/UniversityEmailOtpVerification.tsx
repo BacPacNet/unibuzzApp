@@ -18,16 +18,14 @@ interface Props {
   isPending: boolean;
   onSubmit: (data: any) => Promise<void>;
   handlePrev: () => void;
-  
 }
 
 const UniversityEmailOtpVerification = ({
   onSubmit,
   isPending: verificationIsPending,
   handlePrev,
-
 }: Props) => {
-  const [countdown, setCountdown] = useState(30);
+  const [countdown, setCountdown] = useState(120);
   const [isCounting, setIsCounting] = useState(true);
   const [isResend, setIsResend] = useState(false);
   const {
@@ -88,7 +86,6 @@ const UniversityEmailOtpVerification = ({
     return () => clearTimeout(timer);
   }, [countdown, isCounting]);
 
-  
   return (
     <View style={styles.main}>
       <View>
@@ -151,9 +148,7 @@ const UniversityEmailOtpVerification = ({
               buttonText={
                 isCounting
                   ? `Resend Available after ${countdown}s`
-                  : 
-                    "Resend Code"
-                  
+                  : "Resend Code"
               }
               variant="border_primary"
               activityIndicatorColor="#6744FF"
@@ -175,7 +170,8 @@ const UniversityEmailOtpVerification = ({
           height="large"
         />
         <ReusableButton
-          onPress={()=>{handlePrev();
+          onPress={() => {
+            handlePrev();
             setError("UniversityOtp", {
               message: "",
             });

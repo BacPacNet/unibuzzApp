@@ -38,7 +38,7 @@ export interface CreateCommunityGroupType {
   communityGroupType: string;
   communityGroupAccess: string;
   selectedGroupCategory: string | null;
-  communityGroupLabel: string ;
+  communityGroupLabel: string;
   groupSubCategory: Array<string>;
   communityGroupLogoUrl: any;
   communityGroupLogoCoverUrl: any;
@@ -55,6 +55,10 @@ export interface CreateCommunityGroupType {
 export interface CommunityGroupType {
   _id: string;
   adminUserId: AdminUserId | string;
+  isCommunityGroupLive: boolean;
+  notificationId: string;
+  notificationTypes: string;
+  notificationStatus: string;
   status: status;
   communityId: {
     _id: string;
@@ -62,6 +66,8 @@ export interface CommunityGroupType {
       imageUrl: string;
       publicId: string;
     };
+    adminId: string;
+    name: string;
   };
   title: string;
   description: string;

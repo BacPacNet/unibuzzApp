@@ -87,7 +87,7 @@ const ReusableButton: React.FC<ReusableButtonProps> = ({
 
   return (
     <TouchableOpacity
-      className={`flex items-center justify-center   rounded-lg   ${variantClass} ${containerStyle} ${isLoading ? "opacity-50" : ""}`}
+      className={`flex items-center justify-center    rounded-lg   ${variantClass} ${containerStyle} ${isLoading ? "opacity-50" : ""}`}
       onPress={onPress}
       disabled={disabled || isLoading}
       style={[

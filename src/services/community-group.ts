@@ -304,6 +304,7 @@ export const useChangeCommunityGroupStatus = (communityGroupId: string) => {
       communityGroupId: string;
       adminId: string;
       userId: string;
+      text: string;
     }) => ChangeCommunityGroupStatusAPI(data, communityGroupId, cookieValue),
 
     onSuccess: () => {

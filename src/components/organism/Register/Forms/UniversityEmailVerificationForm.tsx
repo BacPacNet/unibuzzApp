@@ -31,7 +31,7 @@ const UniversityVerificationForm = ({
   isVerificationSuccess,
   logoUrl,
 }: Props) => {
-  const [countdown, setCountdown] = useState(30);
+  const [countdown, setCountdown] = useState(120);
   const [isCounting, setIsCounting] = useState(false);
   const {
     register,
@@ -45,9 +45,8 @@ const UniversityVerificationForm = ({
 
   const { mutateAsync: HandleRegister, isPending: registerIsPending } =
     useHandleRegister_v2();
-    const {
-        mutate: generateUniversityEmailOTP,
-      } = useHandleUniversityEmailVerificationGenerate();
+  const { mutate: generateUniversityEmailOTP } =
+    useHandleUniversityEmailVerificationGenerate();
 
   const handleskip = async () => {
     const data = await getRegisterData();
@@ -62,27 +61,28 @@ const UniversityVerificationForm = ({
     const storedData = await getRegisterData();
     const universityEmail = getValues("universityEmail");
 
-    if(!universityEmail){
-      setError("universityEmail", { message: "Please enter your university email!" });
+    if (!universityEmail) {
+      setError("universityEmail", {
+        message: "Please enter your university email!",
+      });
       return;
     }
     const data = {
       email: universityEmail,
     };
-    generateUniversityEmailOTP(data,{
-        onSuccess:()=>{
-            storeRegisterData({
-                ...storedData,
-                universityEmail: universityEmail,
-                step: 3,
-                subStep: 2,
-              });
-          
-              setStep(3);
-              setSubStep(2);
-        }
-    });
+    generateUniversityEmailOTP(data, {
+      onSuccess: () => {
+        storeRegisterData({
+          ...storedData,
+          universityEmail: universityEmail,
+          step: 3,
+          subStep: 2,
+        });
 
+        setStep(3);
+        setSubStep(2);
+      },
+    });
   };
 
   const handleLoginEmailSendCodeCount = () => {
