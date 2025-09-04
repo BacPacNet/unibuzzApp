@@ -30,6 +30,10 @@ interface Props {
   isChat?: boolean;
   isRemoving?: boolean;
   disabled?: boolean;
+  isOfficialGroup?: boolean;
+  isCommunityAdmin?: boolean;
+  showRemoveButton?: boolean;
+  forCommunityGroup?: boolean;
 }
 const MembersUserCard = ({
   _id,
@@ -50,14 +54,19 @@ const MembersUserCard = ({
   isChat = false,
   isRemoving = false,
   disabled = false,
+  isOfficialGroup = false,
+  isCommunityAdmin = false,
+  showRemoveButton = false,
+  forCommunityGroup = false,
 }: Props) => {
   const navigate = useNavigation() as any;
   const { mutateAsync: toggleFollow } = useToggleFollow(isFollowing, false);
   const [isFollowingState, setIsFollowingState] = useState(isFollowing);
   const [isProcessing, setIsProcessing] = useState(false);
   const membersBottomSheet = useRef<ActionSheetRef>(null);
-
+  const isAllowedToRemove = isCommunityAdmin && !isOfficialGroup;
   const insets = useSafeAreaInsets();
+
   const handleFollowClick = async (id: string) => {
     setIsFollowingState(true);
     setIsProcessing(true);
@@ -89,7 +98,8 @@ const MembersUserCard = ({
     if (isSelfProfile || _id === currentUserId) {
       return null;
     }
-    if (isViewerAdmin) {
+
+    if (isViewerAdmin && !isAllowedToRemove && !showRemoveButton) {
       return (
         <ReusableButton
           onPress={() => membersBottomSheet.current?.show()}
@@ -97,6 +107,19 @@ const MembersUserCard = ({
           buttonText="Settings"
           height="small"
           size={100}
+        />
+      );
+    }
+    if (isViewerAdmin && isAllowedToRemove) {
+      return (
+        <ReusableButton
+          onPress={() => handleRemoveClick?.(_id)}
+          variant="border"
+          buttonText="Remove"
+          height="small"
+          size={100}
+          disabled={disabled}
+          isLoading={isRemoving}
         />
       );
     }
@@ -128,6 +151,10 @@ const MembersUserCard = ({
     }
 
     if (isChat && isGroupAdmin) {
+      return null;
+    }
+
+    if (forCommunityGroup) {
       return null;
     }
 
@@ -177,15 +204,16 @@ const MembersUserCard = ({
         </View>
 
         <View style={styles.metaRow}>
-          {study_year && <Text style={styles.metaText}>{study_year}</Text>}
+          {(study_year || occupation) && (
+            <Text style={styles.metaText}>
+              {isStudent ? study_year : occupation}
+            </Text>
+          )}
         </View>
-        {!isStudent && occupation && (
-          <Text style={styles.metaText}>{occupation}</Text>
+
+        {(affiliation || major) && (
+          <Text style={styles.metaText}>{isStudent ? major : affiliation}</Text>
         )}
-        {isStudent && major && <Text style={styles.metaText}>{major}</Text>}
-        {/* {!isStudent && affiliation && (
-          <Text style={styles.metaText}>{affiliation}</Text>
-        )} */}
       </TouchableOpacity>
 
       <View className="flex justify-end w-max">{renderCTA}</View>

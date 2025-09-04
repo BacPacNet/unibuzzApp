@@ -1,7 +1,7 @@
 import BackHeader from "@/components/atoms/BackHeader";
 import { useNavigation } from "@react-navigation/native";
-import { View, Text, StyleSheet, FlatList } from "react-native";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { View, StyleSheet, FlatList } from "react-native";
+import { useEffect, useState } from "react";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { RootStackParamList } from "@/types/navigation";
 
@@ -19,6 +19,8 @@ const MembersScreen = ({ route }: any) => {
   const communityGroupId = route?.params?.communityGroupId ?? null;
   const communityId = route?.params?.communityId ?? null;
   const CommunityGroupMember = route?.params?.CommunityGroupMember ?? null;
+  const communityAdminId = route?.params?.communityAdminId ?? null;
+  const isOfficialGroup = route?.params?.isOfficialGroup ?? false;
   const groupName = route?.params?.groupName ?? "Community";
   const adminId = route?.params?.adminId ?? null;
   const type = route?.params?.type ?? null;
@@ -84,6 +86,12 @@ const MembersScreen = ({ route }: any) => {
               occupation={item.occupation}
               affiliation={item.affiliation}
               handleRemoveClick={(id: string) => handleRemoveUser(id)}
+              isOfficialGroup={isOfficialGroup}
+              isCommunityAdmin={
+                communityAdminId?.toString() === item?._id?.toString()
+              }
+              showRemoveButton={true}
+              forCommunityGroup={true}
             />
           )}
           contentContainerStyle={styles.listContainer}

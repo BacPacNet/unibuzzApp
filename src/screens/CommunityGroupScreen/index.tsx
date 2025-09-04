@@ -50,10 +50,6 @@ import useCustomBackHandler from "@/hooks/useCustomBackHandler";
 import { NativeSyntheticEvent } from "react-native";
 import { NativeScrollEvent } from "react-native";
 import CommunityGroupNotLiveCard from "@/components/molecules/CommunityGroup/CommunityGroupNotLiveCard";
-import {
-  notificationRoleAccess,
-  notificationStatus,
-} from "@/types/notifications";
 
 type NavigationProp = StackNavigationProp<RootStackParamList, "CommunityGroup">;
 
@@ -66,10 +62,6 @@ const CommunityGroupScreen = ({ route }: any) => {
   const userProfileData = getUserProfileStore();
   const membersBottomSheet = useRef<ActionSheetRef>(null);
   const insets = useSafeAreaInsets();
-  const [isCommunityGroupLive, setIsCommunityGroupLive] = useState<
-    boolean | null
-  >(null);
-
   const { data: communityGroups, refetch } = useGetCommunityGroup(
     communityId,
     communityGroupId
@@ -117,18 +109,9 @@ const CommunityGroupScreen = ({ route }: any) => {
   const isGroupPrivate =
     communityGroups?.communityGroupAccess === CommunityGroupVisibility.PRIVATE;
 
-  const isCommunityGroupNotLive = useMemo(() => {
-    const isAccepted =
-      communityGroups?.notificationStatus === notificationStatus.accepted;
-
-    const invitePending =
-      communityGroups?.notificationStatus === notificationStatus.default &&
-      communityGroups?.notificationTypes ===
-        notificationRoleAccess.GROUP_INVITE &&
-      userData?.id?.toString() !== communityGroups?.adminUserId.toString();
-
-    return !isAccepted && (!!isCommunityGroupLive === false || invitePending);
-  }, [isCommunityGroupLive, communityGroups, userData]);
+  const isCommunityGroupLive = useMemo(() => {
+    return communityGroups?.isCommunityGroupLive || false;
+  }, [communityGroups?.isCommunityGroupLive]);
 
   const isUserVerifiedForCommunity = useMemo(() => {
     return (
@@ -174,14 +157,6 @@ const CommunityGroupScreen = ({ route }: any) => {
       };
     }, [communityId])
   );
-
-  useEffect(() => {
-    if (communityGroups?.isCommunityGroupLive) {
-      setIsCommunityGroupLive(true);
-    } else {
-      setIsCommunityGroupLive(false);
-    }
-  }, [communityGroups]);
 
   useEffect(() => {
     if (communityGroups && userData) {
@@ -326,10 +301,11 @@ const CommunityGroupScreen = ({ route }: any) => {
         }
         adminId={communityGroups?.adminUserId.toString() || ""}
         leaveCommunityGroup={leaveCommunityGroupFunction}
-        isCommunityGroupNotLive={isCommunityGroupNotLive}
+        isCommunityGroupNotLive={!isCommunityGroupLive}
+        refetch={onRefresh}
       />
 
-      {isCommunityGroupNotLive ? (
+      {!isCommunityGroupLive ? (
         <CommunityGroupNotLiveCard
           communityID={communityId}
           communityAdminId={communityGroups?.communityId.adminId as string}
@@ -356,18 +332,17 @@ const CommunityGroupScreen = ({ route }: any) => {
 
   return (
     <SafeAreaView className="bg-white flex-1">
-      {(showCreatePostButton || lastScrollY == 0) &&
-        !isCommunityGroupNotLive && (
-          <CreatePostButton
-            isAllowed={isUserJoinedCommunityGroup || isGroupAdmin}
-            onPress={() =>
-              navigation.navigate("NewGroupPost", {
-                communityId,
-                communityGroupId,
-              })
-            }
-          />
-        )}
+      {(showCreatePostButton || lastScrollY == 0) && isCommunityGroupLive && (
+        <CreatePostButton
+          isAllowed={isUserJoinedCommunityGroup || isGroupAdmin}
+          onPress={() =>
+            navigation.navigate("NewGroupPost", {
+              communityId,
+              communityGroupId,
+            })
+          }
+        />
+      )}
       {isFetching ? (
         <Refresh />
       ) : (
@@ -414,7 +389,7 @@ const CommunityGroupScreen = ({ route }: any) => {
               <View className="flex-1 justify-center items-center">
                 <ActivityIndicator size="large" color="#7367f0" />
               </View>
-            ) : error ? null : isCommunityGroupNotLive ? null : (
+            ) : error ? null : !isCommunityGroupLive ? null : (
               <View className="flex-1 justify-center items-center">
                 <EmptyStateCard
                   imageWidth={226}
