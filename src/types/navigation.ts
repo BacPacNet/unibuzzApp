@@ -39,6 +39,7 @@ export type RootStackParamList = {
     communityId: any;
     communityGroupId: any;
     from: string;
+    filterPostBy?: string;
   };
 
   manageGroupStack: any;

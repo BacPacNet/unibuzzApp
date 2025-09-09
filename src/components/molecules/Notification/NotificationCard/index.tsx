@@ -105,6 +105,14 @@ const NotificationCard = ({ data }: Props) => {
           type: "Community",
           from: screenName.notifications,
         });
+      case notificationRoleAccess.community_post_live_request_notification:
+        return navigation.navigate("CommunityGroup", {
+          communityId: data.communityGroupId?.communityId,
+          communityGroupId: data.communityGroupId?._id,
+          from: screenName.notifications,
+          filterPostBy: "pendingPosts",
+        });
+
       case notificationRoleAccess.PRIVATE_GROUP_REQUEST:
       case notificationRoleAccess.ACCEPTED_OFFICIAL_GROUP_REQUEST:
       case notificationRoleAccess.ACCEPTED_PRIVATE_GROUP_REQUEST:
@@ -112,6 +120,8 @@ const NotificationCard = ({ data }: Props) => {
       case notificationRoleAccess.GROUP_INVITE:
       case notificationRoleAccess.REJECTED_OFFICIAL_GROUP_REQUEST:
       case notificationRoleAccess.REJECTED_PRIVATE_GROUP_REQUEST:
+      case notificationRoleAccess.community_post_accepted_notification:
+      case notificationRoleAccess.community_post_rejected_notification:
         return navigation.navigate("CommunityGroup", {
           communityId: data.communityGroupId?.communityId,
           communityGroupId: data.communityGroupId?._id,

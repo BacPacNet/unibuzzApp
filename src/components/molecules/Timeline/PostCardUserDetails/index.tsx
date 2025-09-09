@@ -20,8 +20,8 @@ type Props = {
   type: "Community" | "Timeline";
   isAdmin: boolean;
   postAdminId: string;
-  setVisible: (visible: boolean) => void;
-  visible: boolean;
+  setVisible?: (visible: boolean) => void;
+  visible?: boolean;
   communityName?: string;
   communityGroupName?: string;
   major: string;
@@ -32,6 +32,7 @@ type Props = {
   isPostVerified?: boolean;
   isCommunityAdmin?: boolean;
   handleDeletePost: () => void;
+  isPostOptionShown?: boolean;
 };
 
 type NavigationProp = StackNavigationProp<RootStackParamList, "Timeline">;
@@ -56,6 +57,7 @@ const PostCardUserDetails = ({
   isAdmin,
   handleDeletePost,
   isCommunityAdmin,
+  isPostOptionShown = true,
 }: Props) => {
   const navigate = useNavigation<NavigationProp>();
 
@@ -126,30 +128,31 @@ const PostCardUserDetails = ({
           </View>
         </View>
       </TouchableOpacity>
-
-      <DropdownWrapper
-        position="left"
-        extraLeft={60}
-        viewTopPosition={-90}
-        renderDropdown={(closeDropdown) => (
-          <PostCardOption
-            handleDeletePost={() => {
-              handleDeletePost();
-              closeDropdown();
-            }}
-            isAdmin={isAdmin}
-            postId={postId}
-            type={type}
-          />
-        )}
-      >
-        <TouchableOpacity
-          className="absolute right-4 top-1"
-          // onPress={() => setVisible(!visible)}
+      {isPostOptionShown && (
+        <DropdownWrapper
+          position="left"
+          extraLeft={60}
+          viewTopPosition={-90}
+          renderDropdown={(closeDropdown) => (
+            <PostCardOption
+              handleDeletePost={() => {
+                handleDeletePost();
+                closeDropdown();
+              }}
+              isAdmin={isAdmin}
+              postId={postId}
+              type={type}
+            />
+          )}
         >
-          <PostOption />
-        </TouchableOpacity>
-      </DropdownWrapper>
+          <TouchableOpacity
+            className="absolute right-4 top-1"
+            // onPress={() => setVisible(!visible)}
+          >
+            <PostOption />
+          </TouchableOpacity>
+        </DropdownWrapper>
+      )}
     </View>
   );
 };

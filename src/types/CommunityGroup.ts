@@ -26,6 +26,22 @@ export interface CommunityGroupUsers {
   profileImageUrl: string;
 }
 
+export const AllFiltersCommunityGroupPost = {
+  myPosts: "Your Posts",
+  pendingPosts: "Pending Posts",
+  allPosts: "All Posts",
+};
+export enum communityPostUpdateStatus {
+  LIVE = "live",
+  REJECTED = "rejected",
+}
+
+export enum communityPostStatus {
+  PENDING = "PENDING",
+  SUCCESS = "SUCCESS",
+  REJECTED = "REJECTED",
+  DEFAULT = "DEFAULT",
+}
 export enum status {
   pending = "pending",
   rejected = "rejected",

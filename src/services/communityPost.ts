@@ -529,3 +529,59 @@ export function useDeleteCommunityPostComment() {
     },
   });
 }
+
+// post live change
+export async function updateCommunityPostStatus(
+  postID: string,
+  status: string | null,
+  token: string
+) {
+  const response: any = await client(
+    `/communitypost/post/${postID}?status=${status}`,
+    {
+      headers: { Authorization: `Bearer ${token}` },
+      method: "PUT",
+    }
+  );
+  return response;
+}
+
+export const useCreateGroupPostStatusChange = (postId: string) => {
+  const cookieValue = getToken() as string;
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (status: string) =>
+      updateCommunityPostStatus(postId, status, cookieValue),
+
+    onSuccess: (_, status) => {
+      queryClient.invalidateQueries({ queryKey: ["communityGroupsPost"] });
+
+      if (status == "rejected") {
+        Toast.hideAll();
+        Toast.show(
+          "This post was not approved and won’t be visible to other group members.",
+          {
+            type: "danger",
+            placement: "top",
+          }
+        );
+      } else {
+        Toast.hideAll();
+        Toast.show(
+          "You’ve approved this post. It’s now visible to other group members.",
+          {
+            type: "success",
+            placement: "top",
+          }
+        );
+      }
+    },
+    onError: (res: any) => {
+      Toast.hideAll();
+      Toast.show(res.response?.data.message || "Something went wrong", {
+        type: "danger",
+        placement: "top",
+      });
+    },
+  });
+};

@@ -170,10 +170,11 @@ export async function getAllCommunityGroupPost(
   communityGroupId: string,
   token: any,
   page: number,
-  limit: number
+  limit: number,
+  filterPostBy: string
 ) {
   const response: any = await client(
-    `/communitypost/group?communityId=${communityId}&communityGroupId=${communityGroupId}&page=${page}&limit=${limit}`,
+    `/communitypost/group?communityId=${communityId}&communityGroupId=${communityGroupId}&page=${page}&limit=${limit}&filterPostBy=${filterPostBy}`,
     {
       headers: { Authorization: `Bearer ${token}` },
     }
@@ -185,18 +186,25 @@ export function useGetCommunityGroupPost(
   communityId: string,
   communityGroupID: string,
   isCommunity: boolean,
-  limit: number
+  limit: number,
+  filterPostBy: string
 ) {
   const cookieValue = getToken() as string;
   return useInfiniteQuery({
-    queryKey: ["communityGroupsPost", communityId, communityGroupID],
+    queryKey: [
+      "communityGroupsPost",
+      communityId,
+      communityGroupID,
+      filterPostBy,
+    ],
     queryFn: ({ pageParam = 1 }) =>
       getAllCommunityGroupPost(
         communityId,
         communityGroupID,
         cookieValue,
         pageParam,
-        limit
+        limit,
+        filterPostBy
       ),
     getNextPageParam: (lastPage) => {
       if (lastPage.currentPage < lastPage.totalPages) {
