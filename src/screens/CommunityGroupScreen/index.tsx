@@ -47,6 +47,7 @@ import { AxiosError } from "axios";
 import EmptyStateCard from "@/components/molecules/EmptyStateCard";
 import NotMember from "@/assets/placeHolder/notMember.svg";
 import NoPostFromGroup from "@/assets/placeHolder/NoPostFromGroup.svg";
+import notPendingNoPostPlaceholder from "@/assets/placeHolder/firstTimeUser.svg";
 import { screenName } from "@/constant/screenName";
 import useCustomBackHandler from "@/hooks/useCustomBackHandler";
 import { NativeSyntheticEvent } from "react-native";
@@ -335,11 +336,13 @@ const CommunityGroupScreen = ({ route }: any) => {
         refetch={onRefresh}
       />
 
-      <CommunityGroupPostFilter
-        pendingPostCount={pendingPostCount}
-        filterPostBy={filterPostBy}
-        setFilterPostBy={setFilterPostBy}
-      />
+      {isCommunityGroupLive && isUserJoinedCommunityGroup && (
+        <CommunityGroupPostFilter
+          pendingPostCount={pendingPostCount}
+          filterPostBy={filterPostBy}
+          setFilterPostBy={setFilterPostBy}
+        />
+      )}
 
       {!isCommunityGroupLive ? (
         <CommunityGroupNotLiveCard
@@ -375,6 +378,8 @@ const CommunityGroupScreen = ({ route }: any) => {
             navigation.navigate("NewGroupPost", {
               communityId,
               communityGroupId,
+              communityGroupAdminId: communityGroups?.adminUserId.toString(),
+              isGroupOfficial,
             })
           }
         />
@@ -435,7 +440,21 @@ const CommunityGroupScreen = ({ route }: any) => {
               <View className="flex-1 justify-center items-center">
                 <ActivityIndicator size="large" color="#7367f0" />
               </View>
-            ) : error ? null : !isCommunityGroupLive ? null : (
+            ) : error ? null : !isCommunityGroupLive ? null : communityGroupPostDatas?.length ===
+                0 &&
+              filterPostBy === Object.keys(AllFiltersCommunityGroupPost)[1] &&
+              communityGroups?.adminUserId.toString() ==
+                userData?.id?.toString() ? (
+              <View className="flex-1 justify-center items-center">
+                <EmptyStateCard
+                  imageWidth={226}
+                  imageHeight={158}
+                  SvgComponent={notPendingNoPostPlaceholder}
+                  title="You are all done!"
+                  description="No pending posts requests at the moment."
+                />
+              </View>
+            ) : (
               <View className="flex-1 justify-center items-center">
                 <EmptyStateCard
                   imageWidth={226}

@@ -10,7 +10,7 @@ import {
 } from "react-native";
 import ReusableButton from "../../../atoms/ReusableButton";
 import JoinGroupButton from "../../../atoms/JoinGroupButton";
-import UniversityLogoPlaceHolder from "@/assets/unibuzz_rounded.svg";
+import OfficailLogoPlaceHolder from "@/assets/community/official-logo.svg";
 import { CommunityGroupTypeEnum, status } from "@/types/CommunityGroup";
 import {
   Globe,
@@ -32,6 +32,7 @@ import {
   notificationStatus,
 } from "@/types/notifications";
 import { useJoinCommunityGroup } from "@/services/notification";
+import { Community as CommunityIcon } from "iconoir-react-native";
 
 type CommunityGroup = {
   title: string;
@@ -189,29 +190,28 @@ const FlatListCommunityHeader: React.FC<Props> = ({
                     />
                   ) : (
                     <View style={styles.universityPlaceHolder}>
-                      <UniversityLogoPlaceHolder
+                      {/* <UniversityLogoPlaceHolder
                         width={40}
                         height={40}
                         style={styles.communityImage}
+                      /> */}
+                      <CommunityIcon
+                        width={30}
+                        height={30}
+                        style={styles.communityImage}
+                        fill={"#6647FF"}
+                        color={"#6647FF"}
                       />
                     </View>
                   )}
                 </View>
                 {isGroupOfficial && (
                   <View style={styles.badgeWrapper}>
-                    {communityLogoUrl?.length ? (
-                      <Image
-                        source={{ uri: communityLogoUrl }}
-                        style={styles.badgeImage}
-                        onError={() => setLogoSrcErr(true)}
-                      />
-                    ) : (
-                      <UniversityLogoPlaceHolder
-                        width={12}
-                        height={12}
-                        style={styles.badgeImage}
-                      />
-                    )}
+                    <OfficailLogoPlaceHolder
+                      width={12}
+                      height={12}
+                      style={styles.badgeImage}
+                    />
                   </View>
                 )}
               </View>
@@ -398,7 +398,7 @@ const styles = StyleSheet.create({
 
   officialBorder: {
     borderWidth: 2,
-    borderColor: "#6647ff",
+    borderColor: "#a544ff",
   },
   imageWrapper: {
     padding: 4,
@@ -455,7 +455,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     backgroundColor: "#fff",
     borderWidth: 2,
-    borderColor: "#6647ff",
+    borderColor: "#a544ff",
     justifyContent: "center",
     alignItems: "center",
   },

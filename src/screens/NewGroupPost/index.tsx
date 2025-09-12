@@ -61,6 +61,9 @@ type fileType = {
 const NewGroupPost = ({ navigation }: any) => {
   const route = useRoute();
   const { communityId, communityGroupId } = route.params as any;
+  const communityGroupAdminId =
+    (route.params as any)?.communityGroupAdminId || " ";
+  const isGroupOfficial = (route.params as any)?.isGroupOfficial || false;
   const userProfileData = getUserProfileStore();
   const [images, setImages] = useState<ImageAsset[]>([]);
   const [files, setFiles] = useState<fileType[]>([]);
@@ -197,6 +200,8 @@ const NewGroupPost = ({ navigation }: any) => {
         userProfileData?.email?.some(
           (entry) => entry.communityId === communityId
         ) || false,
+      isCommunityAdmin: communityGroupAdminId == userProfileData?.users_id,
+      isGroupOfficial: isGroupOfficial,
     };
 
     if (images?.length || files?.length) {

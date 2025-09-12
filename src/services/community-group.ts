@@ -122,10 +122,21 @@ export const useCreateGroupPost = () => {
   return useMutation({
     mutationFn: (data: any) => CreateGroupPost(data, cookieValue),
 
-    onSuccess: () => {
+    onSuccess: (_, req) => {
       queryClient.invalidateQueries({ queryKey: ["communityGroupsPost"] });
       Toast.hideAll();
-      Toast.show("Post created successfully");
+      if (!req?.isCommunityAdmin && req?.isGroupOfficial) {
+        Toast.show("Your post has been submitted for approval.", {
+          placement: "top",
+          textStyle: { color: "#220B6A" },
+          normalColor: "#E9E8FF",
+        });
+      } else {
+        Toast.show("Post created successfully", {
+          placement: "top",
+          type: "success",
+        });
+      }
     },
     onError: (res: any) => {
       Toast.hideAll();
