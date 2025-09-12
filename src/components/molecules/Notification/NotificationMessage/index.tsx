@@ -110,6 +110,39 @@ export const NotificationMessage = ({ data }: NotificationMessageProps) => {
         </Text>
       );
 
+    case notificationRoleAccess.community_post_live_request_notification:
+      return (
+        <Text style={styles.text}>
+          You have a pending post request in {data?.communityGroupId?.title} at{" "}
+          {data?.communityDetails?.name}.
+        </Text>
+      );
+
+    case notificationRoleAccess.community_post_accepted_notification:
+      return (
+        <Text style={styles.text}>
+          Your post in {data?.communityGroupId?.title} at{" "}
+          {data?.communityDetails?.name} has been approved.
+          <Text className="text-[#15803D] mt-2 font-inter text-2xs">
+            {"\n"}
+            Your post is now visible to other members in the group.
+          </Text>
+        </Text>
+      );
+
+    case notificationRoleAccess.community_post_rejected_notification:
+      return (
+        <Text style={styles.text}>
+          Your post in {data?.communityGroupId?.title} at{" "}
+          {data?.communityDetails?.name} has been rejected.
+          <Text className="text-[#EF4444] mt-2 font-inter text-2xs">
+            {"\n"}
+            The post has been rejected by the group admin. It will not be
+            visible to other members.
+          </Text>
+        </Text>
+      );
+
     case notificationRoleAccess.PRIVATE_GROUP_REQUEST:
       return (
         <Text style={styles.text}>

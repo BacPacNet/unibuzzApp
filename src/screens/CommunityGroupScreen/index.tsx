@@ -33,8 +33,10 @@ import { StackNavigationProp } from "@react-navigation/stack";
 import { RootStackParamList } from "@/types/navigation";
 import { CommunityGroupMembersModal } from "@/components/molecules/CommunityGroup/CommunityMembersModal";
 import {
+  AllFiltersCommunityGroupPost,
   CommunityGroupTypeEnum,
   CommunityGroupVisibility,
+  communityPostStatus,
   status,
 } from "@/types/CommunityGroup";
 import CommunityGroupActionModal from "@/components/molecules/CommunityGroup/CommunityGroupActionModal";
@@ -50,6 +52,8 @@ import useCustomBackHandler from "@/hooks/useCustomBackHandler";
 import { NativeSyntheticEvent } from "react-native";
 import { NativeScrollEvent } from "react-native";
 import CommunityGroupNotLiveCard from "@/components/molecules/CommunityGroup/CommunityGroupNotLiveCard";
+import { CommunityGroupPostFilter } from "@/components/molecules/CommunityGroup/CommunityGroupPostFilter";
+import CommunityGroupPendingPostCard from "@/components/molecules/CommunityGroup/CommunityGroupPendingPostCard";
 
 type NavigationProp = StackNavigationProp<RootStackParamList, "CommunityGroup">;
 
@@ -57,6 +61,7 @@ const CommunityGroupScreen = ({ route }: any) => {
   const navigation = useNavigation<NavigationProp>();
   const { communityId, communityGroupId } = route.params;
   const from = route?.params?.from || "";
+  const filterPostByParam = route?.params?.filterPostBy || "";
   const { setCurrentCommunityId } = useCommunityContext();
   const userData = getUserStore();
   const userProfileData = getUserProfileStore();
@@ -74,6 +79,8 @@ const CommunityGroupScreen = ({ route }: any) => {
   const [isUserJoinedCommunityGroup, setIsUserJoinedCommunityGroup] = useState<
     boolean | null
   >(null);
+  const [pendingPostCount, setPendingPostCount] = useState(0);
+  const [filterPostBy, setFilterPostBy] = useState(() => filterPostByParam);
 
   const {
     data: communityGroupPost,
@@ -84,7 +91,13 @@ const CommunityGroupScreen = ({ route }: any) => {
     error,
     isFetching,
     dataUpdatedAt,
-  } = useGetCommunityGroupPost(communityId, communityGroupId, true, 10);
+  } = useGetCommunityGroupPost(
+    communityId,
+    communityGroupId,
+    true,
+    10,
+    filterPostBy
+  );
   const [communityGroupPostDatas, setCommunityGroupPostDatas] = useState<any>(
     []
   );
@@ -98,6 +111,7 @@ const CommunityGroupScreen = ({ route }: any) => {
   const [logoSrc, setLogoSrc] = useState(
     communityGroups?.communityGroupLogoUrl?.imageUrl || ""
   );
+
   const [logoSrcErr, setLogoSrcErr] = useState(false);
   const [refreshing, setRefreshing] = React.useState(false);
   const [showCreatePostButton, setShowCreatePostButton] = useState(false);
@@ -126,6 +140,11 @@ const CommunityGroupScreen = ({ route }: any) => {
       (user) => user._id === userProfileData?.users_id
     )?.status as status;
   }, [communityGroups, userProfileData]);
+
+  const communityGroupPendingPostCount = useMemo(
+    () => communityGroupPost?.pages.flatMap((page) => page?.pendingTotal) || 0,
+    [communityGroupPost?.pages, isFetching]
+  );
 
   const CommunityGroupMember = communityGroups?.users?.filter(
     (user: { status: status }) => user.status === status.accepted
@@ -199,6 +218,17 @@ const CommunityGroupScreen = ({ route }: any) => {
     );
     setCommunityGroupPostDatas(communityDatas);
   }, [communityGroupPost, dataUpdatedAt]);
+
+  useEffect(() => {
+    if (
+      Array.isArray(communityGroupPendingPostCount) &&
+      communityGroupPendingPostCount[0] > 0
+    ) {
+      setPendingPostCount(communityGroupPendingPostCount[0]);
+    } else {
+      setPendingPostCount(0);
+    }
+  }, [communityGroupPendingPostCount]);
 
   const onRefresh = React.useCallback(() => {
     setRefreshing(true);
@@ -305,6 +335,12 @@ const CommunityGroupScreen = ({ route }: any) => {
         refetch={onRefresh}
       />
 
+      <CommunityGroupPostFilter
+        pendingPostCount={pendingPostCount}
+        filterPostBy={filterPostBy}
+        setFilterPostBy={setFilterPostBy}
+      />
+
       {!isCommunityGroupLive ? (
         <CommunityGroupNotLiveCard
           communityID={communityId}
@@ -357,6 +393,16 @@ const CommunityGroupScreen = ({ route }: any) => {
           renderItem={({ item }) =>
             error ? (
               <View></View>
+            ) : filterPostBy ===
+              Object.keys(AllFiltersCommunityGroupPost)[1] ? (
+              <CommunityGroupPendingPostCard
+                data={item}
+                isTimeline={false}
+                communityGroupId={communityGroupId}
+                isSinglePost={false}
+                communityGroupAdminId={communityGroups?.adminUserId as string}
+                postStatus={item?.postStatus as communityPostStatus}
+              />
             ) : (
               <PostCard
                 data={item}

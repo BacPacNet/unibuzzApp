@@ -122,4 +122,9 @@ export const notificationRoleAccess = {
   DELETED_COMMUNITY_GROUP: "DELETED_COMMUNITY_GROUP",
 
   MESSAGE_NOTIFICATION: "MESSAGE_NOTIFICATION",
+
+  community_post_live_request_notification:
+    "community_post_live_request_notification",
+  community_post_accepted_notification: "community_post_accepted_notification",
+  community_post_rejected_notification: "community_post_rejected_notification",
 };
