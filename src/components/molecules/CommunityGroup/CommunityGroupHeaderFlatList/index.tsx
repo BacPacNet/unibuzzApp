@@ -6,11 +6,12 @@ import {
   TouchableOpacity,
   Platform,
   StyleSheet,
+  GestureResponderEvent,
 } from "react-native";
 import ReusableButton from "../../../atoms/ReusableButton";
 import JoinGroupButton from "../../../atoms/JoinGroupButton";
 import UniversityLogoPlaceHolder from "@/assets/unibuzz_rounded.svg";
-import { status } from "@/types/CommunityGroup";
+import { CommunityGroupTypeEnum, status } from "@/types/CommunityGroup";
 import {
   Globe,
   Lock,
@@ -26,6 +27,11 @@ import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { RootStackParamList } from "@/types/navigation";
 import { FONTS } from "@/constants/fonts";
+import {
+  notificationRoleAccess,
+  notificationStatus,
+} from "@/types/notifications";
+import { useJoinCommunityGroup } from "@/services/notification";
 
 type CommunityGroup = {
   title: string;
@@ -56,6 +62,7 @@ type Props = {
   adminId: string;
   leaveCommunityGroup: () => void;
   isCommunityGroupNotLive: boolean;
+  refetch: () => void;
 };
 type NavigationProp = StackNavigationProp<RootStackParamList, "CommunityGroup">;
 
@@ -82,7 +89,11 @@ const FlatListCommunityHeader: React.FC<Props> = ({
   adminId,
   leaveCommunityGroup,
   isCommunityGroupNotLive,
+  refetch,
 }) => {
+  const { mutate: joinGroup, isPending: isJoinGroupPending } =
+    useJoinCommunityGroup();
+
   const groupInfoBottomSheet = useRef<ActionSheetRef>(null);
   const insets = useSafeAreaInsets();
   const { navigate } = useNavigation<NavigationProp>();
@@ -102,6 +113,26 @@ const FlatListCommunityHeader: React.FC<Props> = ({
     (user: { status: status }) => user.status === status.accepted
   );
 
+  const handleAcceptInvite = () => (e: GestureResponderEvent) => {
+    e.stopPropagation?.();
+    if (!communityGroups?._id) return;
+
+    if (
+      communityGroups?.notificationTypes === notificationRoleAccess.GROUP_INVITE
+    ) {
+      const payload = {
+        isAccepted: true,
+        groupId: communityGroups?._id,
+        id: communityGroups?.notificationId,
+      };
+      joinGroup(payload, {
+        onSuccess: () => {
+          refetch();
+        },
+      });
+    }
+  };
+
   const handleNavigateToMembersScreen = useCallback(() => {
     navigate("MembersScreen", {
       CommunityGroupMember,
@@ -109,6 +140,9 @@ const FlatListCommunityHeader: React.FC<Props> = ({
       communityId: communityGroups?.communityId,
       adminId: adminId,
       groupName: communityGroups?.title,
+      communityAdminId: communityGroups?.communityId?.adminId as string,
+      isOfficialGroup:
+        communityGroups?.communityGroupType === CommunityGroupTypeEnum.OFFICIAL,
     });
   }, [CommunityGroupMember, communityGroups?.id, navigate]);
 
@@ -225,7 +259,19 @@ const FlatListCommunityHeader: React.FC<Props> = ({
         <Text style={styles.description}>{communityGroups?.description}</Text>
 
         <View style={styles.buttonContainer}>
-          {!isUserJoinedCommunityGroup && !isCommunityGroupNotLive && (
+          {communityGroups?.notificationStatus == notificationStatus.default &&
+          communityGroups?.notificationTypes ==
+            notificationRoleAccess.GROUP_INVITE ? (
+            <ReusableButton
+              onPress={() => handleAcceptInvite()({} as any)}
+              variant="primary"
+              size={120}
+              buttonText={`Accept Request`}
+              height="small"
+              isLoading={isJoinGroupPending}
+              disabled={isJoinGroupPending}
+            />
+          ) : !isUserJoinedCommunityGroup && !isCommunityGroupNotLive ? (
             <JoinGroupButton
               isPrivate={isGroupPrivate}
               isVerified={isUserVerifiedForCommunity}
@@ -233,7 +279,7 @@ const FlatListCommunityHeader: React.FC<Props> = ({
               userStatus={userStatus}
               onClick={onJoinPress}
             />
-          )}
+          ) : null}
           <ReusableButton
             onPress={() => handleNavigateToMembersScreen()}
             variant="border"

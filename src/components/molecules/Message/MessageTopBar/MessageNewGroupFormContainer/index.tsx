@@ -2,7 +2,6 @@ import DummyButton from "@/components/atoms/DummyButton";
 import MultiSelectDropdown from "@/components/atoms/MultiSelectDropDown";
 import ReusableButton from "@/components/atoms/ReusableButton";
 import { SelectUserProfileChips } from "@/components/atoms/SelectedUserProfileChips";
-import SelectCommunityUsersBottomSheet from "@/components/molecules/CreateNewGroup/SelectCommunityUsersBottomSheet";
 import SubscribedUniveristyBottomSheet from "@/components/molecules/SearchCommunity/SubscribedUniveristyBottomSheet";
 import RoleSelectorWithFields from "@/components/molecules/SearchCommunity/UserSelectionFields";
 import { filterData, filterFacultyData } from "@/lib/communityGroup";
@@ -120,10 +119,7 @@ const MessageNewGroupFormContainer = forwardRef((props, ref) => {
   }, [occupation, affiliation]);
 
   const openUniversityActionSheet = () => {
-    if (
-      userProiledata?.communities?.length &&
-      userProiledata?.communities?.some((community) => community.isVerified)
-    ) {
+    if (userProiledata && userProiledata.email!.length) {
       universityActionSheetRef.current?.show();
     } else {
       Toast.hideAll();
