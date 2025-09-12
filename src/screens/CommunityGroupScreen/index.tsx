@@ -379,6 +379,7 @@ const CommunityGroupScreen = ({ route }: any) => {
               communityId,
               communityGroupId,
               communityGroupAdminId: communityGroups?.adminUserId.toString(),
+              isGroupOfficial,
             })
           }
         />

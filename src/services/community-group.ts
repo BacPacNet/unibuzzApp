@@ -125,7 +125,7 @@ export const useCreateGroupPost = () => {
     onSuccess: (_, req) => {
       queryClient.invalidateQueries({ queryKey: ["communityGroupsPost"] });
       Toast.hideAll();
-      if (!req?.isCommunityAdmin) {
+      if (!req?.isCommunityAdmin && req?.isGroupOfficial) {
         Toast.show("Your post has been submitted for approval.", {
           placement: "top",
           textStyle: { color: "#220B6A" },
