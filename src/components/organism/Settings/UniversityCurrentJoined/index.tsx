@@ -1,5 +1,12 @@
-import React from "react";
-import { View, Text, ScrollView, StyleSheet } from "react-native";
+import React, { useState } from "react";
+import {
+  View,
+  Text,
+  ScrollView,
+  StyleSheet,
+  RefreshControl,
+  ActivityIndicator,
+} from "react-native";
 import BackHeader from "@/components/atoms/BackHeader";
 import Badge from "@/assets/badge.svg";
 import ReusableButton from "@/components/atoms/ReusableButton";
@@ -8,6 +15,7 @@ import { CheckCircleSolid, PlusCircleSolid } from "iconoir-react-native";
 import { FormInput } from "@/components/atoms/FormInput";
 import { universitySettingsScreen } from "@/screens/SettingsScreens/UniversityVerificationScreen";
 import { FONTS } from "@/constants/fonts";
+import { useGetUserProfileVerifiedUniversityEmailData } from "@/services/user-Profile";
 
 const FeatureList = () => (
   <View style={{ marginTop: 32 }}>
@@ -47,11 +55,27 @@ const UniversityVerificationInfo = ({
   setCurrScreen,
   control,
 }: Props) => {
+  const {
+    data: verifiedUniversityEmailData,
+    refetch,
+    isFetching,
+  } = useGetUserProfileVerifiedUniversityEmailData();
+
+  const [refreshing, setRefreshing] = useState(false);
+
+  const handleRefresh = () => {
+    setRefreshing(true);
+    refetch();
+    setRefreshing(false);
+  };
   return (
     <ScrollView
       contentContainerStyle={styles.container}
       keyboardShouldPersistTaps="handled"
       showsVerticalScrollIndicator={false}
+      refreshControl={
+        <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />
+      }
     >
       <BackHeader label="Settings" onPress={goBack} />
       <View style={styles.paddingContainer}>
@@ -63,14 +87,18 @@ const UniversityVerificationInfo = ({
 
         {FeatureList()}
 
-        {email?.length > 0 ? (
+        {isFetching ? (
+          <View className="flex-1 justify-center items-center">
+            <ActivityIndicator size="large" color="#7367f0" />
+          </View>
+        ) : verifiedUniversityEmailData?.length > 0 ? (
           <View>
             <View style={{ marginVertical: 32 }}>
               <Text style={styles.emailText}>
                 You are currently verified for the following universities.
               </Text>
             </View>
-            {email?.map((item: any, idx: number) => (
+            {verifiedUniversityEmailData?.map((item: any, idx: number) => (
               <View style={{ marginBottom: 20 }} key={idx}>
                 <FormInput
                   label="University Email"

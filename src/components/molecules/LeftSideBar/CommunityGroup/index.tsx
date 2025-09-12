@@ -2,7 +2,6 @@ import { RootStackParamList } from "@/types/navigation";
 import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { Community } from "@/types/Community";
-import UniversityLogoPlaceHolder from "@/assets/unibuzz_rounded.svg";
 import OfficailLogoPlaceHolder from "@/assets/community/official-logo.svg";
 import React from "react";
 import {
@@ -14,6 +13,7 @@ import {
   Platform,
 } from "react-native";
 import { CommunityGroupTypeEnum } from "@/types/CommunityGroup";
+import { Community as CommunityIcon } from "iconoir-react-native";
 
 type NavigationProp = StackNavigationProp<RootStackParamList, "Timeline">;
 
@@ -76,10 +76,12 @@ const GroupSelectors = ({
               ]}
             >
               <View style={styles.universityPlaceHolder}>
-                <UniversityLogoPlaceHolder
-                  width={20}
-                  height={20}
+                <CommunityIcon
+                  width={30}
+                  height={30}
                   style={styles.communityImage}
+                  fill={"#6647FF"}
+                  color={"#6647FF"}
                 />
               </View>
             </View>
@@ -147,7 +149,7 @@ const styles = StyleSheet.create({
   },
   officialBorder: {
     borderWidth: 2,
-    borderColor: "#6647ff",
+    borderColor: "#a544ff",
   },
   communityImage: {
     width: 40,
@@ -179,7 +181,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     backgroundColor: "#fff",
     borderWidth: 2,
-    borderColor: "#6647ff",
+    borderColor: "#a544ff",
     justifyContent: "center",
     alignItems: "center",
   },
