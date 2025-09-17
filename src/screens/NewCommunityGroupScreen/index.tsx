@@ -30,7 +30,10 @@ import {
 } from "@/services/university-community";
 
 // Types
-import { CreateCommunityGroupType } from "@/types/CommunityGroup";
+import {
+  CommunityGroupTypeEnum,
+  CreateCommunityGroupType,
+} from "@/types/CommunityGroup";
 import { RootStackParamList } from "@/types/navigation";
 
 // Custom hooks
@@ -79,6 +82,7 @@ const NewCommunityGroupScreen = () => {
       selectedFilters: [],
     },
   });
+  const communityGroupType = watch("communityGroupType");
 
   // Custom hooks
   const {
@@ -148,7 +152,13 @@ const NewCommunityGroupScreen = () => {
         await handleCreateGroup(data, imageToUpload, bannerToUpload);
 
       createGroup(
-        { communityId, data: payload },
+        {
+          communityId,
+          data: payload,
+          isOfficial:
+            communityGroupType.toLowerCase() ===
+            CommunityGroupTypeEnum.OFFICIAL,
+        },
         {
           onSuccess: () => {
             setCreateSelectedFilters([]);

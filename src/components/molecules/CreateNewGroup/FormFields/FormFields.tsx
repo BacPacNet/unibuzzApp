@@ -95,8 +95,8 @@ export const FormFields: React.FC<FormFieldsProps> = ({
       </View>
       {isPending && (
         <Text style={styles.warningText}>
-          Your Official Group request is pending. Your Casual Group will convert
-          after university admin accepts the request.
+          Your request for creating an Official Group is pending. Your group
+          will be deleted if it is rejected.
         </Text>
       )}
 
@@ -108,7 +108,12 @@ export const FormFields: React.FC<FormFieldsProps> = ({
           required
         />
       )}
-      {isNewGroup ? null : groupType === "casual" ? (
+      {isNewGroup ? null : isPending ? (
+        <View style={styles.container}>
+          <Text style={styles.title}>Official</Text>
+          <Text style={styles.subtitle}>Require university approval</Text>
+        </View>
+      ) : groupType === "casual" ? (
         <View style={styles.container}>
           <Text style={styles.title}>Casual</Text>
           <Text style={styles.subtitle}>No approval required</Text>

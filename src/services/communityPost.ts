@@ -96,7 +96,8 @@ export const useLikeUnilikeGroupPost = (
   communityGroupId: string = "",
   isTimeline: boolean,
   isSinglePost: boolean,
-  isProfile: boolean
+  isProfile: boolean,
+  filterPostBy: string = ""
 ) => {
   const cookieValue = getToken() as string;
   const userData = getUserStore();
@@ -108,6 +109,7 @@ export const useLikeUnilikeGroupPost = (
         "communityGroupsPost",
         communityId,
         ...(communityGroupId ? [communityGroupId] : []),
+        filterPostBy,
       ];
 
   return useMutation({

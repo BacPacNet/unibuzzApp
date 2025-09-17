@@ -8,6 +8,7 @@ import {
 } from "@tanstack/react-query";
 import { client } from "./api-client";
 import { Toast } from "react-native-toast-notifications";
+import { notificationStatus as notificationStatusEnum } from "@/types/notifications";
 
 export async function getAllCommunityGroups(
   communityId: string,
@@ -57,13 +58,24 @@ export const useCreateCommunityGroup = () => {
   return useMutation({
     mutationFn: ({ communityId, data }: any) =>
       CreateCommunityGroup(communityId, cookieValue, data),
-    onSuccess: (response: any) => {
+    onSuccess: (response: any, req) => {
       //   queryClient.invalidateQueries({ queryKey: ["communityGroups"] });
       queryClient.invalidateQueries({
         queryKey: ["useGetSubscribedCommunties"],
       });
       Toast.hideAll();
-      Toast.show("Community created successfully");
+      if (req.isOfficial) {
+        Toast.show(
+          "Your official group has been created and is pending admin approval.",
+          {
+            placement: "top",
+            textStyle: { color: "#220B6A" },
+            normalColor: "#E9E8FF",
+          }
+        );
+      } else {
+        Toast.show("Your casual group has been created.");
+      }
     },
     onError: (error: any) => {
       Toast.hideAll();
@@ -132,7 +144,7 @@ export const useCreateGroupPost = () => {
           normalColor: "#E9E8FF",
         });
       } else {
-        Toast.show("Post created successfully", {
+        Toast.show("Post created successfully.", {
           placement: "top",
           type: "success",
         });
@@ -318,11 +330,28 @@ export const useChangeCommunityGroupStatus = (communityGroupId: string) => {
       text: string;
     }) => ChangeCommunityGroupStatusAPI(data, communityGroupId, cookieValue),
 
-    onSuccess: () => {
+    onSuccess: (_, req) => {
       //   queryClient.invalidateQueries({ queryKey: ["user_notification"] });
       queryClient.invalidateQueries({ queryKey: ["userNotification"] });
       Toast.hideAll();
-      Toast.show(`status of community group changed`);
+      if (req.status == notificationStatusEnum.accepted) {
+        Toast.show(
+          "You’ve approved the official group request. The group is now active.",
+          {
+            placement: "top",
+            textStyle: { color: "#220B6A" },
+            normalColor: "#E9E8FF",
+          }
+        );
+      } else {
+        Toast.show(
+          "You’ve rejected the official group request. The group has been deleted.",
+          {
+            placement: "top",
+            type: "danger",
+          }
+        );
+      }
     },
 
     onError: (error: any) => {
