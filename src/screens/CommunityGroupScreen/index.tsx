@@ -414,6 +414,7 @@ const CommunityGroupScreen = ({ route }: any) => {
                 isTimeline={false}
                 communityGroupId={communityGroupId}
                 isSinglePost={false}
+                filterPostBy={filterPostBy}
               />
             )
           }

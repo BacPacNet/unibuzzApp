@@ -49,6 +49,7 @@ const PostCard = memo(
     initialComment,
     toShowInitial = false,
     isProfile = false,
+    filterPostBy,
   }: PostCardType) => {
     const navigation = useNavigation<ScreenNavigationProp>();
     const [visible, setVisible] = useState(false);
@@ -78,7 +79,8 @@ const PostCard = memo(
         communityGroupId,
         isTimeline,
         isSinglePost,
-        isProfile
+        isProfile,
+        filterPostBy
       );
     const { mutate: LikeUnlikeTimelinePost, isPending: isLikeUnlikePending } =
       useLikeUnlikeTimelinePost(

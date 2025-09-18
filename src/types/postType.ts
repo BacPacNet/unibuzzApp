@@ -11,6 +11,7 @@ export enum UserPostType {
 }
 
 export type PostCardType = {
+  filterPostBy?: string;
   source?: string;
   data: {
     isPostVerified?: boolean;
