@@ -64,7 +64,9 @@ const MembersUserCard = ({
   const [isFollowingState, setIsFollowingState] = useState(isFollowing);
   const [isProcessing, setIsProcessing] = useState(false);
   const membersBottomSheet = useRef<ActionSheetRef>(null);
-  const isAllowedToRemove = isCommunityAdmin && !isOfficialGroup;
+  //   const isAllowedToRemove = isCommunityAdmin && !isOfficialGroup;
+  const isAllowedToRemove =
+    (isCommunityAdmin && !isOfficialGroup) || !isCommunityAdmin;
   const insets = useSafeAreaInsets();
 
   const handleFollowClick = async (id: string) => {

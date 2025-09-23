@@ -76,8 +76,10 @@ const MembersScreen = ({ route }: any) => {
               lastName={item.lastName}
               isFollowing={userFollowing?.includes(item._id) || false}
               isSelfProfile={userProfileData?.users_id === item._id}
-              isViewerAdmin={adminId === userProfileData?.users_id}
-              isGroupAdmin={item._id === adminId}
+              isViewerAdmin={
+                adminId.toString() === userProfileData?.users_id?.toString()
+              }
+              isGroupAdmin={item?._id?.toString() === adminId.toString()}
               currentUserId={userId}
               role={item.role}
               profile_dp_imageUrl={item.profileImageUrl}
