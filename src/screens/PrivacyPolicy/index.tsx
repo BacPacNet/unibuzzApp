@@ -6,28 +6,24 @@ const PrivacyPolicy = () => {
     <ScrollView style={styles.container}>
       <Text style={styles.title}>Privacy Policy</Text>
       <View>
-        <Text style={styles.Desc}>Updated: September 20, 2025</Text>
+        <Text style={styles.Desc}>Effective Date: August 1, 2024</Text>
         <Text style={styles.Desc}>
           Welcome to Unibuzz. At Unibuzz Networks, we are committed to
           protecting your privacy and handling your data in an open,
-          responsible, and transparent manner.
+          responsible, and transparent manner. This Privacy Policy outlines how
+          we collect, use, process, and share your personal information when you
+          use our websites, mobile application, and related services
+          (collectively, the "Service"). 
         </Text>
 
         <Text style={styles.Desc}>
-          This Privacy Policy outlines how Unibuzz collects, uses, processes,
-          and shares personal information when you interact with our websites,
-          mobile application, and related services (collectively, the
-          &quot;Service&quot;).
-        </Text>
-        <Text style={styles.Desc}>
           By using Unibuzz, you consent to the collection and use of information
-          in accordance with this policy.
+          in accordance with this policy. 
         </Text>
       </View>
 
       <View style={styles.contentContainer}>
         <Text style={styles.sectionTitle}>Information We Collect</Text>
-        <Text style={styles.DescHeading}>Directly Provided Information</Text>
         <Text style={styles.Desc}>
           We collect information you provide directly to us when you create an
           account, use our Service, or communicate with us. This may include:
@@ -44,10 +40,6 @@ const PrivacyPolicy = () => {
           Academic or university affiliation details, if you choose to verify
           your identity to access university communities.
         </BulletPoint>
-
-        <Text style={styles.DescHeading}>
-          Automatically Collected Usage Information
-        </Text>
         <Text style={styles.Desc}>
           We also automatically collect certain usage information, including:
         </Text>
@@ -235,13 +227,6 @@ const styles = StyleSheet.create({
     lineHeight: 24,
     marginBottom: 16,
     fontWeight: 400,
-  },
-  DescHeading: {
-    fontSize: 16,
-    color: "#3A3B3C",
-    lineHeight: 24,
-    marginVertical: 16,
-    fontWeight: 500,
   },
 
   lastPadding: {

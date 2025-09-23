@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import {
   ActivityIndicator,
   Modal,
@@ -46,8 +46,6 @@ type Props = {
   setShowInitial: (value: boolean) => void;
   showInitial: boolean;
   initialComment: any;
-  isReply?: boolean;
-  commentId?: string;
 };
 
 const CommentBottomSheet = ({
@@ -61,8 +59,6 @@ const CommentBottomSheet = ({
   showInitial,
   setShowInitial,
   initialComment,
-  isReply = false,
-  commentId = "",
 }: Props) => {
   const [showReply, setShowReply] = useState(false);
   const [replyingTo, setReplyingTo] = useState<any>(null);
@@ -134,14 +130,6 @@ const CommentBottomSheet = ({
       likeGroupPostComment({ communityGroupPostCommentId: commentId, level });
     }
   };
-
-  useEffect(() => {
-    if (isReply) {
-      setShowReply(commentId as any);
-    }
-  }, [isReply]);
-
-  console.log("commentId", commentId, "showReply", showReply);
 
   if (
     (isFetching && !userCommentsData.length) ||

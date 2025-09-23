@@ -22,14 +22,11 @@ export const NotificationIcon = ({ type }: NotificationIconProps) => {
     case notificationRoleAccess.REJECTED_PRIVATE_GROUP_REQUEST:
     case notificationRoleAccess.community_post_live_request_notification:
     case notificationRoleAccess.community_post_accepted_notification:
-    case notificationRoleAccess.DELETED_COMMUNITY_GROUP:
     case notificationRoleAccess.community_post_rejected_notification:
       return <Community {...iconProps} />;
 
     case notificationRoleAccess.COMMENT:
     case notificationRoleAccess.COMMUNITY_COMMENT:
-    case notificationRoleAccess.REPLIED_TO_COMMENT:
-    case notificationRoleAccess.REPLIED_TO_COMMUNITY_COMMENT:
       return <ChatBubble {...iconProps} />;
 
     case notificationRoleAccess.REACTED_TO_POST:

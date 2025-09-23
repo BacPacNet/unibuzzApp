@@ -48,7 +48,7 @@ export const NotificationMessage = ({ data }: NotificationMessageProps) => {
 
     case notificationRoleAccess.COMMENT: {
       const name = data?.commentedBy?.newFiveUsers?.[0]?.name || "Someone";
-      const total = data?.userPost?.totalComments || 0;
+      const total = data?.commentedBy?.totalCount || 0;
       return (
         <Text style={styles.text}>
           <Text style={styles.bold}>{name}</Text>
@@ -59,32 +59,9 @@ export const NotificationMessage = ({ data }: NotificationMessageProps) => {
       );
     }
 
-    case notificationRoleAccess.REPLIED_TO_COMMENT: {
-      const firstCommenterName = data?.repliedBy?.newFiveUsers?.length
-        ? data.repliedBy.newFiveUsers[0]?.name || "Someone"
-        : "Someone";
-
-      if (data?.parentCommentReplies[0]?.totalReplies > 1) {
-        return (
-          <Text style={styles.text}>
-            <Text style={styles.bold}>{firstCommenterName}</Text> and{" "}
-            {data?.parentCommentReplies[0]?.totalReplies - 1} others replied to
-            your comment
-          </Text>
-        );
-      } else {
-        return (
-          <Text style={styles.text}>
-            <Text style={styles.bold}>{firstCommenterName}</Text> replied to
-            your comment.
-          </Text>
-        );
-      }
-    }
-
     case notificationRoleAccess.COMMUNITY_COMMENT: {
       const name = data?.commentedBy?.newFiveUsers?.[0]?.name || "Someone";
-      const total = data?.communityPost?.totalComments || 0;
+      const total = data?.commentedBy?.totalCount || 0;
       return (
         <Text style={styles.text}>
           <Text style={styles.bold}>{name}</Text>
@@ -95,32 +72,9 @@ export const NotificationMessage = ({ data }: NotificationMessageProps) => {
       );
     }
 
-    case notificationRoleAccess.REPLIED_TO_COMMUNITY_COMMENT: {
-      const firstCommenterName = data?.repliedBy?.newFiveUsers?.length
-        ? data.repliedBy.newFiveUsers[0]?.name || "Someone"
-        : "Someone";
-
-      if (data?.communityParentCommentReplies[0]?.totalReplies > 1) {
-        return (
-          <Text style={styles.text}>
-            <Text style={styles.bold}>{firstCommenterName}</Text> and{" "}
-            {data?.communityParentCommentReplies[0]?.totalReplies - 1} others
-            replied to your comment
-          </Text>
-        );
-      } else {
-        return (
-          <Text style={styles.text}>
-            <Text style={styles.bold}>{firstCommenterName}</Text> replied to
-            your comment.
-          </Text>
-        );
-      }
-    }
-
     case notificationRoleAccess.REACTED_TO_POST: {
       const name = data?.likedBy?.newFiveUsers?.[0]?.name || "Someone";
-      const total = data?.userPost?.likeCount || 0;
+      const total = data?.likedBy?.totalCount || 0;
       return (
         <Text style={styles.text}>
           <Text style={styles.bold}>{name}</Text>
@@ -133,7 +87,7 @@ export const NotificationMessage = ({ data }: NotificationMessageProps) => {
 
     case notificationRoleAccess.REACTED_TO_COMMUNITY_POST: {
       const name = data?.likedBy?.newFiveUsers?.[0]?.name || "Someone";
-      const total = data?.communityPost?.likeCount || 0;
+      const total = data?.likedBy?.totalCount || 0;
       return (
         <Text style={styles.text}>
           <Text style={styles.bold}>{name}</Text>

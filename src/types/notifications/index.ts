@@ -93,18 +93,9 @@ export interface UserMainNotification {
   communityPostId?: {
     _id?: string;
   };
-  userPost: {
-    likeCount: number;
-    totalComments: number;
-  };
-  communityPost: {
-    likeCount: number;
-    totalComments: number;
-  };
   type: string;
   likedBy: likedBy;
   commentedBy: likedBy;
-  repliedBy: likedBy;
 }
 
 export type UserMainNotificationsProps = {
@@ -121,8 +112,6 @@ export const notificationRoleAccess = {
   COMMUNITY_COMMENT: "COMMUNITY_COMMENT",
   REACTED_TO_POST: "REACTED_TO_POST",
   REACTED_TO_COMMUNITY_POST: "REACTED_TO_COMMUNITY_POST",
-  REPLIED_TO_COMMENT: "REPLIED_TO_COMMENT",
-  REPLIED_TO_COMMUNITY_COMMENT: "REPLIED_TO_COMMUNITY_COMMENT",
 
   OFFICIAL_GROUP_REQUEST: "OFFICIAL_GROUP_REQUEST",
   PRIVATE_GROUP_REQUEST: "PRIVATE_GROUP_REQUEST",
