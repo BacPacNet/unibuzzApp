@@ -57,9 +57,20 @@ type Props = {
     communityPostId?: {
       _id?: string;
     };
+    userPost: {
+      likeCount: number;
+      totalComments: number;
+    };
+    communityPost: {
+      likeCount: number;
+      totalComments: number;
+    };
     type: string;
     likedBy: likedBy;
     commentedBy: CommentedBy;
+    repliedBy: CommentedBy;
+    parentCommentReplies: any;
+    communityParentCommentReplies: any;
   };
 };
 
@@ -86,11 +97,27 @@ const NotificationCard = ({ data }: Props) => {
           commentId: data?.commentedBy.newFiveUsers[0].postCommentId,
           from: screenName.notifications,
         });
+      case notificationRoleAccess.REPLIED_TO_COMMENT:
+        return navigation.navigate("SinglePost", {
+          postID: data.userPostId,
+          type: "Timeline",
+          commentId: data?.parentCommentReplies[0].parentId,
+          isReply: true,
+          from: screenName.notifications,
+        });
       case notificationRoleAccess.COMMUNITY_COMMENT:
         return navigation.navigate("SinglePost", {
           postID: data.communityPostId,
           type: "Community",
           commentId: data?.commentedBy.newFiveUsers[0].communityPostCommentId,
+          from: screenName.notifications,
+        });
+      case notificationRoleAccess.REPLIED_TO_COMMUNITY_COMMENT:
+        return navigation.navigate("SinglePost", {
+          postID: data.communityPostId,
+          type: "Community",
+          commentId: data?.communityParentCommentReplies[0].parentId,
+          isReply: true,
           from: screenName.notifications,
         });
       case notificationRoleAccess.REACTED_TO_POST:
@@ -113,12 +140,24 @@ const NotificationCard = ({ data }: Props) => {
           filterPostBy: "pendingPosts",
         });
 
+      case notificationRoleAccess.OFFICIAL_GROUP_REQUEST:
+        if (data?.status === notificationStatus.rejected) {
+          return;
+        }
+        return navigation.navigate("CommunityGroup", {
+          communityId: data.communityGroupId?.communityId,
+          communityGroupId: data.communityGroupId?._id,
+          from: screenName.notifications,
+        });
+
+      case notificationRoleAccess.REJECTED_OFFICIAL_GROUP_REQUEST:
+        return;
+
       case notificationRoleAccess.PRIVATE_GROUP_REQUEST:
       case notificationRoleAccess.ACCEPTED_OFFICIAL_GROUP_REQUEST:
       case notificationRoleAccess.ACCEPTED_PRIVATE_GROUP_REQUEST:
       case notificationRoleAccess.OFFICIAL_GROUP_REQUEST:
       case notificationRoleAccess.GROUP_INVITE:
-      case notificationRoleAccess.REJECTED_OFFICIAL_GROUP_REQUEST:
       case notificationRoleAccess.REJECTED_PRIVATE_GROUP_REQUEST:
       case notificationRoleAccess.community_post_accepted_notification:
       case notificationRoleAccess.community_post_rejected_notification:

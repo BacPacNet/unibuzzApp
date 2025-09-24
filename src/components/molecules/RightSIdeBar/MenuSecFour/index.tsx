@@ -25,15 +25,16 @@ type RegisterScreenNavigationProp = StackNavigationProp<
 
 const menuItems = [
   {
-    title: "Terms and Conditions",
-    icon: <OpenBook width={22} height={22} color="#555" />,
-    screen: "TermsAndConditions",
-  },
-  {
     title: "Privacy Policy",
     icon: <PrivacyPolicy width={22} height={22} color="#555" />,
     screen: "PrivacyPolicy",
   },
+  {
+    title: "Terms and Conditions",
+    icon: <OpenBook width={22} height={22} color="#555" />,
+    screen: "TermsAndConditions",
+  },
+
   {
     title: "User Guidelines",
     icon: <Group width={22} height={22} color="#555" />,

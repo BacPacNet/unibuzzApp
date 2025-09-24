@@ -77,6 +77,8 @@ export type PostCardType = {
   initialComment?: any;
   toShowInitial?: boolean;
   isProfile?: boolean;
+  isReply?: boolean;
+  commentId?: string;
 };
 
 export type CommentsProp = {

@@ -5,23 +5,36 @@ const UserGuidelinesScreen = () => {
   return (
     <ScrollView style={styles.container}>
       <Text style={styles.title}>User Guidelines</Text>
+      <Text style={styles.Desc}>Updated: September 20, 2025</Text>
+
       <View>
         <Text style={styles.sectionTitle}>
           Welcome to the Unibuzz Community
         </Text>
         <Text style={styles.Desc}>
-          Unibuzz is more than just a social platform — it’s a space built by
-          students, for students. Our mission is to create an inclusive,
-          empowering environment for students, alumni, applicants, and faculty
-          members across universities. Whether you’re here to collaborate on
-          projects, seek advice, or make lifelong connections, we want you to
-          feel safe, respected, and valued.
+          Unibuzz is a space built by students, for students. Our mission is to
+          create an inclusive, empowering environment for students, alumni,
+          applicants, and faculty members across universities. We facilitate
+          collaboration on projects, seeking advice, and making lifelong
+          connections, ensuring you feel safe, respected, and valued. By using
+          Unibuzz, you agree to follow these rules.
         </Text>
+      </View>
 
-        <Text style={styles.Desc}>
-          These guidelines help keep the platform supportive and enriching for
-          everyone. By using Unibuzz, you agree to follow these rules.
-        </Text>
+      <View style={styles.contentContainer}>
+        <Text style={styles.sectionTitle}>Respectful Conduct</Text>
+        <BulletPoint>
+          Treat everyone with kindness. Zero tolerance for harassment, hate
+          speech, bullying, or discrimination.
+        </BulletPoint>
+        <BulletPoint>
+          Avoid personal attacks. Disagreements are acceptable, but
+          conversations should focus on ideas, not individuals.
+        </BulletPoint>
+        <BulletPoint>
+          Be inclusive. Respect identities, backgrounds, and lived experiences
+          of fellow users.
+        </BulletPoint>
       </View>
 
       <View style={styles.contentContainer}>
@@ -34,7 +47,7 @@ const UserGuidelinesScreen = () => {
           Do not impersonate others or misrepresent your background.
         </BulletPoint>
         <BulletPoint>
-          Your profile should reflect who you are — both socially and
+          Your profile should reflect who you are, both socially and
           academically.
         </BulletPoint>
       </View>
@@ -46,11 +59,11 @@ const UserGuidelinesScreen = () => {
           private messages) without consent.
         </BulletPoint>
         <BulletPoint>
-          Never engage in doxing or attempts to expose others’ private data.
+          Never engage in doxxing or attempts to expose others' private data.
         </BulletPoint>
         <BulletPoint>
           If you feel unsafe or notice misconduct, report it using the
-          platform’s built-in tools or contact support.
+          platform's built-in tools or contact support.
         </BulletPoint>
       </View>
 
@@ -63,8 +76,8 @@ const UserGuidelinesScreen = () => {
           materials, notes, or research.
         </BulletPoint>
         <BulletPoint>
-          Avoid spreading misinformation. Fact-check before you post —
-          especially in academic groups.
+          Avoid spreading misinformation. Fact-check before posting, especially
+          in academic groups.
         </BulletPoint>
         <BulletPoint>
           Use the platform to learn and grow, not to cheat or bypass educational
@@ -114,10 +127,11 @@ const UserGuidelinesScreen = () => {
           DM-based unsolicited promotions are strictly prohibited.
         </BulletPoint>
         <BulletPoint>
-          Student-run initiatives, startups, or clubs are welcome — but must
+          Student-run initiatives, startups, or clubs are welcome but must
           follow community promotion policies.
         </BulletPoint>
       </View>
+
       <View style={[styles.contentContainer, styles.lastPadding]}>
         <Text style={styles.sectionTitle}>Enforcement</Text>
         <BulletPoint>
@@ -129,9 +143,8 @@ const UserGuidelinesScreen = () => {
           will not be tolerated.
         </BulletPoint>
         <BulletPoint>
-          {" "}
           False reports or misuse of the reporting system may also result in
-          action.{" "}
+          action.
         </BulletPoint>
       </View>
     </ScrollView>

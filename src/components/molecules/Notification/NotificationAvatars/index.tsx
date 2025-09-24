@@ -58,9 +58,19 @@ type Props = {
     communityPostId?: {
       _id?: string;
     };
+    userPost: {
+      likeCount: number;
+      totalComments: number;
+    };
+    communityPost: {
+      likeCount: number;
+      totalComments: number;
+    };
     type: string;
     likedBy: LikedBy;
     commentedBy: CommentedBy;
+
+    repliedBy: CommentedBy;
   };
 
   notificationType: string;
@@ -118,14 +128,22 @@ const NotificationAvatars = ({
 
   const renderContent = () => {
     if (
-      notificationType === notificationRoleAccess.REACTED_TO_POST ||
-      notificationType === notificationRoleAccess.REACTED_TO_COMMUNITY_POST
+      (notificationType == notificationRoleAccess.REACTED_TO_POST &&
+        data?.userPost?.likeCount > 1) ||
+      (notificationType == notificationRoleAccess.REACTED_TO_COMMUNITY_POST &&
+        data?.communityPost?.likeCount > 1)
     ) {
       return renderUsers(data?.likedBy?.newFiveUsers);
     } else if (notificationType === notificationRoleAccess.COMMENT) {
       return renderUsers(data?.commentedBy?.newFiveUsers);
+    } else if (notificationType == notificationRoleAccess.REPLIED_TO_COMMENT) {
+      return renderUsers(data?.repliedBy?.newFiveUsers);
     } else if (notificationType === notificationRoleAccess.COMMUNITY_COMMENT) {
       return renderCommunityUsers(data?.commentedBy?.newFiveUsers);
+    } else if (
+      notificationType == notificationRoleAccess.REPLIED_TO_COMMUNITY_COMMENT
+    ) {
+      return renderCommunityUsers(data?.repliedBy?.newFiveUsers);
     } else if (
       notificationType ===
         notificationRoleAccess.ACCEPTED_PRIVATE_GROUP_REQUEST ||

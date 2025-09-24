@@ -20,6 +20,7 @@ type NavigationProp = StackNavigationProp<RootStackParamList, "SinglePost">;
 const SinglePost = ({ route }: any) => {
   const navigation = useNavigation<NavigationProp>();
   const { postID, type, commentId } = route.params;
+  const isReply = route.params.isReply || false;
   const from = route?.params?.from || "";
   const { data, isFetching, isPending, isError, isLoading } = useGetPost(
     postID,
@@ -63,6 +64,8 @@ const SinglePost = ({ route }: any) => {
         isSinglePost={true}
         initialComment={comment}
         toShowInitial={!!commentId}
+        isReply={isReply}
+        commentId={commentId}
       />
     </ScrollView>
   );
