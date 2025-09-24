@@ -50,6 +50,8 @@ const PostCard = memo(
     toShowInitial = false,
     isProfile = false,
     filterPostBy,
+    isReply = false,
+    commentId = "",
   }: PostCardType) => {
     const navigation = useNavigation<ScreenNavigationProp>();
     const [visible, setVisible] = useState(false);
@@ -364,6 +366,8 @@ const PostCard = memo(
             setShowInitial={setShowInitial}
             showInitial={showInitial}
             initialComment={initialComment}
+            isReply={isReply}
+            commentId={commentId}
           />
         </ActionSheet>
       </View>

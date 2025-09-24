@@ -187,7 +187,7 @@ function ApplicationNavigator() {
         {/* <Tab.Screen name="Messages" component={Messages} /> */}
         <Tab.Screen name="Messages" component={MessageStack} />
         <Tab.Screen name="Notifications" component={Notifications} />
-        <Tab.Screen name="BuzzBot" component={AI_Assistant} />
+        {/* <Tab.Screen name="BuzzBot" component={AI_Assistant} /> */}
         <Tab.Screen
           name="DiscoverStack"
           component={DiscoverStack}
