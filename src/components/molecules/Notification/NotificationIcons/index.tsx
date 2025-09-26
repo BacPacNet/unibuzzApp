@@ -30,6 +30,7 @@ export const NotificationIcon = ({ type }: NotificationIconProps) => {
     case notificationRoleAccess.COMMUNITY_COMMENT:
     case notificationRoleAccess.REPLIED_TO_COMMENT:
     case notificationRoleAccess.REPLIED_TO_COMMUNITY_COMMENT:
+    case notificationRoleAccess.COMMUNITY_ADMIN_POST:
       return <ChatBubble {...iconProps} />;
 
     case notificationRoleAccess.REACTED_TO_POST:

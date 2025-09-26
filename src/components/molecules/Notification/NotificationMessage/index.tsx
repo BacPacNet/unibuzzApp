@@ -35,6 +35,14 @@ export const NotificationMessage = ({ data }: NotificationMessageProps) => {
         </Text>
       );
 
+    case notificationRoleAccess.COMMUNITY_ADMIN_POST:
+      return (
+        <Text style={styles.text}>
+          <Text style={styles.bold}>{data?.directCommunityDetails?.name}</Text>{" "}
+          admin has posted a new update. Be sure to check it out.
+        </Text>
+      );
+
     case notificationRoleAccess.GROUP_INVITE:
       return (
         <Text style={styles.text}>

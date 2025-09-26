@@ -40,11 +40,34 @@ export const useFirebaseMessaging = (): void => {
           commentId: data?.commentId,
           from: screenName.notifications,
         });
+      case notificationRoleAccess.REPLIED_TO_COMMENT:
+        return navigation.navigate("SinglePost", {
+          postID: data.postId,
+          type: "Timeline",
+          commentId: data?.commentId,
+          from: screenName.notifications,
+          isReply: true,
+        });
       case notificationRoleAccess.COMMUNITY_COMMENT:
         return navigation.navigate("SinglePost", {
           postID: data.postId,
           type: "Community",
           commentId: data?.commentId,
+          from: screenName.notifications,
+        });
+      case notificationRoleAccess.REPLIED_TO_COMMUNITY_COMMENT:
+        return navigation.navigate("SinglePost", {
+          postID: data.postId,
+          type: "Community",
+          commentId: data?.commentId,
+          from: screenName.notifications,
+          isReply: true,
+        });
+      case notificationRoleAccess.COMMUNITY_ADMIN_POST:
+        return navigation.navigate("SinglePost", {
+          postID: data.communityPostId,
+          type: "Community",
+
           from: screenName.notifications,
         });
       case notificationRoleAccess.REACTED_TO_POST:
@@ -64,13 +87,27 @@ export const useFirebaseMessaging = (): void => {
           screen: "Messages",
           params: { selectedUserId: data.chatId },
         });
-      case notificationRoleAccess.PRIVATE_GROUP_REQUEST:
+
       case notificationRoleAccess.ACCEPTED_OFFICIAL_GROUP_REQUEST:
       case notificationRoleAccess.ACCEPTED_PRIVATE_GROUP_REQUEST:
       case notificationRoleAccess.OFFICIAL_GROUP_REQUEST:
       case notificationRoleAccess.GROUP_INVITE:
-      case notificationRoleAccess.REJECTED_OFFICIAL_GROUP_REQUEST:
       case notificationRoleAccess.REJECTED_PRIVATE_GROUP_REQUEST:
+      case notificationRoleAccess.community_post_accepted_notification:
+      case notificationRoleAccess.community_post_rejected_notification:
+      case notificationRoleAccess.community_post_live_request_notification:
+        if (data.communityId && data.communityGroupId) {
+          return navigation.navigate("CommunityGroup", {
+            communityId: data.communityId,
+            communityGroupId: data.communityGroupId,
+            from: screenName.notifications,
+          });
+        } else {
+          return navigation.navigate("Notifications");
+        }
+      case notificationRoleAccess.DELETED_COMMUNITY_GROUP:
+      case notificationRoleAccess.REJECTED_OFFICIAL_GROUP_REQUEST:
+      case notificationRoleAccess.PRIVATE_GROUP_REQUEST:
         return navigation.navigate("Notifications");
       default:
         break;
