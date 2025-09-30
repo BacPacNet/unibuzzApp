@@ -105,6 +105,13 @@ export interface UserMainNotification {
   likedBy: likedBy;
   commentedBy: likedBy;
   repliedBy: likedBy;
+  parentCommentReplies: any;
+  communityParentCommentReplies: any;
+  directCommunityDetails: {
+    communityLogoUrl: {
+      imageUrl: string;
+    };
+  };
 }
 
 export type UserMainNotificationsProps = {
@@ -138,4 +145,6 @@ export const notificationRoleAccess = {
     "community_post_live_request_notification",
   community_post_accepted_notification: "community_post_accepted_notification",
   community_post_rejected_notification: "community_post_rejected_notification",
+
+  COMMUNITY_ADMIN_POST: "COMMUNITY_ADMIN_POST",
 };

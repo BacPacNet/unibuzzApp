@@ -1,7 +1,7 @@
 import PostCard from "@/components/molecules/Timeline/PostCard";
 import { screenName } from "@/constant/screenName";
 import { useGetPost } from "@/services/university-community";
-import React from "react";
+import React, { useCallback } from "react";
 import {
   ActivityIndicator,
   ScrollView,
@@ -9,7 +9,7 @@ import {
   Text,
   View,
 } from "react-native";
-import { useNavigation } from "@react-navigation/native";
+import { useFocusEffect, useNavigation } from "@react-navigation/native";
 
 import useCustomBackHandler from "@/hooks/useCustomBackHandler";
 import { StackNavigationProp } from "@react-navigation/stack";
@@ -22,15 +22,17 @@ const SinglePost = ({ route }: any) => {
   const { postID, type, commentId } = route.params;
   const isReply = route.params.isReply || false;
   const from = route?.params?.from || "";
-  const { data, isFetching, isPending, isError, isLoading } = useGetPost(
-    postID,
-    type,
-    commentId || ""
-  );
-
+  const { data, isFetching, isPending, isError, isLoading, refetch } =
+    useGetPost(postID, type, commentId || "");
+  console.log("params", route.params);
   const item = data?.post;
   const comment = data?.comment;
 
+  useFocusEffect(
+    useCallback(() => {
+      refetch();
+    }, [])
+  );
   const handleBack = () => {
     if (from === screenName.notifications) {
       navigation.navigate("Notifications");
