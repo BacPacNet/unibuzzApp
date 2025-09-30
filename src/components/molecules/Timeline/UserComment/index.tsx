@@ -17,6 +17,7 @@ import { useDeleteCommunityPostComment } from "@/services/communityPost";
 import { RenderCreatedAt } from "@/components/atoms/CreatedAt";
 import { userTypeEnum } from "@/types/register";
 import UserCard from "../UserCard";
+import { timeAgo } from "@/utils";
 
 const UserComment = ({
   item,
@@ -30,7 +31,7 @@ const UserComment = ({
   handleNavigate,
   setModalVisible,
   type,
-  showBorder = true,
+  showBorder = false,
 }: CommentsProp) => {
   const userData = getUserStore();
   const { mutate: deleteUserPost } = useDeleteUserPostComment();
@@ -90,7 +91,7 @@ const UserComment = ({
         },
       ]}
     >
-      <View className="flex flex-row justify-between   ">
+      <View className="flex flex-row justify-between">
         <UserCard
           userId={item?.commenterId?._id}
           firstName={item?.commenterId?.firstName}
@@ -135,61 +136,65 @@ const UserComment = ({
         imageCount={item?.imageUrl?.length}
       />
 
-      <RenderCreatedAt date={item?.createdAt} />
-
-      <View className="flex flex-row justify-end">
-        <View className="flex flex-row gap-4">
-          {item?.level == 0 && (
-            <TouchableOpacity
-              onPress={() => handleReplyTo(item)}
-              className="flex flex-row gap-1 items-center"
-            >
-              <Text style={styles.commentIconText}>Reply</Text>
-              <Reply height={16} width={16} />
-            </TouchableOpacity>
-          )}
-
-          <TouchableOpacity
-            onPress={() =>
-              likePostCommentHandler(item._id, item.level.toString())
-            }
-            className="flex flex-row gap-1 items-center"
-          >
-            <Text style={styles.commentIconText}>
-              {item?.likeCount?.length}
-            </Text>
-            <ThumbsUp
-              height={16}
-              width={16}
-              color={
-                item?.likeCount?.some(
-                  (like: any) => like.userId === userData?.id
-                )
-                  ? "#6647FF"
-                  : "#6B7280"
-              }
-            />
-          </TouchableOpacity>
-
-          {item?.level == 0 &&
-            (item?.replies?.length > 0 || Number(item?.totalCount) > 0) && (
+      <View className="flex flex-row justify-between">
+        <Text style={styles.commentIconText}>
+          {timeAgo(item?.createdAt)} ago
+        </Text>
+        <View className="flex flex-row justify-end">
+          <View className="flex flex-row gap-4">
+            {item?.level == 0 && (
               <TouchableOpacity
-                // onPress={() => commentBottomSheet.current?.show()}
+                onPress={() => handleReplyTo(item)}
                 className="flex flex-row gap-1 items-center"
-                onPress={() => setShowReply(showReply.length ? "" : item._id)}
               >
-                <Text style={styles.commentIconText}>
-                  {item.totalCount || item?.replies?.length}
-                </Text>
-                <ChatBubbleEmpty height={16} width={16} />
+                <Text style={styles.commentIconText}>Reply</Text>
+                <Reply height={16} width={16} />
               </TouchableOpacity>
             )}
 
-          {/* <TouchableOpacity className="flex flex-row gap-1 items-center">
+            <TouchableOpacity
+              onPress={() =>
+                likePostCommentHandler(item._id, item.level.toString())
+              }
+              className="flex flex-row gap-1 items-center"
+            >
+              <Text style={styles.commentIconText}>
+                {item?.likeCount?.length}
+              </Text>
+              <ThumbsUp
+                height={16}
+                width={16}
+                color={
+                  item?.likeCount?.some(
+                    (like: any) => like.userId === userData?.id
+                  )
+                    ? "#6647FF"
+                    : "#6B7280"
+                }
+              />
+            </TouchableOpacity>
+
+            {item?.level == 0 &&
+              (item?.replies?.length > 0 || Number(item?.totalCount) > 0) && (
+                <TouchableOpacity
+                  // onPress={() => commentBottomSheet.current?.show()}
+                  className="flex flex-row gap-1 items-center"
+                  onPress={() => setShowReply(showReply.length ? "" : item._id)}
+                >
+                  <Text style={styles.commentIconText}>
+                    {item.totalCount || item?.replies?.length}
+                  </Text>
+                  <ChatBubbleEmpty height={16} width={16} />
+                </TouchableOpacity>
+              )}
+
+            {/* <TouchableOpacity className="flex flex-row gap-1 items-center">
             <ShareAndroid height={16} width={16} />
           </TouchableOpacity> */}
+          </View>
         </View>
       </View>
+
       {item?.replies?.length > 0 && showReply == item._id && (
         <View
           style={[
@@ -212,7 +217,7 @@ const UserComment = ({
                 setShowTotalReply={setShowTotalReply}
                 showTotalReply={showTotalReply}
                 type={type}
-                showBorder={index !== 0}
+                showBorder={true}
               />
             ))}
           {item?.level === 0 &&
