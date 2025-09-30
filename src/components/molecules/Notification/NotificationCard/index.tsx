@@ -4,6 +4,7 @@ import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 import {
   notificationRoleAccess,
   notificationStatus,
+  UserMainNotification,
 } from "@/types/notifications";
 import { NotificationMessage } from "../NotificationMessage";
 import { timeAgo } from "@/utils";
@@ -71,6 +72,11 @@ type Props = {
     repliedBy: CommentedBy;
     parentCommentReplies: any;
     communityParentCommentReplies: any;
+    directCommunityDetails: {
+      communityLogoUrl: {
+        imageUrl: string;
+      };
+    };
   };
 };
 
@@ -127,6 +133,12 @@ const NotificationCard = ({ data }: Props) => {
           from: screenName.notifications,
         });
       case notificationRoleAccess.REACTED_TO_COMMUNITY_POST:
+        return navigation.navigate("SinglePost", {
+          postID: data.communityPostId,
+          type: "Community",
+          from: screenName.notifications,
+        });
+      case notificationRoleAccess.COMMUNITY_ADMIN_POST:
         return navigation.navigate("SinglePost", {
           postID: data.communityPostId,
           type: "Community",

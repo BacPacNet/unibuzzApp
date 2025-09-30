@@ -71,6 +71,11 @@ type Props = {
     commentedBy: CommentedBy;
 
     repliedBy: CommentedBy;
+    directCommunityDetails: {
+      communityLogoUrl: {
+        imageUrl: string;
+      };
+    };
   };
 
   notificationType: string;
@@ -144,6 +149,21 @@ const NotificationAvatars = ({
       notificationType == notificationRoleAccess.REPLIED_TO_COMMUNITY_COMMENT
     ) {
       return renderCommunityUsers(data?.repliedBy?.newFiveUsers);
+    } else if (
+      notificationType == notificationRoleAccess.COMMUNITY_ADMIN_POST
+    ) {
+      return (
+        <Image
+          source={
+            data?.directCommunityDetails?.communityLogoUrl?.imageUrl
+              ? {
+                  uri: data?.directCommunityDetails?.communityLogoUrl?.imageUrl,
+                }
+              : dummy
+          }
+          style={styles.singleAvatar}
+        />
+      );
     } else if (
       notificationType ===
         notificationRoleAccess.ACCEPTED_PRIVATE_GROUP_REQUEST ||
