@@ -147,7 +147,7 @@ export const NotificationMessage = ({ data }: NotificationMessageProps) => {
           <Text style={styles.bold}>{name}</Text>
           {total > 1
             ? ` and ${total - 1} others liked your Community post`
-            : " liked your Community post."}
+            : " liked your community post."}
         </Text>
       );
     }

@@ -342,7 +342,6 @@ export const useRemoveGroupChatMember = (chatId: string) => {
     mutationFn: (data: any) => removeGroupMember(cookieValue, chatId, data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["userChats"] });
-      //   console.log('data', res)
     },
     onError: (res: any) => {
       Toast.hideAll();

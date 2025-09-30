@@ -116,7 +116,6 @@ const UserEmailChangeScreen = () => {
   };
 
   const onSubmit = (data: any) => {
-    console.log("data", data);
     // mutate(data)
   };
 
