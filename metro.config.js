@@ -8,13 +8,17 @@ const config = mergeConfig(getDefaultConfig(__dirname), {
 
   transformer: {
     babelTransformerPath: require.resolve(
-      "react-native-svg-transformer/react-native",
+      "react-native-svg-transformer/react-native"
     ),
+    // Disable React Refresh in production
+    unstable_allowRequireContext: false,
   },
   resolver: {
     assetExts: assetExts.filter((ext) => ext !== "svg"),
     sourceExts: [...sourceExts, "svg"],
   },
+  // Ensure React Refresh is only enabled in development
+  unstable_enableSymlinks: false,
 });
 
 module.exports = withNativeWind(config, { input: "./global.css" });

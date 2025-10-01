@@ -77,12 +77,8 @@ const UserCard: React.FC<UserCardProps> = ({
             {firstName} {lastName}
           </Text>
           <View className="flex">
-            <Text style={styles.userDetails}>
-              {isStudent ? studyYear : occupation}
-            </Text>
-            <Text style={styles.userDetails}>
-              {isStudent ? major : affiliation}
-            </Text>
+            <Text style={styles.userDetails}>{studyYear || occupation}</Text>
+            <Text style={styles.userDetails}>{major || affiliation}</Text>
           </View>
         </TouchableOpacity>
 

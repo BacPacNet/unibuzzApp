@@ -65,7 +65,7 @@ function LoginScreen() {
                 <View style={styles.inputContainer}>
                   <FormInput
                     isLabelShown={true}
-                    label="Email Address/Username"
+                    label="Email Address"
                     placeholder="john.dowry@example.com"
                     name="email"
                     control={control}

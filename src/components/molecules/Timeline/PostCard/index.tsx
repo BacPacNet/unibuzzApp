@@ -347,8 +347,7 @@ const PostCard = memo(
           useBottomSafeAreaPadding
           ref={commentBottomSheet}
           gestureEnabled={true}
-          //   safeAreaInsets={insets}
-          safeAreaInsets={{ top: 0, bottom: 0, left: 0, right: 0 }}
+          safeAreaInsets={{ top: insets.top, bottom: 0, left: 0, right: 0 }}
           snapPoints={defaultBottomSheetSnapPoints}
           containerStyle={
             {

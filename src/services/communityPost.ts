@@ -465,7 +465,7 @@ export const useCreateGroupPostCommentReply = (
       }
     },
     onError: (res: any) => {
-      console.log(res.response.data.message, "res");
+      console.error(res.response.data.message, "res");
     },
   });
 };

@@ -127,7 +127,6 @@ async function emailAvailability(data: { email: string }) {
     `/users/check-email-availability`,
     { method: "POST", data }
   );
-  console.log("response", response);
   return response;
 }
 
