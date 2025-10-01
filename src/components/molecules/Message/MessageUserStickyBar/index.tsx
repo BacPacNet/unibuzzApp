@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useRef } from "react";
 import { View, Text, TouchableOpacity, Image } from "react-native";
 import avatar from "../../../../assets/avatar.png";
 import { MoreHoriz, NavArrowLeft } from "iconoir-react-native";
@@ -11,14 +11,15 @@ import {
 } from "@/services/Messages";
 import ActionSheet, { ActionSheetRef } from "react-native-actions-sheet";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { CommunityChat, defaultBottomSheetSnapPoints } from "@/types/constant";
+import { CommunityChat } from "@/types/constant";
 import MessageUserOptions from "../MessageUserOptions";
 import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { RootStackParamList } from "@/types/navigation";
-import ReusableButton from "@/components/atoms/ReusableButton";
 import useCustomBackHandler from "@/hooks/useCustomBackHandler";
 import { screenName } from "@/constant/screenName";
+import { StyleSheet } from "react-native";
+import { Community as CommunityIcon } from "iconoir-react-native";
 
 type Props = {
   setSelectedChat: (value: any) => void;
@@ -146,11 +147,23 @@ const MessageUserStickyBar = ({
           onPress={handleNavigateToProfile}
           className="relative flex flex-row items-center gap-2"
         >
-          <Image
-            source={profileCover ? { uri: profileCover } : avatar}
-            style={{ width: 48, height: 48, borderRadius: 100 }}
-            className="w-12 h-12"
-          />
+          {isGroupChat && !profileCover?.length ? (
+            <View style={styles.communityImagePlaceHolder}>
+              <CommunityIcon
+                width={40}
+                height={49}
+                fill={"#6647FF"}
+                color={"#6647FF"}
+              />
+            </View>
+          ) : (
+            <Image
+              source={profileCover ? { uri: profileCover } : avatar}
+              style={{ width: 48, height: 48, borderRadius: 100 }}
+              className="w-12 h-12"
+            />
+          )}
+
           {/* <View
             style={{ right: -3 }}
             className={`absolute bottom-0 w-4 h-4 rounded-full border-2 border-white ${
@@ -201,6 +214,7 @@ const MessageUserStickyBar = ({
           navigateToEditGroup={navigateToEditGroup}
           isAdmin={groupAdmin == yourID}
           handleNavigate={navigateToMembers}
+          handleNavigateToProfile={handleNavigateToProfile}
         />
       </ActionSheet>
     </View>
@@ -208,3 +222,16 @@ const MessageUserStickyBar = ({
 };
 
 export default MessageUserStickyBar;
+
+const styles = StyleSheet.create({
+  communityImagePlaceHolder: {
+    width: 46,
+    height: 46,
+    borderRadius: 200,
+    backgroundColor: "#fafafa",
+    overflow: "hidden",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+});
