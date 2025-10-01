@@ -103,52 +103,45 @@ export const useLikeUnilikeGroupPost = (
   const userData = getUserStore();
   const queryClient = useQueryClient();
 
-  const queryKey = isTimeline
-    ? ["timelinePosts"]
-    : [
-        "communityGroupsPost",
-        communityId,
-        ...(communityGroupId ? [communityGroupId] : []),
-        filterPostBy,
-      ];
-
   return useMutation({
     mutationFn: (communityGroupPostId: any) =>
       LikeUnilikeGroupPost(communityGroupPostId, cookieValue),
-
     onMutate: async (postId: string) => {
-      if (isSinglePost) {
-        queryClient.setQueryData(["getPost", postId], (oldData: any) => {
-          if (!oldData || !oldData.post) return oldData;
-
-          const hasLiked = oldData.post.likeCount.some(
-            (like: any) => like.userId === userData?.id
-          );
-
-          return {
-            ...oldData,
-            post: {
-              ...oldData.post,
-              likeCount: hasLiked
-                ? oldData.post.likeCount.filter(
-                    (like: any) => like.userId !== userData?.id
-                  )
-                : [
-                    ...oldData.post.likeCount,
-                    { userId: userData?.id, _id: "temp-like-id" },
-                  ],
-            },
-          };
-        });
-        await queryClient.refetchQueries({ queryKey: queryKey });
-      }
-      //   ends
+      const queryKey = isSinglePost
+        ? ["getPost", postId]
+        : isTimeline
+          ? ["timelinePosts"]
+          : [
+              "communityGroupsPost",
+              communityId,
+              ...(communityGroupId ? [communityGroupId] : []),
+              ...(communityGroupId ? [filterPostBy] : []),
+            ];
       queryClient.cancelQueries({ queryKey: queryKey });
 
       const previousPosts = queryClient.getQueryData(queryKey);
 
       queryClient.setQueryData(queryKey, (oldData: any) => {
+        console.log(oldData, "oldData");
         if (!oldData) return;
+
+        const toggleLike = (likeCount: any[]) => {
+          const hasLiked = likeCount.some(
+            (like: any) => like.userId === userData?.id
+          );
+          return hasLiked
+            ? likeCount.filter((like: any) => like.userId !== userData?.id)
+            : [...likeCount, { userId: userData?.id, _id: "temp-like-id" }];
+        };
+
+        if (isSinglePost) {
+          return {
+            post: {
+              ...oldData.post,
+              likeCount: toggleLike(oldData.post.likeCount),
+            },
+          };
+        }
 
         if (isTimeline) {
           return {
@@ -158,20 +151,9 @@ export const useLikeUnilikeGroupPost = (
               allPosts: page.allPosts.map((post: any) => {
                 if (post._id !== postId) return post;
 
-                const hasLiked = post.likeCount.some(
-                  (like: any) => like.userId === userData?.id
-                );
-
                 return {
                   ...post,
-                  likeCount: hasLiked
-                    ? post.likeCount.filter(
-                        (like: any) => like.userId !== userData?.id
-                      )
-                    : [
-                        ...post.likeCount,
-                        { userId: userData?.id, _id: "temp-like-id" },
-                      ],
+                  likeCount: toggleLike(post.likeCount),
                 };
               }),
             })),
@@ -184,20 +166,9 @@ export const useLikeUnilikeGroupPost = (
               finalPost: page.finalPost.map((post: any) => {
                 if (post._id !== postId) return post;
 
-                const hasLiked = post.likeCount.some(
-                  (like: any) => like.userId === userData?.id
-                );
-
                 return {
                   ...post,
-                  likeCount: hasLiked
-                    ? post.likeCount.filter(
-                        (like: any) => like.userId !== userData?.id
-                      )
-                    : [
-                        ...post.likeCount,
-                        { userId: userData?.id, _id: "temp-like-id" },
-                      ],
+                  likeCount: toggleLike(post.likeCount),
                 };
               }),
             })),
@@ -251,7 +222,7 @@ export const useCreateGroupPostComment = (sortby: Sortby, postId: string) => {
       }
 
       queryClient.invalidateQueries({ queryKey: ["timelinePosts"] });
-      queryClient.invalidateQueries({ queryKey: ["communityGroupsPost"] });
+      //   queryClient.invalidateQueries({ queryKey: ["communityGroupsPost"] });
       queryClient.invalidateQueries({ queryKey: ["getPost"] });
     },
     onError: (res: any) => {

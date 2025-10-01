@@ -66,7 +66,10 @@ export const useChangeUserPassword = () => {
     mutationFn: (data: any) => changeUserPassword(data, cookieValue),
     onError: (res: any) => {
       Toast.hideAll();
-      Toast.show(res.response?.data.message || "Something went wrong");
+      Toast.show(res.response?.data.message || "Something went wrong", {
+        type: "danger",
+        placement: "top",
+      });
     },
   });
 };

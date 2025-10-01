@@ -12,16 +12,9 @@ import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
-import {
-  KeyboardAvoidingView,
-  Platform,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
+
 import { Toast } from "react-native-toast-notifications";
 
 type Props = {};
@@ -56,6 +49,15 @@ const UserNameChangeScreen = (props: Props) => {
   //   );
 
   const onSubmit = (data: any) => {
+    if (data.newUserName === user?.userName) {
+      Toast.hideAll();
+      Toast.show("New username cannot be the same as the current username", {
+        type: "danger",
+        placement: "top",
+      });
+      return;
+    }
+
     setShowLoader(true);
     mutate(
       {
@@ -85,87 +87,83 @@ const UserNameChangeScreen = (props: Props) => {
     <View style={styles.containerMain}>
       {/* Header */}
 
-      <KeyboardAvoidingView
-        behavior={Platform.OS === "ios" ? "padding" : "height"}
-        style={styles.keyboardAvoid}
+      <KeyboardAwareScrollView
+        enableOnAndroid={true}
+        extraScrollHeight={20}
+        keyboardShouldPersistTaps="handled"
+        contentContainerStyle={styles.container}
       >
-        <ScrollView
-          contentContainerStyle={styles.container}
-          keyboardShouldPersistTaps="handled"
-          showsVerticalScrollIndicator={false}
-        >
-          <BackHeader label="Settings" onPress={() => goBack()} />
-          <View style={styles.paddingContainer} className="flex   ">
-            <Text style={styles.title}>Change Username</Text>
-            <Text style={styles.desc}>
-              Your username can be used to login and be identified by others.
-            </Text>
+        <BackHeader label="Settings" onPress={() => goBack()} />
+        <View style={styles.paddingContainer} className="flex   ">
+          <Text style={styles.title}>Change Username</Text>
+          <Text style={styles.desc}>
+            Your username can be used to login and be identified by others.
+          </Text>
 
-            <View style={styles.inputContainer}>
-              <FormInput
-                label="Current Username"
-                placeholder="Current Username"
-                //   required
-                name="userName"
-                control={control}
-                isError={!!errors.userName}
-                disabled={true}
-                errorMessage={
-                  errors.userName
-                    ? errors.userName.message?.toString()
-                    : "Please enter your username!"
-                }
-                currentValue={user?.userName}
-              />
-              <FormInput
-                label="New Username"
-                placeholder="New Username"
-                //   required
-                name="newUserName"
-                control={control}
-                isError={!!errors.newUserName}
-                errorMessage={
-                  errors.newUserName
-                    ? errors.newUserName.message?.toString()
-                    : "Please enter your username!"
-                }
-                rules={{ required: "Please enter your username." }}
-              />
+          <View style={styles.inputContainer}>
+            <FormInput
+              label="Current Username"
+              placeholder="Current Username"
+              //   required
+              name="userName"
+              control={control}
+              isError={!!errors.userName}
+              disabled={true}
+              errorMessage={
+                errors.userName
+                  ? errors.userName.message?.toString()
+                  : "Please enter your username!"
+              }
+              currentValue={user?.userName}
+            />
+            <FormInput
+              label="New Username"
+              placeholder="New Username"
+              //   required
+              name="newUserName"
+              control={control}
+              isError={!!errors.newUserName}
+              errorMessage={
+                errors.newUserName
+                  ? errors.newUserName.message?.toString()
+                  : "Please enter your username!"
+              }
+              rules={{ required: "Please enter your username." }}
+            />
 
-              {/* password  */}
-              <View>
-                <FormInputPassword
-                  isPasswordStrengthVisible={false}
-                  label="Password"
-                  placeholder="Password"
-                  name="password"
-                  control={control}
-                  isError={!!errors.password}
-                  errorMessage={errors.password?.message?.toString()}
-                  rules={{ required: "Password is required!" }}
-                />
-                <TouchableOpacity
-                  onPress={() =>
-                    navigate("ForgetPassword", {
-                      backTo: "UserNameChangeScreen",
-                    })
-                  }
-                >
-                  <Text style={styles.forgotPassword}>Forgot Password?</Text>
-                </TouchableOpacity>
-              </View>
+            {/* password  */}
+            <View>
+              <FormInputPassword
+                isPasswordStrengthVisible={false}
+                label="Password"
+                placeholder="Password"
+                name="password"
+                control={control}
+                isError={!!errors.password}
+                errorMessage={errors.password?.message?.toString()}
+                rules={{ required: "Password is required!" }}
+              />
+              <TouchableOpacity
+                onPress={() =>
+                  navigate("ForgetPassword", {
+                    backTo: "UserNameChangeScreen",
+                  })
+                }
+              >
+                <Text style={styles.forgotPassword}>Forgot Password?</Text>
+              </TouchableOpacity>
             </View>
           </View>
-          <View style={styles.buttonContainer}>
-            <ReusableButton
-              onPress={handleSubmit(onSubmit)}
-              buttonText="Change Username"
-              variant="primary"
-              height="large"
-            />
-          </View>
-        </ScrollView>
-      </KeyboardAvoidingView>
+        </View>
+        <View style={styles.buttonContainer}>
+          <ReusableButton
+            onPress={handleSubmit(onSubmit)}
+            buttonText="Change Username"
+            variant="primary"
+            height="large"
+          />
+        </View>
+      </KeyboardAwareScrollView>
     </View>
   );
 };
