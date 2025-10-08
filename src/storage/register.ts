@@ -10,11 +10,10 @@ enum StorageKeys {
   REGISTER_DATA = "registerData",
 }
 
-export const storeRegisterData = async (data: any): Promise<void> => {
+export const storeRegisterData = (data: any): void => {
   try {
     storage.set(StorageKeys.REGISTER_DATA, JSON.stringify(data));
   } catch (error) {
-    // Handle error
     console.error("Failed to save Register Data", error);
   }
 };
@@ -37,7 +36,7 @@ export const getRegisterData = async () => {
     if (!jsonRegisterData) {
       console.warn(
         "No data found in storage for key:",
-        StorageKeys.REGISTER_DATA,
+        StorageKeys.REGISTER_DATA
       );
       return null;
     }

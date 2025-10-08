@@ -1,14 +1,10 @@
 import { getRegisterData } from "@/storage/register";
-import React, { useEffect, useRef, useState } from "react";
-
+import React, { useEffect, useState } from "react";
 import {
   View,
-  KeyboardAvoidingView,
-  Platform,
   TouchableWithoutFeedback,
   Keyboard,
   Text,
-  ScrollView,
   StyleSheet,
 } from "react-native";
 

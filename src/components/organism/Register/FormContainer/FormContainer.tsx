@@ -76,7 +76,7 @@ const FormContainer = ({ step, setStep, setSubStep, subStep }: Props) => {
       verificationOtp: "",
       universityName: "",
       universityEmail: "",
-      universityLogo:"",
+      universityLogo: "",
       department: "",
       occupation: "",
       universityId: "",
@@ -85,15 +85,15 @@ const FormContainer = ({ step, setStep, setSubStep, subStep }: Props) => {
       referralCode: "",
       isJoinUniversity: true,
       isUniversityVerified: false,
-
+      isEmailVerified: false,
     },
   });
-
 
   useEffect(() => {
     const loadRegisterData = async () => {
       try {
         const storedData = await getRegisterData();
+        console.log("storedData", storedData);
 
         if (storedData) {
           setRegisterData(storedData);
@@ -141,8 +141,12 @@ const FormContainer = ({ step, setStep, setSubStep, subStep }: Props) => {
       const dataToSend = {
         email: data.email,
         verificationOtp: data.verificationOtp,
+        universityId: registerData?.universityId,
       };
       const isAvailable = await handleUserLoginEmailVerification(dataToSend);
+      if (isAvailable?.isAvailable) {
+        methods.setValue("isEmailVerified", true);
+      }
       return isAvailable;
     } catch (error: any) {
       methods.setError("verificationOtp", {
@@ -174,9 +178,7 @@ const FormContainer = ({ step, setStep, setSubStep, subStep }: Props) => {
     }
   };
 
-
   const handleNext = () => {
-
     if (
       step === 1 &&
       subStep === 0 &&
@@ -192,10 +194,10 @@ const FormContainer = ({ step, setStep, setSubStep, subStep }: Props) => {
     ) {
       return setSubStep(1);
     } else if (step === 1 && subStep === 1) {
-    //   const newStep = step + 1;
+      //   const newStep = step + 1;
       const newStep = 3;
       setStep(newStep);
-       setSubStep(0);
+      setSubStep(0);
       const data = {
         email: methods.getValues("email"),
       };
@@ -206,9 +208,7 @@ const FormContainer = ({ step, setStep, setSubStep, subStep }: Props) => {
       methods.getValues("userType") !== userTypeEnum.Applicant
     ) {
       return setSubStep(1);
-    } 
-    
-    else {
+    } else {
       const newStep = step + 1;
       setStep(newStep);
       setSubStep(0);
@@ -231,8 +231,7 @@ const FormContainer = ({ step, setStep, setSubStep, subStep }: Props) => {
       setSubStep(0);
     } else if (step === 3 && subStep === 2) {
       setSubStep(1);
-    }
-     else if (step === 3) {
+    } else if (step === 3) {
       // setStep(step - 1);
       setStep(1);
       setSubStep(1);
@@ -278,13 +277,25 @@ const FormContainer = ({ step, setStep, setSubStep, subStep }: Props) => {
       methods.getValues("userType") == userTypeEnum.Applicant
     ) {
       currStep = 3;
+    } else if (step === 3 && subStep === 0) {
+      currStep = 3;
+      currSubStep = 1;
+    } else if (step === 3 && subStep === 1) {
+      currStep = 3;
+      currSubStep = 2;
     } else {
       currStep += 1;
       currSubStep = 0;
     }
 
     const saveToLocalStorage = () => {
-      storeRegisterData({ ...data, step: currStep, subStep: currSubStep });
+      const newData = {
+        ...methods.getValues(),
+        step: currStep,
+        subStep: currSubStep,
+      };
+      setRegisterData(newData);
+      storeRegisterData(newData);
     };
 
     if (step === 0) {
@@ -311,9 +322,22 @@ const FormContainer = ({ step, setStep, setSubStep, subStep }: Props) => {
     if (step === 3 && subStep === 0) {
       const isAvailable = await userLoginEmailVerification(data);
 
-      if (isAvailable?.isAvailable) {
+      if (isAvailable?.isAvailable && !isAvailable?.isUniversityDomain) {
         handleNext();
         saveToLocalStorage();
+      } else if (isAvailable?.isAvailable && isAvailable?.isUniversityDomain) {
+        data.isUniversityVerified = true;
+        data.universityEmail = data.email;
+        const isEmailVerified = methods.getValues("isEmailVerified");
+        const res = await HandleRegister({
+          ...data,
+          isEmailVerified: isEmailVerified,
+        } as FormDataType);
+        if (res?.isRegistered) {
+          storeRegisterData({ ...data, step: 4, subStep: 0 });
+          setStep(4);
+          setSubStep(0);
+        }
       }
 
       return;
@@ -387,7 +411,6 @@ const FormContainer = ({ step, setStep, setSubStep, subStep }: Props) => {
           isVerificationSuccess={userLoginEmailVerificationSuccess}
           isPending={userLoginEmailVerificationIsPending}
           handlePrev={() => handlePrev()}
-   
         />
       );
     } else if (step === 3 && subStep === 1) {
@@ -408,7 +431,6 @@ const FormContainer = ({ step, setStep, setSubStep, subStep }: Props) => {
           isVerificationSuccess={userUniversityEmailVerificationSuccess}
           isPending={UniversityEmailVerificationIsPending}
           handlePrev={() => handlePrev()}
-          
         />
       );
     } else if (step === 3) {

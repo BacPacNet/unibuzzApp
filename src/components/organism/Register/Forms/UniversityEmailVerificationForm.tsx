@@ -60,6 +60,7 @@ const UniversityVerificationForm = ({
   const handleNext = async () => {
     const storedData = await getRegisterData();
     const universityEmail = getValues("universityEmail");
+    const universityId = getValues("universityId");
 
     if (!universityEmail) {
       setError("universityEmail", {
@@ -69,6 +70,7 @@ const UniversityVerificationForm = ({
     }
     const data = {
       email: universityEmail,
+      universityId,
     };
     generateUniversityEmailOTP(data, {
       onSuccess: () => {
