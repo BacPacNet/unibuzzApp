@@ -197,3 +197,17 @@ export const handleTakePhoto = async (
     console.error("Camera error:", error);
   }
 };
+
+export const cleanFileName = (fileName: string) => {
+  const decoded = decodeURIComponent(fileName);
+
+  // Regex to match UUID before extension
+  const regex =
+    /-(\b[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}\b)(?=\.\w+$)/i;
+
+  const cleaned = regex.test(decoded)
+    ? decoded.replace(regex, "") // Remove only UUID
+    : decoded;
+
+  return cleaned;
+};

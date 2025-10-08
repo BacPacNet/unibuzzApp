@@ -161,6 +161,7 @@ export const useLikeUnlikeTimelinePost = (
 
   return useMutation({
     mutationFn: (postId: string) => LikeUnilikeUserPost(postId, cookieValue),
+
     onMutate: async (postId: string) => {
       const queryKey = isSinglePost
         ? ["getPost", postId]
@@ -172,11 +173,11 @@ export const useLikeUnlikeTimelinePost = (
       queryClient.setQueryData(queryKey, (oldData: any) => {
         if (!oldData) return;
 
-        console.log(oldData, "oldData");
         const toggleLike = (likeCount: any[]) => {
           const hasLiked = likeCount.some(
             (like: any) => like.userId === userData?.id
           );
+
           return hasLiked
             ? likeCount.filter((like: any) => like.userId !== userData?.id)
             : [...likeCount, { userId: userData?.id, _id: "temp-like-id" }];
@@ -212,27 +213,13 @@ export const useLikeUnlikeTimelinePost = (
         };
       });
     },
-    onSuccess: (data, postId) => {
-      // Invalidate queries to ensure data consistency
-      const queryKey = isSinglePost
-        ? ["getPost", postId]
-        : source === "profile"
-          ? ["userPosts", adminId]
-          : ["timelinePosts"];
-      queryClient.invalidateQueries({ queryKey });
-    },
-    onSettled: (data, error, postId) => {
-      // Additional invalidation to ensure UI is updated
-      const queryKey = isSinglePost
-        ? ["getPost", postId]
-        : source === "profile"
-          ? ["userPosts", adminId]
-          : ["timelinePosts"];
-      queryClient.invalidateQueries({ queryKey });
-    },
+
     onError: (res: any) => {
       Toast.hideAll();
-      return Toast.show(res.response.data.message);
+      return Toast.show(res.response.data.message, {
+        type: "danger",
+        placement: "top",
+      });
     },
   });
 };

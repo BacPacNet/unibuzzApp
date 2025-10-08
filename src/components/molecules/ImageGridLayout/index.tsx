@@ -1,5 +1,5 @@
 import ImageWithFallback from "@/components/atoms/ImageWithFallBack";
-import { getMimeTypeFromUrl, imageMimeTypes } from "@/utils";
+import { cleanFileName, getMimeTypeFromUrl, imageMimeTypes } from "@/utils";
 import { Page } from "iconoir-react-native";
 import React, { useState } from "react";
 import { View, Image, Text, Linking, StyleSheet } from "react-native";
@@ -212,7 +212,11 @@ const ImageGridLayout = ({ imagesData }: Props) => {
                 numberOfLines={1}
                 style={{ flex: 1 }}
               >
-                {decodeURIComponent(
+                {/* {decodeURIComponent(
+                  item.imageUrl.split("/").pop() || "Unknown File"
+                )} */}
+
+                {cleanFileName(
                   item.imageUrl.split("/").pop() || "Unknown File"
                 )}
               </Text>

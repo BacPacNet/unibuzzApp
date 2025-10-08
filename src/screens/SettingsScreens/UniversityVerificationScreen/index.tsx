@@ -11,6 +11,7 @@ import UniversitySelect from "@/components/organism/Settings/UniversitySelect";
 import UniversityOtpVerification from "@/components/organism/Settings/UniversityOtpVerification";
 import { useAddUniversityEmail } from "@/services/edit-Profile";
 import { SafeScreen } from "@/components/template";
+import FullScreenLoader from "@/components/atoms/FullScreenLoader";
 
 type FormDataType = {
   UniversityOtp: string;
@@ -41,6 +42,7 @@ const UniversityVerificationScreen = () => {
   const [currScreen, setCurrScreen] = useState(
     universitySettingsScreen.currentJoined
   );
+  const [showLoader, setShowLoader] = useState(false);
   const {
     mutateAsync: mutateAddUniversity,
     error,
@@ -59,10 +61,22 @@ const UniversityVerificationScreen = () => {
       UniversityOtp: otp,
       universityName: universityName,
     };
-    mutateAddUniversity(data);
-    reset();
-    setCurrScreen(universitySettingsScreen.currentJoined);
+    setShowLoader(true);
+    mutateAddUniversity(data, {
+      onSuccess: () => {
+        reset();
+        setCurrScreen(universitySettingsScreen.currentJoined);
+        setShowLoader(false);
+      },
+      onError: () => {
+        setShowLoader(false);
+      },
+    });
   };
+
+  if (showLoader) {
+    return <FullScreenLoader message="Verifying University..." />;
+  }
 
   return (
     <View style={styles.containerMain}>

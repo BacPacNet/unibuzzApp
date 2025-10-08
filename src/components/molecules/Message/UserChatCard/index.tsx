@@ -1,10 +1,12 @@
 import React from "react";
-import { View, Text, Image } from "react-native";
+import { View, Text, Image, StyleSheet } from "react-native";
 import avatar from "../../../../assets/avatar.png";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import { Attachment } from "iconoir-react-native";
 import { formatRelativeTime } from "@/utils";
+import { Community as CommunityIcon } from "iconoir-react-native";
+
 dayjs.extend(relativeTime);
 
 type User = {
@@ -47,15 +49,14 @@ const UserChatCard = ({
       <View className="flex-1 flex-row items-center gap-4 relative">
         <View className="w-12 h-12 ">
           {isGroupChat && !profilePic ? (
-            <Image
-              source={avatar}
-              style={{
-                width: 48,
-                height: 48,
-                resizeMode: "contain",
-                marginRight: 4,
-              }}
-            />
+            <View style={styles.communityImagePlaceHolder}>
+              <CommunityIcon
+                width={40}
+                height={49}
+                fill={"#6647FF"}
+                color={"#6647FF"}
+              />
+            </View>
           ) : (
             <Image
               source={profilePic ? { uri: profilePic } : avatar}
@@ -127,3 +128,16 @@ const UserChatCard = ({
 };
 
 export default UserChatCard;
+
+const styles = StyleSheet.create({
+  communityImagePlaceHolder: {
+    width: 46,
+    height: 46,
+    borderRadius: 200,
+    backgroundColor: "#fafafa",
+    overflow: "hidden",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+});

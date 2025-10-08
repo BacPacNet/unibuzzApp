@@ -11,9 +11,11 @@ export default function MessageUserOptions({
   isBlockedByYou = false,
   handleToggleBlockMessage,
   handleDeleteGroup,
+  handleNavigateToProfile,
 }: {
   navigateToEditGroup: () => void;
   handleLeaveGroup: () => void;
+  handleNavigateToProfile: () => void;
   _id?: string;
 
   isAdmin: boolean;
@@ -28,6 +30,15 @@ export default function MessageUserOptions({
       {/* Follow Member */}
       {!isGroupChat && (
         <TouchableOpacity
+          onPress={() => handleNavigateToProfile()}
+          style={styles.actionRow}
+        >
+          <Text style={[styles.text]}>View Profile</Text>
+          <User color="#6C63FF" width={20} height={20} />
+        </TouchableOpacity>
+      )}
+      {/* {!isGroupChat && (
+        <TouchableOpacity
           onPress={() => handleToggleBlockMessage()}
           style={styles.actionRow}
         >
@@ -37,7 +48,7 @@ export default function MessageUserOptions({
           </Text>
           <LogIn color="#FF4D4D" width={20} height={20} />
         </TouchableOpacity>
-      )}
+      )} */}
       {isAdmin && isGroupChat && (
         <TouchableOpacity
           onPress={() => navigateToEditGroup()}

@@ -19,6 +19,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Toast } from "react-native-toast-notifications";
 
@@ -75,7 +76,10 @@ const UserPasswordChangeScreen = () => {
         onSuccess: () => {
           reset();
           Toast.hideAll();
-          Toast.show("Password changed successfully");
+          Toast.show("Password changed successfully", {
+            placement: "top",
+            type: "success",
+          });
 
           setShowLoader(false);
         },
@@ -93,88 +97,84 @@ const UserPasswordChangeScreen = () => {
   return (
     // <SafeAreaView style={styles.containerMain}>
     <View style={styles.containerMain}>
-      <KeyboardAvoidingView
-        behavior={Platform.OS === "ios" ? "padding" : "height"}
-        style={styles.keyboardAvoid}
+      <KeyboardAwareScrollView
+        enableOnAndroid={true}
+        extraScrollHeight={20}
+        keyboardShouldPersistTaps="handled"
+        contentContainerStyle={styles.container}
       >
-        <ScrollView
-          contentContainerStyle={styles.container}
-          keyboardShouldPersistTaps="handled"
-          showsVerticalScrollIndicator={false}
-        >
-          <BackHeader label="Settings" onPress={() => goBack()} />
-          <View style={styles.paddingContainer} className="flex   ">
-            {/* <Title>University Verification</Title> */}
-            <Text style={styles.title}>Change Password</Text>
-            <Text style={styles.desc}>
-              A strong password prevents your account from getting your account
-              compromised.
-            </Text>
+        <BackHeader label="Settings" onPress={() => goBack()} />
+        <View style={styles.paddingContainer} className="flex   ">
+          {/* <Title>University Verification</Title> */}
+          <Text style={styles.title}>Change Password</Text>
+          <Text style={styles.desc}>
+            A strong password prevents your account from getting your account
+            compromised.
+          </Text>
 
-            <View style={styles.inputContainer}>
-              {/* password  */}
-              <View>
-                <FormInputPassword
-                  isPasswordStrengthVisible={false}
-                  label="Current Password"
-                  placeholder="*********"
-                  name="currentPassword"
-                  control={control}
-                  isError={!!errors.currentPassword}
-                  errorMessage={errors.currentPassword?.message?.toString()}
-                  rules={rules}
-                />
-                <TouchableOpacity
-                  onPress={() =>
-                    navigate("ForgetPassword", {
-                      backTo: "ChangePasswordScreen",
-                    })
-                  }
-                >
-                  <Text style={styles.forgotPassword}>Forgot Password?</Text>
-                </TouchableOpacity>
-              </View>
-
-              {/* password  */}
-              <FormInputPassword
-                isPasswordStrengthVisible={true}
-                isInfoVisible={!newPassword}
-                label="New Password"
-                placeholder="*********"
-                name="newPassword"
-                control={control}
-                isError={!!errors.newPassword}
-                errorMessage={errors.newPassword?.message?.toString()}
-                rules={rules}
-              />
-
-              {/* password  */}
+          <View style={styles.inputContainer}>
+            {/* password  */}
+            <View>
               <FormInputPassword
                 isPasswordStrengthVisible={false}
-                label="Confirm Password"
+                label="Current Password"
                 placeholder="*********"
-                name="confirmPassword"
+                name="currentPassword"
                 control={control}
-                isError={!!errors.confirmPassword}
-                errorMessage={errors.confirmPassword?.message?.toString()}
-                rules={{
-                  required: "Password is required",
-                  validate: (value: string) =>
-                    value === newPassword || "Passwords do not match",
-                }}
+                isError={!!errors.currentPassword}
+                errorMessage={errors.currentPassword?.message?.toString()}
+                rules={rules}
               />
+              <TouchableOpacity
+                onPress={() =>
+                  navigate("ForgetPassword", {
+                    backTo: "ChangePasswordScreen",
+                  })
+                }
+              >
+                <Text style={styles.forgotPassword}>Forgot Password?</Text>
+              </TouchableOpacity>
             </View>
-          </View>
-          <View style={styles.buttonContainer}>
-            <ReusableButton
-              onPress={handleSubmit(onSubmit)}
-              buttonText="Change Password"
-              variant="primary"
-              height="large"
+
+            {/* password  */}
+            <FormInputPassword
+              isPasswordStrengthVisible={true}
+              isInfoVisible={!newPassword}
+              label="New Password"
+              placeholder="*********"
+              name="newPassword"
+              control={control}
+              isError={!!errors.newPassword}
+              errorMessage={errors.newPassword?.message?.toString()}
+              rules={rules}
+            />
+
+            {/* password  */}
+            <FormInputPassword
+              isPasswordStrengthVisible={false}
+              label="Confirm Password"
+              placeholder="*********"
+              name="confirmPassword"
+              control={control}
+              isError={!!errors.confirmPassword}
+              errorMessage={errors.confirmPassword?.message?.toString()}
+              rules={{
+                required: "Password is required",
+                validate: (value: string) =>
+                  value === newPassword || "Passwords do not match",
+              }}
             />
           </View>
-        </ScrollView>
-      </KeyboardAvoidingView>
+        </View>
+        <View style={styles.buttonContainer}>
+          <ReusableButton
+            onPress={handleSubmit(onSubmit)}
+            buttonText="Change Password"
+            variant="primary"
+            height="large"
+          />
+        </View>
+      </KeyboardAwareScrollView>
     </View>
   );
 };

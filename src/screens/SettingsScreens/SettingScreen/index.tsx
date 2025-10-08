@@ -54,7 +54,7 @@ const sections = [
       { id: "username", title: "Change Username" },
       { id: "password", title: "Change Password" },
       //   { id: "email", title: "Change Email" },
-      { id: "deactivation", title: "Account Deactivation" },
+      //   { id: "deactivation", title: "Account Deactivation" },
     ],
   },
   //   {

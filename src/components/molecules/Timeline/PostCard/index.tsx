@@ -119,10 +119,12 @@ const PostCard = memo(
         isSinglePost || !isTimeline ? !data?.communityId : !data?.community?._id
       ) {
         LikeUnlikeTimelinePost(postId);
+        return;
       } else if (
         isSinglePost || !isTimeline ? data?.communityId : data?.community?._id
       ) {
         LikeUnlikeGroupPost(postId);
+        return;
       }
     };
 
