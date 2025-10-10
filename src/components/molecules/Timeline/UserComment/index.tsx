@@ -1,11 +1,6 @@
 import React from "react";
 import { Alert, StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import {
-  BorderBottom,
-  ChatBubbleEmpty,
-  Reply,
-  ThumbsUp,
-} from "iconoir-react-native";
+import { ChatBubbleEmpty, Reply, ThumbsUp } from "iconoir-react-native";
 
 import { getUserStore } from "@/storage/user";
 import RenderHTML from "react-native-render-html";
@@ -14,7 +9,6 @@ import { CommentsProp, PostType } from "@/types/postType";
 import { useDeleteUserPostComment } from "@/services/timeline";
 import { useDeleteCommunityPostComment } from "@/services/communityPost";
 
-import { RenderCreatedAt } from "@/components/atoms/CreatedAt";
 import { userTypeEnum } from "@/types/register";
 import UserCard from "../UserCard";
 import { timeAgo } from "@/utils";
@@ -113,22 +107,47 @@ const UserComment = ({
           contentWidth={width}
           source={{ html: item?.content }}
           tagsStyles={{
-            p: {
-              marginTop: 0,
-              marginBottom: 0,
-              paddingTop: 0,
-              paddingBottom: 0,
+            body: {
+              margin: 0,
+              padding: 0,
+              color: "#3A3B3C",
             },
-            body: { color: "black" },
+            p: {
+              margin: 0,
+              padding: 0,
+              fontSize: 14,
+            },
+            div: {
+              margin: 0,
+              padding: 0,
+            },
+            ol: {
+              margin: 0,
+              padding: 0,
+              paddingLeft: 20,
+            },
+            ul: {
+              margin: 0,
+              padding: 0,
+              paddingLeft: 20,
+            },
+            li: {
+              margin: 0,
+              padding: 0,
+              fontSize: 14,
+            },
+            code: {
+              fontFamily: "monospace",
+              backgroundColor: "#f0f0f0",
+              padding: 2,
+              paddingLeft: 4,
+              paddingRight: 4,
+              borderRadius: 3,
+              fontSize: 13,
+              color: "#3A3B3C",
+            },
           }}
           ignoredDomTags={["label", "input"]}
-          defaultTextProps={{
-            style: {
-              color: "#3A3B3C",
-              fontSize: 14,
-              fontWeight: "500",
-            },
-          }}
         />
       </View>
       <ImageGallery

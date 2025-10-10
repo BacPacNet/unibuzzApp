@@ -275,6 +275,31 @@ const PostCard = memo(
                   margin: 0,
                   padding: 0,
                 },
+                ol: {
+                  margin: 0,
+                  padding: 0,
+                  paddingLeft: 20,
+                },
+                ul: {
+                  margin: 0,
+                  padding: 0,
+                  paddingLeft: 20,
+                },
+                li: {
+                  margin: 0,
+                  padding: 0,
+                  fontSize: 14,
+                },
+                code: {
+                  fontFamily: "monospace",
+                  backgroundColor: "#f0f0f0",
+                  padding: 2,
+                  paddingLeft: 4,
+                  paddingRight: 4,
+                  borderRadius: 3,
+                  fontSize: 13,
+                  color: "#3A3B3C",
+                },
               }}
               ignoredDomTags={["label", "input"]}
             />

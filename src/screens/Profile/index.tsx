@@ -46,8 +46,7 @@ const Profile = ({ route }: ProfileProps) => {
   const userSelfPostData =
     userSelfPosts?.pages.flatMap((page) => page?.data) || [];
 
-  const { profile, firstName, lastName, university_id, university } =
-    userProfileData || {};
+  const { profile, firstName, lastName } = userProfileData || {};
 
   const {
     bio,
@@ -66,6 +65,7 @@ const Profile = ({ route }: ProfileProps) => {
     occupation,
     role,
     displayEmail,
+    email,
   } = profile || {};
 
   const onRefresh = useCallback(() => {
@@ -93,6 +93,14 @@ const Profile = ({ route }: ProfileProps) => {
   const handleScroll = (event: any) => {
     const contentOffsetY = event.nativeEvent.contentOffset.y;
     setLastOffset(contentOffsetY);
+  };
+
+  const IsUniversityVerified = (): boolean => {
+    return (
+      email?.some(
+        (university) => university.UniversityName === university_name
+      ) || false
+    );
   };
 
   if (isUserProfileDataLoading || isUserProfileDataLoading) {
@@ -135,10 +143,10 @@ const Profile = ({ route }: ProfileProps) => {
         keyExtractor={(item, index) => item?._id + index}
         ListHeaderComponent={
           <FlatListProfileHeaderPart
-            firstName={firstName}
-            lastName={lastName}
+            firstName={firstName || ""}
+            lastName={lastName || ""}
             profile={profile}
-            university_name={university_name}
+            university_name={university_name || ""}
             study_year={study_year}
             degree={degree}
             userId={userId}
@@ -154,7 +162,8 @@ const Profile = ({ route }: ProfileProps) => {
             city={city}
             dob={dob || ""}
             country={country}
-            role={role}
+            role={role || ""}
+            IsUniversityVerified={IsUniversityVerified()}
           />
         }
         renderItem={({ item }) => (
