@@ -13,7 +13,7 @@ const ProfileDropdownMenu: React.FC<ProfileDropdownMenuProps> = ({
   userId,
 }) => {
   const sharePost = async (
-    message = `Hey, check out ${name} profile https://unibuzz.app/${userId}`,
+    message = `Hey, check out ${name} profile https://unibuzz.app/${userId}`
   ) => {
     try {
       await Share.share({ message });
@@ -31,17 +31,17 @@ const ProfileDropdownMenu: React.FC<ProfileDropdownMenuProps> = ({
         <LongArrowUpLeft height={16} width={16} color={"#242526"} />
         <Text className="text-neutral-700"> Share Profile</Text>
       </TouchableOpacity>
-      <TouchableOpacity style={styles.textContainer}>
+      {/* <TouchableOpacity style={styles.textContainer}>
         <Prohibition height={16} width={16} color={"#242526"} />
         <Text className="text-neutral-700 font-medium text-2xs">
           {" "}
           Block User
         </Text>
-      </TouchableOpacity>
-      <TouchableOpacity style={styles.textContainer}>
+      </TouchableOpacity> */}
+      {/* <TouchableOpacity style={styles.textContainer}>
         <WhiteFlag height={16} width={16} color={"#242526"} />
         <Text className="text-neutral-700"> Report this post</Text>
-      </TouchableOpacity>
+      </TouchableOpacity> */}
     </View>
   );
 };
@@ -55,7 +55,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: "#E5E7EB",
     width: 144,
-    height: 124,
+    height: 40,
   },
   textContainer: {
     padding: 10,

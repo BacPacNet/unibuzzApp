@@ -2,7 +2,6 @@
 import { RequestData, ServerResponse } from "@/models/api-client";
 import axios, { AxiosRequestConfig, AxiosResponse } from "axios";
 import { NEXT_PUBLIC_CUSTOM_BASE_URL, NEXT_PUBLIC_API_BASE_URL } from "@env";
-import { useAuth } from "@/context/AuthProvider/AuthContext";
 import { forceDeauthenticate } from "@/hooks/Auth/forceDeautenticate";
 
 const api = axios.create({
@@ -77,8 +76,6 @@ const client = async <T, U>(
   };
 
   try {
-    console.log("ccc", config);
-
     const response: AxiosResponse<ServerResponse<T>> = await api(config);
     const { data: resData } = response;
     return resData;

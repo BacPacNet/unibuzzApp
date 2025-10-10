@@ -25,6 +25,7 @@ interface Props {
   onValidSubmit: (data: any) => void;
   goBack: () => void;
   setError: (name: string, error: any) => void;
+  universityId: string;
 }
 
 const UniversityOtpVerification = ({
@@ -39,6 +40,7 @@ const UniversityOtpVerification = ({
   onValidSubmit,
   goBack,
   setError,
+  universityId,
 }: Props) => {
   const [countdown, setCountdown] = useState(120);
   const [isCounting, setIsCounting] = useState(true);
@@ -52,7 +54,7 @@ const UniversityOtpVerification = ({
   } = useHandleUniversityEmailVerificationGenerate();
 
   const handleUniversityEmailSendCode = () => {
-    const data = { email };
+    const data = { email, universityId };
     handleUniversityEmailSendCodeCount();
     generateUniversityEmailOTP(data);
   };

@@ -27,343 +27,347 @@ import ActionSheet, { ActionSheetRef } from "react-native-actions-sheet";
 import { AllUserSelectBottomSheet } from "../../UserBottomSheet";
 import { Toast } from "react-native-toast-notifications";
 
-const MessageNewGroupFormContainer = forwardRef((props, ref) => {
-  const {
-    register: GroupRegister,
-    watch,
-    control,
+const MessageNewGroupFormContainer = forwardRef(
+  (props: { chatId: string }, ref) => {
+    let chatId = props.chatId;
+    const {
+      register: GroupRegister,
+      watch,
+      control,
 
-    setValue,
-    getValues,
-  } = useForm<any>({
-    defaultValues: {
-      studentYear: [],
-      major: [],
-      occupation: [],
-      affiliation: [],
-      community: { name: "", id: "" },
-      selectedUsers: [],
-    },
-  });
+      setValue,
+      getValues,
+    } = useForm<any>({
+      defaultValues: {
+        studentYear: [],
+        major: [],
+        occupation: [],
+        affiliation: [],
+        community: { name: "", id: "" },
+        selectedUsers: [],
+      },
+    });
 
-  const studentYear = watch("studentYear") || "";
-  const major = watch("major") || "";
-  const occupation = watch("occupation") || "";
-  const affiliation = watch("affiliation") || "";
-  const community = watch("community");
+    const studentYear = watch("studentYear") || "";
+    const major = watch("major") || "";
+    const occupation = watch("occupation") || "";
+    const affiliation = watch("affiliation") || "";
+    const community = watch("community");
 
-  const userProiledata = getUserProfileStore();
+    const userProiledata = getUserProfileStore();
 
-  const [searchInput, setSearchInput] = useState<string>("");
-  const [showbulk, setShowBulk] = useState(false);
-  const [selectedType, setSelectedType] = useState<
-    "student" | "faculty" | null
-  >(null);
-  const [individualsUsers, setIndividualsUsers] = useState<any[]>([]);
-  const [filteredUsers, setFilterUsers] = useState<any[]>([]);
-  const [filteredFacultyUsers, setFilterFacultyUsers] = useState<any[]>([]);
-  const [selectedUsers, setSelectedUsers] = useState<any>([]);
-  const actionSheetRef = useRef<ActionSheetRef>(null);
-  const yearActionSheetRef = useRef<ActionSheetRef>(null);
-  const majorActionSheetRef = useRef<ActionSheetRef>(null);
-  const occupationActionSheetRef = useRef<ActionSheetRef>(null);
-  const affiliationActionSheetRef = useRef<ActionSheetRef>(null);
-  const universityActionSheetRef = useRef<ActionSheetRef>(null);
+    const [searchInput, setSearchInput] = useState<string>("");
+    const [showbulk, setShowBulk] = useState(false);
+    const [selectedType, setSelectedType] = useState<
+      "student" | "faculty" | null
+    >(null);
+    const [individualsUsers, setIndividualsUsers] = useState<any[]>([]);
+    const [filteredUsers, setFilterUsers] = useState<any[]>([]);
+    const [filteredFacultyUsers, setFilterFacultyUsers] = useState<any[]>([]);
+    const [selectedUsers, setSelectedUsers] = useState<any>([]);
+    const actionSheetRef = useRef<ActionSheetRef>(null);
+    const yearActionSheetRef = useRef<ActionSheetRef>(null);
+    const majorActionSheetRef = useRef<ActionSheetRef>(null);
+    const occupationActionSheetRef = useRef<ActionSheetRef>(null);
+    const affiliationActionSheetRef = useRef<ActionSheetRef>(null);
+    const universityActionSheetRef = useRef<ActionSheetRef>(null);
 
-  const { data: communityUsersData } = useCommunityUsers(community.id);
-  const communityUsers =
-    communityUsersData?.pages
-      .flatMap((page) => page.data)
-      .filter((user) => user.users_id !== userProiledata?.users_id) || [];
+    const { data: communityUsersData } = useCommunityUsers(community.id);
+    const communityUsers =
+      communityUsersData?.pages
+        .flatMap((page) => page.data)
+        .filter((user) => user.users_id !== userProiledata?.users_id) || [];
 
-  useImperativeHandle(ref, () => ({
-    getFormValues: getValues,
-    getFilteredFacultyUsers: () => filteredFacultyUsers,
-    getFilteredUsers: () => filteredUsers,
-    getIndividualsUsers: () => individualsUsers,
-  }));
+    useImperativeHandle(ref, () => ({
+      getFormValues: getValues,
+      getFilteredFacultyUsers: () => filteredFacultyUsers,
+      getFilteredUsers: () => filteredUsers,
+      getIndividualsUsers: () => individualsUsers,
+    }));
 
-  const handleRemove = (fieldName: any, itemToRemove: string) => {
-    const currentValue = (watch(fieldName) as string[]) || [];
-    const updatedValue = currentValue.filter((item) => item !== itemToRemove);
-    setValue(fieldName, updatedValue);
-  };
+    const handleRemove = (fieldName: any, itemToRemove: string) => {
+      const currentValue = (watch(fieldName) as string[]) || [];
+      const updatedValue = currentValue.filter((item) => item !== itemToRemove);
+      setValue(fieldName, updatedValue);
+    };
 
-  const removeUser = (userId: string) => {
-    setIndividualsUsers((prev: any[]) =>
-      prev.filter((u) => u.profile?.users_id !== userId)
-    );
-  };
+    const removeUser = (userId: string) => {
+      setIndividualsUsers((prev: any[]) =>
+        prev.filter((u) => u.profile?.users_id !== userId)
+      );
+    };
 
-  const handleAddUsers = () => {
-    setShowBulk(true);
-  };
+    const handleAddUsers = () => {
+      setShowBulk(true);
+    };
 
-  useEffect(() => {
-    const allUsers = communityUsers || [];
+    useEffect(() => {
+      const allUsers = communityUsers || [];
 
-    const filters = { year: studentYear, major: major };
+      const filters = { year: studentYear, major: major };
 
-    const filtered = filterData(allUsers, filters);
+      const filtered = filterData(allUsers, filters);
 
-    setFilterUsers(filtered);
-  }, [studentYear, major]);
+      setFilterUsers(filtered);
+    }, [studentYear, major]);
 
-  useEffect(() => {
-    const allUsers = communityUsers || [];
+    useEffect(() => {
+      const allUsers = communityUsers || [];
 
-    const filters = { occupation: occupation, affiliation: affiliation };
-    const filtered = filterFacultyData(allUsers, filters);
+      const filters = { occupation: occupation, affiliation: affiliation };
+      const filtered = filterFacultyData(allUsers, filters);
 
-    setFilterFacultyUsers(filtered);
-  }, [occupation, affiliation]);
+      setFilterFacultyUsers(filtered);
+    }, [occupation, affiliation]);
 
-  const openUniversityActionSheet = () => {
-    if (userProiledata && userProiledata.email!.length) {
-      universityActionSheetRef.current?.show();
-    } else {
-      Toast.hideAll();
-      return Toast.show("You dont have a verified university", {
-        type: "warning",
-        placement: "top",
-      });
-    }
-  };
+    const openUniversityActionSheet = () => {
+      if (userProiledata && userProiledata.email!.length) {
+        universityActionSheetRef.current?.show();
+      } else {
+        Toast.hideAll();
+        return Toast.show("You dont have a verified university", {
+          type: "warning",
+          placement: "top",
+        });
+      }
+    };
 
-  return (
-    <View>
-      <View style={styles.paddingContainer}>
-        <Text style={styles.inputLabels}>Individuals</Text>
+    return (
+      <View>
+        <View style={styles.paddingContainer}>
+          <Text style={styles.inputLabels}>Individuals</Text>
 
-        <View style={styles.individualsContainer}>
-          <DummyButton
-            onPress={() => actionSheetRef.current?.show()}
-            toShowCross={false}
-            text={"Search Name"}
-            icon={<Search width={20} height={20} />}
-          />
-
-          <SelectUserProfileChips
-            individualsUsers={individualsUsers}
-            isAllUsers={true}
-            onRemove={(id) => removeUser(id as string)}
-          />
-        </View>
-        <ReusableButton
-          onPress={() => setShowBulk(!showbulk)}
-          buttonText="Bulk Add Members"
-          variant="border_primary"
-          height="large"
-        />
-
-        {showbulk ? (
-          <View style={styles.bulkContainer}>
+          <View style={styles.individualsContainer}>
             <DummyButton
-              label="University"
-              onPress={() => openUniversityActionSheet()}
-              toShowCross={!!community.name}
-              text={community.name ? community.name : "Select University"}
-              icon={<NavArrowDown width={20} height={20} />}
+              onPress={() => actionSheetRef.current?.show()}
+              toShowCross={false}
+              text={"Search Name"}
+              icon={<Search width={20} height={20} />}
             />
-            <RoleSelectorWithFields
-              selectedType={selectedType}
-              setSelectedType={setSelectedType}
-              disabled={!community.name}
-              studentFields={{
-                chips: [
-                  {
-                    key: "year",
-                    value: studentYear,
-                    onRemove: (val) => handleRemove("studentYear", val),
-                  },
-                  {
-                    key: "major",
-                    value: major,
-                    onRemove: (val) => handleRemove("major", val),
-                  },
-                ],
-                buttons: [
-                  {
-                    text: "Add Year",
-                    onPress: () => yearActionSheetRef.current?.show(),
-                    label: "Add Year",
-                  },
-                  {
-                    text: "Add Major",
-                    onPress: () => majorActionSheetRef.current?.show(),
-                    label: "Add Major",
-                  },
-                ],
-              }}
-              facultyFields={{
-                chips: [
-                  {
-                    key: "occupation",
-                    value: occupation,
-                    onRemove: (val) => handleRemove("occupation", val),
-                  },
-                  {
-                    key: "affiliation",
-                    value: affiliation,
-                    onRemove: (val) => handleRemove("affiliation", val),
-                  },
-                ],
-                buttons: [
-                  {
-                    text: "Add Occupation",
-                    onPress: () => occupationActionSheetRef.current?.show(),
-                    label: "Add Occupation",
-                  },
-                  {
-                    text: "Add Affiliation",
-                    onPress: () => affiliationActionSheetRef.current?.show(),
-                    label: "Add Affiliation",
-                  },
-                ],
-              }}
+
+            <SelectUserProfileChips
+              individualsUsers={individualsUsers}
+              isAllUsers={true}
+              onRemove={(id) => removeUser(id as string)}
             />
           </View>
-        ) : (
-          <View></View>
-        )}
-      </View>
+          <ReusableButton
+            onPress={() => setShowBulk(!showbulk)}
+            buttonText="Bulk Add Members"
+            variant="border_primary"
+            height="large"
+          />
 
-      <ActionSheet
-        ref={universityActionSheetRef}
-        gestureEnabled={true}
-        snapPoints={[50]}
-        onClose={() => setSearchInput("")}
-        containerStyle={styles.actionSheetContainer}
-      >
-        <SubscribedUniveristyBottomSheet
-          options={userProiledata?.email || []}
-          value={[]}
-          onSelect={(val) => setValue("community", val)}
-          err={false}
-        />
-      </ActionSheet>
+          {showbulk ? (
+            <View style={styles.bulkContainer}>
+              <DummyButton
+                label="University"
+                onPress={() => openUniversityActionSheet()}
+                toShowCross={!!community.name}
+                text={community.name ? community.name : "Select University"}
+                icon={<NavArrowDown width={20} height={20} />}
+              />
+              <RoleSelectorWithFields
+                selectedType={selectedType}
+                setSelectedType={setSelectedType}
+                disabled={!community.name}
+                studentFields={{
+                  chips: [
+                    {
+                      key: "year",
+                      value: studentYear,
+                      onRemove: (val) => handleRemove("studentYear", val),
+                    },
+                    {
+                      key: "major",
+                      value: major,
+                      onRemove: (val) => handleRemove("major", val),
+                    },
+                  ],
+                  buttons: [
+                    {
+                      text: "Add Year",
+                      onPress: () => yearActionSheetRef.current?.show(),
+                      label: "Add Year",
+                    },
+                    {
+                      text: "Add Major",
+                      onPress: () => majorActionSheetRef.current?.show(),
+                      label: "Add Major",
+                    },
+                  ],
+                }}
+                facultyFields={{
+                  chips: [
+                    {
+                      key: "occupation",
+                      value: occupation,
+                      onRemove: (val) => handleRemove("occupation", val),
+                    },
+                    {
+                      key: "affiliation",
+                      value: affiliation,
+                      onRemove: (val) => handleRemove("affiliation", val),
+                    },
+                  ],
+                  buttons: [
+                    {
+                      text: "Add Occupation",
+                      onPress: () => occupationActionSheetRef.current?.show(),
+                      label: "Add Occupation",
+                    },
+                    {
+                      text: "Add Affiliation",
+                      onPress: () => affiliationActionSheetRef.current?.show(),
+                      label: "Add Affiliation",
+                    },
+                  ],
+                }}
+              />
+            </View>
+          ) : (
+            <View></View>
+          )}
+        </View>
 
-      <ActionSheet
-        ref={actionSheetRef}
-        gestureEnabled={true}
-        snapPoints={[50, 100]}
-        onClose={() => setSearchInput("")}
-      >
-        {/* <SelectCommunityUsersBottomSheet
+        <ActionSheet
+          ref={universityActionSheetRef}
+          gestureEnabled={true}
+          snapPoints={[50]}
+          onClose={() => setSearchInput("")}
+          containerStyle={styles.actionSheetContainer}
+        >
+          <SubscribedUniveristyBottomSheet
+            options={userProiledata?.email || []}
+            value={[]}
+            onSelect={(val) => setValue("community", val)}
+            err={false}
+          />
+        </ActionSheet>
+
+        <ActionSheet
+          ref={actionSheetRef}
+          gestureEnabled={true}
+          snapPoints={[50, 100]}
+          onClose={() => setSearchInput("")}
+        >
+          {/* <SelectCommunityUsersBottomSheet
           setSelectedUsers={setIndividualsUsers}
           selectedUsers={individualsUsers}
           communityId={community.id}
           myUserId={userProiledata?.users_id || ""}
         /> */}
-        <AllUserSelectBottomSheet
-          selectedUsers={individualsUsers}
-          setSelectedUsers={setIndividualsUsers}
-          isMultiAllowed={true}
-        />
-      </ActionSheet>
-      <ActionSheet
-        ref={yearActionSheetRef}
-        gestureEnabled={true}
-        // snapPoints={[70, 100]}
+          <AllUserSelectBottomSheet
+            selectedUsers={individualsUsers}
+            setSelectedUsers={setIndividualsUsers}
+            isMultiAllowed={true}
+            chatId={chatId}
+          />
+        </ActionSheet>
+        <ActionSheet
+          ref={yearActionSheetRef}
+          gestureEnabled={true}
+          // snapPoints={[70, 100]}
 
-        onClose={() => setSearchInput("")}
-      >
-        <Controller
-          name="studentYear"
-          control={control}
-          render={({ field }) => (
-            <MultiSelectDropdown
-              options={Object.keys(degreeAndMajors)}
-              value={field.value || []}
-              onChange={field.onChange}
-              placeholder="Select Year"
-              label="Year (Students)"
-              err={false}
-              //   filteredCount={filteredYearCount}
-              multiSelect={false}
-            />
-          )}
-        />
-      </ActionSheet>
-      <ActionSheet
-        ref={majorActionSheetRef}
-        gestureEnabled={true}
-        // snapPoints={[70, 100]}
-        onClose={() => setSearchInput("")}
-        containerStyle={styles.actionSheetContainer}
-      >
-        <Controller
-          name="major"
-          control={control}
-          render={({ field }) => (
-            <MultiSelectDropdown
-              options={value}
-              value={field.value || []}
-              onChange={field.onChange}
-              placeholder="Add By Major"
-              label="Major (Students)"
-              err={false}
-              search={true}
-              //   filteredCount={filteredMajorsCount}
-              parentCategory={studentYear}
-            />
-          )}
-        />
-      </ActionSheet>
+          onClose={() => setSearchInput("")}
+        >
+          <Controller
+            name="studentYear"
+            control={control}
+            render={({ field }) => (
+              <MultiSelectDropdown
+                options={Object.keys(degreeAndMajors)}
+                value={field.value || []}
+                onChange={field.onChange}
+                placeholder="Select Year"
+                label="Year (Students)"
+                err={false}
+                //   filteredCount={filteredYearCount}
+                multiSelect={false}
+              />
+            )}
+          />
+        </ActionSheet>
+        <ActionSheet
+          ref={majorActionSheetRef}
+          gestureEnabled={true}
+          // snapPoints={[70, 100]}
+          onClose={() => setSearchInput("")}
+          containerStyle={styles.actionSheetContainer}
+        >
+          <Controller
+            name="major"
+            control={control}
+            render={({ field }) => (
+              <MultiSelectDropdown
+                options={value}
+                value={field.value || []}
+                onChange={field.onChange}
+                placeholder="Add By Major"
+                label="Major (Students)"
+                err={false}
+                search={true}
+                //   filteredCount={filteredMajorsCount}
+                parentCategory={studentYear}
+              />
+            )}
+          />
+        </ActionSheet>
 
-      <ActionSheet
-        ref={occupationActionSheetRef}
-        gestureEnabled={true}
-        // snapPoints={[70, 100]}
-        onClose={() => setSearchInput("")}
-        containerStyle={styles.actionSheetContainer}
-      >
-        <Controller
-          name="occupation"
-          control={control}
-          render={({ field }) => (
-            <MultiSelectDropdown
-              options={Object.keys(occupationAndDepartment)}
-              value={field.value || []}
-              onChange={field.onChange}
-              placeholder="Add By Major"
-              label="Occupation (Faculty)"
-              err={false}
-              search={true}
-              multiSelect={false}
-              //   filteredCount={filteredOccupationCount}
-            />
-          )}
-        />
-      </ActionSheet>
-      <ActionSheet
-        ref={affiliationActionSheetRef}
-        gestureEnabled={true}
-        // snapPoints={[70, 100]}
-        onClose={() => setSearchInput("")}
-        containerStyle={styles.actionSheetContainer}
-      >
-        <Controller
-          name="affiliation"
-          control={control}
-          render={({ field }) => (
-            <MultiSelectDropdown
-              options={value}
-              value={field.value || []}
-              onChange={field.onChange}
-              placeholder="Add By Major"
-              label="Affiliation/Department (Faculty)"
-              err={false}
-              search={true}
-              //   filteredCount={filteredAffiliationCount}
-              parentCategory={occupation}
-            />
-          )}
-        />
-      </ActionSheet>
-    </View>
-  );
-});
+        <ActionSheet
+          ref={occupationActionSheetRef}
+          gestureEnabled={true}
+          // snapPoints={[70, 100]}
+          onClose={() => setSearchInput("")}
+          containerStyle={styles.actionSheetContainer}
+        >
+          <Controller
+            name="occupation"
+            control={control}
+            render={({ field }) => (
+              <MultiSelectDropdown
+                options={Object.keys(occupationAndDepartment)}
+                value={field.value || []}
+                onChange={field.onChange}
+                placeholder="Add By Major"
+                label="Occupation (Faculty)"
+                err={false}
+                search={true}
+                multiSelect={false}
+                //   filteredCount={filteredOccupationCount}
+              />
+            )}
+          />
+        </ActionSheet>
+        <ActionSheet
+          ref={affiliationActionSheetRef}
+          gestureEnabled={true}
+          // snapPoints={[70, 100]}
+          onClose={() => setSearchInput("")}
+          containerStyle={styles.actionSheetContainer}
+        >
+          <Controller
+            name="affiliation"
+            control={control}
+            render={({ field }) => (
+              <MultiSelectDropdown
+                options={value}
+                value={field.value || []}
+                onChange={field.onChange}
+                placeholder="Add By Major"
+                label="Affiliation/Department (Faculty)"
+                err={false}
+                search={true}
+                //   filteredCount={filteredAffiliationCount}
+                parentCategory={occupation}
+              />
+            )}
+          />
+        </ActionSheet>
+      </View>
+    );
+  }
+);
 
 export default MessageNewGroupFormContainer;
 

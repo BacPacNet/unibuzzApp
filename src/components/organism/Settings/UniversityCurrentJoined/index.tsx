@@ -6,6 +6,7 @@ import {
   StyleSheet,
   RefreshControl,
   ActivityIndicator,
+  TouchableOpacity,
 } from "react-native";
 import BackHeader from "@/components/atoms/BackHeader";
 import Badge from "@/assets/badge.svg";
@@ -16,6 +17,10 @@ import { FormInput } from "@/components/atoms/FormInput";
 import { universitySettingsScreen } from "@/screens/SettingsScreens/UniversityVerificationScreen";
 import { FONTS } from "@/constants/fonts";
 import { useGetUserProfileVerifiedUniversityEmailData } from "@/services/user-Profile";
+import { useNavigation } from "@react-navigation/native";
+import { RootStackParamList } from "@/types/navigation";
+import { StackNavigationProp } from "@react-navigation/stack";
+import { screenName } from "@/constant/screenName";
 
 const FeatureList = () => (
   <View style={{ marginTop: 32 }}>
@@ -55,6 +60,7 @@ const UniversityVerificationInfo = ({
   setCurrScreen,
   control,
 }: Props) => {
+  const navigation = useNavigation<StackNavigationProp<RootStackParamList>>();
   const {
     data: verifiedUniversityEmailData,
     refetch,
@@ -68,6 +74,16 @@ const UniversityVerificationInfo = ({
     refetch();
     setRefreshing(false);
   };
+
+  const handleHelpVerifying = () => {
+    navigation.navigate("InfoStackScreen", {
+      screen: "FeedBackScreen",
+      params: {
+        from: screenName.UniversityVerification,
+      },
+    });
+  };
+
   return (
     <ScrollView
       contentContainerStyle={styles.container}
@@ -86,6 +102,15 @@ const UniversityVerificationInfo = ({
         </Text>
 
         {FeatureList()}
+
+        <TouchableOpacity onPress={handleHelpVerifying}>
+          <Text
+            style={styles.helpText}
+            className=" text-xs text-primary-500 font-semibold decoration-dotted underline underline-offset-2"
+          >
+            Need help verifying?
+          </Text>
+        </TouchableOpacity>
 
         {isFetching ? (
           <View className="flex-1 justify-center items-center">
@@ -184,5 +209,11 @@ const styles = StyleSheet.create({
     fontFamily: FONTS.inter.regular,
     color: "#3A3B3C",
     fontSize: 16,
+  },
+  helpText: {
+    marginTop: 16,
+    paddingBottom: 32,
+    borderBottomWidth: 1,
+    borderBottomColor: "#E5E7EB",
   },
 });

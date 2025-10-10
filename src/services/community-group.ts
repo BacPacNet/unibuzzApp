@@ -1,6 +1,7 @@
 import { getToken } from "@/storage/token";
 import { CommunityGroupType } from "@/types/CommunityGroup";
 import {
+  useInfiniteQuery,
   useMutation,
   useQuery,
   useQueryClient,
@@ -402,3 +403,57 @@ export const useJoinRequestPrivateGroup = (communityGroupId: string) => {
     },
   });
 };
+
+export async function getAllCommunityGroupMembersUser(
+  token: string,
+  communityGroupId: string,
+  userStatus: string,
+  page: number,
+  limit: number
+) {
+  if (!token || token.length === 0) {
+    console.error("Token is empty, cannot make API call");
+    throw new Error("Authentication token is required");
+  }
+
+  const response: any = await client(
+    `/communitygroup/members?communityGroupId=${communityGroupId}&userStatus=${userStatus}&page=${page}&limit=${limit}`,
+    { headers: { Authorization: `Bearer ${token}` } }
+  );
+  return response;
+}
+
+export function useGetCommunityGroupMembersUser(
+  communityGroupId: string,
+  userStatus: string,
+  limit: number
+) {
+  const cookieValue = getToken() as string;
+
+  return useInfiniteQuery({
+    queryKey: [
+      "community-group-members",
+      communityGroupId,
+      userStatus,
+      limit,
+      cookieValue,
+    ],
+    queryFn: ({ pageParam = 1 }) => {
+      return getAllCommunityGroupMembersUser(
+        cookieValue,
+        communityGroupId,
+        userStatus,
+        pageParam,
+        limit
+      );
+    },
+    getNextPageParam: (lastPage) => {
+      if (lastPage.page < lastPage.totalPages) {
+        return lastPage.page + 1;
+      }
+      return undefined;
+    },
+    initialPageParam: 1,
+    enabled: !!communityGroupId && !!cookieValue && cookieValue.length > 0,
+  });
+}

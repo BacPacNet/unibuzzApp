@@ -206,7 +206,7 @@ export default function NewChatScreen() {
                       errors.groupName ? "Group Name is required" : ""
                     }
                   />
-                  <MessageNewGroupFormContainer ref={formRef} />
+                  <MessageNewGroupFormContainer ref={formRef} chatId="" />
                 </View>
               ),
             },

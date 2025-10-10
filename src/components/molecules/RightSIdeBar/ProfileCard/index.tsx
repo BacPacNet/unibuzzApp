@@ -140,6 +140,8 @@ const ProfileCard = ({
           <View className="flex flex-row gap-2">
             <DropdownWrapper
               position="bottom"
+              viewTopPosition={-40}
+              viewLeftPosition={-100}
               renderDropdown={() => (
                 <ProfileDropdownMenu
                   name={name || user?.firstName + " " + user?.lastName}

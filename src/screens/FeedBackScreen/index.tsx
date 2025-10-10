@@ -13,8 +13,17 @@ import ReusableButton from "@/components/atoms/ReusableButton";
 import { useSendContactMessage } from "@/services/contact";
 import { SafeScreen } from "@/components/template";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
+import { StackNavigationProp } from "@react-navigation/stack";
+import { RootStackParamList } from "@/types/navigation";
+import { useNavigation } from "@react-navigation/native";
+import { screenName } from "@/constant/screenName";
+import useCustomBackHandler from "@/hooks/useCustomBackHandler";
+import { universitySettingsScreen } from "../SettingsScreens/UniversityVerificationScreen";
 
-const ContactForm = () => {
+type NavigationProp = StackNavigationProp<RootStackParamList, "SinglePost">;
+
+const ContactForm = ({ route }: any) => {
+  const navigation = useNavigation<NavigationProp>();
   const {
     control,
     handleSubmit,
@@ -29,11 +38,28 @@ const ContactForm = () => {
       email: "",
     },
   });
+  const from = route?.params?.from || "";
+
   const { mutate, isPending, isSuccess } = useSendContactMessage();
+
   const onSubmit = (data: any) => {
     mutate(data);
     reset();
   };
+
+  const handleBack = () => {
+    if (from === screenName.UniversityVerification) {
+      navigation.navigate("SettingsStack", {
+        screen: "UniversityVerification",
+        // params: {
+        //   from: universitySettingsScreen.otpVerification,
+        // },
+      });
+    } else {
+      navigation.goBack();
+    }
+  };
+  useCustomBackHandler(handleBack);
 
   return (
     <SafeScreen>

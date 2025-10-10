@@ -70,7 +70,17 @@ export default function EditChatScreen({ route }: any) {
     isFetchingNextPage,
     hasNextPage,
     isLoading: isUserProfilesLoading,
-  } = useUsersProfileForConnections(searchInput, 10, true);
+  } = useUsersProfileForConnections(
+    searchInput,
+    10,
+    true,
+    "",
+    [],
+    [],
+    [],
+    [],
+    chatId
+  );
   const userProfiles =
     userProfilesData?.pages
       .flatMap((page) => page.users)
@@ -163,7 +173,7 @@ export default function EditChatScreen({ route }: any) {
             isError={!!errors.groupName}
             errorMessage={errors.groupName ? "Group Name is required" : ""}
           />
-          <MessageNewGroupFormContainer ref={formRef} />
+          <MessageNewGroupFormContainer ref={formRef} chatId={chatId} />
         </View>
       </View>
 

@@ -282,6 +282,7 @@ const FlatListCommunityHeader: React.FC<Props> = ({
           ) : null}
           <ReusableButton
             onPress={() => handleNavigateToMembersScreen()}
+            disabled={!isUserJoinedCommunityGroup}
             variant="border"
             size={120}
             buttonText={` ${totalCommunityGroupMember} Members`}
