@@ -42,6 +42,7 @@ type Props = {
   dob?: string;
   country?: string;
   role: string;
+  IsUniversityVerified: boolean;
 };
 type NavigationProp = StackNavigationProp<RootStackParamList, "Profile">;
 export const FlatListProfileHeaderPart = ({
@@ -66,6 +67,7 @@ export const FlatListProfileHeaderPart = ({
   profile,
   study_year,
   role,
+  IsUniversityVerified,
 }: Props) => {
   const userData = useMemo(() => getUserStore(), []);
   const { navigate } = useNavigation<NavigationProp>();
@@ -121,7 +123,7 @@ export const FlatListProfileHeaderPart = ({
               {university_name}
             </Text>
 
-            {IsUniversityVerified() ? (
+            {IsUniversityVerified ? (
               <Badge width={12} height={12} style={styles.badge} />
             ) : (
               <Text></Text>

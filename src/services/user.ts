@@ -3,9 +3,10 @@ import { client } from "./api-client";
 import { getToken } from "@/storage/token";
 import { Toast } from "react-native-toast-notifications";
 import { storeUser } from "@/storage/user";
+import { IUserProfileResponse } from "@/types/users";
 
 export async function getUserData(token: any, id: string) {
-  const response: any = await client(`/users/${id}`, {
+  const response: IUserProfileResponse = await client(`/users/${id}`, {
     headers: { Authorization: `Bearer ${token}` },
   });
   return response;

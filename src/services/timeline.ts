@@ -426,12 +426,19 @@ export const useLikeUnlikeUserPostComment = (
   });
 };
 
-export async function CreateUserPostCommentReply(data: any, token: string) {
-  const response = await client(`/userpostcomment/${data.commentId}/replies`, {
-    method: "POST",
-    headers: { Authorization: `Bearer ${token}` },
-    data,
-  });
+export async function CreateUserPostCommentReply(
+  data: PostCommentData,
+  postId: string,
+  token: string
+) {
+  const response = await client(
+    `/userpostcomment/${data.commentId}/replies?userPostId=${postId}`,
+    {
+      method: "POST",
+      headers: { Authorization: `Bearer ${token}` },
+      data,
+    }
+  );
   return response;
 }
 
@@ -445,7 +452,7 @@ export const useCreateUserPostCommentReply = (
 
   return useMutation({
     mutationFn: (data: PostCommentData) =>
-      CreateUserPostCommentReply(data, cookieValue),
+      CreateUserPostCommentReply(data, postId, cookieValue),
 
     onSuccess: (data: any) => {
       const currUserComments = queryClient.getQueryData<{
