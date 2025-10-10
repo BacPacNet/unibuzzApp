@@ -441,14 +441,6 @@ export async function CreateUserPostCommentReply(
   );
   return response;
 }
-// export async function CreateUserPostCommentReply(data: any, token: string) {
-//   const response = await client(`/userpostcomment/${data.commentId}/replies`, {
-//     method: "POST",
-//     headers: { Authorization: `Bearer ${token}` },
-//     data,
-//   });
-//   return response;
-// }
 
 export const useCreateUserPostCommentReply = (
   showInitial: boolean,
