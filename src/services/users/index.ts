@@ -14,6 +14,7 @@ export async function getAllUsersForConnections(
   major: string[],
   occupation: string[],
   affiliation: string[],
+  chatId?: string
 ): Promise<ProfileConnection> {
   const params = new URLSearchParams();
 
@@ -25,7 +26,7 @@ export async function getAllUsersForConnections(
   if (major?.length) params.append("major", major.join(","));
   if (occupation?.length) params.append("occupation", occupation.join(","));
   if (affiliation?.length) params.append("affiliation", affiliation.join(","));
-
+  if (chatId) params.append("chatId", chatId);
   return await client(`/users/connections?${params.toString()}`, {
     headers: { Authorization: `Bearer ${token}` },
   });
@@ -40,6 +41,7 @@ export function useUsersProfileForConnections(
   major?: string[],
   occupation?: string[],
   affiliation?: string[],
+  chatId?: string
 ) {
   const cookieValue = getToken() as string;
   const debouncedSearchTerm = useDebounce(name, 1000);
@@ -57,6 +59,7 @@ export function useUsersProfileForConnections(
         major || [],
         occupation || [],
         affiliation || [],
+        chatId
       ),
     getNextPageParam: (lastPage) => {
       if (lastPage.currentPage < lastPage.totalPages) {

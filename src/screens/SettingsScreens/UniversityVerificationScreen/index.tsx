@@ -26,7 +26,7 @@ export enum universitySettingsScreen {
 }
 type ScreenNavigationProp = StackNavigationProp<RootStackParamList, "Settings">;
 
-const UniversityVerificationScreen = () => {
+const UniversityVerificationScreen = ({ route }: any) => {
   const navigation = useNavigation<ScreenNavigationProp>();
   const {
     control,
@@ -42,6 +42,7 @@ const UniversityVerificationScreen = () => {
   const [currScreen, setCurrScreen] = useState(
     universitySettingsScreen.currentJoined
   );
+
   const [showLoader, setShowLoader] = useState(false);
   const {
     mutateAsync: mutateAddUniversity,
@@ -54,6 +55,7 @@ const UniversityVerificationScreen = () => {
   const universityName = watch("universityName");
   const otp = watch("otp");
   const universityEmail = watch("email");
+  const universityId = watch("universityId");
 
   const onSubmit = () => {
     const data: FormDataType = {
@@ -109,6 +111,7 @@ const UniversityVerificationScreen = () => {
             control={control}
             setError={setError}
             email={universityEmail}
+            universityId={universityId}
             otp={otp}
             onOtpChange={(otp: any) => setValue("otp", otp)}
             handleSubmit={handleSubmit}

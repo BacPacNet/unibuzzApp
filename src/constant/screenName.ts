@@ -5,4 +5,5 @@ export const screenName = {
   manageCommunityGroup: "manageCommunityGroup",
   message: "message",
   profile: "profile",
+  UniversityVerification: "UniversityVerification",
 };

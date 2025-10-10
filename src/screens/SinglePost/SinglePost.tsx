@@ -24,7 +24,7 @@ const SinglePost = ({ route }: any) => {
   const from = route?.params?.from || "";
   const { data, isFetching, isPending, isError, isLoading, refetch } =
     useGetPost(postID, type, commentId || "");
-  console.log("params", route.params);
+
   const item = data?.post;
   const comment = data?.comment;
 

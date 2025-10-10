@@ -25,13 +25,17 @@ import {
 } from "@/lib/communityGroup";
 import { useNewCommunityGroupStatesContext } from "@/context/NewCommunityGroupStatesProvider/NewCommunityGroupStatesProvider";
 import { useNavigation } from "@react-navigation/native";
-import { useCommunityUsers } from "@/services/community";
+import {
+  useCommunityFilteredUsers,
+  useCommunityUsers,
+} from "@/services/community";
 import { FONTS } from "@/constants/fonts";
 
 const NewCommunityGroupUsersSelectScreen = ({ route }: any) => {
   const universityName = route?.params?.universityName || "";
   const communityId = route?.params?.communityId || "";
   const isEditGroup = route?.params?.isEditGroup || false;
+  const communityGroupId = route?.params?.communityGroupId || "";
   const navigate = useNavigation();
   const {
     register: GroupRegister,
@@ -61,12 +65,19 @@ const NewCommunityGroupUsersSelectScreen = ({ route }: any) => {
   const userProiledata = getUserProfileStore();
 
   const { data: communityData } = useGetCommunity(community.id);
+  //   const {
+  //     data: communityUsersData,
+  //     hasNextPage: communityHasNextPage,
+  //     isFetchingNextPage: communityIsFetchingNextPage,
+  //     fetchNextPage: communityFetchNextPage,
+  //   } = useCommunityUsers(communityId, true, "");
+
   const {
     data: communityUsersData,
-    hasNextPage: communityHasNextPage,
-    isFetchingNextPage: communityIsFetchingNextPage,
-    fetchNextPage: communityFetchNextPage,
-  } = useCommunityUsers(communityId, true, "");
+    hasNextPage,
+    isFetchingNextPage,
+    fetchNextPage,
+  } = useCommunityFilteredUsers(communityId, false, "");
 
   const communityUsers =
     communityUsersData?.pages
@@ -337,6 +348,7 @@ const NewCommunityGroupUsersSelectScreen = ({ route }: any) => {
           selectedUsers={individualsUsers}
           communityId={communityId}
           myUserId={userProiledata?.users_id || ""}
+          communityGroupId={communityGroupId}
         />
       </ActionSheet>
       <ActionSheet

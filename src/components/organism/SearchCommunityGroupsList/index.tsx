@@ -12,6 +12,7 @@ import {
   ActivityIndicator,
   StyleSheet,
 } from "react-native";
+import { Community as CommunityIcon } from "iconoir-react-native";
 
 const SearchCommunityGroupList: React.FC<{
   data: any;
@@ -43,15 +44,22 @@ const SearchCommunityGroupList: React.FC<{
               isGroupOfficial && styles.officialBorder,
             ]}
           >
-            <Image
-              source={
-                !imageUrl || imageError
-                  ? UniversityLogoPlaceHolder
-                  : { uri: imageUrl }
-              }
-              style={styles.communityImage}
-              onError={() => setImageError(true)}
-            />
+            {!imageUrl || imageError ? (
+              <CommunityIcon
+                width={40}
+                height={40}
+                fill={"#6647FF"}
+                color={"#6647FF"}
+                style={styles.communityPlaceHolderImage}
+              />
+            ) : (
+              <Image
+                source={{ uri: imageUrl }}
+                style={styles.communityImage}
+                onError={() => setImageError(true)}
+              />
+            )}
+
             {isGroupOfficial && (
               <View style={styles.badgeWrapper}>
                 <OfficailLogoPlaceHolder
@@ -81,7 +89,7 @@ const SearchCommunityGroupList: React.FC<{
   if (data?.length === 0) {
     return (
       <View className="py-4 ">
-        <Text className="text-center">No Result Found</Text>
+        <Text className="text-center ">No Result Found</Text>
       </View>
     );
   }
@@ -118,7 +126,12 @@ const styles = StyleSheet.create({
   communityImage: {
     width: 46,
     height: 46,
-    borderRadius: 200,
+    borderRadius: 360,
+  },
+  communityPlaceHolderImage: {
+    width: 46,
+    height: 46,
+    borderRadius: 360,
   },
   textContainer: {
     flexDirection: "row",
@@ -143,6 +156,8 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     borderRadius: 360,
+    borderWidth: 1,
+    borderColor: "#d4d4d4",
   },
   badgeWrapper: {
     position: "absolute",

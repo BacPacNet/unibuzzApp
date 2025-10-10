@@ -3,13 +3,17 @@ import { ActivityIndicator, Text, TextInput, View } from "react-native";
 import { FlatList } from "react-native-actions-sheet";
 import { NewGroupUserListItem } from "../UserList";
 import { Users } from "@/types/connections";
-import { useCommunityUsers } from "@/services/community";
+import {
+  useCommunityFilteredUsers,
+  useCommunityUsers,
+} from "@/services/community";
 
 type Props = {
   setSelectedUsers: (value: Users[]) => void;
   selectedUsers: Users[];
   communityId: string;
   myUserId: string;
+  communityGroupId?: string;
 };
 
 const SelectCommunityUsersBottomSheet = ({
@@ -17,6 +21,7 @@ const SelectCommunityUsersBottomSheet = ({
   setSelectedUsers,
   communityId,
   myUserId,
+  communityGroupId,
 }: Props) => {
   const [searchInput, setSearchInput] = useState("");
   const selectedUserIds = selectedUsers.map((user) => user?.users_id || "");
@@ -27,7 +32,12 @@ const SelectCommunityUsersBottomSheet = ({
     hasNextPage: communityHasNextPage,
     isFetchingNextPage: communityIsFetchingNextPage,
     fetchNextPage: communityFetchNextPage,
-  } = useCommunityUsers(communityId, true, searchInput);
+  } = useCommunityFilteredUsers(
+    communityId,
+    false,
+    searchInput,
+    communityGroupId
+  );
 
   const communityUsers =
     communityUsersData?.pages

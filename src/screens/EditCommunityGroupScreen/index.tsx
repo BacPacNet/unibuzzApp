@@ -240,6 +240,7 @@ const EditCommunityGroupScreen = () => {
         universityName: communityData?.name,
         communityId: communityId,
         isEditGroup: true,
+        communityGroupId: communityGroups?._id,
       },
     });
   };

@@ -1,11 +1,21 @@
 import SelectUniversityDropdownBottomSheet from "@/components/atoms/SelectUniversityDropDownBottomSheet";
 import { FormInput } from "@/components/atoms/FormInput";
-import { Text, View, StyleSheet, ScrollView } from "react-native";
+import {
+  Text,
+  View,
+  StyleSheet,
+  ScrollView,
+  TouchableOpacity,
+} from "react-native";
 import BackHeader from "@/components/atoms/BackHeader";
 import ReusableButton from "@/components/atoms/ReusableButton";
 import CommunityLogo from "@/components/atoms/LogoHolder";
 import { useHandleUniversityEmailVerificationGenerate } from "@/services/auth";
 import { useWatch } from "react-hook-form";
+import { useNavigation } from "@react-navigation/native";
+import { RootStackParamList } from "@/types/navigation";
+import { StackNavigationProp } from "@react-navigation/stack";
+import { screenName } from "@/constant/screenName";
 
 interface Props {
   control: any;
@@ -29,6 +39,8 @@ const UniversitySelect = ({
   universityName,
 }: Props) => {
   const email = useWatch({ control, name: "email" });
+  const universityId = useWatch({ control, name: "universityId" });
+  const navigation = useNavigation<StackNavigationProp<RootStackParamList>>();
 
   const {
     mutateAsync: generateUniversityEmailOTP,
@@ -38,12 +50,21 @@ const UniversitySelect = ({
 
   const handleUniversityEmailSendCode = async () => {
     try {
-      const data = { email: email };
+      const data = { email: email, universityId };
       await generateUniversityEmailOTP(data);
       handleSubmit(onValidSubmit)();
     } catch (error) {
       console.log(error);
     }
+  };
+
+  const handleHelpVerifying = () => {
+    navigation.navigate("InfoStackScreen", {
+      screen: "FeedBackScreen",
+      params: {
+        from: screenName.UniversityVerification,
+      },
+    });
   };
   return (
     <ScrollView
@@ -64,6 +85,14 @@ const UniversitySelect = ({
           label="University"
         />
 
+        <TouchableOpacity onPress={handleHelpVerifying}>
+          <Text
+            style={styles.helpText}
+            className=" text-xs text-primary-500 font-semibold decoration-dotted underline underline-offset-2"
+          >
+            Need help verifying?
+          </Text>
+        </TouchableOpacity>
         <FormInput
           label="University Email"
           placeholder="Enter your email"
@@ -110,7 +139,7 @@ const styles = StyleSheet.create({
 
     display: "flex",
     flexDirection: "column",
-    gap: 16,
+    gap: 0,
   },
   title: {
     fontSize: 20,
@@ -127,6 +156,9 @@ const styles = StyleSheet.create({
     marginTop: 64,
     paddingBottom: "8%",
     paddingHorizontal: 16,
+  },
+  helpText: {
+    marginBottom: 32,
   },
 });
 

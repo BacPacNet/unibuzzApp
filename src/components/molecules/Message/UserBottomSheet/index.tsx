@@ -1,7 +1,7 @@
 import { useUsersProfileForConnections } from "@/services/users";
 import { getUserProfileStore } from "@/storage/user";
 import { useState } from "react";
-import { View, TextInput } from "react-native";
+import { View, TextInput, Text } from "react-native";
 import { UserSelectCard } from "../UserSelectCard";
 import { FlatList } from "react-native-actions-sheet";
 import { Users } from "@/types/connections";
@@ -11,6 +11,7 @@ type Props = {
   setSelectedUsers: (users: Users | Users[] | any) => void;
   isMultiAllowed: boolean;
   hideBottomSheet?: () => void;
+  chatId?: string;
 };
 
 export const AllUserSelectBottomSheet = ({
@@ -18,6 +19,7 @@ export const AllUserSelectBottomSheet = ({
   setSelectedUsers,
   isMultiAllowed,
   hideBottomSheet,
+  chatId = "",
 }: Props) => {
   const userProfileData = getUserProfileStore();
   const [searchInput, setSearchInput] = useState("");
@@ -28,7 +30,17 @@ export const AllUserSelectBottomSheet = ({
     isFetchingNextPage,
     hasNextPage,
     isLoading: isUserProfilesLoading,
-  } = useUsersProfileForConnections(searchInput, 10, true);
+  } = useUsersProfileForConnections(
+    searchInput,
+    10,
+    true,
+    "",
+    [],
+    [],
+    [],
+    [],
+    chatId
+  );
 
   const userProfiles =
     userProfilesData?.pages
@@ -66,6 +78,7 @@ export const AllUserSelectBottomSheet = ({
         data={userProfiles}
         style={{ minHeight: 400 }}
         keyExtractor={(item) => item._id}
+        maxToRenderPerBatch={20}
         renderItem={({ item }) => (
           <View className="p-3">
             <UserSelectCard
@@ -80,6 +93,11 @@ export const AllUserSelectBottomSheet = ({
           if (hasNextPage && !isFetchingNextPage) fetchNextPage();
         }}
         onEndReachedThreshold={0.5}
+        ListEmptyComponent={
+          <Text className="text-neutral-500 p-2 text-center">
+            No User found.
+          </Text>
+        }
       />
     </View>
   );

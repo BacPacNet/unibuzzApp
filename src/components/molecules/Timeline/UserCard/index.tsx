@@ -52,6 +52,7 @@ const UserCard: React.FC<UserCardProps> = ({
   major,
   occupation,
   affiliation,
+
   onNavigate,
   toShowOption = false,
   handleDelete,
@@ -77,8 +78,12 @@ const UserCard: React.FC<UserCardProps> = ({
             {firstName} {lastName}
           </Text>
           <View className="flex">
-            <Text style={styles.userDetails}>{studyYear || occupation}</Text>
-            <Text style={styles.userDetails}>{major || affiliation}</Text>
+            <Text style={styles.userDetails}>
+              {isStudent ? studyYear : occupation}
+            </Text>
+            <Text style={styles.userDetails}>
+              {isStudent ? major : affiliation}
+            </Text>
           </View>
         </TouchableOpacity>
 
