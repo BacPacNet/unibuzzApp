@@ -14,6 +14,7 @@ import { IsUniversityVerified } from "@/utils";
 import { userTypeEnum } from "@/types/register";
 import ReusableButton from "@/components/atoms/ReusableButton";
 import { screenName } from "@/constant/screenName";
+import ProfileCommunityHolder from "../ProfileCommunityHolder";
 
 type Props = {
   firstName: string;
@@ -43,6 +44,15 @@ type Props = {
   country?: string;
   role: string;
   IsUniversityVerified: boolean;
+
+  communities: {
+    _id: string;
+    name: string;
+    logo: string;
+    isVerifiedMember: boolean;
+    isCommunityAdmin: boolean;
+  }[];
+  activeUniversityName: string;
 };
 type NavigationProp = StackNavigationProp<RootStackParamList, "Profile">;
 export const FlatListProfileHeaderPart = ({
@@ -68,6 +78,8 @@ export const FlatListProfileHeaderPart = ({
   study_year,
   role,
   IsUniversityVerified,
+  communities,
+  activeUniversityName,
 }: Props) => {
   const userData = useMemo(() => getUserStore(), []);
   const { navigate } = useNavigation<NavigationProp>();
@@ -112,24 +124,6 @@ export const FlatListProfileHeaderPart = ({
           <Text className="text-neutral-500 text-xs">{bio}</Text>
         ) : null}
 
-        <View style={styles.innerContainer}>
-          <CommunityLogo logoUrl={logos || ""} variant="large" />
-          <View style={styles.textContainer}>
-            <Text
-              style={[styles.communityName]}
-              numberOfLines={1}
-              ellipsizeMode="tail"
-            >
-              {university_name}
-            </Text>
-
-            {IsUniversityVerified ? (
-              <Badge width={12} height={12} style={styles.badge} />
-            ) : (
-              <Text></Text>
-            )}
-          </View>
-        </View>
         <View className="flex flex-row gap-4">
           <TouchableOpacity
             onPress={() => handleNavigate("following")}
@@ -148,6 +142,41 @@ export const FlatListProfileHeaderPart = ({
               {followers?.length || 0} Followers
             </Text>
           </TouchableOpacity>
+        </View>
+
+        <View>
+          {communities
+            ?.slice()
+            .sort((a, b) => {
+              const aIsActive =
+                activeUniversityName.toString() === a.name.toString();
+              const bIsActive =
+                activeUniversityName.toString() === b.name.toString();
+
+              const aIsAdmin = a.isCommunityAdmin;
+              const bIsAdmin = b.isCommunityAdmin;
+
+              const aIsVerified = a.isVerifiedMember;
+              const bIsVerified = b.isVerifiedMember;
+
+              if (aIsActive !== bIsActive) return aIsActive ? -1 : 1;
+              if (aIsAdmin !== bIsAdmin) return aIsAdmin ? -1 : 1;
+              if (aIsVerified !== bIsVerified) return aIsVerified ? -1 : 1;
+
+              return 0;
+            })
+            .map((community) => (
+              <ProfileCommunityHolder
+                key={community._id}
+                isActive={
+                  activeUniversityName.toString() === community.name.toString()
+                }
+                logo={community.logo}
+                name={community.name}
+                isVerified={community.isVerifiedMember}
+                isCommunityAdmin={community.isCommunityAdmin}
+              />
+            ))}
         </View>
 
         <ProfileInfo

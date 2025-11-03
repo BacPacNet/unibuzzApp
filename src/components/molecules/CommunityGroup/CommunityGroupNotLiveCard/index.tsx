@@ -15,7 +15,7 @@ import { useNavigation } from "@react-navigation/native";
 import ReusableButton from "@/components/atoms/ReusableButton";
 
 type CommunityGroupNotLiveCardProps = {
-  communityAdminId: string;
+  communityAdminId: string[];
   communityGroupId: string;
   communityGroupAdminId: string;
   notificationType: string;
@@ -48,6 +48,14 @@ const CommunityGroupNotLiveCard = ({
   const { mutate: joinGroup, isPending: isJoinGroupPending } =
     useJoinCommunityGroup();
 
+  const isCommunityAdminId = communityAdminId?.includes(
+    userData?.id?.toString() || ""
+  );
+
+  const filteredCommunityId = communityAdminId?.filter(
+    (id) => id == userData?.id?.toString()
+  );
+
   const handleAcceptInvite = () => (e: GestureResponderEvent) => {
     e.stopPropagation?.();
     if (!communityGroupId) return;
@@ -77,7 +85,7 @@ const CommunityGroupNotLiveCard = ({
               status,
               notificationId,
               communityGroupId: communityGroupId,
-              adminId: communityAdminId,
+              adminId: filteredCommunityId[0],
               userId: communityGroupAdminId,
               text:
                 status == notificationStatusEnum.accepted
@@ -115,7 +123,7 @@ const CommunityGroupNotLiveCard = ({
       </View>
 
       <View style={styles.actions}>
-        {userData?.id?.toString() == communityAdminId?.toString() &&
+        {isCommunityAdminId &&
         notificationType == notificationRoleAccess.OFFICIAL_GROUP_REQUEST ? (
           <View style={styles.actionRow}>
             <ReusableButton
@@ -135,7 +143,7 @@ const CommunityGroupNotLiveCard = ({
           </View>
         ) : notificationType == notificationRoleAccess.GROUP_INVITE &&
           notificationStatus == notificationStatusEnum.default &&
-          userData?.id?.toString() !== communityGroupAdminId?.toString() ? (
+          !isCommunityAdminId ? (
           <View style={styles.actionRow}>
             <ReusableButton
               buttonText="Accept Request"

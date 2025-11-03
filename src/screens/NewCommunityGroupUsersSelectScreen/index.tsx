@@ -30,11 +30,16 @@ import {
   useCommunityUsers,
 } from "@/services/community";
 import { FONTS } from "@/constants/fonts";
+import CustomSwitch from "@/components/atoms/CustomSwitch";
+import Badge from "@/assets/badge.svg";
 
 const NewCommunityGroupUsersSelectScreen = ({ route }: any) => {
   const universityName = route?.params?.universityName || "";
   const communityId = route?.params?.communityId || "";
   const isEditGroup = route?.params?.isEditGroup || false;
+  const isCommunityGroupPrivate =
+    route?.params?.isCommunityGroupPrivate || false;
+
   const communityGroupId = route?.params?.communityGroupId || "";
   const navigate = useNavigation();
   const {
@@ -63,6 +68,7 @@ const NewCommunityGroupUsersSelectScreen = ({ route }: any) => {
   const community = watch("community");
 
   const userProiledata = getUserProfileStore();
+  const [fetchVerifiedUsers, setFetchVerifiedUsers] = useState(false);
 
   const { data: communityData } = useGetCommunity(community.id);
   //   const {
@@ -77,7 +83,7 @@ const NewCommunityGroupUsersSelectScreen = ({ route }: any) => {
     hasNextPage,
     isFetchingNextPage,
     fetchNextPage,
-  } = useCommunityFilteredUsers(communityId, false, "");
+  } = useCommunityFilteredUsers(communityId, fetchVerifiedUsers, "");
 
   const communityUsers =
     communityUsersData?.pages
@@ -117,6 +123,7 @@ const NewCommunityGroupUsersSelectScreen = ({ route }: any) => {
   const occupationActionSheetRef = useRef<ActionSheetRef>(null);
   const affiliationActionSheetRef = useRef<ActionSheetRef>(null);
   const universityActionSheetRef = useRef<ActionSheetRef>(null);
+  const communityGroupAccess = watch("communityGroupAccess");
 
   const [searchInput, setSearchInput] = useState<string>("");
   const [showbulk, setShowBulk] = useState(false);
@@ -197,10 +204,29 @@ const NewCommunityGroupUsersSelectScreen = ({ route }: any) => {
     setSelectedType(selectedTypeState);
   }, []);
 
+  useEffect(() => {
+    if (isCommunityGroupPrivate) {
+      setFetchVerifiedUsers(true);
+    }
+  }, [isCommunityGroupPrivate]);
+
   return (
     <ScrollView style={styles.container}>
       <BackHeader label={isEditGroup ? "Edit Group" : "Create Group"} />
       <View style={styles.paddingContainer}>
+        <View style={styles.switchContainer}>
+          <View style={styles.leftSection}>
+            <Badge width={16} height={16} style={styles.badge} />
+            <Text style={styles.text}>Show verified members only</Text>
+          </View>
+          <CustomSwitch
+            value={fetchVerifiedUsers}
+            onValueChange={setFetchVerifiedUsers}
+            disabled={
+              communityGroupAccess === "Private" || isCommunityGroupPrivate
+            }
+          />
+        </View>
         <Text style={styles.inputLabels}>Add Individuals</Text>
 
         <View style={styles.individualsContainer}>
@@ -349,6 +375,7 @@ const NewCommunityGroupUsersSelectScreen = ({ route }: any) => {
           communityId={communityId}
           myUserId={userProiledata?.users_id || ""}
           communityGroupId={communityGroupId}
+          fetchVerifiedUsers={fetchVerifiedUsers}
         />
       </ActionSheet>
       <ActionSheet
@@ -513,5 +540,34 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     gap: 8,
+  },
+
+  //switch part
+  switchContainer: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    gap: 8,
+    borderWidth: 1,
+    borderColor: "#e5e5e5",
+    borderRadius: 8,
+    padding: 8,
+    width: "100%",
+    marginBottom: 16,
+  },
+  leftSection: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
+  },
+  badge: {
+    width: 16,
+    height: 16,
+    minWidth: 16,
+    resizeMode: "contain",
+  },
+  text: {
+    fontSize: 12,
+    color: "#404040",
   },
 });

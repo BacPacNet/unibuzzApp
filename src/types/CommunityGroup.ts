@@ -82,7 +82,7 @@ export interface CommunityGroupType {
       imageUrl: string;
       publicId: string;
     };
-    adminId: string;
+    adminId: string[];
     name: string;
   };
   title: string;

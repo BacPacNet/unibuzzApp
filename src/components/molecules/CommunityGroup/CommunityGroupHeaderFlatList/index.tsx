@@ -141,7 +141,7 @@ const FlatListCommunityHeader: React.FC<Props> = ({
       communityId: communityGroups?.communityId,
       adminId: adminId,
       groupName: communityGroups?.title,
-      communityAdminId: communityGroups?.communityId?.adminId as string,
+      communityAdminId: communityGroups?.communityId?.adminId as string[],
       isOfficialGroup:
         communityGroups?.communityGroupType === CommunityGroupTypeEnum.OFFICIAL,
     });
@@ -190,11 +190,6 @@ const FlatListCommunityHeader: React.FC<Props> = ({
                     />
                   ) : (
                     <View style={styles.universityPlaceHolder}>
-                      {/* <UniversityLogoPlaceHolder
-                        width={40}
-                        height={40}
-                        style={styles.communityImage}
-                      /> */}
                       <CommunityIcon
                         width={30}
                         height={30}
@@ -282,7 +277,10 @@ const FlatListCommunityHeader: React.FC<Props> = ({
           ) : null}
           <ReusableButton
             onPress={() => handleNavigateToMembersScreen()}
-            disabled={!isUserJoinedCommunityGroup}
+            disabled={
+              !isUserJoinedCommunityGroup &&
+              communityGroups?.status !== "pending"
+            }
             variant="border"
             size={120}
             buttonText={` ${totalCommunityGroupMember} Members`}

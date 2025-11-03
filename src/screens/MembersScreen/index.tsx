@@ -29,7 +29,7 @@ const MembersScreen = ({ route }: any) => {
   const communityGroupId = route?.params?.communityGroupId ?? null;
   const communityId = route?.params?.communityId ?? null;
   const CommunityGroupMember = route?.params?.CommunityGroupMember ?? null;
-  const communityAdminId = route?.params?.communityAdminId ?? null;
+  const communityAdminId = route?.params?.communityAdminId ?? [];
   const isOfficialGroup = route?.params?.isOfficialGroup ?? false;
   const groupName = route?.params?.groupName ?? "Community";
   const adminId = route?.params?.adminId ?? null;
@@ -128,9 +128,10 @@ const MembersScreen = ({ route }: any) => {
                 affiliation={item.affiliation}
                 handleRemoveClick={(id: string) => handleRemoveUser(id)}
                 isOfficialGroup={isOfficialGroup}
-                isCommunityAdmin={
-                  communityAdminId?.toString() === item?._id?.toString()
-                }
+                isCommunityAdmin={communityAdminId?.includes(
+                  item?._id?.toString()
+                )}
+                isVerifiedUserOfCommunity={item?.isVerified}
                 showRemoveButton={true}
                 forCommunityGroup={true}
               />
@@ -191,9 +192,10 @@ const MembersScreen = ({ route }: any) => {
                 affiliation={item.affiliation}
                 handleRemoveClick={(id: string) => handleRemoveUser(id)}
                 isOfficialGroup={isOfficialGroup}
-                isCommunityAdmin={
-                  communityAdminId?.toString() === item?._id?.toString()
-                }
+                isCommunityAdmin={communityAdminId?.includes(
+                  item?._id?.toString()
+                )}
+                isVerifiedUserOfCommunity={item?.isVerified}
                 showRemoveButton={true}
                 forCommunityGroup={true}
               />
@@ -228,68 +230,12 @@ const MembersScreen = ({ route }: any) => {
     <View style={styles.container}>
       <BackHeader label={groupName} onPress={() => handleBack()} />
 
-      {adminId.toString() !== userProfileData?.users_id?.toString() ? (
-        <View style={styles.paddingContainer} className="   ">
-          <FlatList
-            data={communityGroupMembersData}
-            keyExtractor={(item) => item._id}
-            renderItem={({ item }) => (
-              <MembersUserCard
-                _id={item._id}
-                firstName={item.firstName}
-                lastName={item.lastName}
-                isFollowing={userFollowing?.includes(item._id) || false}
-                isSelfProfile={userProfileData?.users_id === item._id}
-                isViewerAdmin={
-                  adminId.toString() === userProfileData?.users_id?.toString()
-                }
-                isGroupAdmin={item?._id?.toString() === adminId.toString()}
-                currentUserId={userId}
-                role={item.role}
-                profile_dp_imageUrl={item.profileImageUrl}
-                study_year={item.year}
-                major={item.major}
-                occupation={item.occupation}
-                affiliation={item.affiliation}
-                handleRemoveClick={(id: string) => handleRemoveUser(id)}
-                isOfficialGroup={isOfficialGroup}
-                isCommunityAdmin={
-                  communityAdminId?.toString() === item?._id?.toString()
-                }
-                showRemoveButton={true}
-                forCommunityGroup={true}
-              />
-            )}
-            contentContainerStyle={styles.listContainer}
-            onEndReached={handleLoadMore}
-            onEndReachedThreshold={0.5}
-            ListFooterComponent={
-              (isFetchingNextPage || isFetchingCommunityGroupMembers) &&
-              !communityGroupMembersData.length ? (
-                <View className="py-4">
-                  <ActivityIndicator size="small" color="#0000ff" />
-                </View>
-              ) : null
-            }
-            ListEmptyComponent={
-              !isFetchingNextPage &&
-              !isFetchingCommunityGroupMembers &&
-              communityGroupMembersData.length === 0 ? (
-                <View className="py-4">
-                  <Text className="text-center">No Result Found</Text>
-                </View>
-              ) : null
-            }
-          />
-        </View>
-      ) : (
-        <Tabs
-          tabs={dummyTabs}
-          onChange={(index) => {
-            setUserStatus(index === 0 ? status.accepted : status.pending);
-          }}
-        />
-      )}
+      <Tabs
+        tabs={dummyTabs}
+        onChange={(index) => {
+          setUserStatus(index === 0 ? status.accepted : status.pending);
+        }}
+      />
     </View>
   );
 };

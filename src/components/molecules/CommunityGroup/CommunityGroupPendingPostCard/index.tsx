@@ -138,6 +138,7 @@ const PendingPostCard = ({
           isPostVerified={data.isPostVerified}
           isCommunityAdmin={data?.userProfile?.isCommunityAdmin}
           isPostOptionShown={false}
+          communities={data?.userProfile?.communities}
         />
 
         {/* Post Text */}

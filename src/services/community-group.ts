@@ -52,7 +52,7 @@ export async function CreateCommunityGroup(
   return response;
 }
 
-export const useCreateCommunityGroup = () => {
+export const useCreateCommunityGroup = (isCommunityAdmin: boolean) => {
   const cookieValue = getToken() as string;
 
   const queryClient = useQueryClient();
@@ -65,7 +65,17 @@ export const useCreateCommunityGroup = () => {
         queryKey: ["useGetSubscribedCommunties"],
       });
       Toast.hideAll();
-      if (req.isOfficial) {
+
+      if (req.isOfficial && !isCommunityAdmin) {
+        Toast.show(
+          "Your official group has been created and is pending admin approval.",
+          {
+            placement: "top",
+            textStyle: { color: "#220B6A" },
+            normalColor: "#E9E8FF",
+          }
+        );
+      } else if (req.isOfficial && isCommunityAdmin) {
         Toast.show(
           "Your official group has been created and is pending admin approval.",
           {
@@ -75,12 +85,19 @@ export const useCreateCommunityGroup = () => {
           }
         );
       } else {
-        Toast.show("Your casual group has been created.");
+        Toast.show("Your casual group has been created.", {
+          placement: "top",
+          textStyle: { color: "#220B6A" },
+          normalColor: "#E9E8FF",
+        });
       }
     },
     onError: (error: any) => {
       Toast.hideAll();
-      Toast.show(error.response.data.message);
+
+      if (!error.response.data.for) {
+        Toast.show(error.response.data.message);
+      }
     },
   });
 };
@@ -116,7 +133,10 @@ export const useUpdateCommunityGroup = () => {
     },
     onError: (res: any) => {
       Toast.hideAll();
-      Toast.show(res.response.data.message);
+      const err = JSON.parse(res.response.data.message);
+      if (!err.for) {
+        Toast.show(res.response.data.message);
+      }
     },
   });
 };

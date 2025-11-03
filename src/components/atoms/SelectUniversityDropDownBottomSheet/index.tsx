@@ -18,6 +18,12 @@ import ActionSheet, {
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { defaultBottomSheetSnapPoints } from "@/types/constant";
 
+interface University {
+  _id: string;
+  name: string;
+  logo?: string | null;
+}
+
 interface SelectDropdownProps {
   control: any;
   name: string;
@@ -28,6 +34,7 @@ interface SelectDropdownProps {
   rules?: object;
   setValue?: (name: string, value: any) => void;
   isMarginBottom?: boolean;
+  customUniversities?: University[];
 }
 
 const SelectUniversityDropdownBottomSheet: React.FC<SelectDropdownProps> = ({
@@ -40,6 +47,7 @@ const SelectUniversityDropdownBottomSheet: React.FC<SelectDropdownProps> = ({
   rules,
   setValue,
   isMarginBottom = true,
+  customUniversities,
 }) => {
   const [show, setShow] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
@@ -52,7 +60,11 @@ const SelectUniversityDropdownBottomSheet: React.FC<SelectDropdownProps> = ({
     isFetching,
     refetch,
   } = useUniversitySearch(true, searchTerm, 1, 10);
-  const universities = universitiesData?.result?.universities;
+
+  const universities =
+    customUniversities && customUniversities.length > 0
+      ? customUniversities
+      : universitiesData?.result?.universities || [];
 
   return (
     <View style={[isMarginBottom && styles.container]}>
@@ -137,6 +149,7 @@ const SelectUniversityDropdownBottomSheet: React.FC<SelectDropdownProps> = ({
                         setValue && setValue("universityId", item._id);
                         setValue && setValue("communityId", item.communityId);
                         setValue && setValue("universityLogo", item.logo);
+                        setValue && setValue("universityDomain", item.domains);
                         actionSheetRef.current?.hide();
                       }}
                     >

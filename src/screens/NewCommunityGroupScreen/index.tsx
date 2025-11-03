@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
@@ -46,7 +46,8 @@ import { useNewCommunityGroupStatesContext } from "@/context/NewCommunityGroupSt
 import SelectedChip from "@/components/molecules/CreateNewGroup/SelectedChip";
 import ActionSheet, { ActionSheetRef } from "react-native-actions-sheet";
 import ImageOptionSelectBottomSheet from "@/components/molecules/ImageOptionSelectBottomSheet";
-import { handleTakePhoto, pickImage } from "@/utils";
+import { handleTakePhoto, pickImage, scrollToField } from "@/utils";
+import { getUserStore } from "@/storage/user";
 
 type NavigationProp = StackNavigationProp<
   RootStackParamList,
@@ -56,8 +57,9 @@ type NavigationProp = StackNavigationProp<
 const NewCommunityGroupScreen = () => {
   const navigate = useNavigation<NavigationProp>();
   const route = useRoute();
+  const scrollViewRef = useRef<ScrollView>(null);
   const { communityId } = route.params as any;
-
+  const userData = getUserStore();
   // Data fetching
   const { data: communityData, isFetching } = useGetCommunity(communityId);
   const { mutate } = useGetFilteredSubscribedCommunities(communityId);
@@ -68,6 +70,7 @@ const NewCommunityGroupScreen = () => {
     handleSubmit: handleGroupCreate,
     formState: { errors },
     setValue,
+    setError,
     watch,
   } = useForm<CreateCommunityGroupType>({
     defaultValues: {
@@ -82,7 +85,25 @@ const NewCommunityGroupScreen = () => {
       selectedFilters: [],
     },
   });
+
+  type FieldRefs = {
+    title: React.RefObject<View>;
+    description: React.RefObject<View>;
+    communityGroupAccess: React.RefObject<View>;
+    communityGroupType: React.RefObject<View>;
+    communityGroupLabel: React.RefObject<View>;
+  };
+
+  const fieldRefs: FieldRefs = {
+    title: useRef<View>(null),
+    description: useRef<View>(null),
+    communityGroupAccess: useRef<View>(null),
+    communityGroupType: useRef<View>(null),
+    communityGroupLabel: useRef<View>(null),
+  };
+
   const communityGroupType = watch("communityGroupType");
+  const communityGroupAccess = watch("communityGroupAccess");
 
   // Custom hooks
   const {
@@ -97,7 +118,11 @@ const NewCommunityGroupScreen = () => {
     setCreateSelectedFilters,
     isPending,
     handleCreateGroup,
-  } = useGroupCreation(communityId, communityData);
+  } = useGroupCreation(
+    communityId,
+    communityData,
+    communityData?.adminId.includes(userData?.id?.toString() || "") || false
+  );
   const { setSelectedUsersState, selectedUsersState, resetFilters } =
     useNewCommunityGroupStatesContext();
 
@@ -130,8 +155,15 @@ const NewCommunityGroupScreen = () => {
       params: {
         universityName: communityData?.name,
         communityId: communityId,
+        isCommunityGroupPrivate: communityGroupAccess === "Private",
       },
     });
+  };
+
+  const onInvalid = (errors: Record<string, any>) => {
+    const firstErrorField = Object.keys(errors)[0] as keyof FieldRefs;
+
+    scrollToField(firstErrorField, fieldRefs, scrollViewRef);
   };
 
   // Form submission
@@ -170,8 +202,14 @@ const NewCommunityGroupScreen = () => {
               params: { communityId, change: Date.now() },
             });
           },
-          onError: () => {
+          onError: (error: any) => {
             setIsProfileLoading(false);
+            const err = error.response.data;
+
+            if (err.for == "title") {
+              setError("title", { message: err.message });
+              scrollToField(err.for, fieldRefs, scrollViewRef);
+            }
           },
         }
       );
@@ -204,7 +242,7 @@ const NewCommunityGroupScreen = () => {
         behavior={Platform.OS === "ios" ? "padding" : "height"}
         style={styles.keyboardAvoid}
       >
-        <ScrollView>
+        <ScrollView ref={scrollViewRef}>
           <BackHeader label="Manage Group" />
           <View style={styles.content}>
             <ImageUploadSection
@@ -222,6 +260,7 @@ const NewCommunityGroupScreen = () => {
               createSelectedFilters={createSelectedFilters}
               setCreateSelectedFilters={setCreateSelectedFilters}
               isNewGroup={true}
+              fieldRefs={fieldRefs}
             />
 
             <View style={styles.section}>
@@ -273,7 +312,8 @@ const NewCommunityGroupScreen = () => {
 
             <View style={styles.submitButtonContainer}>
               <ReusableButton
-                onPress={handleGroupCreate(onSubmit)}
+                // onPress={handleGroupCreate(onSubmit)}
+                onPress={handleGroupCreate(onSubmit, onInvalid)}
                 buttonText="Create Group"
                 variant="primary"
                 isLoading={isProfileLoading || isPending}

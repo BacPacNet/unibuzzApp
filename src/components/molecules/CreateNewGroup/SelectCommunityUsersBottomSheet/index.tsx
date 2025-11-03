@@ -14,6 +14,7 @@ type Props = {
   communityId: string;
   myUserId: string;
   communityGroupId?: string;
+  fetchVerifiedUsers?: boolean;
 };
 
 const SelectCommunityUsersBottomSheet = ({
@@ -22,6 +23,7 @@ const SelectCommunityUsersBottomSheet = ({
   communityId,
   myUserId,
   communityGroupId,
+  fetchVerifiedUsers,
 }: Props) => {
   const [searchInput, setSearchInput] = useState("");
   const selectedUserIds = selectedUsers.map((user) => user?.users_id || "");
@@ -34,7 +36,7 @@ const SelectCommunityUsersBottomSheet = ({
     fetchNextPage: communityFetchNextPage,
   } = useCommunityFilteredUsers(
     communityId,
-    false,
+    fetchVerifiedUsers,
     searchInput,
     communityGroupId
   );

@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import {
   View,
   Text,
@@ -199,6 +199,33 @@ export default function ProfileEdit() {
     }
   };
 
+  const mergedUniversities = useMemo(() => {
+    const joinedUniversity = userProfile?.profile?.communities || [];
+    const veriFiedEmails = userProfile?.profile?.email || [];
+
+    return [
+      ...joinedUniversity.map((u) => ({
+        _id: u._id,
+        name: u.name,
+        UniversityEmail:
+          veriFiedEmails.find((e) => e.communityId === u._id)
+            ?.UniversityEmail || "",
+        logo: u.logo,
+        isVerifiedMember: u.isVerifiedMember || false,
+        isCommunityAdmin: (u as any).isCommunityAdmin || false,
+      })),
+      ...veriFiedEmails
+        .filter((e) => !joinedUniversity.some((u) => u._id === e.communityId))
+        .map((e) => ({
+          _id: e.communityId,
+          name: e.UniversityName,
+          UniversityEmail: e.UniversityEmail,
+          logo: (e as any).logo || "",
+          isVerifiedMember: false,
+        })),
+    ];
+  }, [userProfile]);
+
   return (
     <View style={styles.container}>
       <KeyboardAvoidingView
@@ -363,6 +390,7 @@ export default function ProfileEdit() {
                 icon="single"
                 search={true}
                 rules={{ required: "University is required!" }}
+                customUniversities={mergedUniversities as any}
               />
 
               {watch("university_name") && (
