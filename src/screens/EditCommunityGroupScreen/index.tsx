@@ -158,7 +158,7 @@ const EditCommunityGroupScreen = () => {
   }, [communityGroups]);
 
   const handleNavigateToFilterScreen = () => {
-    navigate.navigate("manageGroupStack", {
+    navigate.navigate("Groups", {
       screen: "NewCommunityGroupFilterScreen",
     });
   };
@@ -255,7 +255,7 @@ const EditCommunityGroupScreen = () => {
   };
   useCustomBackHandler(handleGOBack);
   const handleNavigateToUsersSelectScreen = () => {
-    navigate.navigate("manageGroupStack", {
+    navigate.navigate("Groups", {
       screen: "NewCommunityGroupUsersSelectScreen",
       params: {
         universityName: communityData?.name,

@@ -144,13 +144,13 @@ const NewCommunityGroupScreen = () => {
 
   // Navigation handlers
   const handleNavigateToFilterScreen = () => {
-    navigate.navigate("manageGroupStack", {
+    navigate.navigate("Groups", {
       screen: "NewCommunityGroupFilterScreen",
     });
   };
 
   const handleNavigateToUsersSelectScreen = () => {
-    navigate.navigate("manageGroupStack", {
+    navigate.navigate("Groups", {
       screen: "NewCommunityGroupUsersSelectScreen",
       params: {
         universityName: communityData?.name,
@@ -197,7 +197,7 @@ const NewCommunityGroupScreen = () => {
             resetFilters();
             setIsProfileLoading(false);
 
-            navigate.navigate("manageGroupStack", {
+            navigate.navigate("Groups", {
               screen: "SearchCommunityGroupScreen",
               params: { communityId, change: Date.now() },
             });

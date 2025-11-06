@@ -42,7 +42,8 @@ export type RootStackParamList = {
     filterPostBy?: string;
   };
 
-  manageGroupStack: any;
+  //   manageGroupStack: any;
+  Groups: any;
   SearchCommunityGroupScreen: {
     communityId: any;
   };

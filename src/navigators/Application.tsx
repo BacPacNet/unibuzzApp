@@ -38,7 +38,10 @@ import ProfileStack from "./ProfileStack";
 import { SafeAreaView } from "react-native-safe-area-context";
 import LeftSideSideBar from "@/components/organism/LeftSideSideBar";
 import CommunityScreen from "@/screens/CommunityScreen";
-import { CommunityProvider } from "@/context/CommunityProvider/CommunityProvider";
+import {
+  CommunityProvider,
+  useCommunityContext,
+} from "@/context/CommunityProvider/CommunityProvider";
 import CommunityGroupScreen from "@/screens/CommunityGroupScreen";
 
 import ManageGroups from "./ManageGroups";
@@ -61,6 +64,7 @@ import AboutUs from "@/screens/AboutUs";
 import { SafeScreen } from "@/components/template";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useTabBarVisibility } from "@/hooks/useTabBarVisibility";
+import { getSelectedCommunityGroup } from "@/storage/selected-community-group";
 
 const Stack = createStackNavigator<RootStackParamList>();
 const Tab = createBottomTabNavigator<RootStackParamList>();
@@ -72,6 +76,7 @@ function ApplicationNavigator() {
   const [isAppFirstLaunched, setIsAppFirstLaunched] = useState<boolean | null>(
     null
   );
+
   const userProfileStore = getUserProfileStore();
   const user = getUserStore();
 
@@ -103,6 +108,7 @@ function ApplicationNavigator() {
     "Messages",
     "Notifications",
     "BuzzBot",
+    "Groups",
   ] as const;
 
   type TabName = (typeof knownTabNames)[number];
@@ -113,6 +119,8 @@ function ApplicationNavigator() {
 
   function TabsGroup() {
     const { isTabBarVisible } = useHeader();
+    const { selectedCommunityGroupLogo, selectedCommunityId } =
+      useCommunityContext();
 
     const { data: unreadNotificationCount } =
       useGetUserNotificationTotalCount();
@@ -123,9 +131,15 @@ function ApplicationNavigator() {
       () =>
         getTabIcons(
           unreadNotificationCount || 0,
-          Number(userUnreadMessagesCount?.messageTotalCount) || 0
+          Number(userUnreadMessagesCount?.messageTotalCount) || 0,
+          selectedCommunityGroupLogo || "",
+          selectedCommunityId || null
         ),
-      [unreadNotificationCount, userUnreadMessagesCount]
+      [
+        unreadNotificationCount,
+        userUnreadMessagesCount,
+        selectedCommunityGroupLogo,
+      ]
     );
     return (
       <Tab.Navigator
@@ -171,6 +185,22 @@ function ApplicationNavigator() {
           name="Home"
           component={HomeStack}
           //   options={{ unmountOnBlur: false }}
+        />
+        <Tab.Screen
+          name="Groups"
+          component={ManageGroups}
+          listeners={({ navigation }) => ({
+            tabPress: (e) => {
+              e.preventDefault();
+              navigation.navigate("Groups", {
+                screen: "SearchCommunityGroupScreen",
+
+                params: {
+                  communityId: selectedCommunityId,
+                },
+              });
+            },
+          })}
         />
         <Tab.Screen
           name="Connection"
@@ -223,11 +253,6 @@ function ApplicationNavigator() {
           }}
         />
 
-        <Tab.Screen
-          name="manageGroupStack"
-          component={ManageGroups}
-          options={{ tabBarButton: () => null }}
-        />
         {/* <Tab.Screen
           name="SearchCommunityGroupScreen"
           component={SearchCommunityGroupScreen}

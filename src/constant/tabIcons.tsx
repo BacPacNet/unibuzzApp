@@ -7,13 +7,22 @@ import {
   MailSolid,
   BellNotificationSolid,
 } from "iconoir-react-native";
-import { Text, View } from "react-native";
+import { Image, Text, View } from "react-native";
+import UniversityLogoPlaceHolder from "@/assets/LogoCircle.svg";
 
 export const getTabIcons = (
   unreadCount: number = 0,
-  unreadMessagesCount: number = 0
+  unreadMessagesCount: number = 0,
+  logo: string = "",
+  communityId: string | null = null
 ): Record<
-  "Home" | "Example" | "Connection" | "Messages" | "Notifications" | "BuzzBot",
+  | "Home"
+  | "Example"
+  | "Connection"
+  | "Messages"
+  | "Notifications"
+  | "BuzzBot"
+  | "Groups",
   (focused: boolean) => JSX.Element
 > =>
   ({
@@ -24,6 +33,29 @@ export const getTabIcons = (
         width={28}
         color="white"
       />
+    ),
+    Groups: (focused: boolean) => (
+      <View
+        style={{
+          width: 28,
+          height: 28,
+          borderRadius: 28 / 2,
+        }}
+      >
+        {logo ? (
+          <Image
+            source={{ uri: logo }}
+            style={{ width: 28, height: 28 }}
+            resizeMode="contain"
+          />
+        ) : (
+          <UniversityLogoPlaceHolder
+            width={28}
+            height={28}
+            style={{ width: 28, height: 28, borderRadius: 28 / 2 }}
+          />
+        )}
+      </View>
     ),
     Example: (focused: boolean) =>
       focused ? (

@@ -23,13 +23,17 @@ import { useCommunityFilterContext } from "@/context/CommunityFilterProvider/Com
 import ActionSheet, { ActionSheetRef } from "react-native-actions-sheet";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import SearchCommunityFilterBottomSheet from "@/components/molecules/SearchCommunity/SearchCommunityFilterBottomSheet";
-
-import PlusCircleButton from "@/components/atoms/PlusCircle";
 import SortCommunityBottomSheet from "@/components/molecules/SearchCommunity/SortCommunityBottomSheet";
 import { getUserProfileStore } from "@/storage/user";
 import { Community } from "@/types/Community";
 import { Toast } from "react-native-toast-notifications";
-import { CommunityGroupTypeEnum } from "@/types/CommunityGroup";
+import { CommunityGroupTypeEnum, status } from "@/types/CommunityGroup";
+import TabSwitch from "@/components/molecules/ManageGroup/TabSwitch";
+import CommunityDropdown from "@/components/molecules/LeftSideBar/CommunityDropDown";
+import { useCommunityContext } from "@/context/CommunityProvider/CommunityProvider";
+import { storeSelectedCommunityGroup } from "@/storage/selected-community-group";
+import ReusableButton from "@/components/atoms/ReusableButton";
+import { SearchCommunityGroupTabs } from "@/constant/searchCommunityGroupTabs";
 
 type NavigationProp = StackNavigationProp<
   RootStackParamList,
@@ -46,6 +50,11 @@ const SearchCommunityGroupScreen = () => {
   const userProfileData = getUserProfileStore();
   const [community, setCommunity] = useState<Community>();
   const [refreshing, setRefreshing] = useState(false);
+  const [currTab, setCurrTab] = useState<
+    (typeof SearchCommunityGroupTabs)[keyof typeof SearchCommunityGroupTabs]
+  >(SearchCommunityGroupTabs.Joined);
+  const { setSelectedCommunityGroupLogo, setSelectedCommunityId } =
+    useCommunityContext();
 
   const isUserVerifiedForCommunity: boolean =
     userProfileData?.email?.some(
@@ -57,6 +66,7 @@ const SearchCommunityGroupScreen = () => {
 
   const { data: subscribedCommunitiesForUser, isLoading } =
     useGetSubscribedCommunities();
+
   const {
     mutate,
     data: subscribedCommunities,
@@ -98,12 +108,73 @@ const SearchCommunityGroupScreen = () => {
         placement: "top",
       });
     }
-    navigation.navigate("manageGroupStack", {
+    navigation.navigate("Groups", {
       screen: "NewCommunityGroupScreen",
 
       params: { communityId: communityId },
     });
   };
+
+  const filterCommunityGroups = () => {
+    const subscribedCommunitiesAllGroups = useMemo(() => {
+      const groups = subscribedCommunities?.communityGroups || [];
+      return groups.filter((group: { title: string }) =>
+        group.title.toLowerCase().includes(searchQuery.toLowerCase())
+      );
+    }, [subscribedCommunities, searchQuery]);
+
+    const joinedSubscribedCommunitiesGroup = useMemo(() => {
+      const groups = subscribedCommunities?.communityGroups || [];
+
+      return groups
+        .filter(
+          (group: { users: any[]; adminUserId: string; title: string }) =>
+            group.adminUserId === userProfileData?.users_id ||
+            group.users?.some(
+              (u: { _id: string; status: string }) =>
+                u._id === userProfileData?.users_id &&
+                u.status === status.accepted
+            )
+        )
+        .filter((group: { title: string }) =>
+          group.title.toLowerCase().includes(searchQuery.toLowerCase())
+        );
+    }, [userProfileData, subscribedCommunities, searchQuery]);
+
+    const subscribedCommunitiesMyGroup = useMemo(() => {
+      const groups = subscribedCommunities?.communityGroups || [];
+
+      return groups
+        .filter(
+          (group: { adminUserId: string; title: string }) =>
+            group.adminUserId === userProfileData?.users_id
+        )
+        .filter((group: { title: string }) =>
+          group.title.toLowerCase().includes(searchQuery.toLowerCase())
+        );
+    }, [userProfileData, subscribedCommunities, searchQuery]);
+
+    const data = useMemo(() => {
+      switch (currTab) {
+        case SearchCommunityGroupTabs.Joined:
+          return joinedSubscribedCommunitiesGroup;
+        case SearchCommunityGroupTabs.Create:
+          return subscribedCommunitiesMyGroup;
+        case SearchCommunityGroupTabs.All:
+        default:
+          return subscribedCommunitiesAllGroups;
+      }
+    }, [
+      currTab,
+      joinedSubscribedCommunitiesGroup,
+      subscribedCommunitiesMyGroup,
+      subscribedCommunitiesAllGroups,
+    ]);
+
+    return data;
+  };
+
+  const communityGroups = filterCommunityGroups();
 
   useEffect(() => {
     const data = {
@@ -122,6 +193,24 @@ const SearchCommunityGroupScreen = () => {
     change,
     selectedLabelMain,
   ]);
+
+  const handleCommunityGroupClick = (communityId: string, logo: string) => {
+    setCommunity(
+      subscribedCommunitiesForUser?.find(
+        (community) => community._id === communityId
+      )
+    );
+
+    setSelectedCommunityGroupLogo(logo);
+    setSelectedCommunityId(communityId);
+    storeSelectedCommunityGroup(communityId, logo);
+
+    navigation.navigate("Groups", {
+      screen: "SearchCommunityGroupScreen",
+
+      params: { communityId: communityId },
+    });
+  };
 
   useEffect(() => {
     if (communityId && subscribedCommunitiesForUser) {
@@ -155,7 +244,49 @@ const SearchCommunityGroupScreen = () => {
       }
       className="flex-1 bg-white pb-20"
     >
-      <View className="p-4 flex-row items-center gap-2 ">
+      <View
+        style={{
+          display: "flex",
+          flexDirection: "row",
+          alignItems: "center",
+          justifyContent: "space-between",
+          paddingHorizontal: 16,
+          paddingTop: 20,
+        }}
+      >
+        <View style={{ flex: 1, marginRight: 12 }}>
+          <CommunityDropdown
+            selectedCommunityImage={
+              community?.communityLogoUrl?.imageUrl as string
+            }
+            subscribedCommunities={subscribedCommunitiesForUser as Community[]}
+            handleCommunityGroupClick={handleCommunityGroupClick}
+            placeholder="Select Community"
+            iconSize={16}
+            logoSize={48}
+            isLableShown={false}
+          />
+        </View>
+        <View style={{ flexShrink: 0, width: "80%" }}>
+          <TabSwitch
+            currTab={currTab}
+            setCurrTab={(value: string) =>
+              setCurrTab(
+                value as (typeof SearchCommunityGroupTabs)[keyof typeof SearchCommunityGroupTabs]
+              )
+            }
+            tabs={[
+              SearchCommunityGroupTabs.All,
+              SearchCommunityGroupTabs.Joined,
+              SearchCommunityGroupTabs.Create,
+            ]}
+          />
+        </View>
+      </View>
+      <View
+        style={styles.searchContainer}
+        className=" flex-row items-center gap-2 "
+      >
         <View className="flex-1 relative ">
           <TextInput
             value={searchQuery}
@@ -188,18 +319,22 @@ const SearchCommunityGroupScreen = () => {
           {sort?.length > 0 && <Text style={styles.dot}>.</Text>}
         </TouchableOpacity>
       </View>
-      <TouchableOpacity
-        onPress={() => handleNavigateToNewCommunityGroupScreen()}
-        style={styles.plusCircleContainer}
-      >
-        <PlusCircleButton
-          onPress={() => handleNavigateToNewCommunityGroupScreen()}
-        />
-        <Text style={styles.createGroupPlusText}>Create Group</Text>
-      </TouchableOpacity>
+      {currTab === SearchCommunityGroupTabs.Create && (
+        <View style={styles.createGroupButtonContainer}>
+          <ReusableButton
+            buttonText="Create Group"
+            onPress={() => handleNavigateToNewCommunityGroupScreen()}
+            variant="primary"
+            size="w-full"
+            height="medium"
+          />
+        </View>
+      )}
+
       <View style={styles.listContainer}>
         <SearchCommunityGroupList
-          data={subscribedCommunities?.communityGroups}
+          //   data={subscribedCommunities?.communityGroups}
+          data={communityGroups}
           isFetching={isPending}
           handleNavigateToGroup={handleNavigateToGroup}
         />
@@ -241,23 +376,18 @@ const SearchCommunityGroupScreen = () => {
 export default SearchCommunityGroupScreen;
 
 const styles = StyleSheet.create({
-  plusCircleContainer: {
-    display: "flex",
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 10,
-    marginHorizontal: 16,
-    paddingVertical: 16,
-    borderBottomWidth: 1,
-    borderBottomColor: "#E5E7EB",
+  createGroupButtonContainer: {
+    paddingHorizontal: 16,
+
+    paddingVertical: 24,
   },
-  createGroupPlusText: {
-    fontSize: 14,
-    color: "#6B7280",
-    fontWeight: "500",
-    lineHeight: 16,
-  },
+
   listContainer: {
+    paddingHorizontal: 16,
+  },
+  searchContainer: {
+    paddingBottom: 0,
+    paddingTop: 16,
     paddingHorizontal: 16,
   },
   searchInput: {

@@ -5,11 +5,19 @@ const CommunityContext = createContext<{
   setCurrentCommunityId: (value: string) => void;
   currentCommunityGroupId: string;
   setCurrentCommunityGroupId: (value: string) => void;
+  selectedCommunityGroupLogo: string;
+  setSelectedCommunityGroupLogo: (value: string) => void;
+  selectedCommunityId: string;
+  setSelectedCommunityId: (value: string) => void;
 }>({
   currentCommunityId: "",
   setCurrentCommunityId: () => {},
   currentCommunityGroupId: "",
   setCurrentCommunityGroupId: () => {},
+  selectedCommunityGroupLogo: "",
+  setSelectedCommunityGroupLogo: () => {},
+  selectedCommunityId: "",
+  setSelectedCommunityId: () => {},
 });
 
 interface CommunityProviderProps {
@@ -21,6 +29,9 @@ export const CommunityProvider: React.FC<CommunityProviderProps> = ({
 }) => {
   const [currentCommunityId, setCurrentCommunityId] = useState("");
   const [currentCommunityGroupId, setCurrentCommunityGroupId] = useState("");
+  const [selectedCommunityGroupLogo, setSelectedCommunityGroupLogo] =
+    useState("");
+  const [selectedCommunityId, setSelectedCommunityId] = useState("");
 
   return (
     <CommunityContext.Provider
@@ -29,6 +40,10 @@ export const CommunityProvider: React.FC<CommunityProviderProps> = ({
         setCurrentCommunityId,
         currentCommunityGroupId,
         setCurrentCommunityGroupId,
+        selectedCommunityGroupLogo,
+        setSelectedCommunityGroupLogo,
+        selectedCommunityId,
+        setSelectedCommunityId,
       }}
     >
       {children}

@@ -222,7 +222,7 @@ const CommunityScreen = ({ route }: any) => {
   };
 
   const handleBackToGroups = () => {
-    navigation.navigate("manageGroupStack", {
+    navigation.navigate("Groups", {
       screen: "SearchCommunityGroupScreen",
 
       params: { communityId: communityId },
