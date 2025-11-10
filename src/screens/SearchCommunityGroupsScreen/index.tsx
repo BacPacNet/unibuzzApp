@@ -34,6 +34,7 @@ import { useCommunityContext } from "@/context/CommunityProvider/CommunityProvid
 import { storeSelectedCommunityGroup } from "@/storage/selected-community-group";
 import ReusableButton from "@/components/atoms/ReusableButton";
 import { SearchCommunityGroupTabs } from "@/constant/searchCommunityGroupTabs";
+import VerifyToCreateGroupBottomSheet from "@/components/molecules/CommunityGroup/VerifyToCreateGroupBottomSheet";
 
 type NavigationProp = StackNavigationProp<
   RootStackParamList,
@@ -45,6 +46,7 @@ const SearchCommunityGroupScreen = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const filterBottomSheet = useRef<ActionSheetRef>(null);
   const sortBottomSheet = useRef<ActionSheetRef>(null);
+  const verifyToCreateGroupBottomSheet = useRef<ActionSheetRef>(null);
   const navigation = useNavigation<NavigationProp>();
   const insets = useSafeAreaInsets();
   const userProfileData = getUserProfileStore();
@@ -103,10 +105,8 @@ const SearchCommunityGroupScreen = () => {
   const handleNavigateToNewCommunityGroupScreen = () => {
     if (!canUserCreateGroup) {
       Toast.hideAll();
-      return Toast.show("Verify Account to Create Groups", {
-        type: "warning",
-        placement: "top",
-      });
+      verifyToCreateGroupBottomSheet.current?.show();
+      return;
     }
     navigation.navigate("Groups", {
       screen: "NewCommunityGroupScreen",
@@ -368,6 +368,19 @@ const SearchCommunityGroupScreen = () => {
         <SearchCommunityFilterBottomSheet
           onClose={() => filterBottomSheet.current?.hide()}
         />
+      </ActionSheet>
+
+      <ActionSheet
+        useBottomSafeAreaPadding
+        ref={verifyToCreateGroupBottomSheet}
+        gestureEnabled={true}
+        safeAreaInsets={insets}
+        // snapPoints={[70, 100]}
+        containerStyle={{
+          paddingTop: 10,
+        }}
+      >
+        <VerifyToCreateGroupBottomSheet />
       </ActionSheet>
     </ScrollView>
   );

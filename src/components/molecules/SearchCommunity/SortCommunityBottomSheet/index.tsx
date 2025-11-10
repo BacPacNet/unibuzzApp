@@ -11,28 +11,7 @@ import { FONTS } from "@/constants/fonts";
 
 const sortOptions = [
   {
-    label: "User Count",
-    value: "userCountAsc",
-    icon: <SortUp width={20} height={20} color="#6744FF" strokeWidth={2} />,
-  },
-  {
-    label: "User Count",
-    value: "userCountDesc",
-    icon: <SortDown width={20} height={20} color="#6744FF" strokeWidth={2} />,
-  },
-  {
-    label: "Alphabet (A-Z)",
-    value: "alphabetAsc",
-    icon: <SortUp width={20} height={20} color="#6744FF" strokeWidth={2} />,
-  },
-  {
-    label: "Alphabet (Z-A)",
-    value: "alphabetDesc",
-    icon: <SortDown width={20} height={20} color="#6744FF" strokeWidth={2} />,
-  },
-
-  {
-    label: "Latest",
+    label: "Newest",
     value: "latest",
     icon: <SortUp width={20} height={20} color="#6744FF" strokeWidth={2} />,
   },
@@ -40,6 +19,26 @@ const sortOptions = [
   {
     label: "Oldest",
     value: "oldest",
+    icon: <SortDown width={20} height={20} color="#6744FF" strokeWidth={2} />,
+  },
+  {
+    label: "Alphabet A-Z",
+    value: "alphabetAsc",
+    icon: <SortUp width={20} height={20} color="#6744FF" strokeWidth={2} />,
+  },
+  {
+    label: "Alphabet Z-A",
+    value: "alphabetDesc",
+    icon: <SortDown width={20} height={20} color="#6744FF" strokeWidth={2} />,
+  },
+  {
+    label: "User Count",
+    value: "userCountAsc",
+    icon: <SortUp width={20} height={20} color="#6744FF" strokeWidth={2} />,
+  },
+  {
+    label: "User Count",
+    value: "userCountDesc",
     icon: <SortDown width={20} height={20} color="#6744FF" strokeWidth={2} />,
   },
 ];

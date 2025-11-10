@@ -38,6 +38,8 @@ import ReusableButton from "@/components/atoms/ReusableButton";
 import DropdownWrapper from "@/components/molecules/SelectDropDownWrapper";
 import { Settings } from "iconoir-react-native";
 import { CommunityDropDownModal } from "@/components/molecules/Community/CommunityDropDownModal";
+import UniversityPlaceholder from "@/assets/community/university_banner.svg";
+
 type NavigationProp = StackNavigationProp<RootStackParamList, "Community">;
 
 const CommunityScreen = ({ route }: any) => {
@@ -162,13 +164,7 @@ const CommunityScreen = ({ route }: any) => {
             onError={() => setImageSrcErr(true)}
           />
         ) : (
-          <Image
-            source={{
-              uri: "https://cdn.pixabay.com/photo/2017/08/20/12/13/architecture-2661547_1280.jpg",
-            }}
-            style={styles.image}
-            onError={() => setImageSrcErr(true)}
-          />
+          <UniversityPlaceholder style={styles.image} />
         )}
 
         <View style={styles.content}>
@@ -190,6 +186,10 @@ const CommunityScreen = ({ route }: any) => {
                   renderDropdown={() => (
                     <CommunityDropDownModal
                       leaveCommunity={handleToggleJoinCommunity}
+                      communityLogoUrl={
+                        communityData?.communityLogoUrl?.imageUrl
+                      }
+                      communityName={communityData?.name}
                     />
                   )}
                 >
@@ -338,6 +338,7 @@ const styles = StyleSheet.create({
   image: {
     width: "100%",
     height: 200,
+    objectFit: "fill",
   },
   content: {
     padding: 16,

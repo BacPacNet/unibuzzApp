@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { StyleSheet, Text, View } from "react-native";
 import NavbarSubscribedUniversity from "../SubscribedUniversity";
 import { getUserProfileStore, getUserStore } from "@/storage/user";
@@ -11,13 +11,9 @@ import { useNavigation } from "@react-navigation/native";
 import { RootStackParamList } from "@/types/navigation";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { useCommunityContext } from "@/context/CommunityProvider/CommunityProvider";
-import { TouchableOpacity } from "react-native-gesture-handler";
-import { FilterList } from "iconoir-react-native";
 import CommunityGroupTabs from "@/components/organism/CommunityGroupTabs";
-import CommunityLogo from "@/components/atoms/LogoHolder";
 import { useNewCommunityGroupStatesContext } from "@/context/NewCommunityGroupStatesProvider/NewCommunityGroupStatesProvider";
 import { FONTS } from "@/constants/fonts";
-import ManageGroupIcon from "@/assets/icons/manageGroupIcon.svg";
 import CommunityDropdown from "../CommunityDropDown";
 import { status } from "@/types/CommunityGroup";
 import {
@@ -49,6 +45,7 @@ const UniversitySec = () => {
   const [community, setCommunity] = useState<Community>();
   const [currTab, setCurrTab] = useState("Joined");
   const { resetFilters } = useNewCommunityGroupStatesContext();
+  const hasMutatedRef = useRef(false);
   const {
     mutate: mutateFilterCommunityGroups,
     data: filteredCommunityGroups,
@@ -84,13 +81,7 @@ const UniversitySec = () => {
     setSelectedCommunityId(communityId);
     storeSelectedCommunityGroup(communityId, logo);
 
-    const data = {
-      selectedType: [],
-      selectedFilters: [],
-      sort: "userCountDesc",
-    };
-
-    mutateFilterCommunityGroups(data);
+    hasMutatedRef.current = false;
   };
 
   const joinedSubscribedCommunitiesGroup = useMemo(() => {
@@ -104,7 +95,7 @@ const UniversitySec = () => {
             u._id === userData?.id && u.status === status.accepted
         )
     );
-  }, [userData, filteredCommunityGroups]);
+  }, [userData, filteredCommunityGroups, community]);
 
   useEffect(() => {
     if (selectedCommunityGroup) {
@@ -123,6 +114,19 @@ const UniversitySec = () => {
       setCommunity(subscribedCommunities?.[0] as Community);
     }
   }, [subscribedCommunities, selectedCommunityGroup]);
+
+  useEffect(() => {
+    if (!community?._id || hasMutatedRef.current) return;
+
+    const data = {
+      selectedType: [],
+      selectedFilters: [],
+      sort: "userCountDesc",
+    };
+
+    mutateFilterCommunityGroups(data);
+    hasMutatedRef.current = true;
+  }, [community?._id]);
 
   return (
     <View>
