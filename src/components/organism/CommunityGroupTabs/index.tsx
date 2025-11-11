@@ -1,5 +1,11 @@
 import React from "react";
-import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  StyleSheet,
+  ActivityIndicator,
+} from "react-native";
 import CommunityGroupAll from "../../molecules/LeftSideBar/CommunityGroups";
 import { Community, CommunityGroup } from "@/types/Community";
 import { User } from "@/models/auth";
@@ -15,6 +21,7 @@ type Props = {
   setCurrSelectedGroup: (group: Community | null) => void;
   userData: Partial<User>;
   isCommunityGroup: boolean;
+  isloading?: boolean;
 };
 
 const CommunityGroupTabs = ({
@@ -28,6 +35,7 @@ const CommunityGroupTabs = ({
   userData,
   communityLogo,
   isCommunityGroup,
+  isloading,
 }: Props) => {
   const renderCurrentTabContent = () => {
     switch (currTab) {
@@ -92,7 +100,11 @@ const CommunityGroupTabs = ({
         </TouchableOpacity>
       </View> */}
 
-      {renderCurrentTabContent()}
+      {isloading ? (
+        <ActivityIndicator color={"#6744FF"} />
+      ) : (
+        renderCurrentTabContent()
+      )}
     </View>
   );
 };

@@ -30,6 +30,18 @@ const sortOptions = [
     value: "alphabetDesc",
     icon: <SortDown width={20} height={20} color="#6744FF" strokeWidth={2} />,
   },
+
+  {
+    label: "Latest",
+    value: "latest",
+    icon: <SortUp width={20} height={20} color="#6744FF" strokeWidth={2} />,
+  },
+
+  {
+    label: "Oldest",
+    value: "oldest",
+    icon: <SortDown width={20} height={20} color="#6744FF" strokeWidth={2} />,
+  },
 ];
 
 interface SortCommunityBottomSheetProps {

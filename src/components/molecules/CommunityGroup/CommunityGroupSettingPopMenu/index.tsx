@@ -53,7 +53,7 @@ const CommunityGroupSettingPopMenu: React.FC<
     deleteCommunityGroup(communityGroupId as string, {
       onSuccess: () => {
         mutate(data);
-        navigate("manageGroupStack", {
+        navigate("Groups", {
           screen: "SearchCommunityGroupScreen",
 
           params: { communityId: communityId },

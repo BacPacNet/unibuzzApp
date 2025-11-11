@@ -148,7 +148,7 @@ const FlatListCommunityHeader: React.FC<Props> = ({
   }, [CommunityGroupMember, communityGroups?.id, navigate]);
 
   const handleNavigateToEditCommunityGroupScreen = () => {
-    navigate("manageGroupStack", {
+    navigate("Groups", {
       screen: "EditCommunityGroupScreen",
       params: {
         communityId: communityGroups?.communityId?._id,

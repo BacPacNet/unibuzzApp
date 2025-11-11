@@ -51,15 +51,28 @@ const NavbarSubscribedUniversity = ({
     );
   }
 
-  return subscribedCommunities?.map((item: any) => (
-    <CommunityHolder
-      community={item}
-      key={item?._id}
-      handleCommunityClick={handleCommunityClick}
-      communityId={communityId}
-      isGroup={isGroup}
-    />
-  ));
+  return (
+    <View>
+      {subscribedCommunities?.map((item: any) => (
+        <CommunityHolder
+          community={item}
+          key={item?._id}
+          handleCommunityClick={handleCommunityClick}
+          communityId={communityId}
+          isGroup={isGroup}
+        />
+      ))}
+      <View style={[styles.buttonContainer, styles.lastButtonContainer]}>
+        <ReusableButton
+          buttonText="Add Your University"
+          variant="shade"
+          isRounded={false}
+          onPress={handleAddUniversity}
+          height="medium"
+        />
+      </View>
+    </View>
+  );
 };
 
 interface CommunityHolderProps {
@@ -73,6 +86,8 @@ interface CommunityHolderProps {
   handleCommunityClick: (index: string) => void;
   communityId: string;
   isGroup: boolean;
+  isLast?: boolean;
+  isBorder?: boolean;
 }
 
 const CommunityHolder = ({
@@ -89,7 +104,7 @@ const CommunityHolder = ({
         communityId === community._id && !isGroup && styles.activeCommunity,
       ]}
     >
-      <View style={styles.innerContainer}>
+      <View style={[styles.innerContainer]}>
         <CommunityLogo
           logoUrl={community?.communityLogoUrl?.imageUrl}
           variant="large"
@@ -119,7 +134,7 @@ const styles = StyleSheet.create({
   communityContainer: {
     flexDirection: "row",
     alignItems: "center",
-    paddingHorizontal: 12,
+    paddingHorizontal: 24,
     paddingVertical: 12,
   },
   activeCommunity: {
@@ -152,7 +167,13 @@ const styles = StyleSheet.create({
   },
 
   buttonContainer: {
-    marginHorizontal: 10,
+    marginHorizontal: 24,
+  },
+  lastButtonContainer: {
+    borderBottomWidth: 1,
+    borderBottomColor: "#E5E7EB",
+    paddingBottom: 32,
+    marginTop: 20,
   },
 });
 

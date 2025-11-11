@@ -2,7 +2,10 @@ import React, { useEffect, useMemo, useState } from "react";
 import { StyleSheet, Text, View } from "react-native";
 import NavbarSubscribedUniversity from "../SubscribedUniversity";
 import { getUserProfileStore, getUserStore } from "@/storage/user";
-import { useGetSubscribedCommunities } from "@/services/university-community";
+import {
+  useGetFilteredSubscribedCommunities,
+  useGetSubscribedCommunities,
+} from "@/services/university-community";
 import { Community } from "@/types/Community";
 import { useNavigation } from "@react-navigation/native";
 import { RootStackParamList } from "@/types/navigation";
@@ -15,13 +18,26 @@ import CommunityLogo from "@/components/atoms/LogoHolder";
 import { useNewCommunityGroupStatesContext } from "@/context/NewCommunityGroupStatesProvider/NewCommunityGroupStatesProvider";
 import { FONTS } from "@/constants/fonts";
 import ManageGroupIcon from "@/assets/icons/manageGroupIcon.svg";
+import CommunityDropdown from "../CommunityDropDown";
+import { status } from "@/types/CommunityGroup";
+import {
+  getSelectedCommunityGroup,
+  storeSelectedCommunityGroup,
+} from "@/storage/selected-community-group";
 
 type NavigationProp = StackNavigationProp<RootStackParamList, "Timeline">;
 const UniversitySec = () => {
-  const { currentCommunityId, currentCommunityGroupId } = useCommunityContext();
+  const {
+    currentCommunityId,
+    currentCommunityGroupId,
+    setSelectedCommunityGroupLogo,
+    setSelectedCommunityId,
+  } = useCommunityContext();
 
   const userData = getUserStore();
   const userProfileData = getUserProfileStore();
+  const selectedCommunityGroup = getSelectedCommunityGroup();
+
   const {
     data: subscribedCommunities,
     isFetching,
@@ -31,8 +47,13 @@ const UniversitySec = () => {
   const [currSelectedGroup, setCurrSelectedGroup] =
     useState<Community | null>();
   const [community, setCommunity] = useState<Community>();
-  const [currTab, setCurrTab] = useState("All");
+  const [currTab, setCurrTab] = useState("Joined");
   const { resetFilters } = useNewCommunityGroupStatesContext();
+  const {
+    mutate: mutateFilterCommunityGroups,
+    data: filteredCommunityGroups,
+    isPending,
+  } = useGetFilteredSubscribedCommunities(community?._id || "");
 
   const handleCommunityClick = (id: string) => {
     navigation.navigate("Community", { communityId: id });
@@ -54,62 +75,54 @@ const UniversitySec = () => {
 
   const stackInfo = getCurrentStackInfo();
 
-  const handleManageGroupNavigate = () => {
-    resetFilters();
-    navigation.navigate("manageGroupStack", {
-      screen: "SearchCommunityGroupScreen",
+  const handleCommunityGroupClick = (communityId: string, logo: string) => {
+    setCommunity(
+      subscribedCommunities?.find((community) => community._id === communityId)
+    );
 
-      params: { communityId: community?._id },
-    });
+    setSelectedCommunityGroupLogo(logo);
+    setSelectedCommunityId(communityId);
+    storeSelectedCommunityGroup(communityId, logo);
+
+    const data = {
+      selectedType: [],
+      selectedFilters: [],
+      sort: "userCountDesc",
+    };
+
+    mutateFilterCommunityGroups(data);
   };
 
   const joinedSubscribedCommunitiesGroup = useMemo(() => {
-    const selectedCommunityGroup = subscribedCommunities?.find(
-      (community) =>
-        community?._id ===
-        (currentCommunityId || subscribedCommunities?.[0]._id)
-    )?.communityGroups;
-    return selectedCommunityGroup
-      ?.filter((userCommunityGroup) =>
-        userCommunityGroup?.users?.some(
-          (selectCommunityGroup) =>
-            selectCommunityGroup?._id?.toString() === userData?.id?.toString()
+    const groups = filteredCommunityGroups?.communityGroups || [];
+
+    return groups.filter(
+      (group: { users: any[]; adminUserId: string }) =>
+        group.adminUserId === userData?.id ||
+        group.users?.some(
+          (u: { _id: string; status: string }) =>
+            u._id === userData?.id && u.status === status.accepted
         )
-      )
-      ?.filter((group) => group.title.toLowerCase());
-  }, [subscribedCommunities, currentCommunityId, userData, userProfileData]);
-
-  const subscribedCommunitiesAllGroups = useMemo(() => {
-    const groups = subscribedCommunities?.find(
-      (community) =>
-        community._id ===
-        (currentCommunityId || subscribedCommunities?.[0]?._id)
-    )?.communityGroups;
-
-    return groups || [];
-  }, [subscribedCommunities, currentCommunityId]);
-
-  const subscribedCommunitiesMyGroup = useMemo(() => {
-    const groups = subscribedCommunities?.find(
-      (community) =>
-        community._id ===
-        (currentCommunityId || subscribedCommunities?.[0]?._id)
-    )?.communityGroups;
-
-    return groups?.filter((group) => group?.adminUserId === userData?.id) || [];
-  }, [subscribedCommunities, currentCommunityId, userData, userProfileData]);
+    );
+  }, [userData, filteredCommunityGroups]);
 
   useEffect(() => {
-    if (currentCommunityId && subscribedCommunities) {
+    if (selectedCommunityGroup) {
       setCommunity(
-        subscribedCommunities.find(
-          (community) => community._id === currentCommunityId
+        subscribedCommunities?.find(
+          (community) =>
+            community._id === selectedCommunityGroup?.selectedCommunityGroupId
         )
       );
-    } else if (subscribedCommunities) {
+
+      setSelectedCommunityGroupLogo(
+        selectedCommunityGroup?.selectedCommunityGroupLogo
+      );
+      setSelectedCommunityId(selectedCommunityGroup?.selectedCommunityGroupId);
+    } else {
       setCommunity(subscribedCommunities?.[0] as Community);
     }
-  }, [subscribedCommunities, currentCommunityId]);
+  }, [subscribedCommunities, selectedCommunityGroup]);
 
   return (
     <View>
@@ -124,37 +137,24 @@ const UniversitySec = () => {
         />
       </View>
       <View>
-        <View style={styles.communityImageContainer}>
-          <Text style={styles.groupHeaderText}>GROUPS</Text>
-
-          <CommunityLogo
-            logoUrl={community?.communityLogoUrl?.imageUrl as string}
-            variant="extraSmall"
+        <View style={{ marginTop: 32 }}>
+          <CommunityDropdown
+            selectedCommunityImage={
+              community?.communityLogoUrl?.imageUrl as string
+            }
+            subscribedCommunities={subscribedCommunities as Community[]}
+            handleCommunityGroupClick={handleCommunityGroupClick}
+            placeholder="Select Community"
+            iconSize={16}
           />
         </View>
-        <TouchableOpacity
-          onPress={() => handleManageGroupNavigate()}
-          style={styles.communityMangeButton}
-        >
-          <ManageGroupIcon width={20} height={20} color="#6744FF" />
-
-          <Text style={styles.manageGroupText}>Manage Groups</Text>
-        </TouchableOpacity>
-
-        {/* <CommunityGroupAll
-          key={joinedSubscribedCommunitiesGroup}
-          communityGroups={joinedSubscribedCommunitiesGroup}
-          currSelectedGroup={currSelectedGroup as Community}
-          setCurrSelectedGroup={setCurrSelectedGroup}
-          userData={userData}
-        />  */}
 
         <CommunityGroupTabs
           currTab={currTab}
           setCurrTab={setCurrTab}
-          allGroups={subscribedCommunitiesAllGroups}
+          allGroups={[]}
           joinedGroups={joinedSubscribedCommunitiesGroup || []}
-          myGroups={subscribedCommunitiesMyGroup}
+          myGroups={[]}
           currSelectedGroup={currSelectedGroup || null}
           setCurrSelectedGroup={setCurrSelectedGroup}
           userData={userData || {}}
@@ -164,6 +164,7 @@ const UniversitySec = () => {
             ""
           }
           isCommunityGroup={stackInfo?.currentScreen === "CommunityGroup"}
+          isloading={isPending}
         />
       </View>
     </View>
@@ -186,8 +187,8 @@ const styles = StyleSheet.create({
     color: "#6B7280",
     fontFamily: FONTS.inter.bold,
 
-    marginBottom: 8,
-    paddingHorizontal: 16,
+    marginBottom: 20,
+    paddingHorizontal: 24,
     paddingVertical: 8,
   },
   groupHeaderText: {
@@ -197,19 +198,9 @@ const styles = StyleSheet.create({
     marginVertical: 8,
   },
   universityContainer: {
-    marginBottom: 16,
+    // marginBottom: 32,
   },
-  communityImageContainer: {
-    display: "flex",
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 8,
-    marginBottom: 16,
-    borderTopColor: "#E5E7EB",
-    borderTopWidth: 1,
-    marginHorizontal: 16,
-    paddingTop: 16,
-  },
+
   communityMangeButton: {
     display: "flex",
     flexDirection: "row",

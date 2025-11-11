@@ -281,7 +281,7 @@ const CommunityGroupScreen = ({ route }: any) => {
     hideBottomBar();
     setModalVisible(false);
 
-    navigation.navigate("manageGroupStack", {
+    navigation.navigate("Groups", {
       screen: "EditCommunityGroupScreen",
       params: {
         communityId: communityId._id,
@@ -295,7 +295,7 @@ const CommunityGroupScreen = ({ route }: any) => {
       navigation.navigate("Notifications");
     }
     if (from === screenName.manageCommunityGroup) {
-      navigation.navigate("manageGroupStack", {
+      navigation.navigate("Groups", {
         screen: "SearchCommunityGroupScreen",
 
         params: { communityId: communityId },
