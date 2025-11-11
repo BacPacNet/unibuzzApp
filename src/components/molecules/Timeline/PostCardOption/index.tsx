@@ -35,12 +35,12 @@ const PostCardOption = ({ handleDeletePost, isAdmin, postId, type }: Props) => {
         </Text>
       </TouchableOpacity>
 
-      <TouchableOpacity className={`flex flex-row items-center gap-2 p-2`}>
+      {/* <TouchableOpacity className={`flex flex-row items-center gap-2 p-2`}>
         <WhiteFlag width={20} height={20} color="#3A3B3C" />
         <Text style={styles.text} className={` `}>
           Report this post
         </Text>
-      </TouchableOpacity>
+      </TouchableOpacity> */}
       {isAdmin && (
         <TouchableOpacity
           onPress={() => handleDeletePost()}

@@ -147,6 +147,18 @@ const UserComment = ({
               color: "#3A3B3C",
             },
           }}
+          classesStyles={{
+            "ql-code-block": {
+              fontFamily: "monospace",
+              backgroundColor: "#f0f0f0",
+              padding: 2,
+              paddingLeft: 4,
+              paddingRight: 4,
+              borderRadius: 3,
+              fontSize: 13,
+              color: "#3A3B3C",
+            },
+          }}
           ignoredDomTags={["label", "input"]}
         />
       </View>

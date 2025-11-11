@@ -33,6 +33,8 @@ import {
 } from "@/types/notifications";
 import { useJoinCommunityGroup } from "@/services/notification";
 import { Community as CommunityIcon } from "iconoir-react-native";
+import UniversityPlaceholder from "@/assets/community/university_banner.svg";
+import LeaveCommunityGroupBottomSheet from "../LeaveCommunityGroupBottomSheet";
 
 type CommunityGroup = {
   title: string;
@@ -96,6 +98,7 @@ const FlatListCommunityHeader: React.FC<Props> = ({
     useJoinCommunityGroup();
 
   const groupInfoBottomSheet = useRef<ActionSheetRef>(null);
+  const leaveCommunityGroupBottomSheet = useRef<ActionSheetRef>(null);
   const insets = useSafeAreaInsets();
   const { navigate } = useNavigation<NavigationProp>();
   const onSettingsPress = useCallback(
@@ -158,18 +161,23 @@ const FlatListCommunityHeader: React.FC<Props> = ({
     });
   };
 
+  const handleLeaveCommunityGroup = () => {
+    leaveCommunityGroupBottomSheet.current?.show();
+  };
+
   return (
     <View style={styles.card}>
-      <Image
-        source={{
-          uri:
-            imageSrc && !ImageSrcErr
-              ? imageSrc
-              : "https://cdn.pixabay.com/photo/2017/08/20/12/13/architecture-2661547_1280.jpg",
-        }}
-        style={styles.image}
-        onError={() => setImageSrcErr(true)}
-      />
+      {imageSrc && !ImageSrcErr ? (
+        <Image
+          source={{
+            uri: imageSrc,
+          }}
+          style={styles.image}
+          onError={() => setImageSrcErr(true)}
+        />
+      ) : (
+        <UniversityPlaceholder style={styles.image} />
+      )}
 
       <View style={styles.content}>
         <View style={styles.PrimaryContainer}>
@@ -223,7 +231,7 @@ const FlatListCommunityHeader: React.FC<Props> = ({
                   <CommunityGroupSettingPopMenu
                     isPending={groupStatus === status.pending}
                     isGroupAdmin={isGroupAdmin}
-                    leaveCommunityGroup={leaveCommunityGroup}
+                    leaveCommunityGroup={handleLeaveCommunityGroup}
                     handleNavigateToEditCommunityGroupScreen={
                       handleNavigateToEditCommunityGroupScreen
                     }
@@ -315,6 +323,21 @@ const FlatListCommunityHeader: React.FC<Props> = ({
       >
         <CommmunityGroupInfo />
       </ActionSheet>
+      <ActionSheet
+        useBottomSafeAreaPadding
+        ref={leaveCommunityGroupBottomSheet}
+        gestureEnabled={true}
+        safeAreaInsets={insets}
+        // snapPoints={[70, 100]}
+        containerStyle={{
+          paddingTop: 10,
+        }}
+      >
+        <LeaveCommunityGroupBottomSheet
+          leaveCommunityGroup={leaveCommunityGroup}
+          leaveCommunityGroupBottomSheet={leaveCommunityGroupBottomSheet}
+        />
+      </ActionSheet>
     </View>
   );
 };
@@ -329,6 +352,7 @@ const styles = StyleSheet.create({
   image: {
     width: "100%",
     height: 200,
+    objectFit: "fill",
   },
 
   content: {

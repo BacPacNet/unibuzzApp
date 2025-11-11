@@ -175,10 +175,12 @@ const styles = StyleSheet.create({
 
   forgotPasswordContainer: {
     // marginBottom: 16,
+    alignSelf: "flex-start",
   },
   forgotPasswordText: {
     fontSize: 14,
     color: "#6744FF",
     fontFamily: FONTS.inter.regular,
+    alignSelf: "flex-start",
   },
 });
