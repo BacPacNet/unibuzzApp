@@ -1,6 +1,7 @@
-import { FONTS } from "@/constants/fonts";
+import React, { forwardRef } from "react";
+import { View, Text, TextInput, StyleSheet } from "react-native";
 import { Controller } from "react-hook-form";
-import { Text, TextInput, View, StyleSheet, PixelRatio } from "react-native";
+import { FONTS } from "@/constants/fonts";
 
 interface FormInputProps {
   label?: string;
@@ -19,65 +20,71 @@ interface FormInputProps {
   currentValue?: string;
 }
 
-export function FormInput({
-  label,
-  placeholder,
-  required = false,
-  rules,
-  isLabelShown = true,
-  name,
-  control,
-  isError,
-  errorMessage,
-  secureTextEntry,
-  keyboardType = "default",
-  disabled = false,
-  isTextArea = false,
-  currentValue,
-}: FormInputProps) {
-  return (
-    <View style={styles.container}>
-      {isLabelShown && (
-        <View style={styles.labelContainer}>
-          <Text style={styles.label}>{label}</Text>
-          {required && <Text style={styles.required}>*</Text>}
-        </View>
-      )}
-
-      <Controller
-        control={control}
-        name={name}
-        rules={rules}
-        render={({ field: { onChange, value } }) => (
-          <TextInput
-            editable={!disabled}
-            style={[
-              styles.input,
-              isTextArea && styles.textArea,
-              isError && styles.inputError,
-              disabled && styles.disabledLabel,
-            ]}
-            placeholder={placeholder}
-            value={
-              currentValue && currentValue?.length > 0 ? currentValue : value
-            }
-            onChangeText={onChange}
-            secureTextEntry={secureTextEntry}
-            keyboardType={keyboardType}
-            placeholderTextColor="#9CA3AF"
-            multiline={isTextArea}
-            numberOfLines={isTextArea ? 4 : 1}
-            textAlignVertical={isTextArea ? "top" : "center"}
-          />
+export const FormInput = forwardRef<View, FormInputProps>(
+  (
+    {
+      label,
+      placeholder,
+      required = false,
+      rules,
+      isLabelShown = true,
+      name,
+      control,
+      isError,
+      errorMessage,
+      secureTextEntry,
+      keyboardType = "default",
+      disabled = false,
+      isTextArea = false,
+      currentValue,
+    },
+    ref
+  ) => {
+    return (
+      // ✅ Single root native element with ref
+      <View ref={ref} style={styles.container}>
+        {isLabelShown && (
+          <View style={styles.labelContainer}>
+            <Text style={styles.label}>{label}</Text>
+            {required && <Text style={styles.required}>*</Text>}
+          </View>
         )}
-      />
 
-      {isError && errorMessage && (
-        <Text style={styles.errorText}>{errorMessage}</Text>
-      )}
-    </View>
-  );
-}
+        <Controller
+          control={control}
+          name={name}
+          rules={rules}
+          render={({ field: { onChange, value } }) => (
+            <TextInput
+              editable={!disabled}
+              style={[
+                styles.input,
+                isTextArea && styles.textArea,
+                isError && styles.inputError,
+                disabled && styles.disabledLabel,
+              ]}
+              placeholder={placeholder}
+              value={
+                currentValue && currentValue?.length > 0 ? currentValue : value
+              }
+              onChangeText={onChange}
+              secureTextEntry={secureTextEntry}
+              keyboardType={keyboardType}
+              placeholderTextColor="#9CA3AF"
+              multiline={isTextArea}
+              numberOfLines={isTextArea ? 4 : 1}
+              textAlignVertical={isTextArea ? "top" : "center"}
+            />
+          )}
+        />
+
+        {isError && errorMessage && (
+          <Text style={styles.errorText}>{errorMessage}</Text>
+        )}
+      </View>
+    );
+  }
+);
 
 const styles = StyleSheet.create({
   container: {

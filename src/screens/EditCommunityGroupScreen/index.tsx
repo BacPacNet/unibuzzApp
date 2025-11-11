@@ -13,7 +13,7 @@ import { CreateCommunityGroupType, status } from "@/types/CommunityGroup";
 import { RootStackParamList } from "@/types/navigation";
 
 import { UPLOAD_CONTEXT } from "@/types/uploads";
-import { handleTakePhoto, pickImage } from "@/utils";
+import { handleTakePhoto, pickImage, scrollToField } from "@/utils";
 import {
   useFocusEffect,
   useNavigation,
@@ -74,6 +74,7 @@ const EditCommunityGroupScreen = () => {
     formState: { errors },
     setValue,
     reset,
+    setError,
   } = useForm<CreateCommunityGroupType>({
     defaultValues: {
       communityGroupLogoUrl: null,
@@ -87,6 +88,23 @@ const EditCommunityGroupScreen = () => {
       selectedFilters: [],
     },
   });
+
+  type FieldRefs = {
+    title: React.RefObject<View>;
+    description: React.RefObject<View>;
+    communityGroupAccess: React.RefObject<View>;
+    communityGroupType: React.RefObject<View>;
+    communityGroupLabel: React.RefObject<View>;
+  };
+
+  const fieldRefs: FieldRefs = {
+    title: useRef<View>(null),
+    description: useRef<View>(null),
+    communityGroupAccess: useRef<View>(null),
+    communityGroupType: useRef<View>(null),
+    communityGroupLabel: useRef<View>(null),
+  };
+  const scrollViewRef = useRef<ScrollView>(null);
 
   const title = watch("title") || "";
   const initialDescription = watch("description") || "";
@@ -220,6 +238,9 @@ const EditCommunityGroupScreen = () => {
         },
         onError: (error) => {
           setIsProfileLoading(false);
+          const err = JSON.parse(error.response?.data?.message ?? "{}");
+          setError(err.for, { message: err.message });
+          scrollToField(err.for, fieldRefs, scrollViewRef);
         },
       }
     );
@@ -241,6 +262,7 @@ const EditCommunityGroupScreen = () => {
         communityId: communityId,
         isEditGroup: true,
         communityGroupId: communityGroups?._id,
+        isCommunityGroupPrivate: communityGroupAccess === "Private",
       },
     });
   };
@@ -253,7 +275,7 @@ const EditCommunityGroupScreen = () => {
         behavior={Platform.OS === "ios" ? "padding" : "height"}
         style={styles.keyboardAvoid}
       >
-        <ScrollView>
+        <ScrollView ref={scrollViewRef}>
           <BackHeader label=" Group" onPress={handleGOBack} />
           <View style={styles.content}>
             {/* Profile Photo */}
@@ -273,6 +295,7 @@ const EditCommunityGroupScreen = () => {
               setCreateSelectedFilters={setCreateSelectedFilters}
               isPending={groupStatus === status.pending}
               groupType={communityGroups?.communityGroupType}
+              fieldRefs={fieldRefs}
             />
             <View style={styles.section}>
               <View style={styles.buttonContainer}>

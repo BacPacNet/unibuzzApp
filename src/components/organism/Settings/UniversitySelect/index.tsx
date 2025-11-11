@@ -41,7 +41,7 @@ const UniversitySelect = ({
   const email = useWatch({ control, name: "email" });
   const universityId = useWatch({ control, name: "universityId" });
   const navigation = useNavigation<StackNavigationProp<RootStackParamList>>();
-
+  const universityDomain = useWatch({ control, name: "universityDomain" });
   const {
     mutateAsync: generateUniversityEmailOTP,
     isPending: isResendPending,
@@ -109,6 +109,21 @@ const UniversitySelect = ({
           isError={!!errors.email?.message}
           errorMessage={errors.email?.message}
         />
+
+        {universityDomain && universityDomain.length > 0 ? (
+          <View style={styles.universityDomainContainer}>
+            <Text style={styles.label}>University's associated domain:</Text>
+            {universityDomain.map((domain: string) => (
+              <Text key={domain} style={styles.domain}>
+                @{domain}
+              </Text>
+            ))}
+          </View>
+        ) : (
+          <Text style={styles.info}>
+            Your university email is the one you use for official purposes.
+          </Text>
+        )}
         {logoUrl && universityName && (
           <View className="w-full flex flex-row items-center justify-start gap-2">
             <CommunityLogo logoUrl={logoUrl} variant="small" />
@@ -159,6 +174,23 @@ const styles = StyleSheet.create({
   },
   helpText: {
     marginBottom: 32,
+  },
+
+  universityDomainContainer: {
+    flexDirection: "column",
+  },
+  label: {
+    fontSize: 12,
+    color: "#525252",
+  },
+  domain: {
+    fontSize: 12,
+    color: "#525252",
+    fontWeight: "bold",
+  },
+  info: {
+    fontSize: 12,
+    color: "#525252",
   },
 });
 

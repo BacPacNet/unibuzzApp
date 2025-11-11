@@ -10,6 +10,7 @@ import { userTypeEnum } from "@/storage/register";
 import DropdownWrapper from "../../SelectDropDownWrapper";
 import PostCardOption from "../PostCardOption";
 import { BadgeCheck, Balcony, CheckCircleSolid } from "iconoir-react-native";
+import PostCommunityHolder from "../../PostCommunityHolder/PostCommunityHolder";
 type Props = {
   name: string;
   year: string;
@@ -33,6 +34,13 @@ type Props = {
   isCommunityAdmin?: boolean;
   handleDeletePost: () => void;
   isPostOptionShown?: boolean;
+  communities?: {
+    _id: string;
+    name: string;
+    logo: string;
+    isVerifiedMember: boolean;
+    isCommunityAdmin: boolean;
+  }[];
 };
 
 type NavigationProp = StackNavigationProp<RootStackParamList, "Timeline">;
@@ -58,6 +66,7 @@ const PostCardUserDetails = ({
   handleDeletePost,
   isCommunityAdmin,
   isPostOptionShown = true,
+  communities,
 }: Props) => {
   const navigate = useNavigation<NavigationProp>();
 
@@ -84,7 +93,7 @@ const PostCardUserDetails = ({
   };
 
   return (
-    <View className="relative flex flex-row justify-between items-center  px-4">
+    <View className="relative flex flex-row justify-between items-start  px-4">
       {/*{visible && (
         <PostCardOption handleDeletePost={handleDeletePost} isAdmin={isAdmin} />
       )}*/}
@@ -105,18 +114,6 @@ const PostCardUserDetails = ({
             <Text className="font-semibold text-neutral-900 text-2xs ">
               {name}
             </Text>
-            {isCommunityAdmin ? (
-              <Balcony color="#6744FF" width={14} height={14} />
-            ) : (
-              isPostVerified && (
-                <BadgeCheck
-                  color="white"
-                  fill="#6744FF"
-                  width={14}
-                  height={14}
-                />
-              )
-            )}
           </View>
           <View>
             <Text style={styles.fontSize} className="text-neutral-500 ">
@@ -128,31 +125,62 @@ const PostCardUserDetails = ({
           </View>
         </View>
       </TouchableOpacity>
-      {isPostOptionShown && (
-        <DropdownWrapper
-          position="left"
-          extraLeft={60}
-          viewTopPosition={-90}
-          renderDropdown={(closeDropdown) => (
-            <PostCardOption
-              handleDeletePost={() => {
-                handleDeletePost();
-                closeDropdown();
-              }}
-              isAdmin={isAdmin}
-              postId={postId}
-              type={type}
-            />
+      <View className="flex flex-row items-center gap-2">
+        <View>
+          {communities?.length && communities?.length > 0 && (
+            <View className="flex flex-row items-center gap-2">
+              {communities
+                ?.slice()
+                .sort((a, b) => {
+                  const aIsAdmin = a.isCommunityAdmin;
+                  const bIsAdmin = b.isCommunityAdmin;
+
+                  const aIsVerified = a.isVerifiedMember;
+                  const bIsVerified = b.isVerifiedMember;
+
+                  if (aIsAdmin !== bIsAdmin) return aIsAdmin ? -1 : 1;
+                  if (aIsVerified !== bIsVerified) return aIsVerified ? -1 : 1;
+
+                  return 0;
+                })
+                .map((community) => (
+                  <PostCommunityHolder
+                    key={community._id}
+                    logo={community.logo}
+                    name={community.name}
+                    isVerified={community.isVerifiedMember}
+                    isCommunityAdmin={community.isCommunityAdmin || false}
+                  />
+                ))}
+            </View>
           )}
-        >
-          <TouchableOpacity
-            className="absolute right-4 top-1"
-            // onPress={() => setVisible(!visible)}
+        </View>
+        {isPostOptionShown && (
+          <DropdownWrapper
+            position="left"
+            extraLeft={60}
+            viewTopPosition={-90}
+            renderDropdown={(closeDropdown) => (
+              <PostCardOption
+                handleDeletePost={() => {
+                  handleDeletePost();
+                  closeDropdown();
+                }}
+                isAdmin={isAdmin}
+                postId={postId}
+                type={type}
+              />
+            )}
           >
-            <PostOption />
-          </TouchableOpacity>
-        </DropdownWrapper>
-      )}
+            <TouchableOpacity
+            // className="absolute right-4 top-1"
+            // onPress={() => setVisible(!visible)}
+            >
+              <PostOption />
+            </TouchableOpacity>
+          </DropdownWrapper>
+        )}
+      </View>
     </View>
   );
 };

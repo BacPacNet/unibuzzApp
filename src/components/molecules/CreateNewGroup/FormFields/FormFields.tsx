@@ -20,6 +20,7 @@ interface FormFieldsProps {
   isPending?: boolean;
   groupType?: string;
   isNewGroup?: boolean;
+  fieldRefs?: any;
 }
 
 export const FormFields: React.FC<FormFieldsProps> = ({
@@ -30,11 +31,13 @@ export const FormFields: React.FC<FormFieldsProps> = ({
   isPending,
   groupType,
   isNewGroup = false,
+  fieldRefs,
 }) => (
   <>
     <View style={styles.section}>
       <Text style={styles.requiredTop}>Required Fields *</Text>
       <FormInput
+        ref={fieldRefs?.title}
         placeholder="Enter Group Name"
         required
         name="title"
@@ -54,10 +57,17 @@ export const FormFields: React.FC<FormFieldsProps> = ({
         <Text style={styles.required}>*</Text>
       </View>
       <TextAreaWithWordCount
+        ref={fieldRefs?.description}
         control={control}
         name="description"
         maxChars={160}
+        required
       />
+      {/* {errors.description && (
+        <Text style={{ color: "#EF4444", fontSize: 12, marginTop: 4 }}>
+          {errors.description.message}
+        </Text>
+      )} */}
     </View>
 
     <View style={styles.section}>
@@ -66,6 +76,7 @@ export const FormFields: React.FC<FormFieldsProps> = ({
         <Text style={styles.required}>*</Text>
       </View>
       <RadioInput
+        ref={fieldRefs?.communityGroupAccess}
         name="communityGroupAccess"
         control={control}
         options={GROUP_ACCESS_OPTIONS}
@@ -78,6 +89,7 @@ export const FormFields: React.FC<FormFieldsProps> = ({
         <Text style={styles.required}>*</Text>
       </View>
       <RadioInput
+        ref={fieldRefs?.communityGroupLabel}
         name="communityGroupLabel"
         control={control}
         options={GROUP_LABEL_OPTIONS}
@@ -102,6 +114,7 @@ export const FormFields: React.FC<FormFieldsProps> = ({
 
       {isNewGroup && (
         <RadioInput
+          ref={fieldRefs?.communityGroupType}
           name="communityGroupType"
           control={control}
           options={GROUP_TYPE_OPTIONS}

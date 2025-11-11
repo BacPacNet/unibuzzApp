@@ -33,7 +33,7 @@ export const ImageUploadSection: React.FC<ImageUploadSectionProps> = ({
         <User width={32} height={32} color="#9CA3AF" />
         <Text style={styles.photoUploadText}>Select Image</Text>
       </TouchableOpacity>
-      <Text className="text-xs text-neutral-50-500">Max file size: 5 MB</Text>
+      <Text className="text-xs text-neutral-500">Max file size: 5 MB</Text>
     </View>
 
     {/* Banner Photo */}

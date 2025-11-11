@@ -3,6 +3,7 @@ import { Image, Text, TouchableOpacity, View } from "react-native";
 import BouncyCheckbox from "react-native-bouncy-checkbox";
 import avatar from "@/assets/avatarPlaceholder.png";
 import { Users } from "@/types/connections";
+import Badge from "@/assets/badge.svg";
 
 type Props = {
   item: any;
@@ -19,7 +20,7 @@ export const NewGroupUserListItem = ({
   const imageUri = item?.profile_dp?.imageUrl;
 
   const isSelected = selectedUsers?.some(
-    (selectedUser: any) => selectedUser._id == item._id,
+    (selectedUser: any) => selectedUser._id == item._id
   );
 
   const handleClick = () => {
@@ -51,9 +52,13 @@ export const NewGroupUserListItem = ({
 
         <View className="flex-1 flex-row items-center">
           <View className="flex-1">
-            <Text className="text-neutral-600 text-xs font-semibold">
-              {item.firstName} {item.lastName}
-            </Text>
+            <View className="flex-row items-center gap-2">
+              <Text className="text-neutral-600 text-xs font-semibold">
+                {item.firstName} {item.lastName}
+              </Text>
+              {item?.isVerified && <Badge width={12} height={12} />}
+            </View>
+
             <View>
               <Text style={{ fontSize: 12 }} className="text-neutral-500">
                 {item?.role === "student"

@@ -93,7 +93,6 @@ const FormContainer = ({ step, setStep, setSubStep, subStep }: Props) => {
     const loadRegisterData = async () => {
       try {
         const storedData = await getRegisterData();
-        console.log("storedData", storedData);
 
         if (storedData) {
           setRegisterData(storedData);

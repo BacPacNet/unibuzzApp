@@ -48,6 +48,13 @@ export type PostCardType = {
       profile_dp: {
         imageUrl: string;
       };
+      communities: {
+        _id: string;
+        name: string;
+        logo: string;
+        isVerifiedMember: boolean;
+        isCommunityAdmin: boolean;
+      }[];
     };
 
     profile: {

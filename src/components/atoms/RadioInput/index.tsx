@@ -1,4 +1,4 @@
-import React from "react";
+import React, { forwardRef } from "react";
 import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 import { Controller } from "react-hook-form";
 import { FONTS } from "@/constants/fonts";
@@ -17,52 +17,52 @@ interface RadioInputProps {
   size?: "default" | "small";
 }
 
-const RadioInput: React.FC<RadioInputProps> = ({
-  name,
-  control,
-  options,
-  required = false,
-  size = "default",
-}) => {
-  return (
-    <Controller
-      control={control}
-      name={name}
-      rules={{ required: required ? "This field is required" : false }}
-      render={({ field: { onChange, value }, fieldState: { error } }) => (
-        <View style={styles.container}>
-          {options.map((option) => (
-            <TouchableOpacity
-              key={option.value}
-              style={styles.radioOption}
-              onPress={() => onChange(option.value)}
-            >
-              <View
-                style={[
-                  styles.radioOuter,
-                  value === option.value && styles.radioOuterSelected,
-                ]}
+const RadioInput = forwardRef<View, RadioInputProps>(
+  ({ name, control, options, required = false, size = "default" }, ref) => {
+    return (
+      <Controller
+        control={control}
+        name={name}
+        rules={{ required: required ? "This field is required" : false }}
+        render={({ field: { onChange, value }, fieldState: { error } }) => (
+          <View ref={ref} style={styles.container}>
+            {options.map((option) => (
+              <TouchableOpacity
+                key={option.value}
+                style={styles.radioOption}
+                onPress={() => onChange(option.value)}
               >
-                {value === option.value && <View style={styles.radioInner} />}
-              </View>
-              <View>
-                <Text
-                  style={[size === "small" ? styles.smallLabel : styles.label]}
+                <View
+                  style={[
+                    styles.radioOuter,
+                    value === option.value && styles.radioOuterSelected,
+                  ]}
                 >
-                  {option.label}
-                </Text>
-                {option?.details && (
-                  <Text style={styles.detailsText}>{option?.details}</Text>
-                )}
-              </View>
-            </TouchableOpacity>
-          ))}
-          {error && <Text style={styles.errorText}>{error.message}</Text>}
-        </View>
-      )}
-    />
-  );
-};
+                  {value === option.value && <View style={styles.radioInner} />}
+                </View>
+                <View>
+                  <Text
+                    style={[
+                      size === "small" ? styles.smallLabel : styles.label,
+                    ]}
+                  >
+                    {option.label}
+                  </Text>
+                  {option?.details && (
+                    <Text style={styles.detailsText}>{option?.details}</Text>
+                  )}
+                </View>
+              </TouchableOpacity>
+            ))}
+            {error && <Text style={styles.errorText}>{error.message}</Text>}
+          </View>
+        )}
+      />
+    );
+  }
+);
+
+RadioInput.displayName = "RadioInput";
 
 const styles = StyleSheet.create({
   container: {

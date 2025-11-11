@@ -9,9 +9,12 @@ import { getUserStore } from "@/storage/user";
 import {
   useGetUserNotificationTotalCount,
   useGetUserUnreadMessagesTotalCount,
+  useGetUserNotification,
 } from "@/services/notification";
 import { NEXT_PUBLIC_SOCKET_URL, NEXT_PUBLIC_SOCKET_URL_IOS } from "@env";
 import { SocketConnectionEnums } from "@/types/SocketType";
+import { useQueryClient } from "@tanstack/react-query";
+import { notificationRoleAccess } from "@/constant/notification";
 
 type SocketContextType = {
   socket: Socket | null;
@@ -37,19 +40,26 @@ export const SocketProvider: React.FC<{ children: React.ReactNode }> = ({
   const [notificationType, setNotificationType] = useState("");
 
   const userData = getUserStore();
-
+  const queryClient = useQueryClient();
   const { refetch: unreadNotificationCount } =
     useGetUserNotificationTotalCount();
   const { refetch: userUnreadMessagesCount } =
     useGetUserUnreadMessagesTotalCount();
+  const { refetch: refetchUserNotification } = useGetUserNotification(10, true);
 
   const navigationRef = useNavigationContainerRef();
   const routeNames = useNavigationState((state) => state?.routeNames || []);
   const currentRoute = useNavigationState(
-    (state) => state?.routeNames?.[state.index] || "",
+    (state) => state?.routeNames?.[state.index] || ""
   );
 
   const isRouteMessage = currentRoute !== "Messages";
+
+  const refetchCommunityGroup = () => {
+    queryClient.invalidateQueries({
+      queryKey: ["communityGroup"],
+    });
+  };
 
   useEffect(() => {
     if (!userData?.id) return;
@@ -57,7 +67,7 @@ export const SocketProvider: React.FC<{ children: React.ReactNode }> = ({
     const newSocket = io(
       Platform.OS === "android"
         ? NEXT_PUBLIC_SOCKET_URL
-        : NEXT_PUBLIC_SOCKET_URL_IOS,
+        : NEXT_PUBLIC_SOCKET_URL_IOS
     );
 
     newSocket.on("connect", () => {
@@ -74,9 +84,12 @@ export const SocketProvider: React.FC<{ children: React.ReactNode }> = ({
     });
 
     newSocket.on(`notification_${userData.id}`, (notification) => {
-      console.log("sockert");
-
-      unreadNotificationCount();
+      if (notification.type === notificationRoleAccess.REFETCHNOTIFICATIONS) {
+        refetchUserNotification();
+        refetchCommunityGroup();
+      } else {
+        unreadNotificationCount();
+      }
     });
 
     newSocket.on(`message_notification_${userData.id}`, () => {

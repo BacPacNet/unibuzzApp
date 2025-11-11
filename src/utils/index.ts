@@ -12,6 +12,7 @@ import {
 } from "date-fns";
 import { getUserProfileStore } from "@/storage/user";
 import ImagePicker from "react-native-image-crop-picker";
+import { findNodeHandle, ScrollView, View } from "react-native";
 
 dayjs.extend(relativeTime);
 dayjs.locale("en");
@@ -210,4 +211,46 @@ export const cleanFileName = (fileName: string) => {
     : decoded;
 
   return cleaned;
+};
+
+export const scrollToField = <T extends Record<string, React.RefObject<View>>>(
+  fieldName: keyof T,
+  fieldRefs: T,
+  scrollViewRef: React.RefObject<ScrollView>,
+  delay = 300
+) => {
+  setTimeout(() => {
+    const fieldRef = fieldRefs[fieldName];
+    if (!fieldRef?.current || !scrollViewRef.current) {
+      console.warn(`Missing ref for ${String(fieldName)}`);
+      return;
+    }
+
+    const scrollViewNode = findNodeHandle(scrollViewRef.current);
+
+    if (scrollViewNode) {
+      try {
+        fieldRef.current.measureLayout(
+          scrollViewNode,
+          (_x, y) => {
+            scrollViewRef.current?.scrollTo({
+              y: Math.max(0, y - 100),
+              animated: true,
+            });
+          },
+
+          () => {
+            fieldRef.current?.measureInWindow((_x, y) => {
+              scrollViewRef.current?.scrollTo({
+                y: Math.max(0, y - 100),
+                animated: true,
+              });
+            });
+          }
+        );
+      } catch (error) {
+        console.warn(`scrollToField failed for ${String(fieldName)}:`, error);
+      }
+    }
+  }, delay);
 };

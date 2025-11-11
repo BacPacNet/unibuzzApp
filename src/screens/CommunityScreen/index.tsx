@@ -68,6 +68,7 @@ const CommunityScreen = ({ route }: any) => {
   const [imageSrc, setImageSrc] = useState(
     communityData?.communityCoverUrl?.imageUrl
   );
+  const [isGroupAdmin, setIsGroupAdmin] = useState(false);
   const [ImageSrcErr, setImageSrcErr] = useState(false);
   const [refreshing, setRefreshing] = React.useState(false);
   const queryClient = useQueryClient();
@@ -106,6 +107,11 @@ const CommunityScreen = ({ route }: any) => {
     setImageSrcErr(false);
     if (communityData) {
       setImageSrc(communityData?.communityCoverUrl?.imageUrl);
+      setIsGroupAdmin(
+        communityData?.adminId
+          ?.map(String)
+          .includes(userData?.id?.toString() || "")
+      );
     }
   }, [communityData]);
 
@@ -228,7 +234,7 @@ const CommunityScreen = ({ route }: any) => {
       <SafeAreaView className="bg-white flex-1">
         {(showCreatePostButton || lastScrollY == 0) && (
           <CreatePostButton
-            isAllowed={communityData?.adminId == userData?.id}
+            isAllowed={isGroupAdmin}
             onPress={() =>
               navigation.navigate("NewGroupPost", {
                 communityId,

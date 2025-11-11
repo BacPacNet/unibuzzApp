@@ -66,6 +66,7 @@ const Profile = ({ route }: ProfileProps) => {
     role,
     displayEmail,
     email,
+    communities,
   } = profile || {};
 
   const onRefresh = useCallback(() => {
@@ -164,6 +165,8 @@ const Profile = ({ route }: ProfileProps) => {
             country={country}
             role={role || ""}
             IsUniversityVerified={IsUniversityVerified()}
+            communities={communities || []}
+            activeUniversityName={university_name || ""}
           />
         }
         renderItem={({ item }) => (

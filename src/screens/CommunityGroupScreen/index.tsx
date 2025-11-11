@@ -347,7 +347,7 @@ const CommunityGroupScreen = ({ route }: any) => {
       {!isCommunityGroupLive ? (
         <CommunityGroupNotLiveCard
           communityID={communityId}
-          communityAdminId={communityGroups?.communityId.adminId as string}
+          communityAdminId={communityGroups?.communityId.adminId as string[]}
           communityGroupId={communityGroups?._id as string}
           communityGroupAdminId={communityGroups?.adminUserId as string}
           notificationType={communityGroups?.notificationTypes as string}

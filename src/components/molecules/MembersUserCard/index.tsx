@@ -2,13 +2,14 @@ import { View, Text, Image, StyleSheet, TouchableOpacity } from "react-native";
 import React, { memo, useEffect, useRef, useState } from "react";
 import Avatar from "@/assets/avatar.svg";
 import ReusableButton from "@/components/atoms/ReusableButton";
-import { Crown, UserPlus } from "iconoir-react-native";
+import { CheckCircleSolid, Crown, UserPlus } from "iconoir-react-native";
 import { useToggleFollow } from "@/services/connection";
 import { useNavigation } from "@react-navigation/native";
 import { Toast } from "react-native-toast-notifications";
 import MemberActions from "../CommunityGroup/CommunityGroupMemberAction";
 import ActionSheet, { ActionSheetRef } from "react-native-actions-sheet";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import OfficailLogoPlaceHolder from "@/assets/community/official-logo.svg";
 
 interface Props {
   _id: string;
@@ -34,6 +35,7 @@ interface Props {
   isCommunityAdmin?: boolean;
   showRemoveButton?: boolean;
   forCommunityGroup?: boolean;
+  isVerifiedUserOfCommunity?: boolean;
 }
 const MembersUserCard = ({
   _id,
@@ -58,6 +60,7 @@ const MembersUserCard = ({
   isCommunityAdmin = false,
   showRemoveButton = false,
   forCommunityGroup = false,
+  isVerifiedUserOfCommunity = false,
 }: Props) => {
   const navigate = useNavigation() as any;
   const { mutateAsync: toggleFollow } = useToggleFollow(isFollowing, false);
@@ -199,8 +202,18 @@ const MembersUserCard = ({
           <Text
             style={styles.name}
           >{`${firstName || ""} ${lastName || ""}`}</Text>
+          {isVerifiedUserOfCommunity && (
+            <CheckCircleSolid color={"#6744FF"} height={16} width={16} />
+          )}
           {isGroupAdmin && (
             <Crown height={16} width={16} color={"#F59E0B"} fill={"#F59E0B"} />
+          )}
+          {isCommunityAdmin && (
+            <OfficailLogoPlaceHolder
+              height={16}
+              width={16}
+              style={styles.badgeImage}
+            />
           )}
         </View>
 
@@ -289,5 +302,26 @@ const styles = StyleSheet.create({
     color: "#6B7280",
     lineHeight: 14,
     fontWeight: 400,
+  },
+
+  badgeWrapper: {
+    position: "absolute",
+    bottom: -10,
+    right: 12,
+    width: 20,
+    height: 20,
+    borderRadius: 10,
+    backgroundColor: "#fff",
+    borderWidth: 2,
+    borderColor: "#a544ff",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+
+  badgeImage: {
+    width: 12,
+    height: 12,
+    borderRadius: 6,
+    objectFit: "contain",
   },
 });

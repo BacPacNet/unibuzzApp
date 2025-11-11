@@ -155,11 +155,24 @@ export const NotificationMessage = ({ data }: NotificationMessageProps) => {
     case notificationRoleAccess.OFFICIAL_GROUP_REQUEST:
       return (
         <Text style={styles.text}>
-          {data?.message} has sent a request to become an official group.
+          <Text style={styles.bold}>{fullName}</Text>
+          has requested{" "}
+          <Text style={styles.bold}>
+            {data?.communityGroupId?.title || ""}
+          </Text>{" "}
+          in{" "}
+          <Text style={styles.bold}>{data?.communityDetails?.name || ""}</Text>{" "}
+          to become an <Text style={styles.bold}>official group</Text>
+          {"."}
+          {/* </Text> */}
           {data?.status == notificationStatus.default && (
-            <Text className="text-neutral-500 mt-2 font-inter text-2xs">
-              You will be automatically added to the group if you accept.
-            </Text>
+            <>
+              {"\n"}
+              <Text className="text-neutral-500 mt-2 font-inter text-2xs">
+                You and other admins will automatically be added to the group if
+                you accept.
+              </Text>
+            </>
           )}
         </Text>
       );
