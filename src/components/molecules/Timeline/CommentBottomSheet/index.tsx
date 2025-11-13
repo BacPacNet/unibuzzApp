@@ -79,6 +79,8 @@ const CommentBottomSheet = ({
     isFetchingNextPage,
     hasNextPage,
     isFetching,
+    isLoading,
+    isInitialLoading,
     refetch: refetchUserPostComment,
   } = useGetUserPostComments(
     postId,
@@ -100,6 +102,8 @@ const CommentBottomSheet = ({
     isFetchingNextPage: communityCommentsIsFetchingNextPage,
     hasNextPage: communityCommentsHasNextPage,
     isFetching: communityCommentsIsFetching,
+    isLoading: communityCommentsIsLoading,
+    isInitialLoading: communityCommentsIsInitialLoading,
     refetch: refetchCommunityPostComment,
   } = useGetCommunityPostComments(
     postId,
@@ -141,19 +145,6 @@ const CommentBottomSheet = ({
     }
   }, [isReply]);
 
-  if (
-    (isFetching && !userCommentsData.length) ||
-    (communityCommentsIsFetching && !communityPostCommentsData.length)
-  ) {
-    return (
-      <View style={styles.fullHeight} className="relative">
-        <View className="flex-1 justify-center items-center">
-          <ActivityIndicator size="large" color="#7367f0" />
-        </View>
-      </View>
-    );
-  }
-
   const handleSelect = (option: { value: string; label: string }) => {
     setSelectedOption(option.label);
 
@@ -164,6 +155,23 @@ const CommentBottomSheet = ({
       refetchCommunityPostComment();
     }
   };
+
+  const isUserCommentsLoading =
+    isLoading || isInitialLoading || (isFetching && !userCommentsData.length);
+  const isCommunityCommentsLoading =
+    communityCommentsIsLoading ||
+    communityCommentsIsInitialLoading ||
+    (communityCommentsIsFetching && !communityPostCommentsData.length);
+
+  if (isUserCommentsLoading || isCommunityCommentsLoading) {
+    return (
+      <View style={styles.fullHeight} className="relative">
+        <View className="flex-1  items-center">
+          <ActivityIndicator size="large" color="#6744ff" />
+        </View>
+      </View>
+    );
+  }
 
   return (
     <View style={{ paddingBottom: insets.bottom }}>
@@ -256,6 +264,7 @@ const CommentBottomSheet = ({
                 handleNavigate={handleNavigate}
                 setModalVisible={setModalVisible}
                 type={type}
+                communities={item?.commenterProfileId?.communities}
               />
             )}
             onEndReached={() => {
@@ -284,7 +293,7 @@ const CommentBottomSheet = ({
               )
             }
             ListEmptyComponent={
-              isFetching || communityCommentsIsFetching ? (
+              isUserCommentsLoading || isCommunityCommentsLoading ? (
                 <View style={styles.loaderContainer}>
                   <ActivityIndicator size="large" color="#7367f0" />
                 </View>

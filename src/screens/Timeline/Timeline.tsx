@@ -3,18 +3,14 @@ import {
   FlatList,
   NativeScrollEvent,
   NativeSyntheticEvent,
-  Text,
   View,
 } from "react-native";
 import React, { useEffect, useRef, useState } from "react";
-
 import PostCard from "@/components/molecules/Timeline/PostCard";
 import { useGetTimelinePosts } from "@/services/timeline";
 import { RefreshControl } from "react-native-gesture-handler";
 import { useQueryClient } from "@tanstack/react-query";
-
 import { useNavigation } from "@react-navigation/native";
-
 import { StackNavigationProp } from "@react-navigation/stack";
 import { RootStackParamList } from "@/types/navigation";
 import CreatePostButton from "@/components/atoms/CreatePostButton";
@@ -25,6 +21,7 @@ import { getUserProfileStore, getUserStore } from "@/storage/user";
 import ActionSheet, { ActionSheetRef } from "react-native-actions-sheet";
 import UserGuideLineBottomSheet from "@/components/molecules/UserGuideLineBottomSheet";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { getNotificationToken } from "@/storage/NotificationToken";
 
 type NavigationProp = StackNavigationProp<RootStackParamList, "Timeline">;
 const Timeline = () => {

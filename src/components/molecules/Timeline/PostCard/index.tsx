@@ -254,7 +254,11 @@ const PostCard = memo(
           handleDeletePost={handleDeletePost}
           isPostVerified={data.isPostVerified}
           isCommunityAdmin={data?.userProfile?.isCommunityAdmin}
-          communities={data?.userProfile?.communities}
+          communities={
+            isSinglePost
+              ? data?.profile?.communities
+              : data?.userProfile?.communities
+          }
         />
         {Number(data?.content?.length) > 1 && data?.content ? (
           <View className="px-4">

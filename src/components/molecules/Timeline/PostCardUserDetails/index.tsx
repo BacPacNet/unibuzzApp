@@ -145,11 +145,11 @@ const PostCardUserDetails = ({
                 })
                 .map((community) => (
                   <PostCommunityHolder
-                    key={community._id}
-                    logo={community.logo}
-                    name={community.name}
-                    isVerified={community.isVerifiedMember}
-                    isCommunityAdmin={community.isCommunityAdmin || false}
+                    key={community?._id || ""}
+                    logo={community?.logo || ""}
+                    name={community?.name || ""}
+                    isVerified={community?.isVerifiedMember || false}
+                    isCommunityAdmin={community?.isCommunityAdmin || false}
                   />
                 ))}
             </View>

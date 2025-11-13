@@ -26,6 +26,7 @@ const UserComment = ({
   setModalVisible,
   type,
   showBorder = false,
+  communities,
 }: CommentsProp) => {
   const userData = getUserStore();
   const { mutate: deleteUserPost } = useDeleteUserPostComment();
@@ -99,6 +100,7 @@ const UserComment = ({
           onNavigate={handleNavigate}
           toShowOption={userData?.id === item?.commenterId?._id}
           handleDelete={handleDelete}
+          communities={communities}
         />
       </View>
       {/* comment  */}
@@ -249,6 +251,7 @@ const UserComment = ({
                 showTotalReply={showTotalReply}
                 type={type}
                 showBorder={true}
+                communities={reply?.commenterProfileId?.communities}
               />
             ))}
           {item?.level === 0 &&

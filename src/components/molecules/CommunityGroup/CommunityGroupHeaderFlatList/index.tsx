@@ -35,6 +35,8 @@ import { useJoinCommunityGroup } from "@/services/notification";
 import { Community as CommunityIcon } from "iconoir-react-native";
 import UniversityPlaceholder from "@/assets/community/university_banner.svg";
 import LeaveCommunityGroupBottomSheet from "../LeaveCommunityGroupBottomSheet";
+import GenericInfoBottomSheet from "../../GenericInfoBottomSheet";
+import { verifyUniversityEmailMessage } from "@/content/constant";
 
 type CommunityGroup = {
   title: string;
@@ -96,7 +98,7 @@ const FlatListCommunityHeader: React.FC<Props> = ({
 }) => {
   const { mutate: joinGroup, isPending: isJoinGroupPending } =
     useJoinCommunityGroup();
-
+  const universityVerificationBottomSheet = useRef<ActionSheetRef>(null);
   const groupInfoBottomSheet = useRef<ActionSheetRef>(null);
   const leaveCommunityGroupBottomSheet = useRef<ActionSheetRef>(null);
   const insets = useSafeAreaInsets();
@@ -132,6 +134,11 @@ const FlatListCommunityHeader: React.FC<Props> = ({
       joinGroup(payload, {
         onSuccess: () => {
           refetch();
+        },
+        onError: (error: any) => {
+          if (error.response.data.message == verifyUniversityEmailMessage) {
+            universityVerificationBottomSheet.current?.show();
+          }
         },
       });
     }
@@ -336,6 +343,22 @@ const FlatListCommunityHeader: React.FC<Props> = ({
         <LeaveCommunityGroupBottomSheet
           leaveCommunityGroup={leaveCommunityGroup}
           leaveCommunityGroupBottomSheet={leaveCommunityGroupBottomSheet}
+        />
+      </ActionSheet>
+      <ActionSheet
+        ref={universityVerificationBottomSheet}
+        gestureEnabled={true}
+        safeAreaInsets={insets}
+      >
+        <GenericInfoBottomSheet
+          buttonLabel="Verify Student Email"
+          title="Verify Account to Join "
+          description="Access to private groups is limited to verified users. Please complete verification to continue."
+          onButtonPress={() =>
+            navigate("SettingsStack", {
+              screen: "UniversityVerification",
+            })
+          }
         />
       </ActionSheet>
     </View>

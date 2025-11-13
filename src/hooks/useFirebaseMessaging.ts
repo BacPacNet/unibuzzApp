@@ -4,10 +4,7 @@ import messaging, {
   FirebaseMessagingTypes,
 } from "@react-native-firebase/messaging";
 import { PermissionsAndroid, Platform } from "react-native";
-import {
-  getNotificationToken,
-  storeNotificationToken,
-} from "@/storage/NotificationToken";
+import { storeNotificationToken } from "@/storage/NotificationToken";
 import { useHandleSavePushNotificationToken } from "@/services/pushNotification";
 import { notificationRoleAccess } from "@/types/notifications";
 import { screenName } from "@/constant/screenName";
@@ -115,11 +112,11 @@ export const useFirebaseMessaging = (): void => {
   };
 
   useEffect(() => {
-    const getTokenFromStorage = getNotificationToken();
-    console.log("getTokenFromStorage", getTokenFromStorage);
     const getToken = async (): Promise<void> => {
       try {
+        await messaging().deleteToken();
         const token = await messaging().getToken();
+
         storeNotificationToken(token);
         savePushNotificationToken({ token });
       } catch (error) {

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useRef } from "react";
 import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 
 import {
@@ -14,6 +14,9 @@ import { StackNavigationProp } from "@react-navigation/stack";
 import { RootStackParamList } from "@/types/navigation";
 import { useNavigation } from "@react-navigation/native";
 import { screenName } from "@/constant/screenName";
+import ActionSheet, { ActionSheetRef } from "react-native-actions-sheet";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+import GenericInfoBottomSheet from "../../GenericInfoBottomSheet";
 
 interface likedBy {
   totalCount: number;
@@ -84,6 +87,9 @@ type NavigationProp = StackNavigationProp<RootStackParamList, "Notifications">;
 
 const NotificationCard = ({ data }: Props) => {
   const navigation = useNavigation<NavigationProp>();
+  const limitActionSheetRef = useRef<ActionSheetRef>(null);
+  const insets = useSafeAreaInsets();
+
   const handleUpdateIsRead = async (e: any, id: string) => {
     e.stopPropagation?.();
 
@@ -221,8 +227,28 @@ const NotificationCard = ({ data }: Props) => {
       <View style={styles.body}>
         <NotificationMessage data={data} />
 
-        <NotificationActions data={data} />
+        <NotificationActions
+          data={data}
+          limitActionSheetRef={limitActionSheetRef}
+        />
       </View>
+
+      <ActionSheet
+        ref={limitActionSheetRef}
+        gestureEnabled={true}
+        safeAreaInsets={insets}
+      >
+        <GenericInfoBottomSheet
+          buttonLabel="Verify Student Email"
+          title="Verify Account to Join "
+          description="Access to private groups is limited to verified users. Please complete verification to continue."
+          onButtonPress={() =>
+            navigation.navigate("SettingsStack", {
+              screen: "UniversityVerification",
+            })
+          }
+        />
+      </ActionSheet>
     </TouchableOpacity>
   );
 };
