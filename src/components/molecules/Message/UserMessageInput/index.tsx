@@ -30,6 +30,7 @@ import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import { useTabBarVisibility } from "@/hooks/useTabBarVisibility";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { RootStackParamList } from "@/types/navigation";
+import { mergeMessages, updateChatsList } from "@/utils/chatMessages";
 
 // Types
 type Props = {
@@ -58,7 +59,6 @@ type MediaFile = {
 
 // Constants
 const MAX_FILES = 4;
-const MESSAGE_MERGE_THRESHOLD = 60000;
 
 const useMessageState = () => {
   const [text, setText] = useState("");
@@ -84,70 +84,6 @@ const useMessageState = () => {
     setIsImageUploading,
     resetState,
   };
-};
-
-// Utility functions
-const mergeMessages = (
-  oldMessages: LatestMessage[],
-  newMessage: LatestMessage
-): LatestMessage[] => {
-  if (!oldMessages.length) return [newMessage];
-
-  const lastMsg = oldMessages[oldMessages.length - 1];
-  const isDuplicate = oldMessages.findIndex(
-    (msg) => msg._id === newMessage._id
-  );
-
-  if (isDuplicate !== -1) {
-    const updated = [...oldMessages];
-    updated[isDuplicate] = newMessage;
-    return updated;
-  }
-
-  const isSameSender = lastMsg.sender.id === newMessage.sender.id;
-  const isRecent =
-    new Date(newMessage.createdAt).getTime() -
-      new Date(lastMsg.createdAt).getTime() <
-    MESSAGE_MERGE_THRESHOLD;
-  const noMedia = !lastMsg.media?.length && !newMessage.media?.length;
-
-  if (isSameSender && isRecent && noMedia) {
-    const merged = {
-      ...lastMsg,
-      content: `${lastMsg.content}\n${newMessage.content}`,
-      createdAt: newMessage.createdAt,
-    };
-    return [...oldMessages.slice(0, -1), merged];
-  }
-
-  return [...oldMessages, newMessage];
-};
-
-const updateChatsList = (chats: any[], newMessage: any) => {
-  const chatId = newMessage.chat;
-
-  const updatedChats = chats.map((chat) => {
-    if (chat._id === chatId._id) {
-      return {
-        ...chat,
-        latestMessage: newMessage,
-        latestMessageTime: new Date(newMessage.createdAt).getTime(),
-      };
-    }
-    return chat;
-  });
-
-  return updatedChats.sort((a, b) => {
-    const aTime =
-      a.latestMessageTime > 0
-        ? a.latestMessageTime
-        : new Date(a.createdAt || 0).getTime();
-    const bTime =
-      b.latestMessageTime > 0
-        ? b.latestMessageTime
-        : new Date(b.createdAt || 0).getTime();
-    return bTime - aTime;
-  });
 };
 
 const prepareMediaFiles = (
@@ -350,7 +286,11 @@ const UserMessageInput = ({
 
         createNewMessage(messagePayload, {
           onSuccess: (newMessage) => {
-            const chatId = newMessage.chat;
+            const chatIdentifier =
+              typeof newMessage.chat === "string"
+                ? newMessage.chat
+                : newMessage.chat?._id;
+            if (!chatIdentifier) return;
             const chats = queryClient.getQueryData(["userChats"]);
 
             if (Array.isArray(chats)) {
@@ -359,7 +299,7 @@ const UserMessageInput = ({
             }
 
             queryClient.setQueryData(
-              ["chatMessages", chatId._id],
+              ["chatMessages", chatIdentifier],
               (oldMessages: LatestMessage[] = []) =>
                 mergeMessages(oldMessages, newMessage)
             );

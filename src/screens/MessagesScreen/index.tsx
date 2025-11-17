@@ -15,6 +15,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { useFilteredChats } from "@/hooks/useFilteredChats";
 import { ChatsArray, CommunityChat } from "@/types/constant";
 import { SafeScreen } from "@/components/template";
+import { useNewMessageHandler } from "@/hooks/useNewMessageHandler";
 
 interface Message {
   _id: string;
@@ -106,65 +107,7 @@ const Messages = ({ route }: any) => {
     updateMessageSeen();
   }, [selectedChat?.latestMessage]);
 
-  const handleNewMessage = (newMessage: Message) => {
-    const { _id: chatMessageId, chat } = newMessage;
-    const messageChatId = chat?._id;
-    const isActiveChat = selectedChat?._id === messageChatId;
-
-    const chatData: ChatsArray = queryClient.getQueryData(["userChats"]) || [];
-
-    if (!isActiveChat && chatData.some((chat) => chat._id == messageChatId)) {
-      const updatedChats = chatData.map((chat) =>
-        chat._id === messageChatId
-          ? {
-              ...chat,
-              latestMessage: newMessage,
-              unreadMessagesCount: (chat.unreadMessagesCount || 0) + 1,
-            }
-          : chat
-      );
-
-      updatedChats.sort((a, b) => {
-        const dateA = a.latestMessage?.createdAt
-          ? new Date(a.latestMessage.createdAt).getTime()
-          : 0;
-        const dateB = b.latestMessage?.createdAt
-          ? new Date(b.latestMessage.createdAt).getTime()
-          : 0;
-        return dateB - dateA;
-      });
-      queryClient.setQueryData(["userChats"], updatedChats);
-    } else if (isActiveChat) {
-      queryClient.setQueryData(
-        ["chatMessages", selectedChat?._id],
-        (oldMessages: Message[]) => [...(oldMessages || []), newMessage]
-      );
-
-      const updatedChats = chatData.map((chat) =>
-        chat._id === selectedChat?._id
-          ? {
-              ...chat,
-              latestMessage: newMessage,
-            }
-          : chat
-      );
-      queryClient.setQueryData(["userChats"], updatedChats);
-
-      const isRead = newMessage?.readByUsers?.includes(userData?.id || "");
-
-      if (!isRead && selectedChat?._id) {
-        updateIsSeen({
-          chatId: selectedChat?._id,
-          messageId: chatMessageId,
-          data: { readByUserId: userData?.id },
-        });
-      }
-    } else if (!chatData.some((chat) => chat._id == messageChatId)) {
-      queryClient.invalidateQueries({ queryKey: ["userChats"] });
-      return;
-    }
-  };
-
+  useNewMessageHandler(selectedChat);
   const updatedChats = () => {
     if (!chatsData) return;
 
@@ -243,21 +186,6 @@ const Messages = ({ route }: any) => {
       socket.off(SocketConnectionEnums.USER_DISCONNECT, userDisconnected);
     };
   }, [socket]);
-
-  useEffect(() => {
-    if (!socket) {
-      console.log("Socket is not initialized");
-      return;
-    }
-
-    socket.on(SocketEnums.RECEIVED_MESSAGE, handleNewMessage);
-
-    return () => {
-      if (socket) {
-        socket.off(SocketEnums.RECEIVED_MESSAGE, handleNewMessage);
-      }
-    };
-  }, [socket, selectedChat]);
 
   useEffect(() => {
     if (selectedUserId) {
