@@ -1,4 +1,5 @@
 import ReusableButton from "@/components/atoms/ReusableButton";
+import { verifyUniversityEmailMessage } from "@/content/constant";
 import {
   useChangeCommunityGroupStatus,
   useJoinRequestPrivateGroup,
@@ -8,15 +9,21 @@ import {
   notificationRoleAccess,
   notificationStatus,
 } from "@/types/notifications";
-import React from "react";
+import React, { useRef } from "react";
 import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
+import { ActionSheetRef } from "react-native-actions-sheet";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 type NotificationActionsProps = {
   data: any;
+  limitActionSheetRef: React.RefObject<ActionSheetRef>;
 };
 
-export const NotificationActions = ({ data }: NotificationActionsProps) => {
-  const { mutate: joinGroup } = useJoinCommunityGroup();
+export const NotificationActions = ({
+  data,
+  limitActionSheetRef,
+}: NotificationActionsProps) => {
+  const { mutateAsync: joinGroup } = useJoinCommunityGroup();
   const { mutate: changeGroupStatus } = useChangeCommunityGroupStatus(
     data?.communityGroupId?._id || ""
   );
@@ -33,7 +40,13 @@ export const NotificationActions = ({ data }: NotificationActionsProps) => {
         groupId: data.communityGroupId._id,
         id: data._id,
       };
-      joinGroup(payload);
+      joinGroup(payload, {
+        onError: (error: any) => {
+          if (error.response.data.message == verifyUniversityEmailMessage) {
+            limitActionSheetRef?.current?.show();
+          }
+        },
+      });
     }
   };
 

@@ -92,6 +92,8 @@ const styles = StyleSheet.create({
     width: 32,
     height: 32,
     position: "relative",
+    backgroundColor: "white",
+    borderRadius: 360,
   },
   logo: {
     width: 32,

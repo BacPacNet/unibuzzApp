@@ -29,7 +29,7 @@ type media = {
 };
 
 export type Message = {
-  chat: string;
+  chat: string | { _id: string };
   content: string;
   createdAt: string;
   media: media[];
@@ -55,7 +55,7 @@ export type Message = {
 export type messages = Message[];
 
 export type LatestMessage = {
-  chat: string;
+  chat: string | { _id: string };
   content: string;
   createdAt: string;
   media: media[];

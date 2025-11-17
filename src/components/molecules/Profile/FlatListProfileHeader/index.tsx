@@ -167,14 +167,15 @@ export const FlatListProfileHeaderPart = ({
             })
             .map((community) => (
               <ProfileCommunityHolder
-                key={community._id}
+                key={community?._id || ""}
                 isActive={
-                  activeUniversityName.toString() === community.name.toString()
+                  activeUniversityName.toString() ===
+                  community?.name?.toString()
                 }
-                logo={community.logo}
-                name={community.name}
-                isVerified={community.isVerifiedMember}
-                isCommunityAdmin={community.isCommunityAdmin}
+                logo={community?.logo || ""}
+                name={community?.name || ""}
+                isVerified={community?.isVerifiedMember || false}
+                isCommunityAdmin={community?.isCommunityAdmin || false}
               />
             ))}
         </View>

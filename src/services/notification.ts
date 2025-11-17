@@ -9,6 +9,7 @@ import { getToken } from "@/storage/token";
 import { UserMainNotificationsProps } from "@/types/notifications";
 import axios from "axios";
 import { Toast } from "react-native-toast-notifications";
+import { verifyUniversityEmailMessage } from "@/content/constant";
 
 export async function getUserMainNotification(
   token: string,
@@ -116,7 +117,12 @@ export const useJoinCommunityGroup = () => {
     },
     onError: (res: any) => {
       Toast.hideAll();
-      Toast.show(res.response.data.message);
+      if (res.response.data.message !== verifyUniversityEmailMessage) {
+        Toast.show(res.response.data.message, {
+          type: "danger",
+          placement: "top",
+        });
+      }
     },
   });
 };

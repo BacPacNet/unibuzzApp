@@ -291,6 +291,8 @@ const CommunityGroupScreen = ({ route }: any) => {
   };
 
   const handleBack = () => {
+    setFilterPostBy("");
+
     if (from === screenName.notifications) {
       navigation.navigate("Notifications");
     }

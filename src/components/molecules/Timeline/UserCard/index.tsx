@@ -5,6 +5,7 @@ import { View, Text, Image, TouchableOpacity, StyleSheet } from "react-native";
 import Avatar from "@/assets/avatar.svg";
 import DropdownWrapper from "../../SelectDropDownWrapper";
 import { FONTS } from "@/constants/fonts";
+import PostCommunityHolder from "../../PostCommunityHolder/PostCommunityHolder";
 
 interface CommenterProfile {
   profile_dp?: { imageUrl?: string };
@@ -40,6 +41,13 @@ interface UserCardProps {
   onNavigate: (id: string) => void;
   toShowOption: boolean;
   handleDelete: () => void;
+  communities: {
+    _id: string;
+    name: string;
+    logo: string;
+    isVerifiedMember: boolean;
+    isCommunityAdmin: boolean;
+  }[];
 }
 
 const UserCard: React.FC<UserCardProps> = ({
@@ -56,6 +64,7 @@ const UserCard: React.FC<UserCardProps> = ({
   onNavigate,
   toShowOption = false,
   handleDelete,
+  communities,
 }) => {
   return (
     <View className="flex-1 flex-row items-center gap-4 justify-center">
@@ -86,7 +95,35 @@ const UserCard: React.FC<UserCardProps> = ({
             </Text>
           </View>
         </TouchableOpacity>
+        <View className="mr-2">
+          {communities?.length && communities?.length > 0 && (
+            <View className="flex flex-row items-center gap-2">
+              {communities
+                ?.slice()
+                .sort((a, b) => {
+                  const aIsAdmin = a.isCommunityAdmin;
+                  const bIsAdmin = b.isCommunityAdmin;
 
+                  const aIsVerified = a.isVerifiedMember;
+                  const bIsVerified = b.isVerifiedMember;
+
+                  if (aIsAdmin !== bIsAdmin) return aIsAdmin ? -1 : 1;
+                  if (aIsVerified !== bIsVerified) return aIsVerified ? -1 : 1;
+
+                  return 0;
+                })
+                .map((community) => (
+                  <PostCommunityHolder
+                    key={community?._id || ""}
+                    logo={community?.logo || ""}
+                    name={community?.name || ""}
+                    isVerified={community?.isVerifiedMember || false}
+                    isCommunityAdmin={community?.isCommunityAdmin || false}
+                  />
+                ))}
+            </View>
+          )}
+        </View>
         {toShowOption && (
           <DropdownWrapper
             position="left"

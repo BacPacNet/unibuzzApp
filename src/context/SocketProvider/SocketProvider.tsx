@@ -71,7 +71,7 @@ export const SocketProvider: React.FC<{ children: React.ReactNode }> = ({
     );
 
     newSocket.on("connect", () => {
-      console.log("Connected to the server");
+      //   console.log("Connected to the server", userData?.id);
       newSocket.emit(SocketConnectionEnums.SETUP, userData?.id);
       setSocket(newSocket);
       setIsConnected(true);
