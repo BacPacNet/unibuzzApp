@@ -24,6 +24,7 @@ import COUNTRY_TO_CITY from "@/content/country_to_city.json";
 import REGION_TO_COUNTRY from "@/content/region_to_country.json";
 import REGION_TO_CITY from "@/content/region_to_city.json";
 import { FONTS } from "@/constants/fonts";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 // Constants
 const FILTER_TYPES = ["Region", "Country", "City", "Type"];
@@ -53,7 +54,7 @@ export interface UniversitySearchFiltersRef {
 const UniversitySearchFilters = forwardRef<UniversitySearchFiltersRef, Props>(
   ({ setQuery }, ref) => {
     const { control, watch, reset, setValue } = useForm<FilterFormData>();
-
+    const insets = useSafeAreaInsets();
     const [cityOptions, setCityOptions] = useState<string[]>(cities);
     const [countryOptions, setCountryOptions] = useState<string[]>(COUNTRY);
 
@@ -170,13 +171,16 @@ const UniversitySearchFilters = forwardRef<UniversitySearchFiltersRef, Props>(
         const value = currentFormData[key];
 
         return (
-          <Text
+          <TouchableOpacity
             key={filterType}
             onPress={() => handleBottomSheet(filterType)}
             style={styles.searchTag}
+            activeOpacity={0.7}
           >
-            {value?.length ? value : filterType}
-          </Text>
+            <Text style={styles.searchTagText}>
+              {value?.length ? value : filterType}
+            </Text>
+          </TouchableOpacity>
         );
       },
       [currentFormData, handleBottomSheet]
@@ -194,6 +198,7 @@ const UniversitySearchFilters = forwardRef<UniversitySearchFiltersRef, Props>(
           ref={sheetRefs[filterType]}
           gestureEnabled={true}
           snapPoints={ACTION_SHEET_SNAP_POINTS}
+          safeAreaInsets={insets}
         >
           <Controller
             name={filterType.toLowerCase() as keyof FilterFormData}
@@ -223,9 +228,9 @@ const UniversitySearchFilters = forwardRef<UniversitySearchFiltersRef, Props>(
 
           <View style={styles.searchTagContainer}>
             {FILTER_TYPES.map(renderFilterTag)}
-            {/* <TouchableOpacity style={styles.resetButton} onPress={handleReset}>
-            <Refresh width={20} height={20} color="white" />
-          </TouchableOpacity> */}
+            <TouchableOpacity style={styles.resetButton} onPress={handleReset}>
+              <Refresh width={20} height={20} color="white" />
+            </TouchableOpacity>
           </View>
 
           <View style={styles.searchContainer}>
@@ -281,30 +286,34 @@ const styles = StyleSheet.create({
   },
   searchTagContainer: {
     marginTop: 24,
-    display: "flex",
     flexDirection: "row",
-    gap: 12,
     alignItems: "center",
     flexWrap: "wrap",
+    marginHorizontal: -6,
   },
   searchTag: {
     borderWidth: 1,
     borderColor: "#E2E8F0",
-    textAlign: "center",
-    textAlignVertical: "center",
     borderRadius: 16,
+    height: 36,
+    paddingHorizontal: 16,
+    justifyContent: "center",
+    alignItems: "center",
+    marginHorizontal: 6,
+    marginBottom: 6,
+    backgroundColor: "#FFFFFF",
+  },
+  searchTagText: {
     fontSize: 12,
     fontFamily: FONTS.inter.medium,
     color: "#3A3B3C",
-    height: 36,
-    paddingHorizontal: 16,
+    textAlign: "center",
   },
   resetButton: {
     borderWidth: 1,
     borderColor: "#E2E8F0",
     width: 32,
     height: 32,
-    display: "flex",
     alignItems: "center",
     justifyContent: "center",
     borderRadius: 16,
