@@ -55,8 +55,11 @@ const SearchCommunityGroupScreen = () => {
   const [currTab, setCurrTab] = useState<
     (typeof SearchCommunityGroupTabs)[keyof typeof SearchCommunityGroupTabs]
   >(SearchCommunityGroupTabs.Joined);
-  const { setSelectedCommunityGroupLogo, setSelectedCommunityId } =
-    useCommunityContext();
+  const {
+    setSelectedCommunityGroupLogo,
+    setSelectedCommunityId,
+    selectedCommunityId,
+  } = useCommunityContext();
 
   const isUserVerifiedForCommunity: boolean =
     userProfileData?.email?.some(
@@ -73,7 +76,7 @@ const SearchCommunityGroupScreen = () => {
     mutate,
     data: subscribedCommunities,
     isPending,
-  } = useGetFilteredSubscribedCommunities(communityId);
+  } = useGetFilteredSubscribedCommunities(selectedCommunityId || communityId);
 
   const {
     selectedTypeMain,
@@ -192,6 +195,7 @@ const SearchCommunityGroupScreen = () => {
     selectedFiltersMain,
     change,
     selectedLabelMain,
+    selectedCommunityId,
   ]);
 
   const handleCommunityGroupClick = (communityId: string, logo: string) => {
@@ -213,7 +217,13 @@ const SearchCommunityGroupScreen = () => {
   };
 
   useEffect(() => {
-    if (communityId && subscribedCommunitiesForUser) {
+    if (selectedCommunityId && subscribedCommunitiesForUser) {
+      setCommunity(
+        subscribedCommunitiesForUser.find(
+          (community: any) => community._id === selectedCommunityId
+        )
+      );
+    } else if (communityId && subscribedCommunitiesForUser) {
       setCommunity(
         subscribedCommunitiesForUser.find(
           (community: any) => community._id === communityId
@@ -222,7 +232,7 @@ const SearchCommunityGroupScreen = () => {
     } else if (subscribedCommunitiesForUser) {
       setCommunity(subscribedCommunitiesForUser[0] as Community);
     }
-  }, [subscribedCommunitiesForUser, communityId]);
+  }, [subscribedCommunitiesForUser, communityId, selectedCommunityId]);
 
   const resetFilter = () => {
     setSelectedFiltersMain({});

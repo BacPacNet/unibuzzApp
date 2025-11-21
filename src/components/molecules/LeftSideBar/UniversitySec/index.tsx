@@ -31,7 +31,6 @@ const UniversitySec = () => {
   } = useCommunityContext();
 
   const userData = getUserStore();
-  const userProfileData = getUserProfileStore();
   const selectedCommunityGroup = getSelectedCommunityGroup();
 
   const {
@@ -44,7 +43,6 @@ const UniversitySec = () => {
     useState<Community | null>();
   const [community, setCommunity] = useState<Community>();
   const [currTab, setCurrTab] = useState("Joined");
-  const { resetFilters } = useNewCommunityGroupStatesContext();
   const hasMutatedRef = useRef(false);
   const {
     mutate: mutateFilterCommunityGroups,
@@ -116,7 +114,7 @@ const UniversitySec = () => {
   }, [subscribedCommunities, selectedCommunityGroup]);
 
   useEffect(() => {
-    if (!community?._id || hasMutatedRef.current) return;
+    if (!community?._id) return;
 
     const data = {
       selectedType: [],
@@ -125,7 +123,6 @@ const UniversitySec = () => {
     };
 
     mutateFilterCommunityGroups(data);
-    hasMutatedRef.current = true;
   }, [community?._id]);
 
   return (
