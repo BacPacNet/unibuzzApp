@@ -25,6 +25,7 @@ import {
 } from "react-native";
 import ActionSheet, { ActionSheetRef } from "react-native-actions-sheet";
 import { Toast } from "react-native-toast-notifications";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 type NavigationProp = StackNavigationProp<
   RootStackParamList,
@@ -34,7 +35,7 @@ type NavigationProp = StackNavigationProp<
 const ConnectionsFilter = () => {
   const navigation = useNavigation<NavigationProp>();
   const paramValues: any = useRoute().params;
-
+  const insets = useSafeAreaInsets();
   const {
     register: GroupRegister,
     watch,
@@ -213,6 +214,7 @@ const ConnectionsFilter = () => {
         ref={yearActionSheetRef}
         gestureEnabled={true}
         snapPoints={defaultBottomSheetSnapPoints}
+        safeAreaInsets={insets}
       >
         <Controller
           name="studentYear"
@@ -237,6 +239,7 @@ const ConnectionsFilter = () => {
         gestureEnabled={true}
         snapPoints={defaultBottomSheetSnapPoints}
         containerStyle={styles.actionSheetContainer}
+        safeAreaInsets={insets}
       >
         <Controller
           name="major"
@@ -260,6 +263,7 @@ const ConnectionsFilter = () => {
         gestureEnabled={true}
         snapPoints={defaultBottomSheetSnapPoints}
         containerStyle={styles.actionSheetContainer}
+        safeAreaInsets={insets}
       >
         <Controller
           name="occupation"
@@ -285,6 +289,7 @@ const ConnectionsFilter = () => {
         gestureEnabled={true}
         snapPoints={defaultBottomSheetSnapPoints}
         containerStyle={styles.actionSheetContainer}
+        safeAreaInsets={insets}
       >
         <Controller
           name="affiliation"

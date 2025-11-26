@@ -114,11 +114,6 @@ const SelectUniversityDropdownBottomSheet: React.FC<SelectDropdownProps> = ({
               keyboardHandlerEnabled={false}
               onClose={() => setShow(false)}
             >
-              {/* <TouchableOpacity
-                style={styles.modalOverlay}
-                activeOpacity={1}
-                onPress={() => setShow(false)}
-              > */}
               <TouchableOpacity
                 style={styles.modalContent}
                 activeOpacity={1}
@@ -170,7 +165,6 @@ const SelectUniversityDropdownBottomSheet: React.FC<SelectDropdownProps> = ({
                   }
                 />
               </TouchableOpacity>
-              {/* </TouchableOpacity> */}
             </ActionSheet>
           </>
         )}

@@ -23,6 +23,7 @@ type CommunityGroupSettingPopMenuProps = {
   handleNavigateToEditCommunityGroupScreen: () => void;
   communityGroupId: string;
   communityId: string;
+  closeDropdown?: () => void;
 };
 
 type NavigationProp = StackNavigationProp<RootStackParamList, "CommunityGroup">;
@@ -36,6 +37,7 @@ const CommunityGroupSettingPopMenu: React.FC<
   handleNavigateToEditCommunityGroupScreen,
   communityGroupId,
   communityId,
+  closeDropdown,
 }) => {
   const { navigate } = useNavigation<NavigationProp>();
   const {
@@ -69,7 +71,10 @@ const CommunityGroupSettingPopMenu: React.FC<
       {isGroupAdmin && (
         <TouchableOpacity
           style={styles.textContainer}
-          onPress={handleNavigateToEditCommunityGroupScreen}
+          onPress={() => {
+            closeDropdown?.();
+            handleNavigateToEditCommunityGroupScreen();
+          }}
         >
           <Edit height={16} width={16} color={"#6744FF"} />
           <Text style={styles.text}> Edit Group</Text>
@@ -86,7 +91,10 @@ const CommunityGroupSettingPopMenu: React.FC<
 
       {isGroupAdmin ? (
         <TouchableOpacity
-          onPress={handleDeleteCommunityGroup}
+          onPress={() => {
+            closeDropdown?.();
+            handleDeleteCommunityGroup();
+          }}
           style={styles.textContainer}
         >
           <LogIn height={16} width={16} color={"#EF4444"} strokeWidth={2} />
@@ -94,7 +102,10 @@ const CommunityGroupSettingPopMenu: React.FC<
         </TouchableOpacity>
       ) : (
         <TouchableOpacity
-          onPress={leaveCommunityGroup}
+          onPress={() => {
+            closeDropdown?.();
+            leaveCommunityGroup();
+          }}
           style={styles.textContainer}
         >
           <LogIn height={16} width={16} color={"#EF4444"} strokeWidth={2} />

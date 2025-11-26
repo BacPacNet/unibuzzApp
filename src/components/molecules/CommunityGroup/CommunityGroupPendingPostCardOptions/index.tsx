@@ -81,8 +81,8 @@ const PendingPostCardOption: React.FC<PendingPostCardOptionProps> = ({
 
 const styles = StyleSheet.create({
   wrapper: {
-    paddingVertical: 8,
-    marginBottom: 16,
+    padding: 16,
+    margin: 16,
     borderRadius: 6,
     borderWidth: 1,
   },

@@ -49,7 +49,6 @@ const UsersScreenUserCardItem = ({
   const [isFollowingState, setIsFollowingState] = useState(item?.isFollowing);
   const [isProcessing, setIsProcessing] = useState(false);
 
-  //   console.log("item",item._id,myUserId);
   const handleFollowClick = async (id: string) => {
     setIsFollowingState(true);
     setIsProcessing(true);

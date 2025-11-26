@@ -26,6 +26,7 @@ import { StyleSheet, Text, View } from "react-native";
 import ActionSheet, { ActionSheetRef } from "react-native-actions-sheet";
 import { AllUserSelectBottomSheet } from "../../UserBottomSheet";
 import { Toast } from "react-native-toast-notifications";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 const MessageNewGroupFormContainer = forwardRef(
   (props: { chatId: string }, ref) => {
@@ -71,7 +72,7 @@ const MessageNewGroupFormContainer = forwardRef(
     const occupationActionSheetRef = useRef<ActionSheetRef>(null);
     const affiliationActionSheetRef = useRef<ActionSheetRef>(null);
     const universityActionSheetRef = useRef<ActionSheetRef>(null);
-
+    const insets = useSafeAreaInsets();
     const { data: communityUsersData } = useCommunityUsers(community.id);
     const communityUsers =
       communityUsersData?.pages
@@ -236,6 +237,7 @@ const MessageNewGroupFormContainer = forwardRef(
           snapPoints={[50]}
           onClose={() => setSearchInput("")}
           containerStyle={styles.actionSheetContainer}
+          safeAreaInsets={insets}
         >
           <SubscribedUniveristyBottomSheet
             options={userProiledata?.email || []}
@@ -250,6 +252,7 @@ const MessageNewGroupFormContainer = forwardRef(
           gestureEnabled={true}
           snapPoints={[50, 100]}
           onClose={() => setSearchInput("")}
+          safeAreaInsets={insets}
         >
           {/* <SelectCommunityUsersBottomSheet
           setSelectedUsers={setIndividualsUsers}
@@ -267,9 +270,8 @@ const MessageNewGroupFormContainer = forwardRef(
         <ActionSheet
           ref={yearActionSheetRef}
           gestureEnabled={true}
-          // snapPoints={[70, 100]}
-
           onClose={() => setSearchInput("")}
+          safeAreaInsets={insets}
         >
           <Controller
             name="studentYear"
@@ -291,9 +293,9 @@ const MessageNewGroupFormContainer = forwardRef(
         <ActionSheet
           ref={majorActionSheetRef}
           gestureEnabled={true}
-          // snapPoints={[70, 100]}
           onClose={() => setSearchInput("")}
           containerStyle={styles.actionSheetContainer}
+          safeAreaInsets={insets}
         >
           <Controller
             name="major"
@@ -317,9 +319,9 @@ const MessageNewGroupFormContainer = forwardRef(
         <ActionSheet
           ref={occupationActionSheetRef}
           gestureEnabled={true}
-          // snapPoints={[70, 100]}
           onClose={() => setSearchInput("")}
           containerStyle={styles.actionSheetContainer}
+          safeAreaInsets={insets}
         >
           <Controller
             name="occupation"
@@ -342,9 +344,9 @@ const MessageNewGroupFormContainer = forwardRef(
         <ActionSheet
           ref={affiliationActionSheetRef}
           gestureEnabled={true}
-          // snapPoints={[70, 100]}
           onClose={() => setSearchInput("")}
           containerStyle={styles.actionSheetContainer}
+          safeAreaInsets={insets}
         >
           <Controller
             name="affiliation"
