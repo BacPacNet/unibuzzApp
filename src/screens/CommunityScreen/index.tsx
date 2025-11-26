@@ -187,9 +187,9 @@ const CommunityScreen = ({ route }: any) => {
                     <CommunityDropDownModal
                       leaveCommunity={handleToggleJoinCommunity}
                       communityLogoUrl={
-                        communityData?.communityLogoUrl?.imageUrl
+                        communityData?.communityLogoUrl?.imageUrl || ""
                       }
-                      communityName={communityData?.name}
+                      communityName={communityData?.name || ""}
                     />
                   )}
                 >
