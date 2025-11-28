@@ -6,6 +6,8 @@ import { getToken } from "@/storage/token";
 import { Toast } from "react-native-toast-notifications";
 import { ChatsArray } from "@/types/constant";
 import { useGetUserUnreadMessagesTotalCount } from "./notification";
+import { trackMixpanel } from "@/mixpanel/track";
+import { TRACK_EVENT } from "@/content/constant";
 
 export async function getUserChats(token: any) {
   const response: ChatsArray = await client(`/chat`, {
@@ -96,7 +98,11 @@ export const useCreateUserChat = () => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (data: any) => createUserChat(cookieValue, data),
-    onSuccess: () => {
+    onSuccess: (res: any, variables) => {
+      trackMixpanel(TRACK_EVENT.NEW_INDIVIDUAL_CHAT, {
+        chatId: res._id,
+        userId: variables.userId,
+      });
       queryClient.invalidateQueries({ queryKey: ["userChats"] });
     },
     onError: (error: any) => {
@@ -313,7 +319,12 @@ export const useCreateGroupChat = () => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (data: any) => createGroupChat(cookieValue, data),
-    onSuccess: () => {
+    onSuccess: (res: any, variables) => {
+      trackMixpanel(TRACK_EVENT.NEW_GROUP_CHAT, {
+        chatId: res._id,
+        users: variables.users,
+        groupName: variables.groupName,
+      });
       queryClient.invalidateQueries({ queryKey: ["userChats"] });
     },
     onError: (error: any) => {

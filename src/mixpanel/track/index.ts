@@ -6,6 +6,21 @@ export const trackMixpanel = (event: string, data: any) => {
   getMixpanel()?.track(event, data);
 };
 
+export const identifyUserInMixpanel = (userData: {
+  id: string;
+  email: string;
+  firstName: string;
+  lastName: string;
+}) => {
+  getMixpanel()?.identify(userData.id);
+  getMixpanel()
+    ?.getPeople()
+    .set({
+      $email: userData.email,
+      $name: `${userData.firstName || ""} ${userData.lastName || ""}`.trim(),
+    });
+};
+
 export const trackCommunityGroupPostCommentReplyLike = (
   postId: string,
   commentId: string,
@@ -221,4 +236,40 @@ export const trackCommunityPostLike = (
       source,
     }
   );
+};
+
+// message events func
+export const trackMessageUploads = (
+  data: Array<{ imageUrl: string | null }>
+) => {
+  if (!data || data.length === 0) return;
+
+  const imageItems =
+    data.filter(
+      (item: { imageUrl: string | null }) =>
+        item.imageUrl &&
+        imageMimeTypes.includes(getMimeTypeFromUrl(item.imageUrl))
+    ) || [];
+  const fileItems =
+    data.filter(
+      (item: { imageUrl: string | null }) =>
+        item.imageUrl &&
+        !imageMimeTypes.includes(getMimeTypeFromUrl(item.imageUrl))
+    ) || [];
+
+  if (imageItems?.length > 0) {
+    imageItems?.forEach((item) => {
+      trackMixpanel(TRACK_EVENT.MESSAGE_IMAGE_UPLOAD, {
+        imageUrl: item.imageUrl,
+      });
+    });
+  }
+
+  if (fileItems?.length > 0) {
+    fileItems?.forEach((item) => {
+      trackMixpanel(TRACK_EVENT.MESSAGE_FILE_UPLOAD, {
+        fileUrl: item.imageUrl,
+      });
+    });
+  }
 };

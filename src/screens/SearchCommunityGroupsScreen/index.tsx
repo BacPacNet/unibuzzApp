@@ -35,6 +35,8 @@ import { storeSelectedCommunityGroup } from "@/storage/selected-community-group"
 import ReusableButton from "@/components/atoms/ReusableButton";
 import { SearchCommunityGroupTabs } from "@/constant/searchCommunityGroupTabs";
 import VerifyToCreateGroupBottomSheet from "@/components/molecules/CommunityGroup/VerifyToCreateGroupBottomSheet";
+import { TRACK_EVENT } from "@/content/constant";
+import { trackMixpanel } from "@/mixpanel/track";
 
 type NavigationProp = StackNavigationProp<
   RootStackParamList,
@@ -187,7 +189,17 @@ const SearchCommunityGroupScreen = () => {
       selectedLabel: selectedLabelMain,
     };
 
-    mutate(data);
+    mutate(data, {
+      onSuccess: (res: any) => {
+        trackMixpanel(TRACK_EVENT.SIDEBAR_GROUP_FILTER, {
+          communityId,
+          selectedFilters: selectedFiltersMain,
+          selectedType: selectedTypeMain,
+          selectedLabel: selectedLabelMain,
+          sort,
+        });
+      },
+    });
   }, [
     sort,
     communityId,

@@ -48,6 +48,8 @@ import ActionSheet, { ActionSheetRef } from "react-native-actions-sheet";
 import ImageOptionSelectBottomSheet from "@/components/molecules/ImageOptionSelectBottomSheet";
 import { handleTakePhoto, pickImage, scrollToField } from "@/utils";
 import { getUserStore } from "@/storage/user";
+import { TRACK_EVENT } from "@/content/constant";
+import { trackMixpanel } from "@/mixpanel/track";
 
 type NavigationProp = StackNavigationProp<
   RootStackParamList,
@@ -200,6 +202,13 @@ const NewCommunityGroupScreen = () => {
             navigate.navigate("Groups", {
               screen: "SearchCommunityGroupScreen",
               params: { communityId, change: Date.now() },
+            });
+            trackMixpanel(TRACK_EVENT.NEW_COMMUNITY_GROUP, {
+              groupName: payload.title,
+              groupType: payload.communityGroupType,
+              accessType: payload.communityGroupAccess,
+              groupLabel: payload.communityGroupLabel,
+              communityId: communityId,
             });
           },
           onError: (error: any) => {

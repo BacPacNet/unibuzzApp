@@ -23,7 +23,7 @@ const JoinGroupButton: React.FC<Props> = ({
       return (
         <ReusableButton
           buttonText="Verified Users Only"
-          variant="secondary"
+          variant="primary"
           containerStyle="opacity-60 "
           disabled
           size="w-1/2"

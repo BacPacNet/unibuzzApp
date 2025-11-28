@@ -31,6 +31,7 @@ import { useTabBarVisibility } from "@/hooks/useTabBarVisibility";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { RootStackParamList } from "@/types/navigation";
 import { mergeMessages, updateChatsList } from "@/utils/chatMessages";
+import { trackMessageUploads } from "@/mixpanel/track";
 
 // Types
 type Props = {
@@ -244,6 +245,7 @@ const UserMessageInput = ({
     };
 
     const uploadResponse = await uploadToS3(uploadPayload);
+    trackMessageUploads(uploadResponse.data);
     return uploadResponse.success ? uploadResponse.data : null;
   }, [images, files, uploadToS3]);
 

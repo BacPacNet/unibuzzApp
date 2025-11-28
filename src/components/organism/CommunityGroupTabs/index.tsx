@@ -22,6 +22,7 @@ type Props = {
   userData: Partial<User>;
   isCommunityGroup: boolean;
   isloading?: boolean;
+  communityId: string;
 };
 
 const CommunityGroupTabs = ({
@@ -36,6 +37,7 @@ const CommunityGroupTabs = ({
   communityLogo,
   isCommunityGroup,
   isloading,
+  communityId,
 }: Props) => {
   const renderCurrentTabContent = () => {
     switch (currTab) {
@@ -49,6 +51,7 @@ const CommunityGroupTabs = ({
             userData={userData}
             communityLogo={communityLogo}
             isCommunityGroup={isCommunityGroup}
+            selectCommunityId={communityId}
           />
         );
       case "Joined":
@@ -61,6 +64,7 @@ const CommunityGroupTabs = ({
             userData={userData}
             communityLogo={communityLogo}
             isCommunityGroup={isCommunityGroup}
+            selectCommunityId={communityId}
           />
         );
       case "My":
@@ -73,6 +77,7 @@ const CommunityGroupTabs = ({
             userData={userData}
             communityLogo={communityLogo}
             isCommunityGroup={isCommunityGroup}
+            selectCommunityId={communityId}
           />
         );
       default:

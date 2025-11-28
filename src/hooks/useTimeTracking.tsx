@@ -1,5 +1,6 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useCallback } from "react";
 import { AppState, AppStateStatus } from "react-native";
+import { useFocusEffect } from "@react-navigation/native";
 import { getMixpanel } from "@/context/MixPanelProvider/MixPanelProvidex";
 
 export const useTimeTracking = (
@@ -14,48 +15,56 @@ export const useTimeTracking = (
     propsRef.current = properties;
   }, [properties]);
 
-  useEffect(() => {
-    const mixpanel = getMixpanel();
-    if (!mixpanel) return;
+  useFocusEffect(
+    useCallback(() => {
+      const mixpanel = getMixpanel();
+      if (!mixpanel) return;
 
-    // Begin timing
-    mixpanel.timeEvent(eventName);
-    hasTrackedRef.current = false;
+      // Reset tracking state when screen comes into focus
+      hasTrackedRef.current = false;
 
-    const trackTimeSpent = () => {
-      if (hasTrackedRef.current) return;
-      hasTrackedRef.current = true;
-      mixpanel.track(eventName, propsRef.current);
-    };
+      // Begin timing
+      mixpanel.timeEvent(eventName);
 
-    const handleAppStateChange = (nextAppState: AppStateStatus) => {
-      // When app goes to background, track time (like unmount)
-      if (
-        appStateRef.current.match(/active|foreground/) &&
-        nextAppState.match(/inactive|background/)
-      ) {
-        trackTimeSpent();
-      }
-      // When app comes back to foreground, start new timing session
-      if (
-        appStateRef.current.match(/inactive|background/) &&
-        nextAppState.match(/active|foreground/)
-      ) {
-        // Reset tracking flag and start new timing session
-        hasTrackedRef.current = false;
-        mixpanel.timeEvent(eventName);
-      }
-      appStateRef.current = nextAppState;
-    };
+      const trackTimeSpent = () => {
+        if (hasTrackedRef.current) {
+          return;
+        }
+        hasTrackedRef.current = true;
 
-    const subscription = AppState.addEventListener(
-      "change",
-      handleAppStateChange
-    );
+        mixpanel.track(eventName, propsRef.current);
+      };
 
-    return () => {
-      trackTimeSpent(); // Track on unmount
-      subscription.remove();
-    };
-  }, [eventName]);
+      const handleAppStateChange = (nextAppState: AppStateStatus) => {
+        // When app goes to background, track time
+        if (
+          appStateRef.current.match(/active|foreground/) &&
+          nextAppState.match(/inactive|background/)
+        ) {
+          trackTimeSpent();
+        }
+        // When app comes back to foreground, start new timing session
+        if (
+          appStateRef.current.match(/inactive|background/) &&
+          nextAppState.match(/active|foreground/)
+        ) {
+          // Reset tracking flag and start new timing session
+          hasTrackedRef.current = false;
+          mixpanel.timeEvent(eventName);
+        }
+        appStateRef.current = nextAppState;
+      };
+
+      const subscription = AppState.addEventListener(
+        "change",
+        handleAppStateChange
+      );
+
+      // Cleanup when screen goes out of focus
+      return () => {
+        trackTimeSpent(); // Track time spent when screen loses focus
+        subscription.remove();
+      };
+    }, [eventName])
+  );
 };
