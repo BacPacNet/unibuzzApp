@@ -77,18 +77,21 @@ const PostCard = memo(
 
     const { mutate: LikeUnlikeGroupPost, isPending: isLikeUnlikeGroupPending } =
       useLikeUnilikeGroupPost(
-        data?.communityId,
+        data?.community?._id || data?.communityId,
         communityGroupId,
         isTimeline,
         isSinglePost,
         isProfile,
-        filterPostBy
+        filterPostBy,
+        isSelfLike
       );
+
     const { mutate: LikeUnlikeTimelinePost, isPending: isLikeUnlikePending } =
       useLikeUnlikeTimelinePost(
         source as string,
         data?.user?._id,
-        isSinglePost
+        isSinglePost,
+        isSelfLike
       );
 
     const sharePost = async (
@@ -411,6 +414,8 @@ const PostCard = memo(
             initialComment={initialComment}
             isReply={isReply}
             commentId={commentId}
+            communityId={data?.community?._id || ""}
+            communityGroupId={data?.communityGroupId || ""}
           />
         </ActionSheet>
       </View>

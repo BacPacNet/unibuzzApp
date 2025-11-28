@@ -10,7 +10,7 @@ import {
 } from "@10play/tentap-editor";
 import { useFocusEffect } from "@react-navigation/native";
 import { MediaImage, PagePlus } from "iconoir-react-native";
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState, useRef } from "react";
 import {
   KeyboardAvoidingView,
   Platform,
@@ -35,6 +35,9 @@ import BackHeader from "@/components/atoms/BackHeader";
 import ReusableButton from "@/components/atoms/ReusableButton";
 import { useTabBarVisibility } from "@/hooks/useTabBarVisibility";
 import { SafeScreen } from "@/components/template";
+import { TRACK_EVENT } from "@/content/constant";
+import { trackMixpanel, trackPostUploads } from "@/mixpanel/track";
+import { useToolbarStateLogger } from "@/hooks/useToolbarStateLogger";
 
 type ImageAsset = {
   uri: string;
@@ -55,6 +58,8 @@ type fileType = {
 const NewPost = ({ navigation }: any) => {
   const [images, setImages] = useState<ImageAsset[]>([]);
   const [files, setFiles] = useState<fileType[]>([]);
+  const previousStateRef = useRef<any>(null);
+
   const editor = useEditorBridge({
     autofocus: true,
     avoidIosKeyboard: true,
@@ -71,6 +76,13 @@ const NewPost = ({ navigation }: any) => {
       }),
     ],
   });
+  const toggleEventCall = useCallback((actionName: string) => {
+    trackMixpanel(TRACK_EVENT.USER_POST_TEXT_EDIT, {
+      textEdit: actionName,
+    });
+  }, []);
+  useToolbarStateLogger(editor, toggleEventCall);
+
   const { mutate: CreateTimelinePost, isPending } = useCreateUserPost();
   const { mutateAsync: uploadToS3 } = useUploadToS3();
   const [postAccessType, setPostAccessType] = useState<UserPostType>(
@@ -204,6 +216,7 @@ const NewPost = ({ navigation }: any) => {
 
       const uploadResponse = await uploadToS3(uploadPayload);
       if (uploadResponse.success) {
+        trackPostUploads(uploadResponse.data);
         payload.imageUrl = uploadResponse.data;
       }
     }
@@ -213,6 +226,9 @@ const NewPost = ({ navigation }: any) => {
         setImages([]);
         setFiles([]);
         editor.setContent("");
+        trackMixpanel(TRACK_EVENT.USER_POST_BUTTON_CLICK, {
+          buttonName: "post_create",
+        });
         navigation.goBack();
       },
     });

@@ -8,6 +8,13 @@ import { client } from "./api-client";
 import { Toast } from "react-native-toast-notifications";
 import { getUserStore } from "@/storage/user";
 import { Sortby } from "@/types/constant";
+import {
+  trackCommunityGroupPostCommentReplyLike,
+  trackCommunityPostCommentReplyLike,
+  trackCommunityGroupPostCommentLike,
+  trackCommunityPostCommentLike,
+  trackCommunityPostLike,
+} from "@/mixpanel/track";
 
 export async function deleteCommunityPost(postId: string, token: string) {
   const response = await client(`/communityPost/${postId}`, {
@@ -97,7 +104,8 @@ export const useLikeUnilikeGroupPost = (
   isTimeline: boolean,
   isSinglePost: boolean,
   isProfile: boolean,
-  filterPostBy: string = ""
+  filterPostBy: string = "",
+  localIsLiked: boolean
 ) => {
   const cookieValue = getToken() as string;
   const userData = getUserStore();
@@ -117,12 +125,12 @@ export const useLikeUnilikeGroupPost = (
               ...(communityGroupId ? [communityGroupId] : []),
               ...(communityGroupId ? [filterPostBy] : []),
             ];
+
       queryClient.cancelQueries({ queryKey: queryKey });
 
       const previousPosts = queryClient.getQueryData(queryKey);
 
       queryClient.setQueryData(queryKey, (oldData: any) => {
-        console.log(oldData, "oldData");
         if (!oldData) return;
 
         const toggleLike = (likeCount: any[]) => {
@@ -177,7 +185,17 @@ export const useLikeUnilikeGroupPost = (
       });
       return { previousPosts };
     },
-
+    onSuccess: (res: any, postId: string) => {
+      if (localIsLiked) {
+        trackCommunityPostLike(
+          postId,
+          communityId,
+          isSinglePost,
+          isTimeline,
+          communityGroupId
+        );
+      }
+    },
     onError: (res: any) => {
       Toast.hideAll();
       Toast.show(res.response.data.message);
@@ -250,7 +268,9 @@ export async function LikeUnilikeGroupPostCommnet(
 export const useLikeUnlikeGroupPostComment = (
   showInitial: boolean,
   postId: string,
-  sortby: Sortby
+  sortby: Sortby,
+  communityId: string,
+  communityGroupId: string
 ) => {
   const cookieValue = getToken();
   const queryClient = useQueryClient();
@@ -259,9 +279,11 @@ export const useLikeUnlikeGroupPostComment = (
     mutationFn: ({
       communityGroupPostCommentId,
       level,
+      isSelfLike,
     }: {
       communityGroupPostCommentId: string;
       level: string;
+      isSelfLike: boolean;
     }) =>
       LikeUnilikeGroupPostCommnet(
         communityGroupPostCommentId,
@@ -269,7 +291,45 @@ export const useLikeUnlikeGroupPostComment = (
         sortby
       ),
     onSuccess: (_, variables) => {
-      const { communityGroupPostCommentId, level } = variables;
+      const { communityGroupPostCommentId, level, isSelfLike } = variables;
+      const isCommentReply = level !== "0";
+
+      if (!isSelfLike) {
+        const hasCommunityGroupId = communityGroupId.length > 0;
+
+        if (isCommentReply && hasCommunityGroupId) {
+          trackCommunityGroupPostCommentReplyLike(
+            postId,
+            communityGroupPostCommentId,
+            level,
+            communityId,
+            communityGroupId
+          );
+        } else if (isCommentReply && !hasCommunityGroupId) {
+          trackCommunityPostCommentReplyLike(
+            postId,
+            communityGroupPostCommentId,
+            level,
+            communityId
+          );
+        } else if (!isCommentReply && hasCommunityGroupId) {
+          trackCommunityGroupPostCommentLike(
+            postId,
+            communityGroupPostCommentId,
+            level,
+            communityId,
+            communityGroupId
+          );
+        } else {
+          trackCommunityPostCommentLike(
+            postId,
+            communityGroupPostCommentId,
+            level,
+            communityId
+          );
+        }
+      }
+
       const currUserComments = queryClient.getQueryData<{
         pages: any[];
         pageParams: any[];

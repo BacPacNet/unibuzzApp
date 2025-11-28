@@ -34,6 +34,9 @@ const UserComment = ({
   const role = item?.commenterProfileId?.role;
 
   const isStudent = role === userTypeEnum.Student;
+  const isSelfLike = item?.likeCount?.some(
+    (like: any) => like.userId === userData?.id
+  );
   const handleDelete = () => {
     if (type === PostType.Community) {
       Alert.alert(
@@ -187,7 +190,11 @@ const UserComment = ({
 
             <TouchableOpacity
               onPress={() =>
-                likePostCommentHandler(item._id, item.level.toString())
+                likePostCommentHandler(
+                  item._id,
+                  item.level.toString(),
+                  isSelfLike
+                )
               }
               className="flex flex-row gap-1 items-center"
             >
@@ -197,13 +204,7 @@ const UserComment = ({
               <ThumbsUp
                 height={16}
                 width={16}
-                color={
-                  item?.likeCount?.some(
-                    (like: any) => like.userId === userData?.id
-                  )
-                    ? "#6647FF"
-                    : "#6B7280"
-                }
+                color={isSelfLike ? "#6647FF" : "#6B7280"}
               />
             </TouchableOpacity>
 

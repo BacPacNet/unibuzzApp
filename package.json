@@ -37,6 +37,7 @@
     "i18next": "^23.12.2",
     "iconoir-react-native": "^7.10.1",
     "ky": "^1.5.0",
+    "mixpanel-react-native": "^3.1.2",
     "nativewind": "^4.1.23",
     "npm": "^11.0.0",
     "react": "18.3.1",
