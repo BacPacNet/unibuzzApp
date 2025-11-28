@@ -6,7 +6,10 @@ import { StackNavigationProp } from "@react-navigation/stack";
 import { RootStackParamList } from "@/types/navigation";
 import MembersUserCard from "@/components/molecules/MembersUserCard";
 import { getUserProfileStore, getUserStore } from "@/storage/user";
-import { useGetChatMembers, useRemoveGroupChatMember } from "@/services/Messages";
+import {
+  useGetChatMembers,
+  useRemoveGroupChatMember,
+} from "@/services/Messages";
 import { useEffect, useState } from "react";
 
 type NavigationProp = StackNavigationProp<
@@ -15,18 +18,18 @@ type NavigationProp = StackNavigationProp<
 >;
 
 type userList = {
-    userId: {
-        _id: string;
-        firstName: string;
-        lastName: string;
-        role: string;
-        profileDp: string;
-        studyYear: string;
-        major: string;
-        occupation: string;
-        affiliation: string;
-    }
-}
+  userId: {
+    _id: string;
+    firstName: string;
+    lastName: string;
+    role: string;
+    profileDp: string;
+    studyYear: string;
+    major: string;
+    occupation: string;
+    affiliation: string;
+  };
+};
 
 const ChatMembersScreen = ({ route }: any) => {
   const navigate = useNavigation<NavigationProp>();
@@ -34,19 +37,18 @@ const ChatMembersScreen = ({ route }: any) => {
   const chatId = route?.params?.chatId ?? "";
   const groupAdmin = route?.params?.groupAdmin ?? "";
   const [removing, setRemoving] = useState("");
-  const [usersList, setUsersList] = useState<userList[]>( []);
+  const [usersList, setUsersList] = useState<userList[]>([]);
   const userProfileData = getUserProfileStore();
-  
-  const {data: chatMembers} = useGetChatMembers(chatId)
-//   console.log(chatMembers?.members?.users[0], "chatMembers","chatId",chatId);
-  
+
+  const { data: chatMembers } = useGetChatMembers(chatId);
+
   const { mutateAsync, isPending } = useRemoveGroupChatMember(chatId);
   const handleRemoveUser = async (userIdToRemove: string) => {
     setRemoving(userIdToRemove);
     const res: any = await mutateAsync({ userToToggleId: userIdToRemove });
     if (res?.id) {
       const newUserList = usersList.filter(
-        (user: any) => user.userId._id !== res?.id,
+        (user: any) => user.userId._id !== res?.id
       );
       setUsersList(newUserList);
     }
@@ -60,12 +62,11 @@ const ChatMembersScreen = ({ route }: any) => {
     navigate.goBack();
   };
 
-
-  useEffect(()=>{
-    if(chatMembers){
-      setUsersList(chatMembers?.members?.users)
+  useEffect(() => {
+    if (chatMembers) {
+      setUsersList(chatMembers?.members?.users);
     }
-  },[chatMembers])
+  }, [chatMembers]);
 
   return (
     <View style={styles.container}>

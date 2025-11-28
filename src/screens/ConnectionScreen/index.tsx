@@ -28,17 +28,14 @@ const Connections = () => {
     },
     {
       label: "Mutuals",
-
       content: <ConnectionMutualUserTabList />,
     },
     {
       label: "Following",
-
       content: <ConnectionFollowingUserTabList />,
     },
     {
       label: "Followers",
-
       content: <ConnectionFollowersUserTabList />,
     },
   ];

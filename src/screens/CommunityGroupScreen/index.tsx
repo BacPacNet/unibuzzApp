@@ -308,67 +308,89 @@ const CommunityGroupScreen = ({ route }: any) => {
   };
   useCustomBackHandler(handleBack);
 
-  const FlatListHeaderWithError = () => (
-    <View>
-      <FlatListCommunityHeader
-        imageSrc={imageSrc}
-        logoSrc={logoSrc}
-        isGroupOfficial={isGroupOfficial}
-        isGroupPrivate={isGroupPrivate}
-        groupStatus={communityGroups?.status as string}
-        isUserJoinedCommunityGroup={isUserJoinedCommunityGroup}
-        isGroupAdmin={isGroupAdmin}
-        isUserVerifiedForCommunity={isUserVerifiedForCommunity}
-        isJoinCommunityPending={isJoinCommunityPending}
-        logoSrcErr={logoSrcErr}
-        setLogoSrcErr={setLogoSrcErr}
-        ImageSrcErr={ImageSrcErr}
-        setImageSrcErr={setImageSrcErr}
-        communityGroups={communityGroups}
-        userStatus={userStatus}
-        handleToggleJoinCommunityGroup={handleToggleJoinCommunityGroup}
-        setModalVisible={setModalVisible}
-        membersBottomSheet={membersBottomSheet}
-        communityLogoUrl={
-          communityGroups?.communityId?.communityLogoUrl.imageUrl || ""
-        }
-        adminId={communityGroups?.adminUserId.toString() || ""}
-        leaveCommunityGroup={leaveCommunityGroupFunction}
-        isCommunityGroupNotLive={!isCommunityGroupLive}
-        refetch={onRefresh}
-      />
-
-      {isCommunityGroupLive && isUserJoinedCommunityGroup && (
-        <CommunityGroupPostFilter
-          pendingPostCount={pendingPostCount}
-          filterPostBy={filterPostBy}
-          setFilterPostBy={setFilterPostBy}
-        />
-      )}
-
-      {!isCommunityGroupLive ? (
-        <CommunityGroupNotLiveCard
-          communityID={communityId}
-          communityAdminId={communityGroups?.communityId.adminId as string[]}
-          communityGroupId={communityGroups?._id as string}
-          communityGroupAdminId={communityGroups?.adminUserId as string}
-          notificationType={communityGroups?.notificationTypes as string}
-          notificationId={communityGroups?.notificationId as string}
-          notificationStatus={communityGroups?.notificationStatus as string}
+  const FlatListHeaderWithError = useMemo(
+    () => (
+      <View>
+        <FlatListCommunityHeader
+          imageSrc={imageSrc}
+          logoSrc={logoSrc}
+          isGroupOfficial={isGroupOfficial}
+          isGroupPrivate={isGroupPrivate}
+          groupStatus={communityGroups?.status as string}
+          isUserJoinedCommunityGroup={isUserJoinedCommunityGroup}
+          isGroupAdmin={isGroupAdmin}
+          isUserVerifiedForCommunity={isUserVerifiedForCommunity}
+          isJoinCommunityPending={isJoinCommunityPending}
+          logoSrcErr={logoSrcErr}
+          setLogoSrcErr={setLogoSrcErr}
+          ImageSrcErr={ImageSrcErr}
+          setImageSrcErr={setImageSrcErr}
+          communityGroups={communityGroups}
+          userStatus={userStatus}
+          handleToggleJoinCommunityGroup={handleToggleJoinCommunityGroup}
+          setModalVisible={setModalVisible}
+          membersBottomSheet={membersBottomSheet}
+          communityLogoUrl={
+            communityGroups?.communityId?.communityLogoUrl.imageUrl || ""
+          }
+          adminId={communityGroups?.adminUserId.toString() || ""}
+          leaveCommunityGroup={leaveCommunityGroupFunction}
+          isCommunityGroupNotLive={!isCommunityGroupLive}
           refetch={onRefresh}
-          communityGroupTitle={communityGroups?.title || ""}
-          communityName={communityGroups?.communityId?.name || ""}
         />
-      ) : error && (error as AxiosError).response?.status === 401 ? (
-        <EmptyStateCard
-          imageWidth={126}
-          imageHeight={158}
-          SvgComponent={NotMember}
-          title="You are not a member of this group"
-          description="This group is for members only. Become a member to access exclusive content and discussions."
-        />
-      ) : null}
-    </View>
+
+        {isCommunityGroupLive && isUserJoinedCommunityGroup && (
+          <CommunityGroupPostFilter
+            pendingPostCount={pendingPostCount}
+            filterPostBy={filterPostBy}
+            setFilterPostBy={setFilterPostBy}
+          />
+        )}
+
+        {!isCommunityGroupLive ? (
+          <CommunityGroupNotLiveCard
+            communityID={communityId}
+            communityAdminId={communityGroups?.communityId.adminId as string[]}
+            communityGroupId={communityGroups?._id as string}
+            communityGroupAdminId={communityGroups?.adminUserId as string}
+            notificationType={communityGroups?.notificationTypes as string}
+            notificationId={communityGroups?.notificationId as string}
+            notificationStatus={communityGroups?.notificationStatus as string}
+            refetch={onRefresh}
+            communityGroupTitle={communityGroups?.title || ""}
+            communityName={communityGroups?.communityId?.name || ""}
+          />
+        ) : error && (error as AxiosError).response?.status === 401 ? (
+          <EmptyStateCard
+            imageWidth={126}
+            imageHeight={158}
+            SvgComponent={NotMember}
+            title="You are not a member of this group"
+            description="This group is for members only. Become a member to access exclusive content and discussions."
+          />
+        ) : null}
+      </View>
+    ),
+    [
+      imageSrc,
+      logoSrc,
+      isGroupOfficial,
+      isGroupPrivate,
+      communityGroups?.status,
+      isUserJoinedCommunityGroup,
+      isGroupAdmin,
+      isUserVerifiedForCommunity,
+      isJoinCommunityPending,
+      logoSrcErr,
+      ImageSrcErr,
+      communityGroups,
+      userStatus,
+      isCommunityGroupLive,
+      pendingPostCount,
+      filterPostBy,
+      communityId,
+      error,
+    ]
   );
 
   return (
@@ -437,7 +459,7 @@ const CommunityGroupScreen = ({ route }: any) => {
               <View />
             )
           }
-          ListHeaderComponent={<FlatListHeaderWithError />}
+          ListHeaderComponent={FlatListHeaderWithError}
           ListEmptyComponent={
             isFetching || isLoading ? (
               <View className="flex-1 justify-center items-center">

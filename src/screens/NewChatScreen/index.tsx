@@ -229,6 +229,7 @@ export default function NewChatScreen() {
         ref={userActionSheetRef}
         gestureEnabled={true}
         snapPoints={defaultBottomSheetSnapPoints}
+        safeAreaInsets={insets}
       >
         <AllUserSelectBottomSheet
           hideBottomSheet={() => userActionSheetRef.current?.hide()}

@@ -180,7 +180,9 @@ const FlatListCommunityHeader: React.FC<Props> = ({
             uri: imageSrc,
           }}
           style={styles.image}
+          resizeMode="cover"
           onError={() => setImageSrcErr(true)}
+          fadeDuration={0}
         />
       ) : (
         <UniversityPlaceholder style={styles.image} />
@@ -234,7 +236,7 @@ const FlatListCommunityHeader: React.FC<Props> = ({
                 position="left"
                 extraLeft={70}
                 viewTopPosition={-40}
-                renderDropdown={() => (
+                renderDropdown={(closeDropdown) => (
                   <CommunityGroupSettingPopMenu
                     isPending={groupStatus === status.pending}
                     isGroupAdmin={isGroupAdmin}
@@ -244,6 +246,7 @@ const FlatListCommunityHeader: React.FC<Props> = ({
                     }
                     communityGroupId={communityGroups?._id}
                     communityId={communityGroups?.communityId?._id}
+                    closeDropdown={closeDropdown}
                   />
                 )}
               >
@@ -375,7 +378,6 @@ const styles = StyleSheet.create({
   image: {
     width: "100%",
     height: 200,
-    objectFit: "fill",
   },
 
   content: {

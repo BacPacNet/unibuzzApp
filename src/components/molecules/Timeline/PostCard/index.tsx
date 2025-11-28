@@ -394,12 +394,6 @@ const PostCard = memo(
           gestureEnabled={true}
           safeAreaInsets={insets}
           snapPoints={defaultBottomSheetSnapPoints}
-          containerStyle={
-            {
-              // paddingTop: 10,
-              // backgroundColor: "red",
-            }
-          }
         >
           <CommentBottomSheet
             postId={data?._id}

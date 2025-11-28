@@ -32,6 +32,7 @@ import {
 import { FONTS } from "@/constants/fonts";
 import CustomSwitch from "@/components/atoms/CustomSwitch";
 import Badge from "@/assets/badge.svg";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 const NewCommunityGroupUsersSelectScreen = ({ route }: any) => {
   const universityName = route?.params?.universityName || "";
@@ -124,7 +125,7 @@ const NewCommunityGroupUsersSelectScreen = ({ route }: any) => {
   const affiliationActionSheetRef = useRef<ActionSheetRef>(null);
   const universityActionSheetRef = useRef<ActionSheetRef>(null);
   const communityGroupAccess = watch("communityGroupAccess");
-
+  const insets = useSafeAreaInsets();
   const [searchInput, setSearchInput] = useState<string>("");
   const [showbulk, setShowBulk] = useState(false);
   const [selectedType, setSelectedType] = useState<
@@ -354,6 +355,7 @@ const NewCommunityGroupUsersSelectScreen = ({ route }: any) => {
         snapPoints={[50]}
         onClose={() => setSearchInput("")}
         containerStyle={styles.actionSheetContainer}
+        safeAreaInsets={insets}
       >
         <SubscribedUniveristyBottomSheet
           options={userProiledata?.email || []}
@@ -368,6 +370,7 @@ const NewCommunityGroupUsersSelectScreen = ({ route }: any) => {
         gestureEnabled={true}
         snapPoints={[50, 100]}
         onClose={() => setSearchInput("")}
+        safeAreaInsets={insets}
       >
         <SelectCommunityUsersBottomSheet
           setSelectedUsers={setIndividualsUsers}
@@ -411,6 +414,7 @@ const NewCommunityGroupUsersSelectScreen = ({ route }: any) => {
         // snapPoints={[70, 100]}
         onClose={() => setSearchInput("")}
         containerStyle={styles.actionSheetContainer}
+        safeAreaInsets={insets}
       >
         <Controller
           name="major"
@@ -439,6 +443,7 @@ const NewCommunityGroupUsersSelectScreen = ({ route }: any) => {
         // snapPoints={[70, 100]}
         onClose={() => setSearchInput("")}
         containerStyle={styles.actionSheetContainer}
+        safeAreaInsets={insets}
       >
         <Controller
           name="occupation"
@@ -467,6 +472,7 @@ const NewCommunityGroupUsersSelectScreen = ({ route }: any) => {
         // snapPoints={[70, 100]}
         onClose={() => setSearchInput("")}
         containerStyle={styles.actionSheetContainer}
+        safeAreaInsets={insets}
       >
         <Controller
           name="affiliation"

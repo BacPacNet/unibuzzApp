@@ -63,19 +63,17 @@ const ConnectionFollowingUserTabList: React.FC<{}> = ({}) => {
       keyExtractor={(item) => item._id}
       initialNumToRender={10}
       ListHeaderComponent={
-        <View>
-          <View className="flex-1 relative py-4">
-            <SearchInput
-              value={name}
-              onChangeText={setName}
-              placeholder="Search User..."
-            />
-            {!isFetching && userProfiles?.length === 0 ? (
-              <View className="py-4">
-                <Text className="text-center">No Result Found</Text>
-              </View>
-            ) : null}
-          </View>
+        <View className="py-4">
+          <SearchInput
+            value={name}
+            onChangeText={setName}
+            placeholder="Search User..."
+          />
+          {!isFetching && userProfiles?.length === 0 ? (
+            <View className="py-4">
+              <Text className="text-center">No Result Found</Text>
+            </View>
+          ) : null}
         </View>
       }
       renderItem={({ item }) => (
@@ -98,6 +96,7 @@ const ConnectionFollowingUserTabList: React.FC<{}> = ({}) => {
       )}
       getItemLayout={(_, index) => ({ length: 80, offset: 80 * index, index })}
       contentContainerStyle={{
+        paddingBottom: 40,
         paddingHorizontal: 16,
       }}
       removeClippedSubviews

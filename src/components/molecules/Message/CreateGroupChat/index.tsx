@@ -26,6 +26,7 @@ import { replaceImage } from "@/services/uploadImage";
 import SelectBottomSheet from "../../SelectBottomSheet";
 import { currYear, occupationAndDepartment, value } from "@/types/register";
 import BackHeader from "@/components/atoms/BackHeader";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 interface User {
   _id: string;
@@ -82,7 +83,7 @@ const CreateGroupChat = ({ setSelectedChat, setCurrTab }: Props) => {
   const [searchInput, setSearchInput] = useState<string>("");
   const { data, isFetching } = useGetUserFollowingAndFollowers(searchInput);
   const { mutate: createGroupChat, isPending } = useCreateGroupChat();
-
+  const insets = useSafeAreaInsets();
   const actionSheetRef = useRef<ActionSheetRef>(null);
   //   const yearSheetRef = useRef<ActionSheetRef>(null);
   //   const majorSheetRef = useRef<ActionSheetRef>(null);
@@ -525,6 +526,7 @@ const CreateGroupChat = ({ setSelectedChat, setCurrTab }: Props) => {
             gestureEnabled={true}
             snapPoints={[70, 100]}
             onClose={() => setSearchInput("")}
+            safeAreaInsets={insets}
           >
             <SelectUsersForGroupChat
               data={data}

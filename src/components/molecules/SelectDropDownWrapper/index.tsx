@@ -99,18 +99,17 @@ const DropdownWrapper = ({
       >
         <TouchableWithoutFeedback onPress={closeDropdown}>
           <View className="flex-1">
-            <TouchableWithoutFeedback>
-              <View
-                style={{
-                  position: "absolute",
-                  top: modalTop + viewTopPosition,
-                  left: modalLeft + viewLeftPosition,
-                  minWidth: 160,
-                }}
-              >
-                {renderDropdown(closeDropdown)}
-              </View>
-            </TouchableWithoutFeedback>
+            <View
+              style={{
+                position: "absolute",
+                top: modalTop + viewTopPosition,
+                left: modalLeft + viewLeftPosition,
+                minWidth: 160,
+              }}
+              onStartShouldSetResponder={() => true}
+            >
+              {renderDropdown(closeDropdown)}
+            </View>
           </View>
         </TouchableWithoutFeedback>
       </Modal>
