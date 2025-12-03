@@ -9,6 +9,7 @@ import {
 } from "iconoir-react-native";
 import { Image, Text, View } from "react-native";
 import UniversityLogoPlaceHolder from "@/assets/LogoCircle.svg";
+import { Grayscale } from "react-native-color-matrix-image-filters";
 
 export const getTabIcons = (
   unreadCount: number = 0,
@@ -43,9 +44,36 @@ export const getTabIcons = (
         }}
       >
         {logo ? (
+          focused ? (
+            <Image
+              source={{ uri: logo }}
+              style={{ width: 28, height: 28, borderRadius: 14 }}
+              resizeMode="contain"
+            />
+          ) : (
+            <Grayscale>
+              <Image
+                source={{ uri: logo }}
+                style={{ width: 28, height: 28, borderRadius: 14 }}
+                resizeMode="contain"
+              />
+            </Grayscale>
+          )
+        ) : (
+          <UniversityLogoPlaceHolder
+            width={28}
+            height={28}
+            style={{ width: 28, height: 28, borderRadius: 14 }}
+          />
+        )}
+        {/* {logo ? (
           <Image
             source={{ uri: logo }}
-            style={{ width: 28, height: 28 }}
+            style={{
+              width: 28,
+              height: 28,
+              tintColor: focused ? undefined : "#6B7280",
+            }}
             resizeMode="contain"
           />
         ) : (
@@ -54,7 +82,7 @@ export const getTabIcons = (
             height={28}
             style={{ width: 28, height: 28, borderRadius: 28 / 2 }}
           />
-        )}
+        )} */}
       </View>
     ),
     Example: (focused: boolean) =>

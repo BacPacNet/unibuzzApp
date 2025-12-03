@@ -7,6 +7,29 @@ import { getToken } from "@/storage/token";
 import { NEXT_PUBLIC_API_BASE_URL } from "@env";
 import { Platform } from "react-native";
 
+export async function resolveFilePath(uri: string, fileName: string) {
+  // iOS works with file:// directly
+  if (Platform.OS === "ios") {
+    return uri.replace("file://", "");
+  }
+
+  try {
+    // Try stat() – works for some Android Uris
+    const stat = await RNFetchBlob.fs.stat(uri);
+    if (stat && stat.path) return stat.path;
+  } catch (e) {
+    // ignore – will fallback
+  }
+
+  // Fallback for SAF content:// Uris → copy to cache
+  const cachePath = `${RNFetchBlob.fs.dirs.CacheDir}/${fileName}`;
+
+  const base64Data = await RNFetchBlob.fs.readFile(uri, "base64");
+  await RNFetchBlob.fs.writeFile(cachePath, base64Data, "base64");
+
+  return cachePath;
+}
+
 export interface S3UploadItem {
   imageUrl: string | null;
   publicId: string | null;
@@ -24,68 +47,41 @@ export interface S3UploadRequest {
 
 async function uploadToS3WithRNFetchBlob(
   uploadPayload: S3UploadRequest,
-  cookieValue: string
+  token: string
 ): Promise<S3UploadResponse> {
   const body: any[] = [];
 
-  // Add files to form data
-  uploadPayload.files.forEach((file, index) => {
-    const filename = file.fileName || `upload_${Date.now()}_${index}.jpg`;
-    const type = file.type || "image/jpeg";
+  for (const file of uploadPayload.files) {
+    const filename = file.fileName || `file_${Date.now()}`;
+    const mimeType = file.type || "application/octet-stream";
 
-    // Handle iOS file path - remove file:// prefix
-    let uri = file.uri;
-    if (Platform.OS === "ios" && uri.startsWith("file://")) {
-      uri = uri.replace("file://", "");
-    }
-
-    // Decode URI if it's encoded
-    const decodedUri = decodeURIComponent(uri);
+    const path = await resolveFilePath(file.uri, filename);
 
     body.push({
       name: "files",
       filename,
-      type,
-      data: RNFetchBlob.wrap(decodedUri),
+      type: mimeType,
+      data: RNFetchBlob.wrap(path),
     });
-  });
+  }
 
-  // Add context as JSON string
+  // Add context field
   body.push({
     name: "context",
     data: JSON.stringify(uploadPayload.context),
   });
 
-  try {
-    // Check if files exist before uploading
-    for (const file of uploadPayload.files) {
-      let uri = file.uri;
-      if (Platform.OS === "ios" && uri.startsWith("file://")) {
-        uri = uri.replace("file://", "");
-      }
-      const decodedUri = decodeURIComponent(uri);
+  const response = await RNFetchBlob.fetch(
+    "POST",
+    `${NEXT_PUBLIC_API_BASE_URL}/upload`,
+    {
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "multipart/form-data",
+    },
+    body
+  );
 
-      const exists = await RNFetchBlob.fs.exists(decodedUri);
-      if (!exists) {
-        throw new Error(`File does not exist: ${decodedUri}`);
-      }
-    }
-
-    const response = await RNFetchBlob.fetch(
-      "POST",
-      `${NEXT_PUBLIC_API_BASE_URL}/upload`,
-      {
-        Authorization: `Bearer ${cookieValue}`,
-        "Content-Type": "multipart/form-data",
-      },
-      body
-    );
-
-    const result = response.json();
-    return result;
-  } catch (error) {
-    throw error;
-  }
+  return response.json();
 }
 
 export const useUploadToS3 = () => {

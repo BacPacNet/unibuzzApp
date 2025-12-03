@@ -217,7 +217,6 @@ const NewCommunityGroupUsersSelectScreen = ({ route }: any) => {
       <View style={styles.paddingContainer}>
         <View style={styles.switchContainer}>
           <View style={styles.leftSection}>
-            <Badge width={16} height={16} style={styles.badge} />
             <Text style={styles.text}>Show verified members only</Text>
           </View>
           <CustomSwitch
@@ -226,6 +225,7 @@ const NewCommunityGroupUsersSelectScreen = ({ route }: any) => {
             disabled={
               communityGroupAccess === "Private" || isCommunityGroupPrivate
             }
+            size="small"
           />
         </View>
         <Text style={styles.inputLabels}>Add Individuals</Text>
@@ -237,6 +237,9 @@ const NewCommunityGroupUsersSelectScreen = ({ route }: any) => {
             text={"Search Name"}
             icon={<Search width={20} height={20} />}
           />
+          <Text style={styles.inputDescription}>
+            Add individuals from the global database.
+          </Text>
           <SelectUserProfileChips
             individualsUsers={individualsUsers}
             onRemove={(id) => removeUser(id as string)}
@@ -514,9 +517,14 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontFamily: FONTS.inter.medium,
 
-    color: "#171717",
+    color: "#3A3B3C",
   },
-
+  inputDescription: {
+    fontSize: 12,
+    fontFamily: FONTS.inter.regular,
+    color: "#737373",
+    paddingVertical: 4,
+  },
   individualsContainer: {
     display: "flex",
     marginBottom: 32,
@@ -554,10 +562,7 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     alignItems: "center",
     gap: 8,
-    borderWidth: 1,
-    borderColor: "#e5e5e5",
-    borderRadius: 8,
-    padding: 8,
+
     width: "100%",
     marginBottom: 16,
   },
@@ -573,7 +578,8 @@ const styles = StyleSheet.create({
     resizeMode: "contain",
   },
   text: {
-    fontSize: 12,
-    color: "#404040",
+    fontSize: 14,
+    color: "#3A3B3C",
+    fontFamily: FONTS.inter.medium,
   },
 });
