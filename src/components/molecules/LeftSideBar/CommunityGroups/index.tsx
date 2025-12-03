@@ -12,6 +12,7 @@ type Props = {
   isCommunityGroupsLoading?: boolean;
   communityLogo: string;
   isCommunityGroup: boolean;
+  selectCommunityId: string;
 };
 
 function CommunityGroupAll({
@@ -25,6 +26,7 @@ function CommunityGroupAll({
   isCommunityGroupsLoading,
   communityLogo,
   isCommunityGroup,
+  selectCommunityId,
 }: Props) {
   if (isCommunityGroupsLoading || communityGroups == undefined)
     return <ActivityIndicator />;
@@ -46,6 +48,7 @@ function CommunityGroupAll({
           // userId={userData?.id}
           communityLogo={communityLogo}
           isCommunityGroup={isCommunityGroup}
+          selectCommunityId={selectCommunityId}
         />
       ))}
     </>

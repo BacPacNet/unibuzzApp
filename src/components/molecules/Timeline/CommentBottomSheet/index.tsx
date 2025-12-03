@@ -48,6 +48,8 @@ type Props = {
   initialComment: any;
   isReply?: boolean;
   commentId?: string;
+  communityId?: string;
+  communityGroupId?: string;
 };
 
 const CommentBottomSheet = ({
@@ -63,6 +65,8 @@ const CommentBottomSheet = ({
   initialComment,
   isReply = false,
   commentId = "",
+  communityId,
+  communityGroupId,
 }: Props) => {
   const [showReply, setShowReply] = useState(false);
   const [replyingTo, setReplyingTo] = useState<any>(null);
@@ -115,7 +119,9 @@ const CommentBottomSheet = ({
   const { mutate: likeGroupPostComment } = useLikeUnlikeGroupPostComment(
     showInitial,
     postId,
-    selectedSortValue
+    selectedSortValue,
+    communityId || "",
+    communityGroupId || ""
   );
 
   const userCommentsData =
@@ -131,11 +137,19 @@ const CommentBottomSheet = ({
     hideBottomBar();
   };
 
-  const likePostCommentHandler = (commentId: string, level: string) => {
+  const likePostCommentHandler = (
+    commentId: string,
+    level: string,
+    isSelfLike: boolean
+  ) => {
     if (type === PostType.Timeline) {
-      likeUserPostComment({ userPostCommentId: commentId, level });
+      likeUserPostComment({ userPostCommentId: commentId, level, isSelfLike });
     } else if (type === PostType.Community) {
-      likeGroupPostComment({ communityGroupPostCommentId: commentId, level });
+      likeGroupPostComment({
+        communityGroupPostCommentId: commentId,
+        level,
+        isSelfLike,
+      });
     }
   };
 

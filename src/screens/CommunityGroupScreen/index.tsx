@@ -18,9 +18,7 @@ import {
 import { useGetCommunityGroupPost } from "@/services/university-community";
 import ActionSheet, { ActionSheetRef } from "react-native-actions-sheet";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-
 import { getUserProfileStore, getUserStore } from "@/storage/user";
-
 import PostCard from "@/components/molecules/Timeline/PostCard";
 import { useQueryClient } from "@tanstack/react-query";
 import {
@@ -55,6 +53,8 @@ import { NativeScrollEvent } from "react-native";
 import CommunityGroupNotLiveCard from "@/components/molecules/CommunityGroup/CommunityGroupNotLiveCard";
 import { CommunityGroupPostFilter } from "@/components/molecules/CommunityGroup/CommunityGroupPostFilter";
 import CommunityGroupPendingPostCard from "@/components/molecules/CommunityGroup/CommunityGroupPendingPostCard";
+import { useTimeTracking } from "@/hooks/useTimeTracking";
+import { TRACK_EVENT } from "@/content/constant";
 
 type NavigationProp = StackNavigationProp<RootStackParamList, "CommunityGroup">;
 
@@ -72,7 +72,11 @@ const CommunityGroupScreen = ({ route }: any) => {
     communityId,
     communityGroupId
   );
-
+  useTimeTracking(TRACK_EVENT.COMMUNITY_GROUP_PAGE_VIEW_DURATION, {
+    communityId,
+    groupId: communityGroupId,
+    groupName: communityGroups?.title,
+  });
   const { mutate: joinCommunityGroup, isPending: isJoinCommunityPending } =
     useJoinCommunityGroup();
   const { mutate: leaveCommunityGroup, isPending: isLeaveCommunityPending } =

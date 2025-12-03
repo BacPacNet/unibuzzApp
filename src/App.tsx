@@ -14,6 +14,7 @@ import {
 import { ToastProvider } from "react-native-toast-notifications";
 import AuthProvider from "./context/AuthProvider/AuthProvider";
 import { UserPasswordResetProvider } from "./context/UserPasswordResetProvider/UserPasswordResetProvider";
+import MixPanelProvider from "./context/MixPanelProvider/MixPanelProvidex";
 
 export const queryClient = new QueryClient();
 export const storage = new MMKV();
@@ -25,7 +26,9 @@ function App() {
         <SafeAreaProvider>
           <AuthProvider>
             <UserPasswordResetProvider>
-              <InnerApp />
+              <MixPanelProvider>
+                <InnerApp />
+              </MixPanelProvider>
             </UserPasswordResetProvider>
           </AuthProvider>
         </SafeAreaProvider>

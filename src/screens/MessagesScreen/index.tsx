@@ -16,6 +16,8 @@ import { useFilteredChats } from "@/hooks/useFilteredChats";
 import { ChatsArray, CommunityChat } from "@/types/constant";
 import { SafeScreen } from "@/components/template";
 import { useNewMessageHandler } from "@/hooks/useNewMessageHandler";
+import { useTimeTracking } from "@/hooks/useTimeTracking";
+import { TRACK_EVENT } from "@/content/constant";
 
 interface Message {
   _id: string;
@@ -28,6 +30,9 @@ interface Message {
 
 const Messages = ({ route }: any) => {
   const [currTab, setCurrTab] = useState("Inbox");
+  useTimeTracking(TRACK_EVENT.MESSAGE_PAGE_VIEW, {
+    currTab,
+  });
   const [selectedChat, setSelectedChat] = useState<any>(undefined);
   const selectedUserId = route?.params?.selectedUserId ?? null;
   const [toSetChat, setToSetChat] = useState<boolean>(true);

@@ -14,6 +14,8 @@ import {
 } from "react-native";
 import { CommunityGroupTypeEnum } from "@/types/CommunityGroup";
 import { Community as CommunityIcon } from "iconoir-react-native";
+import { TRACK_EVENT } from "@/content/constant";
+import { trackMixpanel } from "@/mixpanel/track";
 
 type NavigationProp = StackNavigationProp<RootStackParamList, "Timeline">;
 
@@ -23,6 +25,7 @@ type Props = {
   currSelectedGroup: Community | null;
   setCurrSelectedGroup: (value: Community) => void;
   isCommunityGroup: boolean;
+  selectCommunityId: string;
 };
 const GroupSelectors = ({
   currSelectedGroup,
@@ -30,6 +33,7 @@ const GroupSelectors = ({
   communityLogo,
   data,
   isCommunityGroup,
+  selectCommunityId,
 }: Props) => {
   const navigation = useNavigation<NavigationProp>();
 
@@ -39,6 +43,12 @@ const GroupSelectors = ({
       communityId: data?.communityId,
       communityGroupId: data?._id,
       from: isCommunityGroup ? "CommunityGroup" : "Community",
+    });
+
+    trackMixpanel(TRACK_EVENT.COMMUNITY_GROUP_PAGE_VIEW, {
+      communityId: selectCommunityId,
+      groupId: data?._id,
+      groupName: data?.title,
     });
   };
 

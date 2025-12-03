@@ -9,6 +9,8 @@ import { Toast } from "react-native-toast-notifications";
 
 import { PostCommentData, Sortby } from "@/types/constant";
 import { getUserStore } from "@/storage/user";
+import { TRACK_EVENT } from "@/content/constant";
+import { trackMixpanel } from "@/mixpanel/track";
 
 export async function getAllTimelinePosts(
   token: string,
@@ -153,7 +155,8 @@ export async function LikeUnilikeUserPost(postId: string, token: string) {
 export const useLikeUnlikeTimelinePost = (
   source: string,
   adminId: string,
-  isSinglePost: boolean
+  isSinglePost: boolean,
+  localIsLiked: boolean
 ) => {
   const cookieValue = getToken() as string;
   const userData = getUserStore();
@@ -213,7 +216,20 @@ export const useLikeUnlikeTimelinePost = (
         };
       });
     },
+    onSuccess: (res: any, postId: string) => {
+      if (localIsLiked) {
+        const trackSource = isSinglePost
+          ? "single_post"
+          : source === "profile"
+            ? "profile_page"
+            : "timeline_page";
 
+        trackMixpanel(TRACK_EVENT.USER_POST_LIKE, {
+          postId,
+          source: trackSource,
+        });
+      }
+    },
     onError: (res: any) => {
       Toast.hideAll();
       return Toast.show(res.response.data.message, {
@@ -263,6 +279,11 @@ export const useCreateUserPostComment = (sortby: Sortby, postId: string) => {
         queryClient.invalidateQueries({ queryKey: ["timelinePosts"] });
         queryClient.invalidateQueries({ queryKey: ["getPost"] });
       }
+
+      trackMixpanel(TRACK_EVENT.USER_POST_COMMENT_CREATE, {
+        postId: postId,
+        source: "user_post_comment",
+      });
     },
     onError: (res: any) => {
       console.log(res.response.data.message, "res");
@@ -297,12 +318,31 @@ export const useLikeUnlikeUserPostComment = (
     mutationFn: ({
       userPostCommentId,
       level,
+      isSelfLike,
     }: {
       userPostCommentId: string;
       level: string;
+      isSelfLike: boolean;
     }) => LikeUnlikeUserPostComment(userPostCommentId, cookieValue, sortby),
     onSuccess: (_, variables) => {
-      const { userPostCommentId, level } = variables;
+      const { userPostCommentId, level, isSelfLike } = variables;
+      const isCommentReply = level !== "0";
+      if (!isSelfLike) {
+        const event = isCommentReply
+          ? TRACK_EVENT.USER_POST_COMMENT_REPLY_LIKE
+          : TRACK_EVENT.USER_POST_COMMENT_LIKE;
+
+        const trackSource = isCommentReply
+          ? "user_post_comment_reply"
+          : "user_post_comment";
+
+        trackMixpanel(event, {
+          postId,
+          commentId: userPostCommentId,
+          level,
+          source: trackSource,
+        });
+      }
       const currUserComments = queryClient.getQueryData<{
         pages: any[];
         pageParams: any[];
@@ -496,6 +536,13 @@ export const useCreateUserPostCommentReply = (
           pages: updatedPages,
         });
       }
+
+      trackMixpanel(TRACK_EVENT.USER_POST_COMMENT_REPLY_CREATE, {
+        postId: postId,
+        commentId: data.commentReply._id,
+        level: data.commentReply.level,
+        source: "user_post_comment_reply",
+      });
     },
     onError: (res: any) => {
       console.log(res.response.data.message, "res");

@@ -25,6 +25,8 @@ import {
 } from "@/services/auth";
 import VerificationOption from "../Forms/VerificationOption";
 import UniversityEmailOtpVerification from "../Forms/UniversityEmailOtpVerification";
+import { useTimeTracking } from "@/hooks/useTimeTracking";
+import { TRACK_EVENT } from "@/content/constant";
 
 interface Props {
   step: number;
@@ -54,8 +56,11 @@ const FormContainer = ({ step, setStep, setSubStep, subStep }: Props) => {
     isError,
   } = useHandleLoginEmailVerificationGenerate();
 
-  const { mutateAsync: HandleRegister, isPending: registerIsPending } =
-    useHandleRegister_v2();
+  const {
+    mutateAsync: HandleRegister,
+    isPending: registerIsPending,
+    data: registeredData,
+  } = useHandleRegister_v2();
 
   const methods = useForm({
     defaultValues: {
@@ -112,6 +117,11 @@ const FormContainer = ({ step, setStep, setSubStep, subStep }: Props) => {
       methods.reset(registerData);
     }
   }, [registerData]);
+  const currEmail = methods.watch("email");
+  useTimeTracking(TRACK_EVENT.REGISTER_PAGE_VIEW_DURATION, {
+    isRegistrationCompleted: registeredData?.isRegistered || false,
+    email: currEmail || "",
+  });
 
   const userCheck = async (data: { email: string; userName: string }) => {
     try {

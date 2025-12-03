@@ -39,6 +39,8 @@ import DropdownWrapper from "@/components/molecules/SelectDropDownWrapper";
 import { Settings } from "iconoir-react-native";
 import { CommunityDropDownModal } from "@/components/molecules/Community/CommunityDropDownModal";
 import UniversityPlaceholder from "@/assets/community/university_banner.svg";
+import { useTimeTracking } from "@/hooks/useTimeTracking";
+import { TRACK_EVENT } from "@/content/constant";
 
 type NavigationProp = StackNavigationProp<RootStackParamList, "Community">;
 
@@ -49,6 +51,11 @@ const CommunityScreen = ({ route }: any) => {
   const userData = getUserStore();
 
   const { data: communityData, isFetching } = useGetCommunity(communityId);
+  useTimeTracking(TRACK_EVENT.UNIVERSITY_COMMUNITY_PAGE_VIEW_DURATION, {
+    communityId,
+    communityName: communityData?.name,
+  });
+
   const { mutate: joinCommunity, isPending: isJoinLoading } =
     useJoinCommunity();
   const { mutate: leaveCommunity, isPending: isLeaveLoading } =

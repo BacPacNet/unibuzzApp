@@ -13,6 +13,8 @@ import { getRegisterData, storeRegisterData } from "@/storage/register";
 import ReusableButton from "@/components/atoms/ReusableButton";
 import { FormInput } from "@/components/atoms/FormInput";
 import CommunityLogo from "@/components/atoms/LogoHolder";
+import { useTimeTracking } from "@/hooks/useTimeTracking";
+import { TRACK_EVENT } from "@/content/constant";
 
 type Props = {
   onSubmit: (data: any) => Promise<void>;
@@ -43,8 +45,17 @@ const UniversityVerificationForm = ({
 
   const univeristyName = getValues("universityName");
   const universityDomain = getValues("universityDomain");
-  const { mutateAsync: HandleRegister, isPending: registerIsPending } =
-    useHandleRegister_v2();
+  const {
+    mutateAsync: HandleRegister,
+    isPending: registerIsPending,
+    data: registeredData,
+  } = useHandleRegister_v2();
+  useTimeTracking(TRACK_EVENT.UNIVERSITY_VERIFICATION_STEP_VIEW_DURATION, {
+    isUniversityEmailVerified: isVerificationSuccess,
+    email: getValues("email"),
+    universityEmail: getValues("universityEmail"),
+    isRegistered: registeredData?.isRegistered || false,
+  });
   const { mutate: generateUniversityEmailOTP } =
     useHandleUniversityEmailVerificationGenerate();
 

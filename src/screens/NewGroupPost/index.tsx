@@ -40,6 +40,14 @@ import useCustomBackHandler from "@/hooks/useCustomBackHandler";
 import { useTabBarVisibility } from "@/hooks/useTabBarVisibility";
 import { useHeader } from "@/context/HeaderProvider/Header";
 import { SafeScreen } from "@/components/template";
+import { useToolbarStateLogger } from "@/hooks/useToolbarStateLogger";
+import {
+  trackMixpanel,
+  trackCommunityPostButtonClick,
+  trackCommunityPostTextEdit,
+  trackCommunityPostUploads,
+} from "@/mixpanel/track";
+import { TRACK_EVENT } from "@/content/constant";
 
 type ImageAsset = {
   uri: string;
@@ -85,11 +93,18 @@ const NewGroupPost = ({ navigation }: any) => {
       }),
     ],
   });
+
+  const customEventCallback = useCallback(
+    (actionName: string) => {
+      trackCommunityPostTextEdit(actionName, communityId, communityGroupId);
+    },
+    [communityGroupId, communityId]
+  );
+  useToolbarStateLogger(editor, customEventCallback);
   const { mutateAsync: uploadToS3 } = useUploadToS3();
   const { mutate: CreateGroupPost, isPending } = useCreateGroupPost();
   const [isPostCreating, setIsPostCreating] = useState(false);
   const { changeHeaderShownStatus } = useHeader();
-  const [forceKeyboard, setForceKeyboard] = useState(true);
 
   useTabBarVisibility(navigation);
 
@@ -225,6 +240,11 @@ const NewGroupPost = ({ navigation }: any) => {
 
       const uploadResponse = await uploadToS3(uploadPayload);
       if (uploadResponse.success) {
+        trackCommunityPostUploads(
+          uploadResponse.data,
+          communityId,
+          communityGroupId
+        );
         basePayload.imageUrl = uploadResponse.data;
       }
     }
@@ -234,7 +254,15 @@ const NewGroupPost = ({ navigation }: any) => {
         handleBack();
         setImages([]);
         setFiles([]);
+
         editor.setContent("");
+        trackCommunityPostButtonClick(
+          communityGroupId && communityGroupId?.length > 0
+            ? "community_group_post_create"
+            : "community_post_create",
+          communityId,
+          communityGroupId
+        );
       },
     });
 

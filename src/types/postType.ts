@@ -136,7 +136,11 @@ export type CommentsProp = {
   setShowReply?: any;
   showReply?: any;
   setReplyingTo: (value: any) => void;
-  likePostCommentHandler: (value: string, value2: string) => void;
+  likePostCommentHandler: (
+    value: string,
+    value2: string,
+    isSelfLike: boolean
+  ) => void;
   setShowTotalReply: (value: number) => void;
   setModalVisible?: (value: boolean) => void;
   showTotalReply: number;

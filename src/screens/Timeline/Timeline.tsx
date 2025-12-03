@@ -22,6 +22,8 @@ import ActionSheet, { ActionSheetRef } from "react-native-actions-sheet";
 import UserGuideLineBottomSheet from "@/components/molecules/UserGuideLineBottomSheet";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { getNotificationToken } from "@/storage/NotificationToken";
+import { getMixpanel } from "@/context/MixPanelProvider/MixPanelProvidex";
+import { identifyUserInMixpanel } from "@/mixpanel/track";
 
 type NavigationProp = StackNavigationProp<RootStackParamList, "Timeline">;
 const Timeline = () => {
@@ -81,6 +83,16 @@ const Timeline = () => {
       guideLineActionSheetRef.current?.show();
     }
   }, [userData?.isNewUser]);
+
+  useEffect(() => {
+    if (!userData) return;
+    identifyUserInMixpanel({
+      id: userData?.id,
+      email: userData?.email,
+      firstName: userData?.firstName,
+      lastName: userData?.lastName,
+    });
+  }, [userData?.id, userData?.email, userData?.firstName, userData?.lastName]);
 
   if (isPending) {
     return (

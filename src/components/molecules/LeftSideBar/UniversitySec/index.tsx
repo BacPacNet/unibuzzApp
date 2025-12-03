@@ -20,6 +20,8 @@ import {
   getSelectedCommunityGroup,
   storeSelectedCommunityGroup,
 } from "@/storage/selected-community-group";
+import { TRACK_EVENT } from "@/content/constant";
+import { trackMixpanel } from "@/mixpanel/track";
 
 type NavigationProp = StackNavigationProp<RootStackParamList, "Timeline">;
 const UniversitySec = () => {
@@ -51,6 +53,12 @@ const UniversitySec = () => {
   } = useGetFilteredSubscribedCommunities(community?._id || "");
 
   const handleCommunityClick = (id: string) => {
+    trackMixpanel(TRACK_EVENT.UNIVERSITY_COMMUNITY_PAGE_VIEW, {
+      communityId: id,
+      communityName: subscribedCommunities?.find(
+        (community) => community?._id === id
+      )?.name,
+    });
     navigation.navigate("Community", { communityId: id });
     setCurrSelectedGroup(community);
   };
@@ -157,6 +165,7 @@ const UniversitySec = () => {
           joinedGroups={joinedSubscribedCommunitiesGroup || []}
           myGroups={[]}
           currSelectedGroup={currSelectedGroup || null}
+          communityId={community?._id || ""}
           setCurrSelectedGroup={setCurrSelectedGroup}
           userData={userData || {}}
           communityLogo={
