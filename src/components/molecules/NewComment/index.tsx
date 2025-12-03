@@ -339,16 +339,6 @@ const NewComment = ({
           : `Commenting on ${postAuthorName} post`}
       </Text>
 
-      {/* {images.length > 0 && (
-        <View style={{ height: 100 }}>
-          <MediaPreviewList
-            files={[...images, ...files]}
-            onRemove={(index: any, isImage: boolean) =>
-              handleImageRemove(index, isImage)
-            }
-          />
-        </View>
-      )} */}
       {(images.length > 0 || files.length > 0) && (
         <View style={{ height: 100 }}>
           <MediaPreviewList

@@ -285,8 +285,6 @@ export default UserComment;
 
 const styles = StyleSheet.create({
   container: {
-    // paddingHorizontal: 12,
-    // marginHorizontal: 16,
     paddingVertical: 16,
     display: "flex",
     gap: 16,
@@ -348,7 +346,6 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   repliesContainer: {
-    // marginLeft: 20,
     marginLeft: 0,
   },
   showMoreButton: {

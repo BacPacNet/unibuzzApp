@@ -66,23 +66,6 @@ export const getTabIcons = (
             style={{ width: 28, height: 28, borderRadius: 14 }}
           />
         )}
-        {/* {logo ? (
-          <Image
-            source={{ uri: logo }}
-            style={{
-              width: 28,
-              height: 28,
-              tintColor: focused ? undefined : "#6B7280",
-            }}
-            resizeMode="contain"
-          />
-        ) : (
-          <UniversityLogoPlaceHolder
-            width={28}
-            height={28}
-            style={{ width: 28, height: 28, borderRadius: 28 / 2 }}
-          />
-        )} */}
       </View>
     ),
     Example: (focused: boolean) =>
