@@ -221,6 +221,7 @@ const styles = StyleSheet.create({
   },
   label: {
     fontSize: 12,
+    flex: 1,
   },
   selectedText: {
     fontWeight: "bold",
