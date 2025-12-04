@@ -1,7 +1,19 @@
 import React, { useRef, useEffect } from "react";
 import { Animated, TouchableOpacity, View, StyleSheet } from "react-native";
 
-const CustomSwitch = ({ value, onValueChange, disabled }: any) => {
+interface CustomSwitchProps {
+  value: boolean;
+  onValueChange: (value: boolean) => void;
+  disabled?: boolean;
+  size?: "default" | "small";
+}
+
+const CustomSwitch = ({
+  value,
+  onValueChange,
+  disabled,
+  size = "default",
+}: CustomSwitchProps) => {
   const thumbAnim = useRef(new Animated.Value(value ? 1 : 0)).current;
 
   useEffect(() => {
@@ -16,32 +28,43 @@ const CustomSwitch = ({ value, onValueChange, disabled }: any) => {
     onValueChange(!value);
   };
 
+  const isSmall = size === "small";
   const thumbTranslate = thumbAnim.interpolate({
     inputRange: [0, 1],
-    outputRange: [0, 14],
+    outputRange: [0, isSmall ? 12 : 14],
   });
+
+  const containerStyle = [
+    styles.switchContainer,
+    isSmall && {
+      width: 28,
+      height: 16,
+      borderRadius: 8,
+    },
+    value && !disabled
+      ? styles.activeColor
+      : disabled
+        ? styles.disabledColor
+        : styles.defaultColor,
+  ];
+
+  const thumbStyle = [
+    styles.thumb,
+    isSmall && {
+      width: 12,
+      height: 12,
+      borderRadius: 6,
+    },
+    {
+      transform: [{ translateX: thumbTranslate }],
+      backgroundColor: value ? "white" : "#ccc",
+    },
+  ];
 
   return (
     <TouchableOpacity onPress={toggleSwitch} disabled={disabled}>
-      <View
-        style={[
-          styles.switchContainer,
-          value && !disabled
-            ? styles.activeColor
-            : disabled
-              ? styles.disabledColor
-              : styles.defaultColor,
-        ]}
-      >
-        <Animated.View
-          style={[
-            styles.thumb,
-            {
-              transform: [{ translateX: thumbTranslate }],
-              backgroundColor: value ? "white" : "#ccc",
-            },
-          ]}
-        />
+      <View style={containerStyle}>
+        <Animated.View style={thumbStyle} />
       </View>
     </TouchableOpacity>
   );
@@ -59,7 +82,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#6744FF",
   },
   defaultColor: {
-    backgroundColor: "#F3F2FF",
+    backgroundColor: "#E9E8FF",
   },
   disabledColor: {
     backgroundColor: "#B9B1FF",

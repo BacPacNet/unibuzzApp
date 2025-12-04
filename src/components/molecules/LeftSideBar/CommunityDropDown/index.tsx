@@ -78,15 +78,20 @@ const CommunityDropdown = ({
                     setSelectedImage(item.communityLogoUrl.imageUrl);
                   }}
                 >
-                  <Image
-                    source={{ uri: item.communityLogoUrl.imageUrl }}
-                    style={[
-                      styles.itemLogo,
-                      { width: subLogoSize, height: subLogoSize },
-                    ]}
-                    resizeMode="contain"
-                    onError={handleError}
-                  />
+                  {item.communityLogoUrl.imageUrl &&
+                  item.communityLogoUrl.imageUrl?.length > 0 ? (
+                    <Image
+                      source={{ uri: item.communityLogoUrl.imageUrl }}
+                      style={[
+                        styles.itemLogo,
+                        { width: subLogoSize, height: subLogoSize },
+                      ]}
+                      resizeMode="contain"
+                      onError={handleError}
+                    />
+                  ) : (
+                    <UniversityLogoPlaceholder width={24} height={24} />
+                  )}
                   <Text style={styles.itemText}>{item.name}</Text>
                 </TouchableOpacity>
               )}
@@ -100,7 +105,7 @@ const CommunityDropdown = ({
         >
           {isLableShown && <Text style={styles.groupText}>GROUPS</Text>}
           <View style={styles.logoContainer}>
-            {!hasError && selectedImage ? (
+            {!hasError && selectedImage && selectedImage?.length > 0 ? (
               <Image
                 source={{ uri: selectedImage }}
                 style={[styles.logo, { width: logoSize, height: logoSize }]}
@@ -174,6 +179,7 @@ const styles = StyleSheet.create({
     fontSize: 12,
     fontWeight: "500",
     color: "#404040",
+    flex: 1,
   },
   groupText: {
     fontSize: 14,

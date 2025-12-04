@@ -108,14 +108,21 @@ const NewPost = ({ navigation }: any) => {
 
           if (!validationResult.isValid) {
             Toast.hideAll();
-            Toast.show(validationResult.message);
+            Toast.show(validationResult.message, {
+              type: "warning",
+              placement: "top",
+            });
             return;
           }
 
-          const totalFiles = files.length + images.length;
+          const totalFiles =
+            files.length + images.length + response.assets.length;
           if (totalFiles > 4) {
             Toast.hideAll();
-            Toast.show("You can upload a maximum of 4 files.");
+            Toast.show("You can upload a maximum of 4 files.", {
+              type: "warning",
+              placement: "top",
+            });
             return;
           }
           setImages((prevImages) => [...prevImages, ...response.assets]);
@@ -156,19 +163,25 @@ const NewPost = ({ navigation }: any) => {
 
       if (!validationResult.isValid) {
         Toast.hideAll();
-        Toast.show(validationResult.message);
+        Toast.show(validationResult.message, {
+          type: "warning",
+          placement: "top",
+        });
         return;
       }
 
-      const totalFiles = res.length + images.length;
+      const totalFiles = res.length + images.length + files.length;
 
       if (totalFiles > 4) {
         Toast.hideAll();
-        Toast.show("You can upload a maximum of 4 files.");
+        Toast.show("You can upload a maximum of 4 files.", {
+          type: "warning",
+          placement: "top",
+        });
         return;
       }
 
-      setFiles(res);
+      setFiles((prev) => [...prev, ...res]);
     } catch (err) {
       if (DocumentPicker.isCancel(err)) {
         console.log("User cancelled picker");
@@ -190,7 +203,10 @@ const NewPost = ({ navigation }: any) => {
 
     if (!cleanedText && !images?.length && !files?.length) {
       Toast.hideAll();
-      Toast.show("Post must contain text or at least one file.");
+      Toast.show("Post must contain text or at least one file.", {
+        type: "warning",
+        placement: "top",
+      });
       return;
     }
     setIsPostCreating(true);

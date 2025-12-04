@@ -177,12 +177,12 @@ const styles = StyleSheet.create({
     borderRadius: 4,
   },
   checkboxLabel: {
-    fontSize: 18,
+    fontSize: 14,
     color: "#3A3B3C",
     fontFamily: FONTS.inter.semiBold,
   },
   checkboxLabelActive: {
-    fontSize: 18,
+    fontSize: 14,
     color: "#3A3B3C",
     fontFamily: FONTS.inter.semiBold,
   },

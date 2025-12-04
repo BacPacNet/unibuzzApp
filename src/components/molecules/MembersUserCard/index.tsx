@@ -10,7 +10,7 @@ import MemberActions from "../CommunityGroup/CommunityGroupMemberAction";
 import ActionSheet, { ActionSheetRef } from "react-native-actions-sheet";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import OfficailLogoPlaceHolder from "@/assets/community/official-logo.svg";
-
+import UserMinus from "@/assets/icons/user-minus.svg";
 interface Props {
   _id: string;
   firstName: string;
@@ -118,8 +118,15 @@ const MembersUserCard = ({
       return (
         <ReusableButton
           onPress={() => handleRemoveClick?.(_id)}
-          variant="border"
+          variant="danger_outline"
+          buttonContent={
+            <View className="flex-row items-center justify-center gap-1">
+              <Text className="text-2xs text-[#EF4444]">Remove</Text>
+              <UserMinus width={16} height={16} />
+            </View>
+          }
           buttonText="Remove"
+          textSize="text-2xs"
           height="small"
           size={100}
           disabled={disabled}
@@ -135,6 +142,7 @@ const MembersUserCard = ({
           variant="border"
           buttonText="View Profile"
           height="small"
+          textSize="text-2xs"
           size={100}
         />
       );

@@ -115,8 +115,7 @@ const CommunityHolder = ({
               styles.communityName,
               communityId === community._id && !isGroup && styles.activeText,
             ]}
-            numberOfLines={1}
-            ellipsizeMode="tail"
+            numberOfLines={2}
           >
             {community.name}
           </Text>
@@ -156,6 +155,7 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: "#6B7280",
     fontFamily: FONTS.inter.medium,
+    maxWidth: "80%",
   },
   activeText: {
     fontWeight: "bold",

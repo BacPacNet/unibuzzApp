@@ -1,4 +1,4 @@
-import { getMimeTypeFromUrl, imageMimeTypes } from "@/utils";
+import { cleanFileName, getMimeTypeFromUrl, imageMimeTypes } from "@/utils";
 import React, { useState } from "react";
 import {
   View,
@@ -198,7 +198,7 @@ const ImageGallery = ({
             className="border border-neutral-200 rounded-lg p-2 mt-1"
           >
             <Text lineBreakMode="clip" style={styles.fileText}>
-              {decodeURI(item.imageUrl.split("/").pop() || "Unknown File")}
+              {cleanFileName(item.imageUrl.split("/").pop() || "Unknown File")}
             </Text>
           </TouchableOpacity>
         ))}

@@ -62,7 +62,7 @@ const ReusableButton: React.FC<ReusableButtonProps> = ({
     border: "text-neutral-700 ",
     border_primary: "text-primary",
     danger: "text-white",
-    danger_outline: "text-[#EF4444]",
+    danger_outline: "text-[#FEE2E2]",
     shade: "text-primary-500 ",
   };
 

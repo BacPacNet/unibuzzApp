@@ -8,7 +8,7 @@ import {
   useEditorBridge,
 } from "@10play/tentap-editor";
 
-import { MediaImage } from "iconoir-react-native";
+import { MediaImage, PagePlus } from "iconoir-react-native";
 import React, { useCallback, useState, useEffect, useRef } from "react";
 import { useFocusEffect } from "@react-navigation/native";
 import {
@@ -21,6 +21,7 @@ import {
   View,
   Keyboard,
   TextInput,
+  Alert,
 } from "react-native";
 import { launchImageLibrary } from "react-native-image-picker";
 import { PostCommentData, Sortby } from "@/types/constant";
@@ -30,7 +31,7 @@ import { getUserProfileStore } from "@/storage/user";
 import { UPLOAD_CONTEXT } from "@/types/uploads";
 import { useUploadToS3 } from "@/services/upload";
 import { validateUploadedFiles } from "@/utils";
-
+import DocumentPicker from "react-native-document-picker";
 import MediaPreviewList from "@/components/molecules/MediaPreview";
 import {
   useCreateGroupPostComment,
@@ -135,33 +136,79 @@ const NewComment = ({
 
   const handleImagePick = useCallback(() => {
     launchImageLibrary(
-      { mediaType: "photo", selectionLimit: 1 },
+      { mediaType: "photo", selectionLimit: 4 },
       (response: any) => {
         if (response.assets && response.assets.length > 0) {
-          const images = response.assets.map((asset: any) => ({
+          const newImages = response.assets.map((asset: any) => ({
             ...asset,
             size: asset.fileSize,
             type: asset.type,
           }));
-          const validationResult = validateUploadedFiles(images);
+          const validationResult = validateUploadedFiles(newImages);
 
           if (!validationResult.isValid) {
-            Toast.hideAll();
-            Toast.show(validationResult.message);
+            Alert.alert("Warning", validationResult.message);
             return;
           }
 
-          const totalFiles = files.length + images.length;
+          const totalFiles =
+            files.length + images.length + response.assets.length;
           if (totalFiles > 4) {
-            Toast.hideAll();
-            Toast.show("You can upload a maximum of 4 files.");
+            Alert.alert(
+              "Warning",
+              "You can upload a maximum of 4 files or images."
+            );
             return;
           }
           setImages((prevImages) => [...prevImages, ...response.assets]);
         }
       }
     );
-  }, []);
+  }, [files.length, images.length]);
+
+  const handleFilePick = async () => {
+    try {
+      const res = await DocumentPicker.pick({
+        type: [
+          DocumentPicker.types.pdf,
+          DocumentPicker.types.docx,
+          DocumentPicker.types.doc,
+        ],
+        allowMultiSelection: true,
+      });
+
+      const validationResult = validateUploadedFiles(
+        res.map((file: any) => ({
+          ...file,
+          size: file.size,
+          type: file.type,
+        }))
+      );
+
+      if (!validationResult.isValid) {
+        Alert.alert("Warning", validationResult.message);
+        return;
+      }
+
+      const totalFiles = files.length + images.length + res.length;
+
+      if (totalFiles > 4) {
+        Alert.alert(
+          "Warning",
+          "You can upload a maximum of 4 files or images."
+        );
+        return;
+      }
+
+      setFiles((prev) => [...prev, ...res]);
+    } catch (err) {
+      if (DocumentPicker.isCancel(err)) {
+        console.log("User cancelled picker");
+      } else {
+        console.error("DocumentPicker Error:", err);
+      }
+    }
+  };
 
   const handleImageRemove = useCallback(
     (identifier: number | string, isImage: boolean) => {
@@ -181,9 +228,8 @@ const NewComment = ({
 
     const cleanedText = isEmpty ? "" : text;
 
-    if (!cleanedText && !images?.length) {
-      Toast.hideAll();
-      Toast.show("Post must contain text or at least one file.");
+    if (!cleanedText && !images?.length && !files.length) {
+      Alert.alert("Error", "Post must contain text or at least one file.");
       return;
     }
     setIsPostCreating(true);
@@ -193,12 +239,26 @@ const NewComment = ({
       postID: postId,
     };
 
-    if (images?.length) {
+    if (images?.length || files?.length) {
+      const mergedFiles = [
+        ...(images || []).map((image) => ({
+          uri: image.uri,
+          fileName: image.fileName || `upload_${Date.now()}.jpg`,
+          type: image.type || "image/jpeg",
+        })),
+        ...(files || []).map((file: any) => ({
+          uri: file.uri,
+          fileName: file.name || `file_${Date.now()}`,
+          type: file.type || "application/octet-stream",
+        })),
+      ];
       const uploadPayload = {
-        files: images,
+        files: mergedFiles,
         context: UPLOAD_CONTEXT.POST_COMMENT,
       };
+
       const imageData = await uploadToS3(uploadPayload);
+
       payload.imageUrl = imageData.data;
     }
 
@@ -279,7 +339,7 @@ const NewComment = ({
           : `Commenting on ${postAuthorName} post`}
       </Text>
 
-      {images.length > 0 && (
+      {(images.length > 0 || files.length > 0) && (
         <View style={{ height: 100 }}>
           <MediaPreviewList
             files={[...images, ...files]}
@@ -306,6 +366,9 @@ const NewComment = ({
           <View className="flex flex-row gap-2 items-center border-t border-neutral-300 p-2">
             <TouchableOpacity onPress={handleImagePick}>
               <MediaImage height={20} width={20} color={"#a3a3a3"} />
+            </TouchableOpacity>
+            <TouchableOpacity onPress={handleFilePick}>
+              <PagePlus height={20} width={20} color={"#a3a3a3"} />
             </TouchableOpacity>
           </View>
         )}

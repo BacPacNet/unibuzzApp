@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { io, Socket } from "socket.io-client";
-import { Platform } from "react-native";
+import { Platform, AppState, AppStateStatus } from "react-native";
 import {
   useNavigationContainerRef,
   useNavigationState,
@@ -73,6 +73,12 @@ export const SocketProvider: React.FC<{ children: React.ReactNode }> = ({
     newSocket.on("connect", () => {
       //   console.log("Connected to the server", userData?.id);
       newSocket.emit(SocketConnectionEnums.SETUP, userData?.id);
+
+      const currentAppState = AppState.currentState;
+      const initialState: "foreground" | "background" =
+        currentAppState === "active" ? "foreground" : "background";
+      newSocket.emit(SocketConnectionEnums.APP_STATE, initialState);
+
       setSocket(newSocket);
       setIsConnected(true);
     });
@@ -98,10 +104,26 @@ export const SocketProvider: React.FC<{ children: React.ReactNode }> = ({
       }
     });
 
+    const handleAppStateChange = (nextAppState: AppStateStatus) => {
+      if (!newSocket || !newSocket.connected) return;
+
+      const state: "foreground" | "background" =
+        nextAppState === "active" ? "foreground" : "background";
+
+      newSocket.emit(SocketConnectionEnums.APP_STATE, state);
+    };
+
+    // Subscribe to app state changes
+    const appStateSubscription = AppState.addEventListener(
+      "change",
+      handleAppStateChange
+    );
+
     setSocket(newSocket);
     setIsConnected(true);
 
     return () => {
+      appStateSubscription.remove();
       newSocket.disconnect();
       setSocket(null);
       setIsConnected(false);
