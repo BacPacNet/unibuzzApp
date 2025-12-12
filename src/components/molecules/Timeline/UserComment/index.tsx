@@ -14,6 +14,8 @@ import UserCard from "../UserCard";
 import { timeAgo } from "@/utils";
 
 const UserComment = ({
+  postId,
+  postContentType,
   item,
   width,
   setShowReply,
@@ -27,6 +29,7 @@ const UserComment = ({
   type,
   showBorder = false,
   communities,
+  parentCommentId,
 }: CommentsProp) => {
   const userData = getUserStore();
   const { mutate: deleteUserPost } = useDeleteUserPostComment();
@@ -111,9 +114,14 @@ const UserComment = ({
           occupation={item?.commenterProfileId?.occupation}
           affiliation={item?.commenterProfileId?.affiliation}
           onNavigate={handleNavigate}
-          toShowOption={userData?.id === item?.commenterId?._id}
+          isCommentAdmin={userData?.id === item?.commenterId?._id}
           handleDelete={handleDelete}
           communities={communities}
+          postId={postId}
+          postContentType={postContentType}
+          level={item?.level}
+          commentId={item?._id}
+          parentCommentId={parentCommentId}
         />
       </View>
       {/* comment  */}
@@ -263,6 +271,9 @@ const UserComment = ({
                 type={type}
                 showBorder={true}
                 communities={reply?.commenterProfileId?.communities}
+                postId={postId}
+                postContentType={postContentType}
+                parentCommentId={item?._id}
               />
             ))}
           {item?.level === 0 &&

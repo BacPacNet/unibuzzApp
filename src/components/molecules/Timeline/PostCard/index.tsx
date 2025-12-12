@@ -36,6 +36,7 @@ import {
   NEXT_PROD_FE_BASE_URL,
   NEXT_DEV_FE_BASE_URL,
 } from "@env";
+import { ContentType } from "@/types/report-content";
 
 type ScreenNavigationProp = StackNavigationProp<RootStackParamList, "Home">;
 
@@ -202,6 +203,22 @@ const PostCard = memo(
       return "";
     }, [data, communityGroupId]);
 
+    const postContentType = useMemo(() => {
+      if (
+        (data?.community?.name || data?.communityName) &&
+        data?.communityGroupName
+      ) {
+        return ContentType.COMMUNITY_GROUP_POST;
+      }
+      if (data?.community?.name || data?.communityName) {
+        return ContentType.COMMUNITY_POST;
+      }
+      return ContentType.USER_POST;
+    }, [
+      data?.community?.name || data?.communityName,
+      data?.communityGroupName,
+    ]);
+
     return (
       <View
         className={`relative  ${isSinglePost ? "flex-1 " : ""} flex   gap-4 my-4 z-1 `}
@@ -262,6 +279,7 @@ const PostCard = memo(
               ? data?.profile?.communities
               : data?.userProfile?.communities
           }
+          postType={postContentType}
         />
         {Number(data?.content?.length) > 1 && data?.content ? (
           <View className="px-4">
@@ -410,6 +428,7 @@ const PostCard = memo(
             commentId={commentId}
             communityId={data?.community?._id || ""}
             communityGroupId={data?.communityGroupId || ""}
+            postContentType={postContentType}
           />
         </ActionSheet>
       </View>

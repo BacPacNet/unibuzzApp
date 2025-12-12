@@ -1,11 +1,14 @@
 // components/CommentHeader.tsx
-import { BinMinusIn, MoreHoriz } from "iconoir-react-native";
-import React from "react";
+import { BinMinusIn, DashFlag, MoreHoriz } from "iconoir-react-native";
+import React, { useMemo, useState } from "react";
 import { View, Text, Image, TouchableOpacity, StyleSheet } from "react-native";
 import Avatar from "@/assets/avatar.svg";
 import DropdownWrapper from "../../SelectDropDownWrapper";
 import { FONTS } from "@/constants/fonts";
 import PostCommunityHolder from "../../PostCommunityHolder/PostCommunityHolder";
+import ReportContentModal from "@/components/organism/reportUserModal";
+import { getUserStore } from "@/storage/user";
+import { ContentType as ContentTypeEnum } from "@/types/report-content";
 
 interface CommenterProfile {
   profile_dp?: { imageUrl?: string };
@@ -39,7 +42,7 @@ interface UserCardProps {
   occupation?: string;
   affiliation?: string;
   onNavigate: (id: string) => void;
-  toShowOption: boolean;
+  isCommentAdmin: boolean;
   handleDelete: () => void;
   communities: {
     _id: string;
@@ -48,6 +51,11 @@ interface UserCardProps {
     isVerifiedMember: boolean;
     isCommunityAdmin: boolean;
   }[];
+  postId: string;
+  postContentType: ContentTypeEnum;
+  level: number;
+  commentId?: string;
+  parentCommentId?: string;
 }
 
 const UserCard: React.FC<UserCardProps> = ({
@@ -62,10 +70,48 @@ const UserCard: React.FC<UserCardProps> = ({
   affiliation,
 
   onNavigate,
-  toShowOption = false,
+  isCommentAdmin = false,
   handleDelete,
   communities,
+  postId,
+  postContentType,
+  level,
+  commentId,
+  parentCommentId,
 }) => {
+  const [visible, setVisible] = useState(false);
+  const userdata = getUserStore();
+  const handleReportComment = () => {
+    setVisible(true);
+  };
+
+  const commentCategory = useMemo(() => {
+    if (postContentType === ContentTypeEnum.COMMUNITY_POST && level == 0) {
+      return ContentTypeEnum.COMMUNITY_COMMENT;
+    }
+    if (postContentType === ContentTypeEnum.COMMUNITY_POST && level == 1) {
+      return ContentTypeEnum.COMMUNITY_REPLY;
+    }
+    if (
+      postContentType === ContentTypeEnum.COMMUNITY_GROUP_POST &&
+      level == 0
+    ) {
+      return ContentTypeEnum.COMMUNITY_GROUP_COMMENT;
+    }
+    if (
+      postContentType === ContentTypeEnum.COMMUNITY_GROUP_POST &&
+      level == 1
+    ) {
+      return ContentTypeEnum.COMMUNITY_GROUP_REPLY;
+    }
+    if (postContentType === ContentTypeEnum.USER_POST && level == 0) {
+      return ContentTypeEnum.USER_COMMENT;
+    }
+    if (postContentType === ContentTypeEnum.USER_POST && level == 1) {
+      return ContentTypeEnum.USER_REPLY;
+    }
+  }, [level, postContentType]);
+
   return (
     <View className="flex-1 flex-row items-center gap-4 justify-center">
       <View style={styles.avatarContainer}>
@@ -124,32 +170,56 @@ const UserCard: React.FC<UserCardProps> = ({
             </View>
           )}
         </View>
-        {toShowOption && (
-          <DropdownWrapper
-            position="left"
-            extraLeft={10}
-            viewTopPosition={-40}
-            renderDropdown={(closeDropdown) => (
-              <TouchableOpacity
-                style={styles.dropdown}
-                onPress={() => {
-                  handleDelete();
-                  closeDropdown();
-                }}
-              >
-                <BinMinusIn height={16} width={16} />
-                <Text className="text-neutral-700">Delete</Text>
-              </TouchableOpacity>
-            )}
-          >
-            {/* <View className="flex justify-center items-center"> */}
-            <TouchableOpacity style={styles.moreButton}>
-              <MoreHoriz height={20} width={20} color="#6744FF" />
-            </TouchableOpacity>
-            {/* </View> */}
-          </DropdownWrapper>
-        )}
+
+        <DropdownWrapper
+          position="left"
+          extraLeft={80}
+          viewTopPosition={-40}
+          renderDropdown={(closeDropdown) => (
+            <View className="flex flex-col gap-2">
+              {isCommentAdmin && (
+                <TouchableOpacity
+                  style={styles.dropdown}
+                  onPress={() => {
+                    handleDelete();
+                    closeDropdown();
+                  }}
+                >
+                  <BinMinusIn height={16} width={16} />
+                  <Text className="text-neutral-700">Delete</Text>
+                </TouchableOpacity>
+              )}
+              {!isCommentAdmin && (
+                <TouchableOpacity
+                  onPress={() => {
+                    handleReportComment();
+                    closeDropdown();
+                  }}
+                  style={styles.dropdown}
+                >
+                  <DashFlag height={16} width={16} />
+                  <Text className="text-neutral-700">Report Comment</Text>
+                </TouchableOpacity>
+              )}
+            </View>
+          )}
+        >
+          {/* <View className="flex justify-center items-center"> */}
+          <TouchableOpacity style={styles.moreButton}>
+            <MoreHoriz height={20} width={20} color="#6744FF" />
+          </TouchableOpacity>
+          {/* </View> */}
+        </DropdownWrapper>
       </View>
+      <ReportContentModal
+        visible={visible}
+        postID={postId}
+        reporterId={userdata?.id || ""}
+        contentType={commentCategory as ContentTypeEnum}
+        setModalVisible={setVisible}
+        commentId={commentId}
+        parentCommentId={parentCommentId}
+      />
     </View>
   );
 };
@@ -185,7 +255,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     gap: 5,
-    width: 90,
+    justifyContent: "flex-start",
     backgroundColor: "white",
     padding: 10,
     borderRadius: 10,

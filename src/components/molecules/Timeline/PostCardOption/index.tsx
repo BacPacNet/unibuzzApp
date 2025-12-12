@@ -1,9 +1,12 @@
-import React from "react";
+import React, { useState } from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { OpenInBrowser, WhiteFlag, Bin } from "iconoir-react-native";
 import { useNavigation } from "@react-navigation/native";
 import { RootStackParamList } from "@/types/navigation";
 import { StackNavigationProp } from "@react-navigation/stack";
+import { ContentType } from "@/types/report-content";
+import ReportContentModal from "@/components/organism/reportUserModal";
+import { getUserStore } from "@/storage/user";
 
 type ScreenNavigationProp = StackNavigationProp<RootStackParamList, "Home">;
 
@@ -12,10 +15,19 @@ type Props = {
   isAdmin: boolean;
   postId: string;
   type: string;
+  postType: ContentType;
 };
 
-const PostCardOption = ({ handleDeletePost, isAdmin, postId, type }: Props) => {
+const PostCardOption = ({
+  handleDeletePost,
+  isAdmin,
+  postId,
+  type,
+  postType,
+}: Props) => {
   const navigation = useNavigation<ScreenNavigationProp>();
+  const [visible, setVisible] = useState(false);
+  const userdata = getUserStore();
   const openPost = () => {
     navigation.navigate("SinglePost", {
       postID: postId,
@@ -34,13 +46,17 @@ const PostCardOption = ({ handleDeletePost, isAdmin, postId, type }: Props) => {
           Open Post
         </Text>
       </TouchableOpacity>
-
-      {/* <TouchableOpacity className={`flex flex-row items-center gap-2 p-2`}>
-        <WhiteFlag width={20} height={20} color="#3A3B3C" />
-        <Text style={styles.text} className={` `}>
-          Report this post
-        </Text>
-      </TouchableOpacity> */}
+      {!isAdmin && (
+        <TouchableOpacity
+          onPress={() => setVisible(true)}
+          className={`flex flex-row items-center gap-2 p-2`}
+        >
+          <WhiteFlag width={20} height={20} color="#3A3B3C" />
+          <Text style={styles.text} className={` `}>
+            Report this post
+          </Text>
+        </TouchableOpacity>
+      )}
       {isAdmin && (
         <TouchableOpacity
           onPress={() => handleDeletePost()}
@@ -52,6 +68,13 @@ const PostCardOption = ({ handleDeletePost, isAdmin, postId, type }: Props) => {
           </Text>
         </TouchableOpacity>
       )}
+      <ReportContentModal
+        visible={visible}
+        postID={postId}
+        reporterId={userdata?.id || ""}
+        contentType={postType}
+        setModalVisible={setVisible}
+      />
     </View>
   );
 };
