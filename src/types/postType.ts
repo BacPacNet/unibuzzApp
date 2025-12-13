@@ -1,3 +1,5 @@
+import { ContentType } from "./report-content";
+
 export enum PostType {
   Community = "Community",
   Timeline = "Timeline",
@@ -96,6 +98,8 @@ export type PostCardType = {
 };
 
 export type CommentsProp = {
+  postId: string;
+  postContentType: ContentType;
   communities: {
     _id: string;
     name: string;
@@ -147,4 +151,6 @@ export type CommentsProp = {
   handleNavigate?: any;
   type: PostType;
   showBorder?: boolean;
+  commentId?: string;
+  parentCommentId?: string;
 };

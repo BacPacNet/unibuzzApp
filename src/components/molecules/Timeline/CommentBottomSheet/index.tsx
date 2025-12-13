@@ -34,6 +34,7 @@ import { SafeScreen } from "@/components/template";
 import { FONTS } from "@/constants/fonts";
 import CommentButtonIcon from "@/assets/icons/comment-button-icon.svg";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { ContentType } from "@/types/report-content";
 
 type Props = {
   postId: string;
@@ -50,6 +51,7 @@ type Props = {
   commentId?: string;
   communityId?: string;
   communityGroupId?: string;
+  postContentType: ContentType;
 };
 
 const CommentBottomSheet = ({
@@ -67,6 +69,7 @@ const CommentBottomSheet = ({
   commentId = "",
   communityId,
   communityGroupId,
+  postContentType,
 }: Props) => {
   const [showReply, setShowReply] = useState(false);
   const [replyingTo, setReplyingTo] = useState<any>(null);
@@ -279,6 +282,8 @@ const CommentBottomSheet = ({
                 setModalVisible={setModalVisible}
                 type={type}
                 communities={item?.commenterProfileId?.communities}
+                postId={postId}
+                postContentType={postContentType}
               />
             )}
             onEndReached={() => {

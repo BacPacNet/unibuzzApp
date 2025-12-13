@@ -11,6 +11,7 @@ import DropdownWrapper from "../../SelectDropDownWrapper";
 import PostCardOption from "../PostCardOption";
 import { BadgeCheck, Balcony, CheckCircleSolid } from "iconoir-react-native";
 import PostCommunityHolder from "../../PostCommunityHolder/PostCommunityHolder";
+import { ContentType } from "@/types/report-content";
 type Props = {
   name: string;
   year: string;
@@ -41,6 +42,7 @@ type Props = {
     isVerifiedMember: boolean;
     isCommunityAdmin: boolean;
   }[];
+  postType: ContentType;
 };
 
 type NavigationProp = StackNavigationProp<RootStackParamList, "Timeline">;
@@ -67,6 +69,7 @@ const PostCardUserDetails = ({
   isCommunityAdmin,
   isPostOptionShown = true,
   communities,
+  postType,
 }: Props) => {
   const navigate = useNavigation<NavigationProp>();
 
@@ -169,6 +172,7 @@ const PostCardUserDetails = ({
                 isAdmin={isAdmin}
                 postId={postId}
                 type={type}
+                postType={postType}
               />
             )}
           >

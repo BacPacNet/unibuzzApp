@@ -19,14 +19,16 @@ const PostCommunityHolder = ({
   isVerified,
   isCommunityAdmin = false,
 }: Props) => {
-  const [logoSrc, setLogoSrc] = useState<{ uri: string } | number>({
+  const [logoSrc, setLogoSrc] = useState<{ uri: string } | undefined>({
     uri: logo,
   });
   const [hasError, setHasError] = useState(false);
 
   useEffect(() => {
-    setLogoSrc({ uri: logo });
-    setHasError(false);
+    if (logo.length > 0) {
+      setLogoSrc({ uri: logo });
+      setHasError(false);
+    }
   }, [logo]);
 
   const handleImageError = () => {
@@ -52,7 +54,7 @@ const PostCommunityHolder = ({
         )}
       >
         <TouchableOpacity style={styles.logoContainer}>
-          {!hasError ? (
+          {!hasError && logoSrc?.uri && logoSrc?.uri?.length > 0 ? (
             <Image
               source={logoSrc}
               onError={handleImageError}
