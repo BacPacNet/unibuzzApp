@@ -1,5 +1,11 @@
 export const MESSAGES = {
   SOMETHING_WENT_WRONG: "Something went wrong",
+  GROUP_NOT_FOUND: "Group Not Found",
+  GROUP_NOT_FOUND_DESCRIPTION:
+    "The group you're looking for doesn't exist or may have been removed by the admin.",
+  USER_NOT_FOUND: "User Not Found",
+  USER_NOT_FOUND_DESCRIPTION:
+    "The user you’re looking for can’t be found or may have deleted their account.",
 };
 export const verifyUniversityEmailMessage =
   "You need to verify your university email to join private groups";

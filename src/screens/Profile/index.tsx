@@ -15,6 +15,8 @@ import { RootStackParamList } from "@/types/navigation";
 import useCustomBackHandler from "@/hooks/useCustomBackHandler";
 import QuiteHere from "@/assets/placeHolder/quiteHere.svg";
 import EmptyStateCard from "@/components/molecules/EmptyStateCard";
+import ErrorContainer from "@/components/molecules/ErrorContainer";
+import { MESSAGES } from "@/content/constant";
 
 type NavigationProp = StackNavigationProp<RootStackParamList, "SinglePost">;
 
@@ -32,6 +34,7 @@ const Profile = ({ route }: ProfileProps) => {
     data: userProfileData,
     isLoading: isUserProfileDataLoading,
     refetch: refetchUserProfileData,
+    isError: isUserProfileDataError,
   } = useGetUserData(userId);
 
   const {
@@ -103,6 +106,15 @@ const Profile = ({ route }: ProfileProps) => {
       ) || false
     );
   };
+
+  if (isUserProfileDataError) {
+    return (
+      <ErrorContainer
+        title={MESSAGES.USER_NOT_FOUND}
+        description={MESSAGES.USER_NOT_FOUND_DESCRIPTION}
+      />
+    );
+  }
 
   if (isUserProfileDataLoading || isUserProfileDataLoading) {
     return <LoadingState />;

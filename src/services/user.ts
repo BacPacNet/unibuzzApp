@@ -171,3 +171,34 @@ export const useNewUserTrue = () => {
     },
   });
 };
+
+const softDeleteUserAccount = async (token: string, data: any) => {
+  const res = await client(`/users`, {
+    method: "DELETE",
+    headers: { Authorization: `Bearer ${token}` },
+    data,
+  });
+  return res;
+};
+
+export const useDeleteUserAccount = () => {
+  const cookieValue = getToken() as string;
+  return useMutation({
+    mutationFn: (data: any) => softDeleteUserAccount(cookieValue, data),
+
+    onSuccess: (res: any) => {
+      Toast.hideAll();
+      Toast.show(res.response.data.message, {
+        placement: "top",
+        type: "success",
+      });
+    },
+    onError: (res: any) => {
+      Toast.hideAll();
+      Toast.show(res.response.data.message, {
+        placement: "top",
+        type: "warning",
+      });
+    },
+  });
+};

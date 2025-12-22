@@ -113,6 +113,7 @@ const ReportContentModal = ({
           <TextInput
             placeholder="Tell us what happened"
             multiline
+            placeholderTextColor="#9CA3AF"
             maxLength={480}
             onChangeText={(text) =>
               setValue("description", text, { shouldValidate: true })
@@ -171,6 +172,7 @@ const styles = StyleSheet.create({
     height: 150,
     borderWidth: 1,
     borderColor: "#ddd",
+    color: "#1F2937",
     padding: 10,
     borderRadius: 8,
     marginTop: 10,

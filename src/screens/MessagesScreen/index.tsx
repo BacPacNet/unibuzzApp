@@ -292,6 +292,7 @@ const Messages = ({ route }: any) => {
             )}
             communitySelected={selectedChat?.community as CommunityChat}
             selectedUserId={selectedUserId}
+            isDeletedUser={userName?.userId.isDeleted || false}
           />
           <UserMessages
             chatId={selectedChat._id}
@@ -309,6 +310,7 @@ const Messages = ({ route }: any) => {
             yourID={userData?.id || ""}
             isRequestNotAccepted={currTab == "Requests"}
             setCurrTab={setCurrTab}
+            isDeletedUser={userName?.userId.isDeleted || false}
           />
         </SafeScreen>
       );
