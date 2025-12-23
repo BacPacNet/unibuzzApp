@@ -84,7 +84,7 @@ export const SocketProvider: React.FC<{ children: React.ReactNode }> = ({
     });
 
     newSocket.on(SocketConnectionEnums.DISCONNECT, () => {
-      console.log("Disconnected from the server");
+      //   console.log("Disconnected from the server");
       setSocket(null);
       setIsConnected(false);
     });

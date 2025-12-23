@@ -38,6 +38,7 @@ type Props = {
   communitySelected: CommunityChat;
   userId: string;
   selectedUserId: string | null;
+  isDeletedUser: boolean;
 };
 
 type User = {
@@ -68,6 +69,7 @@ const MessageUserStickyBar = ({
   communitySelected,
   userId,
   selectedUserId,
+  isDeletedUser,
 }: Props) => {
   const userName =
     users?.flat().filter((item) => item.userId._id !== yourID) || [];
@@ -83,6 +85,8 @@ const MessageUserStickyBar = ({
   const bottomSheet = useRef<ActionSheetRef>(null);
   const navigation = useNavigation<NavigationProp>();
   const insets = useSafeAreaInsets();
+
+  const toShowPopover = isDeletedUser && !isGroupChat ? false : true;
 
   const handleMoveToInbox = () => {
     if (isGroupChat) {
@@ -188,13 +192,15 @@ const MessageUserStickyBar = ({
         )} */}
 
         <View className="relative">
-          <TouchableOpacity
-            style={{ backgroundColor: "#F3F2FF" }}
-            className=" rounded-full p-2"
-            onPress={() => bottomSheet.current?.show()}
-          >
-            <MoreHoriz height={24} width={24} color="#6744FF" />
-          </TouchableOpacity>
+          {toShowPopover && (
+            <TouchableOpacity
+              style={{ backgroundColor: "#F3F2FF" }}
+              className=" rounded-full p-2"
+              onPress={() => bottomSheet.current?.show()}
+            >
+              <MoreHoriz height={24} width={24} color="#6744FF" />
+            </TouchableOpacity>
+          )}
         </View>
       </View>
 

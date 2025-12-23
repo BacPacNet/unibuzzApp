@@ -49,6 +49,7 @@ type Props = {
   isRequestNotAccepted: boolean;
 
   setCurrTab: (value: string) => void;
+  isDeletedUser: boolean;
 };
 
 type MessageProps = {
@@ -112,6 +113,7 @@ const UserMessages = ({
   isRequestNotAccepted,
   setCurrTab,
   isGroupChat,
+  isDeletedUser,
 }: Props) => {
   const { data: chatMessages, isFetching } = useGetUserMessages(chatId);
 
@@ -124,7 +126,7 @@ const UserMessages = ({
   const scrollViewRef = useRef<ScrollView>(null);
   const [changed, setChanged] = useState("");
   let previousDate: any = "";
-
+  const toDisableButton = isDeletedUser && !isGroupChat ? true : false;
   useEffect(() => {
     if (scrollViewRef.current) {
       scrollViewRef.current.scrollToEnd({ animated: true });
@@ -202,6 +204,7 @@ const UserMessages = ({
       </ScrollView>
       <View className="border-t border-neutral-300 p-4">
         <UserMessageInput
+          toDisableButton={toDisableButton}
           chatId={chatId}
           userProfileId={userProfileData?._id || ""}
           isRequestNotAccepted={isRequestNotAccepted}

@@ -41,6 +41,7 @@ type Props = {
   setCurrTab: (value: string) => void;
   setChanged: (value: string) => void;
   isGroupChat: boolean;
+  toDisableButton: boolean;
 };
 
 type ImageAsset = {
@@ -116,6 +117,7 @@ const UserMessageInput = ({
   setCurrTab,
   setChanged,
   isGroupChat,
+  toDisableButton,
 }: Props) => {
   const inputRef = useRef<TextInput>(null);
   const navigation = useNavigation<NavigationProp>();
@@ -389,7 +391,7 @@ const UserMessageInput = ({
 
           <TouchableOpacity
             onPress={handleSubmit}
-            disabled={isSubmitting}
+            disabled={isSubmitting || toDisableButton}
             className="bg-primary-500 w-8 h-8 flex items-center justify-center rounded-full disabled:opacity-50"
           >
             {isSubmitting ? (

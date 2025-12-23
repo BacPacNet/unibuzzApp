@@ -54,7 +54,8 @@ import CommunityGroupNotLiveCard from "@/components/molecules/CommunityGroup/Com
 import { CommunityGroupPostFilter } from "@/components/molecules/CommunityGroup/CommunityGroupPostFilter";
 import CommunityGroupPendingPostCard from "@/components/molecules/CommunityGroup/CommunityGroupPendingPostCard";
 import { useTimeTracking } from "@/hooks/useTimeTracking";
-import { TRACK_EVENT } from "@/content/constant";
+import { MESSAGES, TRACK_EVENT } from "@/content/constant";
+import ErrorContainer from "@/components/molecules/ErrorContainer";
 
 type NavigationProp = StackNavigationProp<RootStackParamList, "CommunityGroup">;
 
@@ -68,10 +69,11 @@ const CommunityGroupScreen = ({ route }: any) => {
   const userProfileData = getUserProfileStore();
   const membersBottomSheet = useRef<ActionSheetRef>(null);
   const insets = useSafeAreaInsets();
-  const { data: communityGroups, refetch } = useGetCommunityGroup(
-    communityId,
-    communityGroupId
-  );
+  const {
+    data: communityGroups,
+    refetch,
+    isError: isCommunityGroupError,
+  } = useGetCommunityGroup(communityId, communityGroupId);
   useTimeTracking(TRACK_EVENT.COMMUNITY_GROUP_PAGE_VIEW_DURATION, {
     communityId,
     groupId: communityGroupId,
@@ -311,6 +313,15 @@ const CommunityGroupScreen = ({ route }: any) => {
     }
   };
   useCustomBackHandler(handleBack);
+
+  if (isCommunityGroupError) {
+    return (
+      <ErrorContainer
+        title={MESSAGES.GROUP_NOT_FOUND}
+        description={MESSAGES.GROUP_NOT_FOUND_DESCRIPTION}
+      />
+    );
+  }
 
   const FlatListHeaderWithError = useMemo(
     () => (

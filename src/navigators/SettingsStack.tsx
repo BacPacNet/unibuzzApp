@@ -1,6 +1,7 @@
 import UserAccountDeactivationScreen from "@/screens/SettingsScreens/AccountDeactivationScreen";
 import UserEmailChangeScreen from "@/screens/SettingsScreens/ChangeEmailScreen";
 import UserPasswordChangeScreen from "@/screens/SettingsScreens/ChangePasswordScreen";
+import DeleteAccountPage from "@/screens/SettingsScreens/DeleteAccountScreen";
 import SettingsScreen from "@/screens/SettingsScreens/SettingScreen";
 import UniversityVerificationScreen from "@/screens/SettingsScreens/UniversityVerificationScreen";
 import UserNameChangeScreen from "@/screens/SettingsScreens/UserNameChangeScreen";
@@ -25,6 +26,7 @@ const SettingsStack = () => {
         name="UserAccountDeactivation"
         component={UserAccountDeactivationScreen}
       />
+      <Stack.Screen name="DeleteAccount" component={DeleteAccountPage} />
     </Stack.Navigator>
   );
 };
