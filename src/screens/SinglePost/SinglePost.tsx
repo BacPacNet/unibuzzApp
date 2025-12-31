@@ -14,6 +14,8 @@ import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import useCustomBackHandler from "@/hooks/useCustomBackHandler";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { RootStackParamList } from "@/types/navigation";
+import ErrorContainer from "@/components/molecules/ErrorContainer";
+import { MESSAGES } from "@/content/constant";
 
 type NavigationProp = StackNavigationProp<RootStackParamList, "SinglePost">;
 
@@ -44,9 +46,10 @@ const SinglePost = ({ route }: any) => {
 
   if (isError) {
     return (
-      <View style={styles.errContainer}>
-        <Text className="text-neutral-500">Not Allowed</Text>
-      </View>
+      <ErrorContainer
+        title={MESSAGES.POST_NOT_FOUND}
+        description={MESSAGES.POST_NOT_FOUND_DESCRIPTION}
+      />
     );
   }
 

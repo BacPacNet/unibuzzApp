@@ -19,15 +19,6 @@ import { useNewMessageHandler } from "@/hooks/useNewMessageHandler";
 import { useTimeTracking } from "@/hooks/useTimeTracking";
 import { TRACK_EVENT } from "@/content/constant";
 
-interface Message {
-  _id: string;
-  chat: {
-    _id: string;
-  };
-  createdAt: string;
-  readByUsers?: string[];
-}
-
 const Messages = ({ route }: any) => {
   const [currTab, setCurrTab] = useState("Inbox");
   useTimeTracking(TRACK_EVENT.MESSAGE_PAGE_VIEW, {
@@ -64,24 +55,25 @@ const Messages = ({ route }: any) => {
 
   const totalUnreadMessages = chats?.reduce((sum, item) => {
     if (item.isGroupChat) {
-      const isUserInGroup = item.users.some(
-        (user) => user.userId._id === userData?.id && user.isRequestAccepted
+      const isUserInGroup = item?.users?.some(
+        (user) => user?.userId?._id === userData?.id && user?.isRequestAccepted
       );
 
       return isUserInGroup ? sum + item.unreadMessagesCount : sum;
     } else {
-      return item.isRequestAccepted ? sum + item.unreadMessagesCount : sum;
+      return item?.isRequestAccepted ? sum + item?.unreadMessagesCount : sum;
     }
   }, 0);
 
   const totalUnreadNotAcceptedMessages = chats?.reduce((sum, item) => {
-    const shouldInclude = item.isGroupChat
-      ? item.users.some(
+    const shouldInclude = item?.isGroupChat
+      ? item?.users?.some(
           (user) =>
-            user.userId._id.toString() === userData?.id &&
-            !user.isRequestAccepted
+            user?.userId?._id?.toString() === userData?.id &&
+            !user?.isRequestAccepted
         )
-      : !item.isRequestAccepted && item.groupAdmin.toString() !== userData?.id;
+      : !item?.isRequestAccepted &&
+        item?.groupAdmin?.toString() !== userData?.id;
 
     return shouldInclude ? sum + item.unreadMessagesCount : sum;
   }, 0);
@@ -118,16 +110,16 @@ const Messages = ({ route }: any) => {
 
     const updatedChats = chatsData.map((chat) => ({
       ...chat,
-      users: chat.users.map((user) => ({
+      users: chat?.users?.map((user) => ({
         ...user,
-        isOnline: onlineUsersSet?.has(user.userId._id) ?? false,
+        isOnline: onlineUsersSet?.has(user?.userId?._id) ?? false,
       })),
     }));
 
     setChats(updatedChats);
     const updateCurrSelectedChat = () => {
       const toWrite = updatedChats.find(
-        (item) => item._id == selectedChat?._id
+        (item) => item?._id == selectedChat?._id
       );
       setSelectedChat(toWrite);
     };
@@ -143,7 +135,7 @@ const Messages = ({ route }: any) => {
     return chatsData?.flatMap((chat) =>
       chat.users
         .map((user) =>
-          user.userId._id !== userData?.id ? user.userId._id : null
+          user?.userId?._id !== userData?.id ? user?.userId?._id : null
         )
         .filter((id) => id !== null)
     );
@@ -195,7 +187,7 @@ const Messages = ({ route }: any) => {
   useEffect(() => {
     if (selectedUserId) {
       const selectedChatBySearchQuery = chats?.find(
-        (item) => item._id.toString() == selectedUserId
+        (item) => item?._id?.toString() == selectedUserId
       );
       if (selectedChatBySearchQuery) {
         setToSetChat(false);
@@ -311,6 +303,7 @@ const Messages = ({ route }: any) => {
             isRequestNotAccepted={currTab == "Requests"}
             setCurrTab={setCurrTab}
             isDeletedUser={userName?.userId.isDeleted || false}
+            isBlockedUser={userName?.userId?.isBlocked || false}
           />
         </SafeScreen>
       );

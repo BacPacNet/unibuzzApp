@@ -53,6 +53,7 @@ const sections = [
       { id: "UniversityVerification", title: "University Verification" },
       { id: "username", title: "Change Username" },
       { id: "password", title: "Change Password" },
+      { id: "blockUsers", title: "Block Users" },
       { id: "deleteAccount", title: "Delete Account" },
       //   { id: "email", title: "Change Email" },
       //   { id: "deactivation", title: "Account Deactivation" },
@@ -102,6 +103,8 @@ const SettingsScreen = () => {
         return navigation.navigate("UserAccountDeactivation");
       case "deleteAccount":
         return navigation.navigate("DeleteAccount");
+      case "blockUsers":
+        return navigation.navigate("BlockUsers");
     }
   };
 

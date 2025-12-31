@@ -42,7 +42,7 @@ const UserChatCard = ({
   isGroupChat,
   unRead,
 }: Props) => {
-  const userName = users?.flat().filter((item) => item.userId._id !== YourID);
+  const userName = users?.flat().filter((item) => item?.userId?._id !== YourID);
 
   return (
     <View className="flex flex-row justify-between py-4 ">
@@ -72,7 +72,7 @@ const UserChatCard = ({
           <View className=" flex-1 ">
             <View className="flex-row items-center gap-2 ">
               <Text className={`text-neutral-700 text-2xs font-semibold`}>
-                {isGroupChat ? groupName : userName[0]?.userId?.firstName}
+                {isGroupChat ? groupName : userName?.[0]?.userId?.firstName}
               </Text>
               <Text className="text-neutral-500 text-2xs text-center">
                 {date?.length ? formatRelativeTime(new Date(date)) : ""}

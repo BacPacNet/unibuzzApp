@@ -52,13 +52,13 @@ const UserChats = ({
     if (currTabb === "Inbox") {
       const filteredChats = chats?.filter(
         (item: Chat) =>
-          item.users.find(
+          item?.users?.find(
             (user) =>
-              user?.userId._id.toString() === userData?.id &&
+              user?.userId?._id?.toString() === userData?.id &&
               user?.isRequestAccepted
           ) ||
-          item.isRequestAccepted ||
-          item.groupAdmin.toString() === userData?.id
+          item?.isRequestAccepted ||
+          item?.groupAdmin?.toString() === userData?.id
       );
       if (isChatLoading) {
         return (
@@ -68,7 +68,7 @@ const UserChats = ({
         );
       }
 
-      if (filteredChats.length === 0) {
+      if (filteredChats?.length === 0) {
         return (
           <Text className="text-neutral-500 text-center py-16">
             There are no chats in your Inbox yet.
@@ -76,7 +76,7 @@ const UserChats = ({
         );
       }
 
-      return filteredChats.map((item: Chat) => (
+      return filteredChats?.map((item: Chat) => (
         <TouchableOpacity
           onPress={() => {
             handleClick(item);
@@ -106,16 +106,16 @@ const UserChats = ({
       ));
     } else if (currTabb === "Requests") {
       const filteredChats = chats?.filter((item: Chat) =>
-        item.isGroupChat
-          ? item.users.some(
+        item?.isGroupChat
+          ? item?.users?.some(
               (user) =>
-                user.userId._id.toString() === userData?.id &&
-                !user.isRequestAccepted
+                user?.userId?._id?.toString() === userData?.id &&
+                !user?.isRequestAccepted
             )
-          : !item.isRequestAccepted &&
-            item.groupAdmin.toString() !== userData?.id
+          : !item?.isRequestAccepted &&
+            item?.groupAdmin?.toString() !== userData?.id
       );
-      if (filteredChats.length === 0) {
+      if (filteredChats?.length === 0) {
         return (
           <Text className="text-neutral-500 text-center py-8">
             You have no message requests at the moment.
@@ -123,7 +123,7 @@ const UserChats = ({
         );
       }
 
-      return filteredChats.map((item: Chat) => (
+      return filteredChats?.map((item: Chat) => (
         <TouchableOpacity
           onPress={() => setSelectedChat(item)}
           key={item?._id}

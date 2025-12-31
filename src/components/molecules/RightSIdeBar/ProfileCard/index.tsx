@@ -27,6 +27,10 @@ import { useCreateUserChat } from "@/services/Messages";
 import ProfileDropdownMenu from "@/components/atoms/ProfileDropdownMenu";
 import ReusableButton from "@/components/atoms/ReusableButton";
 
+type userFollowing = {
+  userId: string;
+};
+
 type Props = {
   name?: string;
   avatarUrl?: string;
@@ -42,6 +46,7 @@ type Props = {
   isSideBar?: boolean;
   userId?: string;
   ProfileSize?: "small" | "large";
+  followers: userFollowing[];
 };
 
 type NavigationProp = StackNavigationProp<RootStackParamList, "Profile">;
@@ -61,14 +66,17 @@ const ProfileCard = ({
   isSideBar = false,
   userId,
   ProfileSize = "small",
+  followers,
 }: Props) => {
   const user = getUserStore();
   const userProfile = getUserProfileStore();
-  const userFollowingIDs =
-    userProfile && userProfile?.following?.map((following) => following.userId);
+  //   const userFollowingIDs =
+  //     userProfile && userProfile?.following?.map((following) => following.userId);
+  const userFollowerIDs =
+    followers && followers?.map((followers) => followers.userId.toString());
   const { navigate } = useNavigation<NavigationProp>();
   const { mutate: toggleFollow, isPending } = useToggleFollow(
-    userFollowingIDs?.includes(userId as string) || false,
+    userFollowerIDs?.includes(userId as string) || false,
     true
   );
   const { mutateAsync: mutateCreateUserChat, isPending: userChatPending } =
@@ -158,7 +166,7 @@ const ProfileCard = ({
             </TouchableOpacity>
             <ReusableButton
               buttonContent={
-                userFollowingIDs?.includes(userId as string) ? (
+                userFollowerIDs?.includes(user?.id as string) ? (
                   <Text className="text-primary font-bold text-2xs">
                     Following
                   </Text>
@@ -172,14 +180,14 @@ const ProfileCard = ({
                 )
               }
               variant={
-                userFollowingIDs?.includes(userId as string)
+                userFollowerIDs?.includes(user?.id as string)
                   ? "border_primary"
                   : "primary"
               }
               onPress={() => toggleFollow(userId as string)}
               isLoading={isPending}
               activityIndicatorColor={
-                userFollowingIDs?.includes(userId as string)
+                userFollowerIDs?.includes(user?.id as string)
                   ? "#6744FF"
                   : "white"
               }

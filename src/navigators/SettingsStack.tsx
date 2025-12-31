@@ -1,4 +1,5 @@
 import UserAccountDeactivationScreen from "@/screens/SettingsScreens/AccountDeactivationScreen";
+import BlockUsersScreen from "@/screens/SettingsScreens/BlockUsersScreen";
 import UserEmailChangeScreen from "@/screens/SettingsScreens/ChangeEmailScreen";
 import UserPasswordChangeScreen from "@/screens/SettingsScreens/ChangePasswordScreen";
 import DeleteAccountPage from "@/screens/SettingsScreens/DeleteAccountScreen";
@@ -27,6 +28,7 @@ const SettingsStack = () => {
         component={UserAccountDeactivationScreen}
       />
       <Stack.Screen name="DeleteAccount" component={DeleteAccountPage} />
+      <Stack.Screen name="BlockUsers" component={BlockUsersScreen} />
     </Stack.Navigator>
   );
 };
