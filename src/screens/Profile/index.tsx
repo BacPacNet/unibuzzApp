@@ -32,7 +32,7 @@ const Profile = ({ route }: ProfileProps) => {
 
   const {
     data: userProfileData,
-    isLoading: isUserProfileDataLoading,
+    isFetching: isUserProfileDataLoading,
     refetch: refetchUserProfileData,
     isError: isUserProfileDataError,
   } = useGetUserData(userId);

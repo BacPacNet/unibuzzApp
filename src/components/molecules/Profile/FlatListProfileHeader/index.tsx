@@ -114,6 +114,7 @@ export const FlatListProfileHeaderPart = ({
           isSideBar={false}
           userId={userId}
           ProfileSize="large"
+          followers={followers || []}
         />
       </View>
       <View

@@ -50,6 +50,7 @@ type Props = {
 
   setCurrTab: (value: string) => void;
   isDeletedUser: boolean;
+  isBlockedUser: boolean;
 };
 
 type MessageProps = {
@@ -114,6 +115,7 @@ const UserMessages = ({
   setCurrTab,
   isGroupChat,
   isDeletedUser,
+  isBlockedUser,
 }: Props) => {
   const { data: chatMessages, isFetching } = useGetUserMessages(chatId);
 
@@ -126,7 +128,8 @@ const UserMessages = ({
   const scrollViewRef = useRef<ScrollView>(null);
   const [changed, setChanged] = useState("");
   let previousDate: any = "";
-  const toDisableButton = isDeletedUser && !isGroupChat ? true : false;
+  const toDisableButton =
+    (isDeletedUser || isBlockedUser) && !isGroupChat ? true : false;
   useEffect(() => {
     if (scrollViewRef.current) {
       scrollViewRef.current.scrollToEnd({ animated: true });

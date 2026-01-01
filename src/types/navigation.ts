@@ -63,6 +63,7 @@ export type RootStackParamList = {
   UserEmailChange: undefined;
   UserAccountDeactivation: undefined;
   DeleteAccount: undefined;
+  BlockUsers: undefined;
   SinglePost: any;
   UsersScreen: any;
   MembersScreen: any;

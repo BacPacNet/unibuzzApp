@@ -46,6 +46,7 @@ type User = {
     _id: string;
     firstName: string;
     lastName: string;
+    isBlocked: boolean;
   };
   isOnline?: boolean;
   isStarred: boolean;
@@ -72,11 +73,13 @@ const MessageUserStickyBar = ({
   isDeletedUser,
 }: Props) => {
   const userName =
-    users?.flat().filter((item) => item.userId._id !== yourID) || [];
+    users?.flat().filter((item) => item?.userId?._id !== yourID) || [];
+  const isBlockedByUser =
+    users?.flat().some((user) => user?.userId?.isBlocked) || false;
   const { mutate: acceptRequest } = useAcceptRequest();
   const { mutate: acceptGroupRequest } = useAcceptGroupRequest();
   const { mutate: toggleBlockMessage } = useToggleBlockMessages(
-    userName[0]?.userId?._id,
+    userName?.[0]?.userId?._id,
     isBlockedByYou
   );
   const { mutate: leaveGroup } = useLeaveGroup(chatId);
@@ -86,7 +89,8 @@ const MessageUserStickyBar = ({
   const navigation = useNavigation<NavigationProp>();
   const insets = useSafeAreaInsets();
 
-  const toShowPopover = isDeletedUser && !isGroupChat ? false : true;
+  const toShowPopover =
+    (isDeletedUser || isBlockedByUser) && !isGroupChat ? false : true;
 
   const handleMoveToInbox = () => {
     if (isGroupChat) {
