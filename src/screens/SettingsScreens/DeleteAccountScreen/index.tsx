@@ -36,11 +36,10 @@ type FormDataType = {
 const DeleteAccountPage = () => {
   const user = getUserStore();
   const { goBack, navigate } = useNavigation<any>();
-  const { mutate, isPending } = useDeleteUserAccount();
+  const { mutateAsync, isPending } = useDeleteUserAccount();
   const deActivateAccountBottomSheet = useRef<ActionSheetRef>(null);
   const { mutateAsync: deletePushNotificationToken } =
     useHandleDeletePushNotificationToken();
-  const { deauthenticate } = useAuth();
   const insets = useSafeAreaInsets();
   const {
     control,
@@ -55,20 +54,9 @@ const DeleteAccountPage = () => {
   const onSubmit = async () => {
     const data = getValues();
 
-    mutate(data, {
+    await mutateAsync(data, {
       onSuccess: async () => {
         reset();
-
-        Toast.show("Account has been deleted", {
-          placement: "top",
-          type: "danger",
-        });
-        try {
-          await deletePushNotificationToken();
-          deauthenticate();
-        } catch {
-          deauthenticate();
-        }
       },
     });
   };
