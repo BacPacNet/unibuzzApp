@@ -1,13 +1,6 @@
 import React, { useRef } from "react";
-import {
-  View,
-  Text,
-  TouchableOpacity,
-  TextInput,
-  StyleSheet,
-  ScrollView,
-} from "react-native";
-import { useForm, Controller } from "react-hook-form";
+import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
+import { useForm } from "react-hook-form";
 
 import { useDeleteUserAccount } from "@/services/user";
 
@@ -18,7 +11,6 @@ import { CheckSquareSolid } from "iconoir-react-native";
 import { FONTS } from "@/constants/fonts";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import BackHeader from "@/components/atoms/BackHeader";
-import { FormInput } from "@/components/atoms/FormInput";
 import { getUserStore } from "@/storage/user";
 import { FormInputPassword } from "@/components/atoms/FormInputPassword";
 import ActionSheet, { ActionSheetRef } from "react-native-actions-sheet";
@@ -30,13 +22,12 @@ import { useAuth } from "@/context/AuthProvider/AuthContext";
 type FormDataType = {
   password: string;
   sure: boolean;
-  email: string;
 };
 
 const DeleteAccountPage = () => {
   const user = getUserStore();
   const { goBack, navigate } = useNavigation<any>();
-  const { mutate, isPending } = useDeleteUserAccount();
+  const { mutate, isPending, error } = useDeleteUserAccount();
   const deActivateAccountBottomSheet = useRef<ActionSheetRef>(null);
   const { mutateAsync: deletePushNotificationToken } =
     useHandleDeletePushNotificationToken();
@@ -44,21 +35,26 @@ const DeleteAccountPage = () => {
   const insets = useSafeAreaInsets();
   const {
     control,
-    handleSubmit,
     getValues,
     formState: { errors },
     reset,
     watch,
     setValue,
-  } = useForm<FormDataType>();
+  } = useForm<FormDataType>({
+    defaultValues: {
+      password: "",
+      sure: true,
+    },
+  });
   const isSelected = watch("sure");
   const onSubmit = async () => {
     const data = getValues();
-
+    console.log(data);
+    console.log(error);
     mutate(data, {
       onSuccess: async () => {
+        console.log("success");
         reset();
-
         Toast.show("Account has been deleted", {
           placement: "top",
           type: "danger",
@@ -69,6 +65,13 @@ const DeleteAccountPage = () => {
         } catch {
           deauthenticate();
         }
+      },
+      onError: (error: any) => {
+        console.log("error", error);
+        // Toast.show(error.response.data.message, {
+        //   placement: "top",
+        //   type: "warning",
+        // });
       },
     });
   };
@@ -114,22 +117,8 @@ const DeleteAccountPage = () => {
           {/* Form */}
           <View style={styles.inputContainer}>
             <View>
-              <FormInput
-                label="Email"
-                placeholder="Email"
-                name="email"
-                control={control}
-                isError={!!errors.email}
-                disabled={true}
-                errorMessage={
-                  errors.email
-                    ? errors.email.message?.toString()
-                    : "Please enter your email!"
-                }
-                currentValue={user?.email}
-              />
+              <Text style={styles.info}>{user?.email}</Text>
             </View>
-
             <View>
               <FormInputPassword
                 isPasswordStrengthVisible={false}
@@ -142,7 +131,6 @@ const DeleteAccountPage = () => {
                 rules={{ required: "Password is required!" }}
               />
             </View>
-
             <View className="flex flex-row items-center gap-2 ">
               <View className="flex justify-center items-center">
                 <TouchableOpacity
