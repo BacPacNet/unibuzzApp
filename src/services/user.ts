@@ -4,6 +4,11 @@ import { getToken } from "@/storage/token";
 import { Toast } from "react-native-toast-notifications";
 import { storeUser } from "@/storage/user";
 import { IUserProfileResponse, ReferralsResponse } from "@/types/users";
+import { useHandleDeletePushNotificationToken } from "./pushNotification";
+
+import { showToast } from "@/utils/toastWrapper";
+import { useNavigation } from "@react-navigation/native";
+import { useAuth } from "@/context/AuthProvider/AuthContext";
 
 export async function getUserData(token: any, id: string) {
   const response: IUserProfileResponse = await client(`/users/${id}`, {
@@ -183,21 +188,27 @@ const softDeleteUserAccount = async (token: string, data: any) => {
 
 export const useDeleteUserAccount = () => {
   const cookieValue = getToken() as string;
+  const { mutateAsync: deletePushNotificationToken } =
+    useHandleDeletePushNotificationToken();
+  const { deauthenticate } = useAuth();
   return useMutation({
     mutationFn: (data: any) => softDeleteUserAccount(cookieValue, data),
 
     onSuccess: (res: any) => {
-      Toast.hideAll();
-      Toast.show(res.response.data.message, {
-        placement: "top",
+      showToast({
+        message: res?.response?.data?.message || "Account has been deleted",
         type: "success",
+        placement: "top",
       });
+
+      deletePushNotificationToken();
+      deauthenticate();
     },
     onError: (res: any) => {
-      Toast.hideAll();
-      Toast.show(res.response.data.message, {
-        placement: "top",
+      showToast({
+        message: res.response?.data?.message || "Something went wrong",
         type: "warning",
+        placement: "top",
       });
     },
   });
