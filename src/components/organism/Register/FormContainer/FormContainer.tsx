@@ -334,7 +334,6 @@ const FormContainer = ({ step, setStep, setSubStep, subStep }: Props) => {
 
     if (step === 3 && subStep === 0) {
       const isAvailable = await userLoginEmailVerification(data);
-      console.log("isAvailable", isAvailable);
       if (isAvailable?.isAvailable && !isAvailable?.isUniversityDomain) {
         handleNext();
         saveToLocalStorage();
