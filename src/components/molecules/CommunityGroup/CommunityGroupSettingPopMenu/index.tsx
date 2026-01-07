@@ -1,20 +1,9 @@
 import { FONTS } from "@/constants/fonts";
-import { useDeleteCommunityGroup } from "@/services/community-group";
-import { useGetFilteredSubscribedCommunities } from "@/services/university-community";
 import { RootStackParamList } from "@/types/navigation";
-import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
-import {
-  Edit,
-  LogIn,
-  LongArrowUpLeft,
-  Prohibition,
-  WarningCircleSolid,
-  WhiteFlag,
-} from "iconoir-react-native";
+import { Edit, LogIn, WarningCircleSolid } from "iconoir-react-native";
 import React from "react";
-import { View, Text, TouchableOpacity, Share, StyleSheet } from "react-native";
-import { Toast } from "react-native-toast-notifications";
+import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 
 type CommunityGroupSettingPopMenuProps = {
   isPending: boolean;
@@ -24,6 +13,7 @@ type CommunityGroupSettingPopMenuProps = {
   communityGroupId: string;
   communityId: string;
   closeDropdown?: () => void;
+  handleDeleteCommunityGroup: () => void;
 };
 
 type NavigationProp = StackNavigationProp<RootStackParamList, "CommunityGroup">;
@@ -38,34 +28,8 @@ const CommunityGroupSettingPopMenu: React.FC<
   communityGroupId,
   communityId,
   closeDropdown,
+  handleDeleteCommunityGroup,
 }) => {
-  const { navigate } = useNavigation<NavigationProp>();
-  const {
-    mutate: deleteCommunityGroup,
-    isPending: isDeleteCommunityGroupPending,
-  } = useDeleteCommunityGroup();
-  const { mutate } = useGetFilteredSubscribedCommunities(communityId);
-  const handleDeleteCommunityGroup = () => {
-    const data = {
-      selectedType: [],
-      selectedFilters: [],
-      sort: "",
-    };
-
-    deleteCommunityGroup(communityGroupId as string, {
-      onSuccess: () => {
-        mutate(data);
-        navigate("Groups", {
-          screen: "SearchCommunityGroupScreen",
-
-          params: { communityId: communityId },
-        });
-      },
-    });
-
-    // router.push(`/community/${communityId}`)
-  };
-
   return (
     <View style={styles.container}>
       {isGroupAdmin && (

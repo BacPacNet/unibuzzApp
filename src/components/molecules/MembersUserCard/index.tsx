@@ -166,9 +166,9 @@ const MembersUserCard = ({
       return null;
     }
 
-    if (forCommunityGroup) {
-      return null;
-    }
+    // if (forCommunityGroup) {
+    //   return null;
+    // }
 
     return (
       <ReusableButton

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import avatar from "../../../../assets/avatar.png";
 
@@ -12,6 +12,8 @@ import PostCardOption from "../PostCardOption";
 import { BadgeCheck, Balcony, CheckCircleSolid } from "iconoir-react-native";
 import PostCommunityHolder from "../../PostCommunityHolder/PostCommunityHolder";
 import { ContentType } from "@/types/report-content";
+import ReportContentModal from "@/components/organism/reportUserModal";
+import { getUserStore } from "@/storage/user";
 type Props = {
   name: string;
   year: string;
@@ -72,6 +74,8 @@ const PostCardUserDetails = ({
   postType,
 }: Props) => {
   const navigate = useNavigation<NavigationProp>();
+  const [reportVisible, setReportVisible] = useState(false);
+  const userdata = getUserStore();
 
   const normalizedRole = role
     ? role.charAt(0).toUpperCase() + role.slice(1).toLowerCase()
@@ -167,12 +171,16 @@ const PostCardUserDetails = ({
               <PostCardOption
                 handleDeletePost={() => {
                   handleDeletePost();
-                  closeDropdown();
+                  closeDropdown?.();
+                }}
+                handleReportPost={() => {
+                  setReportVisible(true);
+                  closeDropdown?.();
                 }}
                 isAdmin={isAdmin}
                 postId={postId}
                 type={type}
-                postType={postType}
+                closeDropdown={closeDropdown}
               />
             )}
           >
@@ -185,6 +193,13 @@ const PostCardUserDetails = ({
           </DropdownWrapper>
         )}
       </View>
+      <ReportContentModal
+        visible={reportVisible}
+        postID={postId}
+        reporterId={userdata?.id || ""}
+        contentType={postType}
+        setModalVisible={setReportVisible}
+      />
     </View>
   );
 };

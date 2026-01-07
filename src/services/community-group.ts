@@ -10,6 +10,7 @@ import {
 import { client } from "./api-client";
 import { Toast } from "react-native-toast-notifications";
 import { notificationStatus as notificationStatusEnum } from "@/types/notifications";
+import { showToast } from "@/utils/toastWrapper";
 
 export async function getAllCommunityGroups(
   communityId: string,
@@ -193,17 +194,13 @@ export const useJoinCommunityGroup = () => {
     mutationFn: (communityGroupId: string) =>
       joinCommunityGroupAPI(communityGroupId, cookieValue),
 
-    onSuccess: () => {
-      // Invalidate relevant query caches
-
-      //   queryClient.invalidateQueries({
-      //     queryKey: ["useGetSubscribedCommunties"],
-      //   });
-      //   queryClient.invalidateQueries({ queryKey: ["communityGroupsPost"] });
+    onSuccess: (response: any) => {
       queryClient.invalidateQueries({ queryKey: ["communityGroup"] });
       queryClient.invalidateQueries({ queryKey: ["communityGroupsPost"] });
-      Toast.hideAll();
-      Toast.show("Joined Community Group");
+
+      if (response.success && response.isGroupPrivate) {
+        return showToast({ message: response.message });
+      }
     },
 
     onError: (error: any) => {
@@ -237,7 +234,7 @@ export const useLeaveCommunityGroup = () => {
       queryClient.invalidateQueries({ queryKey: ["communityGroup"] });
       queryClient.invalidateQueries({ queryKey: ["communityGroupsPost"] });
       Toast.hideAll();
-      Toast.show("Left Community Group!");
+      Toast.show("Community left successfully");
     },
 
     onError: (error: any) => {

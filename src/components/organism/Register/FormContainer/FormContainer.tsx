@@ -145,12 +145,16 @@ const FormContainer = ({ step, setStep, setSubStep, subStep }: Props) => {
   const userLoginEmailVerification = async (data: {
     email: string;
     verificationOtp: string;
+    firstName: string;
+    birthDate: string;
   }) => {
     try {
       const dataToSend = {
         email: data.email,
         verificationOtp: data.verificationOtp,
         universityId: registerData?.universityId,
+        name: data?.firstName,
+        dob: data?.birthDate,
       };
       const isAvailable = await handleUserLoginEmailVerification(dataToSend);
       if (isAvailable?.isAvailable) {
@@ -330,7 +334,7 @@ const FormContainer = ({ step, setStep, setSubStep, subStep }: Props) => {
 
     if (step === 3 && subStep === 0) {
       const isAvailable = await userLoginEmailVerification(data);
-
+      console.log("isAvailable", isAvailable);
       if (isAvailable?.isAvailable && !isAvailable?.isUniversityDomain) {
         handleNext();
         saveToLocalStorage();
