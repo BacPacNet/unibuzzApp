@@ -37,6 +37,7 @@ import UniversityPlaceholder from "@/assets/community/university_banner.svg";
 import LeaveCommunityGroupBottomSheet from "../LeaveCommunityGroupBottomSheet";
 import GenericInfoBottomSheet from "../../GenericInfoBottomSheet";
 import { verifyUniversityEmailMessage } from "@/content/constant";
+import DeleteCommunityGroupBottomSheet from "../DeleteCommunityGroupBottomSheet";
 
 type CommunityGroup = {
   title: string;
@@ -101,6 +102,7 @@ const FlatListCommunityHeader: React.FC<Props> = ({
   const universityVerificationBottomSheet = useRef<ActionSheetRef>(null);
   const groupInfoBottomSheet = useRef<ActionSheetRef>(null);
   const leaveCommunityGroupBottomSheet = useRef<ActionSheetRef>(null);
+  const deleteCommunityGroupBottomSheet = useRef<ActionSheetRef>(null);
   const insets = useSafeAreaInsets();
   const { navigate } = useNavigation<NavigationProp>();
   const onSettingsPress = useCallback(
@@ -170,6 +172,10 @@ const FlatListCommunityHeader: React.FC<Props> = ({
 
   const handleLeaveCommunityGroup = () => {
     leaveCommunityGroupBottomSheet.current?.show();
+  };
+
+  const handleDeleteCommunityGroup = () => {
+    deleteCommunityGroupBottomSheet.current?.show();
   };
 
   return (
@@ -244,6 +250,7 @@ const FlatListCommunityHeader: React.FC<Props> = ({
                     handleNavigateToEditCommunityGroupScreen={
                       handleNavigateToEditCommunityGroupScreen
                     }
+                    handleDeleteCommunityGroup={handleDeleteCommunityGroup}
                     communityGroupId={communityGroups?._id}
                     communityId={communityGroups?.communityId?._id}
                     closeDropdown={closeDropdown}
@@ -349,6 +356,22 @@ const FlatListCommunityHeader: React.FC<Props> = ({
         />
       </ActionSheet>
       <ActionSheet
+        useBottomSafeAreaPadding
+        ref={deleteCommunityGroupBottomSheet}
+        gestureEnabled={true}
+        safeAreaInsets={insets}
+        // snapPoints={[70, 100]}
+        containerStyle={{
+          paddingTop: 10,
+        }}
+      >
+        <DeleteCommunityGroupBottomSheet
+          deleteCommunityGroupBottomSheet={deleteCommunityGroupBottomSheet}
+          communityGroupId={communityGroups?._id}
+          communityId={communityGroups?.communityId?._id}
+        />
+      </ActionSheet>
+      <ActionSheet
         ref={universityVerificationBottomSheet}
         gestureEnabled={true}
         safeAreaInsets={insets}
@@ -382,10 +405,10 @@ const styles = StyleSheet.create({
 
   content: {
     padding: 16,
-    paddingBottom: 32,
-    marginBottom: 16,
-    borderBottomWidth: 1,
-    borderBottomColor: "#E5E7EB",
+    // paddingBottom: 32,
+    // marginBottom: 16,
+    // borderBottomWidth: 1,
+    // borderBottomColor: "#E5E7EB",
     gap: 16,
   },
   titleContainer: {

@@ -56,6 +56,7 @@ import CommunityGroupPendingPostCard from "@/components/molecules/CommunityGroup
 import { useTimeTracking } from "@/hooks/useTimeTracking";
 import { MESSAGES, TRACK_EVENT } from "@/content/constant";
 import ErrorContainer from "@/components/molecules/ErrorContainer";
+import Tabs from "@/components/molecules/Tabs";
 
 type NavigationProp = StackNavigationProp<RootStackParamList, "CommunityGroup">;
 
@@ -69,16 +70,24 @@ const CommunityGroupScreen = ({ route }: any) => {
   const userProfileData = getUserProfileStore();
   const membersBottomSheet = useRef<ActionSheetRef>(null);
   const insets = useSafeAreaInsets();
+  const isMountedRef = useRef(true);
   const {
     data: communityGroups,
     refetch,
     isError: isCommunityGroupError,
   } = useGetCommunityGroup(communityId, communityGroupId);
-  useTimeTracking(TRACK_EVENT.COMMUNITY_GROUP_PAGE_VIEW_DURATION, {
-    communityId,
-    groupId: communityGroupId,
-    groupName: communityGroups?.title,
-  });
+  const timeTrackingProperties = useMemo(
+    () => ({
+      communityId,
+      groupId: communityGroupId,
+      groupName: communityGroups?.title,
+    }),
+    [communityId, communityGroupId, communityGroups?.title]
+  );
+  useTimeTracking(
+    TRACK_EVENT.COMMUNITY_GROUP_PAGE_VIEW_DURATION,
+    timeTrackingProperties
+  );
   const { mutate: joinCommunityGroup, isPending: isJoinCommunityPending } =
     useJoinCommunityGroup();
   const { mutate: leaveCommunityGroup, isPending: isLeaveCommunityPending } =
@@ -176,25 +185,43 @@ const CommunityGroupScreen = ({ route }: any) => {
 
   useFocusEffect(
     useCallback(() => {
+      isMountedRef.current = true;
       setCurrentCommunityId(communityId);
 
       return () => {
+        isMountedRef.current = false;
         setCurrentCommunityId("");
       };
-    }, [communityId])
+    }, [communityId, setCurrentCommunityId])
   );
 
   useEffect(() => {
-    if (communityGroups && userData) {
+    return () => {
+      isMountedRef.current = false;
+    };
+  }, []);
+
+  useEffect(() => {
+    if (
+      !isCommunityGroupError &&
+      isMountedRef.current &&
+      communityGroups &&
+      userData
+    ) {
       const { id } = userData;
       setIsGroupAdmin(
         communityGroups.adminUserId.toString() === id?.toString()
       );
     }
-  }, [communityGroups, userData]);
+  }, [communityGroups, userData, isCommunityGroupError]);
 
   useEffect(() => {
-    if (communityGroups && userData) {
+    if (
+      !isCommunityGroupError &&
+      isMountedRef.current &&
+      communityGroups &&
+      userData
+    ) {
       setIsUserJoinedCommunityGroup(
         communityGroups?.users?.some(
           (item) =>
@@ -202,29 +229,35 @@ const CommunityGroupScreen = ({ route }: any) => {
         )
       );
     }
-  }, [communityGroups, userData, setIsGroupAdmin]);
+  }, [communityGroups, userData, isCommunityGroupError]);
 
   useEffect(() => {
-    setLogoSrcErr(false);
-    setImageSrcErr(false);
-    if (communityGroups) {
-      setLogoSrc(communityGroups?.communityGroupLogoUrl?.imageUrl || "");
-      setImageSrc(communityGroups?.communityGroupLogoCoverUrl?.imageUrl || "");
+    if (!isCommunityGroupError && isMountedRef.current) {
+      setLogoSrcErr(false);
+      setImageSrcErr(false);
+      if (communityGroups) {
+        setLogoSrc(communityGroups?.communityGroupLogoUrl?.imageUrl || "");
+        setImageSrc(
+          communityGroups?.communityGroupLogoCoverUrl?.imageUrl || ""
+        );
+      }
     }
-  }, [communityGroups]);
+  }, [communityGroups, isCommunityGroupError]);
 
   useEffect(() => {
-    if (isFetching) {
+    if (!isCommunityGroupError && isMountedRef.current && isFetching) {
       setCommunityGroupPostDatas([]);
     }
-  }, [isFetching, queryClient]);
+  }, [isFetching, isCommunityGroupError]);
 
   useEffect(() => {
-    const communityDatas: any = communityGroupPost?.pages.flatMap(
-      (page) => page?.finalPost
-    );
-    setCommunityGroupPostDatas(communityDatas);
-  }, [communityGroupPost, dataUpdatedAt]);
+    if (!isCommunityGroupError && isMountedRef.current) {
+      const communityDatas: any = communityGroupPost?.pages.flatMap(
+        (page) => page?.finalPost
+      );
+      setCommunityGroupPostDatas(communityDatas);
+    }
+  }, [communityGroupPost, dataUpdatedAt, isCommunityGroupError]);
 
   useEffect(() => {
     if (
@@ -245,7 +278,7 @@ const CommunityGroupScreen = ({ route }: any) => {
     });
     refetch();
     setRefreshing(false);
-  }, []);
+  }, [queryClient, communityId, communityGroupId, refetch]);
 
   const handleToggleJoinCommunityGroup = () => {
     if (communityGroups?.adminUserId == userData?.id) {
@@ -296,7 +329,7 @@ const CommunityGroupScreen = ({ route }: any) => {
     });
   };
 
-  const handleBack = () => {
+  const handleBack = useCallback(() => {
     setFilterPostBy("");
 
     if (from === screenName.notifications) {
@@ -311,7 +344,7 @@ const CommunityGroupScreen = ({ route }: any) => {
     } else {
       navigation.goBack();
     }
-  };
+  }, [from, communityId, navigation]);
   useCustomBackHandler(handleBack);
 
   if (isCommunityGroupError) {
@@ -322,6 +355,32 @@ const CommunityGroupScreen = ({ route }: any) => {
       />
     );
   }
+
+  const COMMUNITY_GROUP_TABS = [
+    {
+      key: "",
+      label: AllFiltersCommunityGroupPost.allPosts,
+    },
+    {
+      key: "myPosts",
+      label: AllFiltersCommunityGroupPost.myPosts,
+    },
+    {
+      key: "pendingPosts",
+      label: AllFiltersCommunityGroupPost.pendingPosts,
+      showBadge: true,
+    },
+  ];
+
+  const communityGroupTabs = COMMUNITY_GROUP_TABS.map((tab) => ({
+    label: tab.label,
+    badgeCount:
+      tab.showBadge && pendingPostCount > 0
+        ? String(pendingPostCount)
+        : undefined,
+    //   tab.showBadge ? String(10) : undefined,
+    content: <View />,
+  }));
 
   const FlatListHeaderWithError = useMemo(
     () => (
@@ -355,11 +414,17 @@ const CommunityGroupScreen = ({ route }: any) => {
         />
 
         {isCommunityGroupLive && isUserJoinedCommunityGroup && (
-          <CommunityGroupPostFilter
-            pendingPostCount={pendingPostCount}
-            filterPostBy={filterPostBy}
-            setFilterPostBy={setFilterPostBy}
-          />
+          <View style={styles.tabsContainer}>
+            <Tabs
+              tabs={communityGroupTabs}
+              activeIndex={COMMUNITY_GROUP_TABS.findIndex(
+                (tab) => tab.key === filterPostBy
+              )}
+              onChange={(index) => {
+                setFilterPostBy(COMMUNITY_GROUP_TABS[index].key);
+              }}
+            />
+          </View>
         )}
 
         {!isCommunityGroupLive ? (
@@ -546,5 +611,8 @@ const styles = StyleSheet.create({
   flatListStyle: {
     width: "100%",
     height: "100%",
+  },
+  tabsContainer: {
+    paddingBottom: 32,
   },
 });

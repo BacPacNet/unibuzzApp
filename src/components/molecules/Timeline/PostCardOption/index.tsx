@@ -5,7 +5,6 @@ import { useNavigation } from "@react-navigation/native";
 import { RootStackParamList } from "@/types/navigation";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { ContentType } from "@/types/report-content";
-import ReportContentModal from "@/components/organism/reportUserModal";
 import { getUserStore } from "@/storage/user";
 
 type ScreenNavigationProp = StackNavigationProp<RootStackParamList, "Home">;
@@ -15,7 +14,9 @@ type Props = {
   isAdmin: boolean;
   postId: string;
   type: string;
-  postType: ContentType;
+
+  closeDropdown: () => void;
+  handleReportPost: () => void;
 };
 
 const PostCardOption = ({
@@ -23,11 +24,11 @@ const PostCardOption = ({
   isAdmin,
   postId,
   type,
-  postType,
+  closeDropdown,
+  handleReportPost,
 }: Props) => {
   const navigation = useNavigation<ScreenNavigationProp>();
-  const [visible, setVisible] = useState(false);
-  const userdata = getUserStore();
+
   const openPost = () => {
     navigation.navigate("SinglePost", {
       postID: postId,
@@ -38,7 +39,10 @@ const PostCardOption = ({
   return (
     <View className="flex gap-2 absolute bg-white shadow-md w-48 top-12 right-4 z-10 rounded-md">
       <TouchableOpacity
-        onPress={openPost}
+        onPress={() => {
+          openPost();
+          closeDropdown?.();
+        }}
         className={`flex flex-row items-center gap-2 p-2`}
       >
         <OpenInBrowser width={20} height={20} color="#3A3B3C" />
@@ -48,7 +52,9 @@ const PostCardOption = ({
       </TouchableOpacity>
       {!isAdmin && (
         <TouchableOpacity
-          onPress={() => setVisible(true)}
+          onPress={() => {
+            handleReportPost();
+          }}
           className={`flex flex-row items-center gap-2 p-2`}
         >
           <WhiteFlag width={20} height={20} color="#3A3B3C" />
@@ -59,7 +65,9 @@ const PostCardOption = ({
       )}
       {isAdmin && (
         <TouchableOpacity
-          onPress={() => handleDeletePost()}
+          onPress={() => {
+            handleDeletePost();
+          }}
           className={`flex flex-row items-center gap-2 p-2`}
         >
           <Bin width={20} height={20} color="#3A3B3C" />
@@ -68,13 +76,6 @@ const PostCardOption = ({
           </Text>
         </TouchableOpacity>
       )}
-      <ReportContentModal
-        visible={visible}
-        postID={postId}
-        reporterId={userdata?.id || ""}
-        contentType={postType}
-        setModalVisible={setVisible}
-      />
     </View>
   );
 };
