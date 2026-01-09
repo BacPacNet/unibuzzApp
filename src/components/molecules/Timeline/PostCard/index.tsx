@@ -37,6 +37,7 @@ import {
   NEXT_DEV_FE_BASE_URL,
 } from "@env";
 import { ContentType } from "@/types/report-content";
+import { htmlStyles } from "@/utils/renderHtlmStyles";
 
 type ScreenNavigationProp = StackNavigationProp<RootStackParamList, "Home">;
 
@@ -179,7 +180,7 @@ const PostCard = memo(
 
     useFocusEffect(
       useCallback(() => {
-        if (toShowInitial) {
+        if (toShowInitial && initialComment?.commenterId?._id) {
           setShowInitial(true);
           commentBottomSheet.current?.show();
         }
@@ -286,59 +287,8 @@ const PostCard = memo(
             <RenderHtml
               contentWidth={width}
               source={{ html: data?.content }}
-              tagsStyles={{
-                body: {
-                  margin: 0,
-                  padding: 0,
-                  color: "#3A3B3C",
-                },
-                p: {
-                  margin: 0,
-                  padding: 0,
-                  fontSize: 14,
-                },
-                div: {
-                  margin: 0,
-                  padding: 0,
-                },
-                ol: {
-                  margin: 0,
-                  padding: 0,
-                  paddingLeft: 20,
-                },
-                ul: {
-                  margin: 0,
-                  padding: 0,
-                  paddingLeft: 20,
-                },
-                li: {
-                  margin: 0,
-                  padding: 0,
-                  fontSize: 14,
-                },
-                code: {
-                  fontFamily: "monospace",
-                  backgroundColor: "#f0f0f0",
-                  padding: 2,
-                  paddingLeft: 4,
-                  paddingRight: 4,
-                  borderRadius: 3,
-                  fontSize: 13,
-                  color: "#3A3B3C",
-                },
-              }}
-              classesStyles={{
-                "ql-code-block": {
-                  fontFamily: "monospace",
-                  backgroundColor: "#f0f0f0",
-                  padding: 2,
-                  paddingLeft: 4,
-                  paddingRight: 4,
-                  borderRadius: 3,
-                  fontSize: 13,
-                  color: "#3A3B3C",
-                },
-              }}
+              tagsStyles={htmlStyles.tagsStyles}
+              classesStyles={htmlStyles.classesStyles}
               ignoredDomTags={["label", "input"]}
             />
           </View>

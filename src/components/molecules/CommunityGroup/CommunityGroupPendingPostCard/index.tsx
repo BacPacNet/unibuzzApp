@@ -16,6 +16,7 @@ import RenderHTML from "react-native-render-html";
 import { useWindowDimensions } from "react-native";
 import { useCreateGroupPostStatusChange } from "@/services/communityPost";
 import PendingPostCardOption from "../CommunityGroupPendingPostCardOptions";
+import { htmlStyles } from "@/utils/renderHtlmStyles";
 
 type ScreenNavigationProp = StackNavigationProp<RootStackParamList, "Home">;
 
@@ -147,34 +148,8 @@ const PendingPostCard = ({
             <RenderHTML
               contentWidth={width}
               source={{ html: data?.content }}
-              tagsStyles={{
-                body: {
-                  margin: 0,
-                  padding: 0,
-                  color: "#3A3B3C",
-                },
-                p: {
-                  margin: 0,
-                  padding: 0,
-                  fontSize: 14,
-                },
-                div: {
-                  margin: 0,
-                  padding: 0,
-                },
-              }}
-              classesStyles={{
-                "ql-code-block": {
-                  fontFamily: "monospace",
-                  backgroundColor: "#f0f0f0",
-                  padding: 2,
-                  paddingLeft: 4,
-                  paddingRight: 4,
-                  borderRadius: 3,
-                  fontSize: 13,
-                  color: "#3A3B3C",
-                },
-              }}
+              tagsStyles={htmlStyles.tagsStyles}
+              classesStyles={htmlStyles.classesStyles}
               ignoredDomTags={["label", "input"]}
             />
           </View>

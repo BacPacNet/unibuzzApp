@@ -65,12 +65,12 @@ const CommunityGroupScreen = ({ route }: any) => {
   const { communityId, communityGroupId } = route.params;
   const from = route?.params?.from || "";
   const filterPostByParam = route?.params?.filterPostBy || "";
-  const { setCurrentCommunityId } = useCommunityContext();
+  const { setCurrentCommunityId, setIsCommunityGroup, selectedCommunityId } =
+    useCommunityContext();
   const userData = getUserStore();
   const userProfileData = getUserProfileStore();
   const membersBottomSheet = useRef<ActionSheetRef>(null);
   const insets = useSafeAreaInsets();
-  const isMountedRef = useRef(true);
   const {
     data: communityGroups,
     refetch,
@@ -185,29 +185,20 @@ const CommunityGroupScreen = ({ route }: any) => {
 
   useFocusEffect(
     useCallback(() => {
-      isMountedRef.current = true;
       setCurrentCommunityId(communityId);
 
+      if (selectedCommunityId == communityId) {
+        setIsCommunityGroup(true);
+      }
       return () => {
-        isMountedRef.current = false;
         setCurrentCommunityId("");
+        setIsCommunityGroup(false);
       };
     }, [communityId, setCurrentCommunityId])
   );
 
   useEffect(() => {
-    return () => {
-      isMountedRef.current = false;
-    };
-  }, []);
-
-  useEffect(() => {
-    if (
-      !isCommunityGroupError &&
-      isMountedRef.current &&
-      communityGroups &&
-      userData
-    ) {
+    if (!isCommunityGroupError && communityGroups && userData) {
       const { id } = userData;
       setIsGroupAdmin(
         communityGroups.adminUserId.toString() === id?.toString()
@@ -216,12 +207,7 @@ const CommunityGroupScreen = ({ route }: any) => {
   }, [communityGroups, userData, isCommunityGroupError]);
 
   useEffect(() => {
-    if (
-      !isCommunityGroupError &&
-      isMountedRef.current &&
-      communityGroups &&
-      userData
-    ) {
+    if (!isCommunityGroupError && communityGroups && userData) {
       setIsUserJoinedCommunityGroup(
         communityGroups?.users?.some(
           (item) =>
@@ -232,7 +218,7 @@ const CommunityGroupScreen = ({ route }: any) => {
   }, [communityGroups, userData, isCommunityGroupError]);
 
   useEffect(() => {
-    if (!isCommunityGroupError && isMountedRef.current) {
+    if (!isCommunityGroupError) {
       setLogoSrcErr(false);
       setImageSrcErr(false);
       if (communityGroups) {
@@ -245,13 +231,13 @@ const CommunityGroupScreen = ({ route }: any) => {
   }, [communityGroups, isCommunityGroupError]);
 
   useEffect(() => {
-    if (!isCommunityGroupError && isMountedRef.current && isFetching) {
+    if (!isCommunityGroupError && isFetching) {
       setCommunityGroupPostDatas([]);
     }
   }, [isFetching, isCommunityGroupError]);
 
   useEffect(() => {
-    if (!isCommunityGroupError && isMountedRef.current) {
+    if (!isCommunityGroupError) {
       const communityDatas: any = communityGroupPost?.pages.flatMap(
         (page) => page?.finalPost
       );
@@ -346,15 +332,6 @@ const CommunityGroupScreen = ({ route }: any) => {
     }
   }, [from, communityId, navigation]);
   useCustomBackHandler(handleBack);
-
-  if (isCommunityGroupError) {
-    return (
-      <ErrorContainer
-        title={MESSAGES.GROUP_NOT_FOUND}
-        description={MESSAGES.GROUP_NOT_FOUND_DESCRIPTION}
-      />
-    );
-  }
 
   const COMMUNITY_GROUP_TABS = [
     {
@@ -475,132 +452,150 @@ const CommunityGroupScreen = ({ route }: any) => {
 
   return (
     <SafeAreaView className="bg-white flex-1">
-      {(showCreatePostButton || lastScrollY == 0) && isCommunityGroupLive && (
-        <CreatePostButton
-          isAllowed={isUserJoinedCommunityGroup || isGroupAdmin}
-          onPress={() =>
-            navigation.navigate("NewGroupPost", {
-              communityId,
-              communityGroupId,
-              communityGroupAdminId: communityGroups?.adminUserId.toString(),
-              isGroupOfficial,
-            })
-          }
+      {isCommunityGroupError ? (
+        <ErrorContainer
+          title={MESSAGES.GROUP_NOT_FOUND}
+          description={MESSAGES.GROUP_NOT_FOUND_DESCRIPTION}
         />
-      )}
-      {isFetching ? (
-        <Refresh />
       ) : (
-        <FlatList
-          data={communityGroupPostDatas}
-          style={{
-            width: "100%",
-            height: "100%",
-          }}
-          keyExtractor={(item, index) => item?._id + index}
-          onScroll={handleScroll}
-          renderItem={({ item }) =>
-            error ? (
-              <View></View>
-            ) : filterPostBy ===
-              Object.keys(AllFiltersCommunityGroupPost)[1] ? (
-              <CommunityGroupPendingPostCard
-                data={item}
-                isTimeline={false}
-                communityGroupId={communityGroupId}
-                isSinglePost={false}
-                communityGroupAdminId={communityGroups?.adminUserId as string}
-                postStatus={item?.postStatus as communityPostStatus}
+        <>
+          {(showCreatePostButton || lastScrollY == 0) &&
+            isCommunityGroupLive && (
+              <CreatePostButton
+                isAllowed={isUserJoinedCommunityGroup || isGroupAdmin}
+                onPress={() =>
+                  navigation.navigate("NewGroupPost", {
+                    communityId,
+                    communityGroupId,
+                    communityGroupAdminId:
+                      communityGroups?.adminUserId.toString(),
+                    isGroupOfficial,
+                  })
+                }
               />
-            ) : (
-              <PostCard
-                data={item}
-                isTimeline={false}
-                communityGroupId={communityGroupId}
-                isSinglePost={false}
-                filterPostBy={filterPostBy}
-              />
-            )
-          }
-          refreshControl={
-            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-          }
-          onEndReached={() => {
-            if (communityPostHasNextPage && !communityPostIsFetchingNextPage) {
-              communityPostNextpage();
-            }
-          }}
-          ListFooterComponent={
-            communityPostIsFetchingNextPage && communityPostHasNextPage ? (
-              <View>
-                <ActivityIndicator size="large" color="#7367f0" />
-              </View>
-            ) : (
-              <View />
-            )
-          }
-          ListHeaderComponent={FlatListHeaderWithError}
-          ListEmptyComponent={
-            isFetching || isLoading ? (
-              <View className="flex-1 justify-center items-center">
-                <ActivityIndicator size="large" color="#7367f0" />
-              </View>
-            ) : error ? null : !isCommunityGroupLive ? null : communityGroupPostDatas?.length ===
-                0 &&
-              filterPostBy === Object.keys(AllFiltersCommunityGroupPost)[1] &&
-              communityGroups?.adminUserId.toString() ==
-                userData?.id?.toString() ? (
-              <View className="flex-1 justify-center items-center">
-                <EmptyStateCard
-                  imageWidth={226}
-                  imageHeight={158}
-                  SvgComponent={notPendingNoPostPlaceholder}
-                  title="You are all done!"
-                  description="No pending posts requests at the moment."
-                />
-              </View>
-            ) : (
-              <View className="flex-1 justify-center items-center">
-                <EmptyStateCard
-                  imageWidth={226}
-                  imageHeight={158}
-                  SvgComponent={NoPostFromGroup}
-                  title="No Posts from Group."
-                  description="No posts in this group yet. Once members start sharing, you’ll see them here."
-                />
-              </View>
-            )
-          }
-        />
-      )}
+            )}
+          {isFetching ? (
+            <Refresh />
+          ) : (
+            <FlatList
+              data={communityGroupPostDatas}
+              style={{
+                width: "100%",
+                height: "100%",
+              }}
+              keyExtractor={(item, index) => item?._id + index}
+              onScroll={handleScroll}
+              renderItem={({ item }) =>
+                error ? (
+                  <View></View>
+                ) : filterPostBy ===
+                  Object.keys(AllFiltersCommunityGroupPost)[1] ? (
+                  <CommunityGroupPendingPostCard
+                    data={item}
+                    isTimeline={false}
+                    communityGroupId={communityGroupId}
+                    isSinglePost={false}
+                    communityGroupAdminId={
+                      communityGroups?.adminUserId as string
+                    }
+                    postStatus={item?.postStatus as communityPostStatus}
+                  />
+                ) : (
+                  <PostCard
+                    data={item}
+                    isTimeline={false}
+                    communityGroupId={communityGroupId}
+                    isSinglePost={false}
+                    filterPostBy={filterPostBy}
+                  />
+                )
+              }
+              refreshControl={
+                <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+              }
+              onEndReached={() => {
+                if (
+                  communityPostHasNextPage &&
+                  !communityPostIsFetchingNextPage
+                ) {
+                  communityPostNextpage();
+                }
+              }}
+              ListFooterComponent={
+                communityPostIsFetchingNextPage && communityPostHasNextPage ? (
+                  <View>
+                    <ActivityIndicator size="large" color="#7367f0" />
+                  </View>
+                ) : (
+                  <View />
+                )
+              }
+              ListHeaderComponent={FlatListHeaderWithError}
+              ListEmptyComponent={
+                isFetching || isLoading ? (
+                  <View className="flex-1 justify-center items-center">
+                    <ActivityIndicator size="large" color="#7367f0" />
+                  </View>
+                ) : error ? null : !isCommunityGroupLive ? null : communityGroupPostDatas?.length ===
+                    0 &&
+                  filterPostBy ===
+                    Object.keys(AllFiltersCommunityGroupPost)[1] &&
+                  communityGroups?.adminUserId.toString() ==
+                    userData?.id?.toString() ? (
+                  <View className="flex-1 justify-center items-center">
+                    <EmptyStateCard
+                      imageWidth={226}
+                      imageHeight={158}
+                      SvgComponent={notPendingNoPostPlaceholder}
+                      title="You are all done!"
+                      description="No pending posts requests at the moment."
+                    />
+                  </View>
+                ) : (
+                  <View className="flex-1 justify-center items-center">
+                    <EmptyStateCard
+                      imageWidth={226}
+                      imageHeight={158}
+                      SvgComponent={NoPostFromGroup}
+                      title="No Posts from Group."
+                      description="No posts in this group yet. Once members start sharing, you’ll see them here."
+                    />
+                  </View>
+                )
+              }
+            />
+          )}
 
-      <ActionSheet
-        useBottomSafeAreaPadding
-        ref={membersBottomSheet}
-        gestureEnabled={true}
-        safeAreaInsets={insets}
-        // snapPoints={[70, 100]}
-        containerStyle={{
-          paddingTop: 10,
-        }}
-      >
-        <CommunityGroupMembersModal
-          users={CommunityGroupMember || []}
-          communityGroupId={communityGroupId}
-          isGroupAdmin={
-            communityGroups?.adminUserId.toString() === userData?.id?.toString()
-          }
-          adminId={communityGroups?.adminUserId as string}
-          hideBottomBar={hideBottomBar}
-        />
-      </ActionSheet>
-      <CommunityGroupActionModal
-        modalVisible={modalVisible}
-        setModalVisible={setModalVisible}
-        isAdmin={isGroupAdmin}
-        onEdit={() => handleNavigateToEditCommunityGroupScreen()}
-        onLeave={() => handleToggleJoinCommunityGroup()}
-      />
+          <ActionSheet
+            useBottomSafeAreaPadding
+            ref={membersBottomSheet}
+            gestureEnabled={true}
+            safeAreaInsets={insets}
+            // snapPoints={[70, 100]}
+            containerStyle={{
+              paddingTop: 10,
+            }}
+          >
+            <CommunityGroupMembersModal
+              users={CommunityGroupMember || []}
+              communityGroupId={communityGroupId}
+              isGroupAdmin={
+                communityGroups?.adminUserId.toString() ===
+                userData?.id?.toString()
+              }
+              adminId={communityGroups?.adminUserId as string}
+              hideBottomBar={hideBottomBar}
+            />
+          </ActionSheet>
+          <CommunityGroupActionModal
+            modalVisible={modalVisible}
+            setModalVisible={setModalVisible}
+            isAdmin={isGroupAdmin}
+            onEdit={() => handleNavigateToEditCommunityGroupScreen()}
+            onLeave={() => handleToggleJoinCommunityGroup()}
+          />
+        </>
+      )}
     </SafeAreaView>
   );
 };

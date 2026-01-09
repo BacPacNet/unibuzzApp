@@ -38,3 +38,11 @@ export const getSelectedCommunityGroup = (): {
     return null;
   }
 };
+
+export const clearSelectedCommunityGroup = async () => {
+  try {
+    storage.delete(StorageKeys.SELECTED_COMMUNITY_GROUP_ID);
+  } catch (error) {
+    console.error("Failed to clear selected community group id", error);
+  }
+};
