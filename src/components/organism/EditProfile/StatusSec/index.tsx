@@ -50,7 +50,7 @@ const StatusOptions: React.FC<StatusOptionsProps> = ({
             label="Year"
             placeholder="If you are a student choose your current year"
             name="study_year"
-            options={currYear}
+            options={Object.keys(degreeAndMajors)}
             control={control}
             search={true}
             required

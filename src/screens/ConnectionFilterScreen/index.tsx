@@ -26,6 +26,7 @@ import {
 import ActionSheet, { ActionSheetRef } from "react-native-actions-sheet";
 import { Toast } from "react-native-toast-notifications";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import useCustomBackHandler from "@/hooks/useCustomBackHandler";
 
 type NavigationProp = StackNavigationProp<
   RootStackParamList,
@@ -106,10 +107,19 @@ const ConnectionsFilter = () => {
 
   const resetFilters = () => {
     reset();
-    navigation.navigate("Connections", {
-      values: null,
-    });
   };
+
+  const handleBack = () => {
+    if (!universityName) {
+      navigation.navigate("Connections", {
+        values: null,
+      });
+    } else {
+      navigation.goBack();
+    }
+  };
+
+  useCustomBackHandler(handleBack);
 
   return (
     <ScrollView style={styles.container}>
@@ -117,7 +127,7 @@ const ConnectionsFilter = () => {
         style={{ marginRight: 8 }}
         className="flex-row items-center justify-between"
       >
-        <BackHeader label="Connections" />
+        <BackHeader label="Connections" onPress={handleBack} />
 
         <TouchableOpacity
           onPress={() => {

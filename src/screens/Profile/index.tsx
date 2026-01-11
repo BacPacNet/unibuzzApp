@@ -1,6 +1,11 @@
 import { View, Text, FlatList, RefreshControl } from "react-native";
-import React, { useState, useCallback } from "react";
-import { getUserStore } from "@/storage/user";
+import React, { useState, useCallback, useEffect } from "react";
+import {
+  getUserProfileStore,
+  getUserStore,
+  updateUserProfileStoreUserUniversityPosition,
+  updateUserStoreUserName,
+} from "@/storage/user";
 import { useGetUserData, useGetUserPosts } from "@/services/user";
 import PostCard from "@/components/molecules/Timeline/PostCard";
 import { useQueryClient } from "@tanstack/react-query";
@@ -51,6 +56,30 @@ const Profile = ({ route }: ProfileProps) => {
 
   const { profile, firstName, lastName } = userProfileData || {};
 
+  useEffect(() => {
+    if (
+      userProfileData &&
+      userProfileData?.firstName &&
+      userProfileData?.lastName &&
+      (userData?.firstName !== userProfileData?.firstName ||
+        userData?.lastName !== userProfileData?.lastName)
+    ) {
+      updateUserStoreUserName(
+        userProfileData?.firstName,
+        userProfileData?.lastName
+      );
+    }
+
+    if (userProfileData) {
+      updateUserProfileStoreUserUniversityPosition({
+        role: userProfileData?.profile?.role,
+        study_year: userProfileData?.profile?.study_year,
+        major: userProfileData?.profile?.major,
+        affiliation: userProfileData?.profile?.affiliation,
+        occupation: userProfileData?.profile?.occupation,
+      });
+    }
+  }, [userProfileData]);
   const {
     bio,
     university_name,

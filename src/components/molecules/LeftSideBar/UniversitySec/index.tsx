@@ -17,6 +17,7 @@ import { FONTS } from "@/constants/fonts";
 import CommunityDropdown from "../CommunityDropDown";
 import { status } from "@/types/CommunityGroup";
 import {
+  clearSelectedCommunityGroup,
   getSelectedCommunityGroup,
   storeSelectedCommunityGroup,
 } from "@/storage/selected-community-group";
@@ -104,7 +105,18 @@ const UniversitySec = () => {
   }, [userData, filteredCommunityGroups, community]);
 
   useEffect(() => {
-    if (selectedCommunityGroup) {
+    if (!subscribedCommunities || subscribedCommunities?.length <= 0) {
+      clearSelectedCommunityGroup();
+      setCommunity(null as unknown as Community);
+      setSelectedCommunityGroupLogo("");
+      setSelectedCommunityId("");
+      return;
+    }
+    const existingCommunityIndex = subscribedCommunities?.findIndex(
+      (community) =>
+        community._id === selectedCommunityGroup?.selectedCommunityGroupId
+    );
+    if (selectedCommunityGroup && existingCommunityIndex !== -1) {
       setCommunity(
         subscribedCommunities?.find(
           (community) =>
@@ -118,6 +130,10 @@ const UniversitySec = () => {
       setSelectedCommunityId(selectedCommunityGroup?.selectedCommunityGroupId);
     } else {
       setCommunity(subscribedCommunities?.[0] as Community);
+      storeSelectedCommunityGroup(
+        subscribedCommunities?.[0]?._id || "",
+        subscribedCommunities?.[0]?.communityLogoUrl?.imageUrl || ""
+      );
     }
   }, [subscribedCommunities, selectedCommunityGroup]);
 
@@ -131,7 +147,7 @@ const UniversitySec = () => {
     };
 
     mutateFilterCommunityGroups(data);
-  }, [community?._id]);
+  }, [community?._id, subscribedCommunities]);
 
   return (
     <View>
