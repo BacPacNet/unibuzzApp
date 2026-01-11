@@ -15,7 +15,8 @@ export const getTabIcons = (
   unreadCount: number = 0,
   unreadMessagesCount: number = 0,
   logo: string = "",
-  communityId: string | null = null
+  communityId: string | null = null,
+  isCommunityGroup: boolean = false
 ): Record<
   | "Home"
   | "Example"
@@ -44,7 +45,7 @@ export const getTabIcons = (
         }}
       >
         {logo ? (
-          focused ? (
+          focused || isCommunityGroup ? (
             <Image
               source={{ uri: logo }}
               style={{ width: 28, height: 28, borderRadius: 14 }}

@@ -1,6 +1,7 @@
 import { storage } from "@/App";
 import { User } from "@/models/auth";
 import { UserCommunities, userProfileType } from "@/types/users";
+import { userTypeEnum } from "./register";
 
 enum StorageKeys {
   USER = "user",
@@ -28,6 +29,27 @@ export const getUserStore = (): User | null => {
   } catch (error) {
     console.error("Failed to retrieve user data", error);
     return null;
+  }
+};
+
+export const updateUserStoreUserName = async (
+  firstName: string,
+  lastName: string
+) => {
+  console.log(firstName, lastName, "firstName, lastName");
+
+  try {
+    const rawUser = storage.getString(StorageKeys.USER);
+    if (!rawUser) {
+      console.warn("No existing user found in storage.");
+      return;
+    }
+    const user: User = JSON.parse(rawUser);
+    user.firstName = firstName;
+    user.lastName = lastName;
+    storage.set(StorageKeys.USER, JSON.stringify(user));
+  } catch (error) {
+    console.error("Failed to update user data", error);
   }
 };
 
@@ -90,6 +112,48 @@ export const updateUserProfileFollowing = async (
     storage.set(StorageKeys.USER_PROFILE, JSON.stringify(updatedProfile));
   } catch (error) {
     console.error("Failed to update following in user profile", error);
+  }
+};
+
+export const updateUserProfileStoreUserUniversityPosition = ({
+  role,
+  study_year,
+  major,
+  affiliation,
+  occupation,
+}: {
+  role: string;
+  study_year: string;
+  major: string;
+  affiliation: string;
+  occupation: string;
+}) => {
+  try {
+    const rawProfile = storage.getString(StorageKeys.USER_PROFILE);
+    const isStudent = role === userTypeEnum.Student;
+    if (!rawProfile) {
+      console.warn("No existing user profile found in storage.");
+      return;
+    }
+
+    const profile: userProfileType = JSON.parse(rawProfile);
+
+    if (
+      isStudent &&
+      (profile.study_year !== study_year || profile.major !== major)
+    ) {
+      profile.study_year = study_year;
+      profile.major = major;
+    } else if (
+      !isStudent &&
+      (profile.affiliation !== affiliation || profile.occupation !== occupation)
+    ) {
+      profile.affiliation = affiliation;
+      profile.occupation = occupation;
+    }
+    storage.set(StorageKeys.USER_PROFILE, JSON.stringify(profile));
+  } catch (error) {
+    console.error("Failed to update user profile", error);
   }
 };
 

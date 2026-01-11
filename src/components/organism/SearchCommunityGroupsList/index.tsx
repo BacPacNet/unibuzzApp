@@ -147,7 +147,7 @@ const styles = StyleSheet.create({
   },
   officialBorder: {
     borderWidth: 2,
-    borderColor: "#6647ff",
+    borderColor: "#a544ff",
   },
   imageContainer: {
     position: "relative",
@@ -168,7 +168,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     backgroundColor: "#fff",
     borderWidth: 2,
-    borderColor: "#6647ff",
+    borderColor: "#a544ff",
     justifyContent: "center",
     alignItems: "center",
   },

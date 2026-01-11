@@ -79,7 +79,7 @@ const CommunityScreen = ({ route }: any) => {
   );
   const [isGroupAdmin, setIsGroupAdmin] = useState(false);
   const [ImageSrcErr, setImageSrcErr] = useState(false);
-  const [refreshing, setRefreshing] = React.useState(false);
+  const [refreshing, setRefreshing] = useState(false);
   const queryClient = useQueryClient();
   const [showCreatePostButton, setShowCreatePostButton] = useState(false);
   const [lastScrollY, setLastScrollY] = useState(0);
