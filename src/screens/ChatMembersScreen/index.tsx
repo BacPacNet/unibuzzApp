@@ -80,10 +80,15 @@ const ChatMembersScreen = ({ route }: any) => {
               _id={item.userId._id}
               firstName={item.userId.firstName}
               lastName={item.userId.lastName}
-              isFollowing={false}
+              isFollowing={
+                userProfileData?.following?.some(
+                  (userItem) => userItem.userId === item.userId._id
+                ) as boolean
+              }
               isSelfProfile={userProfileData?.users_id === item.userId._id}
-              isViewerAdmin={false}
+              isViewerAdmin={groupAdmin === userProfileData?.users_id}
               isGroupAdmin={groupAdmin === item.userId._id}
+              forCommunityGroup={true}
               currentUserId={userProfileData?.users_id || ""}
               role={item.userId.role}
               isChat={true}

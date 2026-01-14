@@ -65,8 +65,12 @@ const CommunityGroupScreen = ({ route }: any) => {
   const { communityId, communityGroupId } = route.params;
   const from = route?.params?.from || "";
   const filterPostByParam = route?.params?.filterPostBy || "";
-  const { setCurrentCommunityId, setIsCommunityGroup, selectedCommunityId } =
-    useCommunityContext();
+  const {
+    setCurrentCommunityId,
+    setIsCommunityGroup,
+    selectedCommunityId,
+    refetchFilterCommunityGroupsRef,
+  } = useCommunityContext();
   const userData = getUserStore();
   const userProfileData = getUserProfileStore();
   const membersBottomSheet = useRef<ActionSheetRef>(null);
@@ -277,6 +281,7 @@ const CommunityGroupScreen = ({ route }: any) => {
       joinCommunityGroup(communityGroupId, {
         onSuccess: () => {
           setIsUserJoinedCommunityGroup(true);
+          refetchFilterCommunityGroupsRef();
         },
       });
     } else {
@@ -284,6 +289,7 @@ const CommunityGroupScreen = ({ route }: any) => {
         onSuccess: () => {
           setIsUserJoinedCommunityGroup(false);
           setModalVisible(false);
+          refetchFilterCommunityGroupsRef();
           hideBottomBar();
         },
       });
@@ -294,6 +300,7 @@ const CommunityGroupScreen = ({ route }: any) => {
     leaveCommunityGroup(communityGroupId, {
       onSuccess: () => {
         setIsUserJoinedCommunityGroup(false);
+        refetchFilterCommunityGroupsRef();
       },
     });
   };
