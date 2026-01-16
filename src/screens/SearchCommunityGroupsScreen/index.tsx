@@ -27,7 +27,7 @@ import SortCommunityBottomSheet from "@/components/molecules/SearchCommunity/Sor
 import { getUserProfileStore } from "@/storage/user";
 import { Community } from "@/types/Community";
 import { Toast } from "react-native-toast-notifications";
-import { CommunityGroupTypeEnum, status } from "@/types/CommunityGroup";
+import { status } from "@/types/CommunityGroup";
 import TabSwitch from "@/components/molecules/ManageGroup/TabSwitch";
 import CommunityDropdown from "@/components/molecules/LeftSideBar/CommunityDropDown";
 import { useCommunityContext } from "@/context/CommunityProvider/CommunityProvider";
@@ -68,7 +68,7 @@ const SearchCommunityGroupScreen = () => {
       (community) => community?.communityId === communityId
     ) || false;
   const canUserCreateGroup =
-    community?.users.some((user) => user._id === userProfileData?.users_id) &&
+    community?.users?.some((user) => user._id === userProfileData?.users_id) &&
     isUserVerifiedForCommunity;
 
   const { data: subscribedCommunitiesForUser, isLoading } =
@@ -120,66 +120,60 @@ const SearchCommunityGroupScreen = () => {
     });
   };
 
-  const filterCommunityGroups = () => {
-    const subscribedCommunitiesAllGroups = useMemo(() => {
-      const groups = subscribedCommunities?.communityGroups || [];
-      return groups.filter((group: { title: string }) =>
+  const subscribedCommunitiesAllGroups = useMemo(() => {
+    const groups = subscribedCommunities?.communityGroups || [];
+    return groups.filter((group: { title: string }) =>
+      group.title.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+  }, [subscribedCommunities, searchQuery]);
+
+  const joinedSubscribedCommunitiesGroup = useMemo(() => {
+    const groups = subscribedCommunities?.communityGroups || [];
+
+    return groups
+      .filter(
+        (group: { users: any[]; adminUserId: string; title: string }) =>
+          group.adminUserId === userProfileData?.users_id ||
+          group.users?.some(
+            (u: { _id: string; status: string }) =>
+              u._id === userProfileData?.users_id &&
+              u.status === status.accepted
+          )
+      )
+      .filter((group: { title: string }) =>
         group.title.toLowerCase().includes(searchQuery.toLowerCase())
       );
-    }, [subscribedCommunities, searchQuery]);
+  }, [userProfileData, subscribedCommunities, searchQuery]);
 
-    const joinedSubscribedCommunitiesGroup = useMemo(() => {
-      const groups = subscribedCommunities?.communityGroups || [];
+  const subscribedCommunitiesMyGroup = useMemo(() => {
+    const groups = subscribedCommunities?.communityGroups || [];
 
-      return groups
-        .filter(
-          (group: { users: any[]; adminUserId: string; title: string }) =>
-            group.adminUserId === userProfileData?.users_id ||
-            group.users?.some(
-              (u: { _id: string; status: string }) =>
-                u._id === userProfileData?.users_id &&
-                u.status === status.accepted
-            )
-        )
-        .filter((group: { title: string }) =>
-          group.title.toLowerCase().includes(searchQuery.toLowerCase())
-        );
-    }, [userProfileData, subscribedCommunities, searchQuery]);
+    return groups
+      .filter(
+        (group: { adminUserId: string; title: string }) =>
+          group.adminUserId === userProfileData?.users_id
+      )
+      .filter((group: { title: string }) =>
+        group.title.toLowerCase().includes(searchQuery.toLowerCase())
+      );
+  }, [userProfileData, subscribedCommunities, searchQuery]);
 
-    const subscribedCommunitiesMyGroup = useMemo(() => {
-      const groups = subscribedCommunities?.communityGroups || [];
-
-      return groups
-        .filter(
-          (group: { adminUserId: string; title: string }) =>
-            group.adminUserId === userProfileData?.users_id
-        )
-        .filter((group: { title: string }) =>
-          group.title.toLowerCase().includes(searchQuery.toLowerCase())
-        );
-    }, [userProfileData, subscribedCommunities, searchQuery]);
-
-    const data = useMemo(() => {
-      switch (currTab) {
-        case SearchCommunityGroupTabs.Joined:
-          return joinedSubscribedCommunitiesGroup;
-        case SearchCommunityGroupTabs.Create:
-          return subscribedCommunitiesMyGroup;
-        case SearchCommunityGroupTabs.All:
-        default:
-          return subscribedCommunitiesAllGroups;
-      }
-    }, [
-      currTab,
-      joinedSubscribedCommunitiesGroup,
-      subscribedCommunitiesMyGroup,
-      subscribedCommunitiesAllGroups,
-    ]);
-
-    return data;
-  };
-
-  const communityGroups = filterCommunityGroups();
+  const communityGroups = useMemo(() => {
+    switch (currTab) {
+      case SearchCommunityGroupTabs.Joined:
+        return joinedSubscribedCommunitiesGroup;
+      case SearchCommunityGroupTabs.Create:
+        return subscribedCommunitiesMyGroup;
+      case SearchCommunityGroupTabs.All:
+      default:
+        return subscribedCommunitiesAllGroups;
+    }
+  }, [
+    currTab,
+    joinedSubscribedCommunitiesGroup,
+    subscribedCommunitiesMyGroup,
+    subscribedCommunitiesAllGroups,
+  ]);
 
   useEffect(() => {
     const data = {
@@ -208,6 +202,7 @@ const SearchCommunityGroupScreen = () => {
     change,
     selectedLabelMain,
     selectedCommunityId,
+    mutate,
   ]);
 
   const handleCommunityGroupClick = (communityId: string, logo: string) => {

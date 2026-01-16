@@ -11,7 +11,7 @@ import { useUsersProfileForConnections } from "@/services/users";
 import { getUserProfileStore } from "@/storage/user";
 import { defaultBottomSheetSnapPoints } from "@/types/constant";
 import { UPLOAD_CONTEXT } from "@/types/uploads";
-import { NavArrowDown, User } from "iconoir-react-native";
+import { NavArrowDown, Search, User } from "iconoir-react-native";
 import { useRef, useState } from "react";
 import {
   View,
@@ -138,6 +138,7 @@ export default function NewChatScreen() {
         <ExpandableRadioGroup
           selectedValue={selectedType}
           onSelect={(val) => setSelectedType(val as any)}
+          optionsGap={32}
           options={[
             {
               label: "Individual Chat",
@@ -145,13 +146,12 @@ export default function NewChatScreen() {
               content: (
                 <View>
                   <DummyButton
-                    label={"Select User"}
-                    text={"Select User"}
+                    text={"Search User"}
                     onPress={() => {
                       userActionSheetRef.current?.show();
                     }}
                     toShowCross={false}
-                    icon={<NavArrowDown width={20} height={20} />}
+                    icon={<Search width={20} height={20} />}
                   />
                   {selectedUsers.length > 0 && (
                     <UserSelectCard
@@ -162,6 +162,7 @@ export default function NewChatScreen() {
                       handleRemoveUser={() => {
                         setSelectedUsers([]);
                       }}
+                      isBottomBorder={false}
                     />
                   )}
                 </View>
@@ -230,6 +231,7 @@ export default function NewChatScreen() {
         gestureEnabled={true}
         snapPoints={defaultBottomSheetSnapPoints}
         safeAreaInsets={insets}
+        containerStyle={{ marginBottom: insets.bottom, paddingHorizontal: 16 }}
       >
         <AllUserSelectBottomSheet
           hideBottomSheet={() => userActionSheetRef.current?.hide()}
@@ -274,9 +276,9 @@ const styles = StyleSheet.create({
   buttonContainer: {
     borderTopWidth: 1,
     borderTopColor: "#E0E0E0",
-    paddingTop: 32,
+    paddingVertical: 32,
     marginHorizontal: 16,
-    marginTop: 64,
+    marginTop: 32,
   },
   actionSheetContainer: {
     height: "100%",

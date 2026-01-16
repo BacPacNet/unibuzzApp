@@ -1,6 +1,7 @@
-import { View, Text, Pressable } from "react-native";
+import { View, Text, Pressable, StyleSheet } from "react-native";
 import { useState } from "react";
 import { Bell } from "iconoir-react-native";
+import { FONTS } from "@/constants/fonts";
 
 type TabItem = {
   label: string;
@@ -31,21 +32,29 @@ export default function Tabs({ tabs, activeIndex = 0, onChange }: TabsProps) {
               setSelectedTab(index);
               onChange(index);
             }}
-            className={`flex-1 flex-row items-center justify-center py-4 gap-1 relative ${
-              selectedTab === index ? "border-b-2 border-primary-500" : ""
-            }`}
+            className={`flex-1 flex-row items-center justify-center py-4 gap-1 relative
+            `}
+            style={[
+              selectedTab === index ? styles.tabActive : styles.tabInactive,
+            ]}
           >
             {/* {tab.icon}
             <Bell fill={"#6B7280"} fontSize={18} /> */}
             <Text
-              className={` text-neutral-500 text-xs font-bold ${selectedTab === index ? "text-primary-500 " : ""}`}
+              className={`   `}
+              style={[
+                styles.tabText,
+                selectedTab === index
+                  ? styles.tabTextActive
+                  : styles.tabTextInactive,
+              ]}
             >
               {tab.label}
             </Text>
 
             {tab.badgeCount && Number(tab.badgeCount) > 0 && (
-              <View className=" bg-red-500 rounded-full p-2 py-1">
-                <Text className="text-white text-sm font-bold">
+              <View style={styles.badge} className=" bg-red-500 rounded-full ">
+                <Text style={styles.badgeText} className="">
                   {tab.badgeCount}
                 </Text>
               </View>
@@ -57,3 +66,38 @@ export default function Tabs({ tabs, activeIndex = 0, onChange }: TabsProps) {
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  tabActive: {
+    borderBottomColor: "#3A169C",
+    borderBottomWidth: 2,
+  },
+  tabInactive: {
+    borderBottomColor: "#9CA3AF",
+    borderBottomWidth: 2,
+  },
+  tabText: {
+    fontFamily: FONTS.inter.extraBold,
+    fontSize: 14,
+  },
+  tabTextActive: {
+    color: "#3A169C",
+  },
+  tabTextInactive: {
+    color: "#9CA3AF",
+  },
+
+  badge: {
+    width: 16,
+    height: 16,
+    borderRadius: 16,
+
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  badgeText: {
+    fontSize: 10,
+
+    color: "white",
+  },
+});

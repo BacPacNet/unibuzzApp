@@ -56,6 +56,7 @@ import CommunityGroupPendingPostCard from "@/components/molecules/CommunityGroup
 import { useTimeTracking } from "@/hooks/useTimeTracking";
 import { MESSAGES, TRACK_EVENT } from "@/content/constant";
 import ErrorContainer from "@/components/molecules/ErrorContainer";
+import Tabs from "@/components/molecules/Tabs";
 
 type NavigationProp = StackNavigationProp<RootStackParamList, "CommunityGroup">;
 
@@ -64,7 +65,12 @@ const CommunityGroupScreen = ({ route }: any) => {
   const { communityId, communityGroupId } = route.params;
   const from = route?.params?.from || "";
   const filterPostByParam = route?.params?.filterPostBy || "";
-  const { setCurrentCommunityId } = useCommunityContext();
+  const {
+    setCurrentCommunityId,
+    setIsCommunityGroup,
+    selectedCommunityId,
+    refetchFilterCommunityGroupsRef,
+  } = useCommunityContext();
   const userData = getUserStore();
   const userProfileData = getUserProfileStore();
   const membersBottomSheet = useRef<ActionSheetRef>(null);
@@ -74,11 +80,18 @@ const CommunityGroupScreen = ({ route }: any) => {
     refetch,
     isError: isCommunityGroupError,
   } = useGetCommunityGroup(communityId, communityGroupId);
-  useTimeTracking(TRACK_EVENT.COMMUNITY_GROUP_PAGE_VIEW_DURATION, {
-    communityId,
-    groupId: communityGroupId,
-    groupName: communityGroups?.title,
-  });
+  const timeTrackingProperties = useMemo(
+    () => ({
+      communityId,
+      groupId: communityGroupId,
+      groupName: communityGroups?.title,
+    }),
+    [communityId, communityGroupId, communityGroups?.title]
+  );
+  useTimeTracking(
+    TRACK_EVENT.COMMUNITY_GROUP_PAGE_VIEW_DURATION,
+    timeTrackingProperties
+  );
   const { mutate: joinCommunityGroup, isPending: isJoinCommunityPending } =
     useJoinCommunityGroup();
   const { mutate: leaveCommunityGroup, isPending: isLeaveCommunityPending } =
@@ -178,23 +191,27 @@ const CommunityGroupScreen = ({ route }: any) => {
     useCallback(() => {
       setCurrentCommunityId(communityId);
 
+      if (selectedCommunityId == communityId) {
+        setIsCommunityGroup(true);
+      }
       return () => {
         setCurrentCommunityId("");
+        setIsCommunityGroup(false);
       };
-    }, [communityId])
+    }, [communityId, setCurrentCommunityId])
   );
 
   useEffect(() => {
-    if (communityGroups && userData) {
+    if (!isCommunityGroupError && communityGroups && userData) {
       const { id } = userData;
       setIsGroupAdmin(
         communityGroups.adminUserId.toString() === id?.toString()
       );
     }
-  }, [communityGroups, userData]);
+  }, [communityGroups, userData, isCommunityGroupError]);
 
   useEffect(() => {
-    if (communityGroups && userData) {
+    if (!isCommunityGroupError && communityGroups && userData) {
       setIsUserJoinedCommunityGroup(
         communityGroups?.users?.some(
           (item) =>
@@ -202,29 +219,35 @@ const CommunityGroupScreen = ({ route }: any) => {
         )
       );
     }
-  }, [communityGroups, userData, setIsGroupAdmin]);
+  }, [communityGroups, userData, isCommunityGroupError]);
 
   useEffect(() => {
-    setLogoSrcErr(false);
-    setImageSrcErr(false);
-    if (communityGroups) {
-      setLogoSrc(communityGroups?.communityGroupLogoUrl?.imageUrl || "");
-      setImageSrc(communityGroups?.communityGroupLogoCoverUrl?.imageUrl || "");
+    if (!isCommunityGroupError) {
+      setLogoSrcErr(false);
+      setImageSrcErr(false);
+      if (communityGroups) {
+        setLogoSrc(communityGroups?.communityGroupLogoUrl?.imageUrl || "");
+        setImageSrc(
+          communityGroups?.communityGroupLogoCoverUrl?.imageUrl || ""
+        );
+      }
     }
-  }, [communityGroups]);
+  }, [communityGroups, isCommunityGroupError]);
 
   useEffect(() => {
-    if (isFetching) {
+    if (!isCommunityGroupError && isFetching) {
       setCommunityGroupPostDatas([]);
     }
-  }, [isFetching, queryClient]);
+  }, [isFetching, isCommunityGroupError]);
 
   useEffect(() => {
-    const communityDatas: any = communityGroupPost?.pages.flatMap(
-      (page) => page?.finalPost
-    );
-    setCommunityGroupPostDatas(communityDatas);
-  }, [communityGroupPost, dataUpdatedAt]);
+    if (!isCommunityGroupError) {
+      const communityDatas: any = communityGroupPost?.pages.flatMap(
+        (page) => page?.finalPost
+      );
+      setCommunityGroupPostDatas(communityDatas);
+    }
+  }, [communityGroupPost, dataUpdatedAt, isCommunityGroupError]);
 
   useEffect(() => {
     if (
@@ -245,7 +268,7 @@ const CommunityGroupScreen = ({ route }: any) => {
     });
     refetch();
     setRefreshing(false);
-  }, []);
+  }, [queryClient, communityId, communityGroupId, refetch]);
 
   const handleToggleJoinCommunityGroup = () => {
     if (communityGroups?.adminUserId == userData?.id) {
@@ -258,6 +281,7 @@ const CommunityGroupScreen = ({ route }: any) => {
       joinCommunityGroup(communityGroupId, {
         onSuccess: () => {
           setIsUserJoinedCommunityGroup(true);
+          refetchFilterCommunityGroupsRef();
         },
       });
     } else {
@@ -265,6 +289,7 @@ const CommunityGroupScreen = ({ route }: any) => {
         onSuccess: () => {
           setIsUserJoinedCommunityGroup(false);
           setModalVisible(false);
+          refetchFilterCommunityGroupsRef();
           hideBottomBar();
         },
       });
@@ -275,6 +300,7 @@ const CommunityGroupScreen = ({ route }: any) => {
     leaveCommunityGroup(communityGroupId, {
       onSuccess: () => {
         setIsUserJoinedCommunityGroup(false);
+        refetchFilterCommunityGroupsRef();
       },
     });
   };
@@ -296,7 +322,7 @@ const CommunityGroupScreen = ({ route }: any) => {
     });
   };
 
-  const handleBack = () => {
+  const handleBack = useCallback(() => {
     setFilterPostBy("");
 
     if (from === screenName.notifications) {
@@ -311,17 +337,34 @@ const CommunityGroupScreen = ({ route }: any) => {
     } else {
       navigation.goBack();
     }
-  };
+  }, [from, communityId, navigation]);
   useCustomBackHandler(handleBack);
 
-  if (isCommunityGroupError) {
-    return (
-      <ErrorContainer
-        title={MESSAGES.GROUP_NOT_FOUND}
-        description={MESSAGES.GROUP_NOT_FOUND_DESCRIPTION}
-      />
-    );
-  }
+  const COMMUNITY_GROUP_TABS = [
+    {
+      key: "",
+      label: AllFiltersCommunityGroupPost.allPosts,
+    },
+    {
+      key: "myPosts",
+      label: AllFiltersCommunityGroupPost.myPosts,
+    },
+    {
+      key: "pendingPosts",
+      label: AllFiltersCommunityGroupPost.pendingPosts,
+      showBadge: true,
+    },
+  ];
+
+  const communityGroupTabs = COMMUNITY_GROUP_TABS.map((tab) => ({
+    label: tab.label,
+    badgeCount:
+      tab.showBadge && pendingPostCount > 0
+        ? String(pendingPostCount)
+        : undefined,
+    //   tab.showBadge ? String(10) : undefined,
+    content: <View />,
+  }));
 
   const FlatListHeaderWithError = useMemo(
     () => (
@@ -355,11 +398,17 @@ const CommunityGroupScreen = ({ route }: any) => {
         />
 
         {isCommunityGroupLive && isUserJoinedCommunityGroup && (
-          <CommunityGroupPostFilter
-            pendingPostCount={pendingPostCount}
-            filterPostBy={filterPostBy}
-            setFilterPostBy={setFilterPostBy}
-          />
+          <View style={styles.tabsContainer}>
+            <Tabs
+              tabs={communityGroupTabs}
+              activeIndex={COMMUNITY_GROUP_TABS.findIndex(
+                (tab) => tab.key === filterPostBy
+              )}
+              onChange={(index) => {
+                setFilterPostBy(COMMUNITY_GROUP_TABS[index].key);
+              }}
+            />
+          </View>
         )}
 
         {!isCommunityGroupLive ? (
@@ -410,132 +459,150 @@ const CommunityGroupScreen = ({ route }: any) => {
 
   return (
     <SafeAreaView className="bg-white flex-1">
-      {(showCreatePostButton || lastScrollY == 0) && isCommunityGroupLive && (
-        <CreatePostButton
-          isAllowed={isUserJoinedCommunityGroup || isGroupAdmin}
-          onPress={() =>
-            navigation.navigate("NewGroupPost", {
-              communityId,
-              communityGroupId,
-              communityGroupAdminId: communityGroups?.adminUserId.toString(),
-              isGroupOfficial,
-            })
-          }
+      {isCommunityGroupError ? (
+        <ErrorContainer
+          title={MESSAGES.GROUP_NOT_FOUND}
+          description={MESSAGES.GROUP_NOT_FOUND_DESCRIPTION}
         />
-      )}
-      {isFetching ? (
-        <Refresh />
       ) : (
-        <FlatList
-          data={communityGroupPostDatas}
-          style={{
-            width: "100%",
-            height: "100%",
-          }}
-          keyExtractor={(item, index) => item?._id + index}
-          onScroll={handleScroll}
-          renderItem={({ item }) =>
-            error ? (
-              <View></View>
-            ) : filterPostBy ===
-              Object.keys(AllFiltersCommunityGroupPost)[1] ? (
-              <CommunityGroupPendingPostCard
-                data={item}
-                isTimeline={false}
-                communityGroupId={communityGroupId}
-                isSinglePost={false}
-                communityGroupAdminId={communityGroups?.adminUserId as string}
-                postStatus={item?.postStatus as communityPostStatus}
+        <>
+          {(showCreatePostButton || lastScrollY == 0) &&
+            isCommunityGroupLive && (
+              <CreatePostButton
+                isAllowed={isUserJoinedCommunityGroup || isGroupAdmin}
+                onPress={() =>
+                  navigation.navigate("NewGroupPost", {
+                    communityId,
+                    communityGroupId,
+                    communityGroupAdminId:
+                      communityGroups?.adminUserId.toString(),
+                    isGroupOfficial,
+                  })
+                }
               />
-            ) : (
-              <PostCard
-                data={item}
-                isTimeline={false}
-                communityGroupId={communityGroupId}
-                isSinglePost={false}
-                filterPostBy={filterPostBy}
-              />
-            )
-          }
-          refreshControl={
-            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-          }
-          onEndReached={() => {
-            if (communityPostHasNextPage && !communityPostIsFetchingNextPage) {
-              communityPostNextpage();
-            }
-          }}
-          ListFooterComponent={
-            communityPostIsFetchingNextPage && communityPostHasNextPage ? (
-              <View>
-                <ActivityIndicator size="large" color="#7367f0" />
-              </View>
-            ) : (
-              <View />
-            )
-          }
-          ListHeaderComponent={FlatListHeaderWithError}
-          ListEmptyComponent={
-            isFetching || isLoading ? (
-              <View className="flex-1 justify-center items-center">
-                <ActivityIndicator size="large" color="#7367f0" />
-              </View>
-            ) : error ? null : !isCommunityGroupLive ? null : communityGroupPostDatas?.length ===
-                0 &&
-              filterPostBy === Object.keys(AllFiltersCommunityGroupPost)[1] &&
-              communityGroups?.adminUserId.toString() ==
-                userData?.id?.toString() ? (
-              <View className="flex-1 justify-center items-center">
-                <EmptyStateCard
-                  imageWidth={226}
-                  imageHeight={158}
-                  SvgComponent={notPendingNoPostPlaceholder}
-                  title="You are all done!"
-                  description="No pending posts requests at the moment."
-                />
-              </View>
-            ) : (
-              <View className="flex-1 justify-center items-center">
-                <EmptyStateCard
-                  imageWidth={226}
-                  imageHeight={158}
-                  SvgComponent={NoPostFromGroup}
-                  title="No Posts from Group."
-                  description="No posts in this group yet. Once members start sharing, you’ll see them here."
-                />
-              </View>
-            )
-          }
-        />
-      )}
+            )}
+          {isFetching ? (
+            <Refresh />
+          ) : (
+            <FlatList
+              data={communityGroupPostDatas}
+              style={{
+                width: "100%",
+                height: "100%",
+              }}
+              keyExtractor={(item, index) => item?._id + index}
+              onScroll={handleScroll}
+              renderItem={({ item }) =>
+                error ? (
+                  <View></View>
+                ) : filterPostBy ===
+                  Object.keys(AllFiltersCommunityGroupPost)[1] ? (
+                  <CommunityGroupPendingPostCard
+                    data={item}
+                    isTimeline={false}
+                    communityGroupId={communityGroupId}
+                    isSinglePost={false}
+                    communityGroupAdminId={
+                      communityGroups?.adminUserId as string
+                    }
+                    postStatus={item?.postStatus as communityPostStatus}
+                  />
+                ) : (
+                  <PostCard
+                    data={item}
+                    isTimeline={false}
+                    communityGroupId={communityGroupId}
+                    isSinglePost={false}
+                    filterPostBy={filterPostBy}
+                  />
+                )
+              }
+              refreshControl={
+                <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+              }
+              onEndReached={() => {
+                if (
+                  communityPostHasNextPage &&
+                  !communityPostIsFetchingNextPage
+                ) {
+                  communityPostNextpage();
+                }
+              }}
+              ListFooterComponent={
+                communityPostIsFetchingNextPage && communityPostHasNextPage ? (
+                  <View>
+                    <ActivityIndicator size="large" color="#7367f0" />
+                  </View>
+                ) : (
+                  <View />
+                )
+              }
+              ListHeaderComponent={FlatListHeaderWithError}
+              ListEmptyComponent={
+                isFetching || isLoading ? (
+                  <View className="flex-1 justify-center items-center">
+                    <ActivityIndicator size="large" color="#7367f0" />
+                  </View>
+                ) : error ? null : !isCommunityGroupLive ? null : communityGroupPostDatas?.length ===
+                    0 &&
+                  filterPostBy ===
+                    Object.keys(AllFiltersCommunityGroupPost)[1] &&
+                  communityGroups?.adminUserId.toString() ==
+                    userData?.id?.toString() ? (
+                  <View className="flex-1 justify-center items-center">
+                    <EmptyStateCard
+                      imageWidth={226}
+                      imageHeight={158}
+                      SvgComponent={notPendingNoPostPlaceholder}
+                      title="You are all done!"
+                      description="No pending posts requests at the moment."
+                    />
+                  </View>
+                ) : (
+                  <View className="flex-1 justify-center items-center">
+                    <EmptyStateCard
+                      imageWidth={226}
+                      imageHeight={158}
+                      SvgComponent={NoPostFromGroup}
+                      title="No Posts from Group."
+                      description="No posts in this group yet. Once members start sharing, you’ll see them here."
+                    />
+                  </View>
+                )
+              }
+            />
+          )}
 
-      <ActionSheet
-        useBottomSafeAreaPadding
-        ref={membersBottomSheet}
-        gestureEnabled={true}
-        safeAreaInsets={insets}
-        // snapPoints={[70, 100]}
-        containerStyle={{
-          paddingTop: 10,
-        }}
-      >
-        <CommunityGroupMembersModal
-          users={CommunityGroupMember || []}
-          communityGroupId={communityGroupId}
-          isGroupAdmin={
-            communityGroups?.adminUserId.toString() === userData?.id?.toString()
-          }
-          adminId={communityGroups?.adminUserId as string}
-          hideBottomBar={hideBottomBar}
-        />
-      </ActionSheet>
-      <CommunityGroupActionModal
-        modalVisible={modalVisible}
-        setModalVisible={setModalVisible}
-        isAdmin={isGroupAdmin}
-        onEdit={() => handleNavigateToEditCommunityGroupScreen()}
-        onLeave={() => handleToggleJoinCommunityGroup()}
-      />
+          <ActionSheet
+            useBottomSafeAreaPadding
+            ref={membersBottomSheet}
+            gestureEnabled={true}
+            safeAreaInsets={insets}
+            // snapPoints={[70, 100]}
+            containerStyle={{
+              paddingTop: 10,
+            }}
+          >
+            <CommunityGroupMembersModal
+              users={CommunityGroupMember || []}
+              communityGroupId={communityGroupId}
+              isGroupAdmin={
+                communityGroups?.adminUserId.toString() ===
+                userData?.id?.toString()
+              }
+              adminId={communityGroups?.adminUserId as string}
+              hideBottomBar={hideBottomBar}
+            />
+          </ActionSheet>
+          <CommunityGroupActionModal
+            modalVisible={modalVisible}
+            setModalVisible={setModalVisible}
+            isAdmin={isGroupAdmin}
+            onEdit={() => handleNavigateToEditCommunityGroupScreen()}
+            onLeave={() => handleToggleJoinCommunityGroup()}
+          />
+        </>
+      )}
     </SafeAreaView>
   );
 };
@@ -546,5 +613,8 @@ const styles = StyleSheet.create({
   flatListStyle: {
     width: "100%",
     height: "100%",
+  },
+  tabsContainer: {
+    paddingBottom: 32,
   },
 });

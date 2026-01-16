@@ -1,3 +1,4 @@
+import { FONTS } from "@/constants/fonts";
 import React from "react";
 import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 
@@ -12,6 +13,7 @@ type Props<T> = {
   selectedValue: T | null;
   onSelect: (value: T) => void;
   disabled?: boolean;
+  optionsGap?: number;
 };
 
 function ExpandableRadioGroup<T extends string | number>({
@@ -19,6 +21,7 @@ function ExpandableRadioGroup<T extends string | number>({
   selectedValue,
   onSelect,
   disabled = false,
+  optionsGap = 16,
 }: Props<T>) {
   const handlePress = (value: any) => {
     if (!disabled) {
@@ -27,7 +30,7 @@ function ExpandableRadioGroup<T extends string | number>({
   };
 
   return (
-    <View style={{ gap: 16 }}>
+    <View style={{ gap: optionsGap }}>
       {options.map((option) => {
         const isSelected = selectedValue === option.value;
         return (
@@ -77,8 +80,9 @@ const styles = StyleSheet.create({
     backgroundColor: "#6744FF",
   },
   optionLabel: {
-    fontSize: 16,
+    fontSize: 18,
     color: "#3A3B3C",
+    fontFamily: FONTS.inter.semiBold,
   },
   expandContent: {
     // marginLeft: 28,

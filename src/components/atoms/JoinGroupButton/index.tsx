@@ -26,7 +26,7 @@ const JoinGroupButton: React.FC<Props> = ({
           variant="primary"
           containerStyle="opacity-60 "
           disabled
-          size="w-1/2"
+          size={"fit"}
         />
       );
     }
@@ -40,8 +40,10 @@ const JoinGroupButton: React.FC<Props> = ({
         disabled={userStatus === status.pending}
         // isLoading={userStatus === status.pending}
         variant="primary"
-        size={130}
+        // size={130}
+        size={"fit"}
         height="small"
+        textSize="text-2xs"
         containerStyle=""
       />
     );
@@ -55,7 +57,10 @@ const JoinGroupButton: React.FC<Props> = ({
       isLoading={isPending}
       disabled={isPending}
       variant="primary"
-      size={95}
+      //   size={95}
+      size={"fit"}
+      height="small"
+      textSize="text-2xs"
       containerStyle=""
     />
   );

@@ -510,7 +510,7 @@ const styles = StyleSheet.create({
   },
   paddingContainer: {
     paddingHorizontal: 16,
-    marginTop: 32,
+    marginTop: 0,
   },
 
   inputLabels: {
@@ -524,6 +524,7 @@ const styles = StyleSheet.create({
     fontFamily: FONTS.inter.regular,
     color: "#737373",
     paddingVertical: 4,
+    marginBottom: 16,
   },
   individualsContainer: {
     display: "flex",
@@ -564,7 +565,7 @@ const styles = StyleSheet.create({
     gap: 8,
 
     width: "100%",
-    marginBottom: 16,
+    marginBottom: 24,
   },
   leftSection: {
     flexDirection: "row",

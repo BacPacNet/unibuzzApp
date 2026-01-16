@@ -119,8 +119,11 @@ function ApplicationNavigator() {
 
   function TabsGroup() {
     const { isTabBarVisible } = useHeader();
-    const { selectedCommunityGroupLogo, selectedCommunityId } =
-      useCommunityContext();
+    const {
+      selectedCommunityGroupLogo,
+      selectedCommunityId,
+      isCommunityGroup,
+    } = useCommunityContext();
 
     const { data: unreadNotificationCount } =
       useGetUserNotificationTotalCount();
@@ -133,12 +136,14 @@ function ApplicationNavigator() {
           unreadNotificationCount || 0,
           Number(userUnreadMessagesCount?.messageTotalCount) || 0,
           selectedCommunityGroupLogo || "",
-          selectedCommunityId || null
+          selectedCommunityId || null,
+          isCommunityGroup
         ),
       [
         unreadNotificationCount,
         userUnreadMessagesCount,
         selectedCommunityGroupLogo,
+        isCommunityGroup,
       ]
     );
     return (

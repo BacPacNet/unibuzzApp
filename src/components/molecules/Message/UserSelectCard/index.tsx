@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Image, Text, TouchableOpacity, View } from "react-native";
+import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import avatar from "@/assets/avatarPlaceholder.png";
 import { Users } from "@/types/connections";
 import { Xmark } from "iconoir-react-native";
@@ -11,6 +11,7 @@ type Props = {
   handleUserSelect?: (value: Users) => void;
   handleRemoveUser?: () => void;
   isRemoveAllowed?: boolean;
+  isBottomBorder?: boolean;
 };
 
 export const UserSelectCard = ({
@@ -20,6 +21,7 @@ export const UserSelectCard = ({
   handleUserSelect,
   isRemoveAllowed,
   handleRemoveUser,
+  isBottomBorder = true,
 }: Props) => {
   const [imageError, setImageError] = useState(false);
   const imageUri = item?.profile?.profile_dp?.imageUrl;
@@ -52,8 +54,8 @@ export const UserSelectCard = ({
   return (
     <TouchableOpacity
       onPress={handleClick}
-      style={{ paddingHorizontal: 12 }}
-      className="flex flex-row justify-between p-4 border-b border-neutral-200"
+      style={{ ...(isBottomBorder ? { paddingHorizontal: 0 } : {}) }}
+      className={`flex flex-row justify-between py-4   ${isBottomBorder ? "border-b border-neutral-200" : ""}`}
     >
       <View className="flex-1 flex-row items-center gap-4 justify-center">
         <View>
@@ -66,18 +68,21 @@ export const UserSelectCard = ({
           />
         </View>
 
-        <View className="flex-1 flex-row items-center">
+        <View
+          style={styles.infoContainer}
+          className="flex-1 flex-row items-center"
+        >
           <View className="flex-1">
-            <Text className="text-neutral-600 text-xs font-semibold">
+            <Text style={styles.name}>
               {item.firstName} {item.lastName}
             </Text>
             <View>
-              <Text style={{ fontSize: 12 }} className="text-neutral-500">
+              <Text style={styles.info}>
                 {item?.profile?.role === "student"
                   ? `${item.profile.study_year}`
                   : item?.profile?.occupation}
               </Text>
-              <Text style={{ fontSize: 12 }} className="text-neutral-500">
+              <Text style={styles.info}>
                 {item?.profile?.role === "student"
                   ? item.profile.major
                   : item?.profile?.affiliation}
@@ -98,3 +103,19 @@ export const UserSelectCard = ({
     </TouchableOpacity>
   );
 };
+
+const styles = StyleSheet.create({
+  name: {
+    fontSize: 12,
+    fontWeight: "600",
+    color: "#3A3B3C",
+  },
+  info: {
+    fontSize: 10,
+    color: "#6B7280",
+    fontWeight: "400",
+  },
+  infoContainer: {
+    gap: 16,
+  },
+});

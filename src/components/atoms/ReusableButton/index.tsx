@@ -24,7 +24,7 @@ interface ReusableButtonProps {
   containerStyle?: string;
   textStyle?: string;
   activityIndicatorColor?: string;
-  size?: "w-full" | "w-1/2" | "small" | number;
+  size?: "w-full" | "w-1/2" | "small" | "fit" | number;
   isRounded?: boolean;
   height?: "small" | "medium" | "large";
   textSize?: "text-sm" | "text-2xs";
@@ -67,8 +67,14 @@ const ReusableButton: React.FC<ReusableButtonProps> = ({
   };
 
   const getSizeStyle = (
-    size?: "w-full" | "w-1/2" | "small" | number
-  ): { width: number | string } | {} => {
+    size?: "w-full" | "w-1/2" | "small" | "fit" | number
+  ):
+    | {
+        width?: number | string;
+        alignSelf?: string;
+        paddingHorizontal?: number;
+      }
+    | {} => {
     switch (size) {
       case "w-full":
         return { width: "100%" };
@@ -76,6 +82,8 @@ const ReusableButton: React.FC<ReusableButtonProps> = ({
         return { width: "50%" };
       case "small":
         return { width: 89 };
+      case "fit":
+        return { alignSelf: "flex-start", paddingHorizontal: 16 };
       default:
         if (typeof size === "number") return { width: size };
         return {};
@@ -87,7 +95,7 @@ const ReusableButton: React.FC<ReusableButtonProps> = ({
 
   return (
     <TouchableOpacity
-      className={`flex items-center justify-center    rounded-lg   ${variantClass} ${containerStyle} ${isLoading ? "opacity-50" : ""}`}
+      className={`flex items-center justify-center ${disabled ? "opacity-50" : "opacity-100"}   rounded-lg   ${variantClass} ${containerStyle} ${isLoading ? "opacity-50" : ""}`}
       onPress={onPress}
       disabled={disabled || isLoading}
       style={[

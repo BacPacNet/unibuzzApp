@@ -12,6 +12,7 @@ import { useDeleteCommunityPostComment } from "@/services/communityPost";
 import { userTypeEnum } from "@/types/register";
 import UserCard from "../UserCard";
 import { timeAgo } from "@/utils";
+import { htmlStyles } from "@/utils/renderHtlmStyles";
 
 const UserComment = ({
   postId,
@@ -82,6 +83,8 @@ const UserComment = ({
     }
   };
 
+  //   if (!item?.commenterId?._id) return;
+
   return (
     <View
       style={[
@@ -90,13 +93,13 @@ const UserComment = ({
           borderBottomWidth: 1,
           borderBottomColor: "#E5E7EB",
         },
-        item.level == 0 && {
+        item?.level == 0 && {
           marginHorizontal: 16,
         },
-        item.level !== 0 && {
+        item?.level !== 0 && {
           paddingLeft: 16,
         },
-        showReply !== item._id && {
+        showReply !== item?._id && {
           borderBottomWidth: 1,
           borderBottomColor: "#E5E7EB",
         },
@@ -129,59 +132,8 @@ const UserComment = ({
         <RenderHTML
           contentWidth={width}
           source={{ html: item?.content }}
-          tagsStyles={{
-            body: {
-              margin: 0,
-              padding: 0,
-              color: "#3A3B3C",
-            },
-            p: {
-              margin: 0,
-              padding: 0,
-              fontSize: 14,
-            },
-            div: {
-              margin: 0,
-              padding: 0,
-            },
-            ol: {
-              margin: 0,
-              padding: 0,
-              paddingLeft: 20,
-            },
-            ul: {
-              margin: 0,
-              padding: 0,
-              paddingLeft: 20,
-            },
-            li: {
-              margin: 0,
-              padding: 0,
-              fontSize: 14,
-            },
-            code: {
-              fontFamily: "monospace",
-              backgroundColor: "#f0f0f0",
-              padding: 2,
-              paddingLeft: 4,
-              paddingRight: 4,
-              borderRadius: 3,
-              fontSize: 13,
-              color: "#3A3B3C",
-            },
-          }}
-          classesStyles={{
-            "ql-code-block": {
-              fontFamily: "monospace",
-              backgroundColor: "#f0f0f0",
-              padding: 2,
-              paddingLeft: 4,
-              paddingRight: 4,
-              borderRadius: 3,
-              fontSize: 13,
-              color: "#3A3B3C",
-            },
-          }}
+          tagsStyles={htmlStyles.tagsStyles}
+          classesStyles={htmlStyles.classesStyles}
           ignoredDomTags={["label", "input"]}
         />
       </View>

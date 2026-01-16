@@ -177,6 +177,7 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     marginTop: 10,
     textAlignVertical: "top",
+    marginBottom: 16,
   },
   error: {
     color: "red",

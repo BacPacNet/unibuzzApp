@@ -256,7 +256,8 @@ const styles = StyleSheet.create({
     borderTopColor: "#E0E0E0",
     paddingTop: 32,
     marginHorizontal: 16,
-    marginTop: 64,
+    marginTop: 32,
+    marginBottom: 32,
   },
   actionSheetContainer: {
     height: "100%",

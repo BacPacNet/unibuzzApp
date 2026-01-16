@@ -10,7 +10,6 @@ import {
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { RootStackParamList } from "@/types/navigation";
-
 import { getUserProfileStore } from "@/storage/user";
 import MembersUserCard from "@/components/molecules/MembersUserCard";
 import { CommunityGroupUsers, status } from "@/types/CommunityGroup";
@@ -161,7 +160,7 @@ const MembersScreen = ({ route }: any) => {
       ),
     },
     {
-      label: "Pending",
+      label: "Invited",
 
       content: (
         <View style={styles.paddingContainer} className="   ">
