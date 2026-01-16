@@ -65,6 +65,7 @@ import { SafeScreen } from "@/components/template";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useTabBarVisibility } from "@/hooks/useTabBarVisibility";
 import { getSelectedCommunityGroup } from "@/storage/selected-community-group";
+import { linking } from "@/linking/linking";
 
 const Stack = createStackNavigator<RootStackParamList>();
 const Tab = createBottomTabNavigator<RootStackParamList>();
@@ -495,7 +496,7 @@ function ApplicationNavigator() {
   }
 
   return (
-    <NavigationContainer theme={navigationTheme}>
+    <NavigationContainer linking={linking} theme={navigationTheme}>
       <AuthGuard>
         <SocketProvider>
           <HeaderProvider>

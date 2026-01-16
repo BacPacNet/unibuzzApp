@@ -27,6 +27,53 @@
         <action android:name="android.intent.action.MAIN" />
         <category android:name="android.intent.category.LAUNCHER" />
       </intent-filter>
+
+      <!-- 🔗 Deep links - Custom scheme -->
+      <intent-filter>
+        <action android:name="android.intent.action.VIEW" />
+        <category android:name="android.intent.category.DEFAULT" />
+        <category android:name="android.intent.category.BROWSABLE" />
+        <data android:scheme="unibuzz" />
+      </intent-filter>
+
+      <!-- 🔗 Deep links - Production (unibuzz.org) -->
+      <intent-filter android:autoVerify="true">
+        <action android:name="android.intent.action.VIEW" />
+        <category android:name="android.intent.category.DEFAULT" />
+        <category android:name="android.intent.category.BROWSABLE" />
+        <data
+            android:scheme="https"
+            android:host="unibuzz.org" />
+      </intent-filter>
+
+      <!-- 🔗 Deep links - Production (www.unibuzz.org) -->
+      <intent-filter android:autoVerify="true">
+        <action android:name="android.intent.action.VIEW" />
+        <category android:name="android.intent.category.DEFAULT" />
+        <category android:name="android.intent.category.BROWSABLE" />
+        <data
+            android:scheme="https"
+            android:host="www.unibuzz.org" />
+      </intent-filter>
+
+      <!-- 🔗 Deep links - Testing (dev-unibuzz.vercel.app) -->
+      <intent-filter android:autoVerify="true">
+        <action android:name="android.intent.action.VIEW" />
+        <category android:name="android.intent.category.DEFAULT" />
+        <category android:name="android.intent.category.BROWSABLE" />
+        <data
+            android:scheme="https"
+            android:host="dev-unibuzz.vercel.app" />
+      </intent-filter>
+      <!-- 🔗 Deep links - Testing (saiyangym.netlify.app) -->
+      <intent-filter android:autoVerify="true">
+        <action android:name="android.intent.action.VIEW" />
+        <category android:name="android.intent.category.DEFAULT" />
+        <category android:name="android.intent.category.BROWSABLE" />
+        <data
+            android:scheme="https"
+            android:host="saiyangym.netlify.app" />
+      </intent-filter>
     </activity>
   </application>
 </manifest>
