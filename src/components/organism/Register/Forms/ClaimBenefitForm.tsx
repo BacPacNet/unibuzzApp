@@ -1,13 +1,18 @@
 import React from "react";
 import { useFormContext, Controller } from "react-hook-form";
-import { View, Text, TouchableOpacity } from "react-native";
+import {
+  View,
+  Text,
+  Image,
+  StyleSheet,
+  KeyboardAvoidingView,
+  Platform,
+  TextInput,
+} from "react-native";
 
 import Title from "@/components/atoms/Title";
-import SupportingText from "@/components/atoms/SupportingText";
-import CustomTextInput from "@/components/atoms/CustomTextInput";
-
 import ReusableButton from "@/components/atoms/ReusableButton";
-import { FormInput } from "@/components/atoms/FormInput";
+import referralImage from "@/assets/referralImage.png";
 
 const ClaimBenefitForm = ({
   onSubmit,
@@ -16,77 +21,98 @@ const ClaimBenefitForm = ({
   onSubmit: (data: any) => Promise<void>;
   isPending: boolean;
 }) => {
-  const {
-    formState: { errors: ClaimBenefit },
-    control,
+  const { control, watch, handleSubmit } = useFormContext();
 
-    handleSubmit,
-  } = useFormContext();
+  const referralCode = watch("referralCode");
 
   return (
-    <View className="w-full">
-      <View className="flex  items-center text-center p-4 ">
-        <Title>Claim your benefit</Title>
-        <SupportingText>
-          Enter your referral code for these perks:
-        </SupportingText>
-      </View>
-      {BadgeList()}
-      <View className="w-full flex  mb-4">
-        <View className="mt-4">
-          <FormInput
-            label="referralCode"
-            placeholder="code"
-            isLabelShown={false}
-            required
-            name="referralCode"
-            control={control}
+    <KeyboardAvoidingView
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
+      className="flex-1 w-full"
+    >
+      <View className="flex-1 w-full px-4 justify-between">
+        <View className="w-full">
+          <View className="flex items-center mb-6">
+            <Image
+              source={referralImage}
+              style={styles.referralImage}
+              resizeMode="contain"
+            />
+          </View>
+
+          <View className="flex items-center mb-6">
+            <Title className="mb-2">Have a referral code?</Title>
+            <Text className="text-sm text-neutral-500 text-center mt-2 mb-4">
+              Optional — shared by a friend from your university
+            </Text>
+          </View>
+
+          <View className="w-full">
+            <Controller
+              control={control}
+              name="referralCode"
+              render={({ field: { onChange, value } }) => (
+                <TextInput
+                  style={styles.input}
+                  placeholder="Enter referral code"
+                  placeholderTextColor="#9CA3AF"
+                  value={value || ""}
+                  onChangeText={(text) => {
+                    // Convert to uppercase and filter to only allow alphanumeric
+                    const filtered = text
+                      .toUpperCase()
+                      .replace(/[^A-Z0-9]/g, "");
+                    onChange(filtered);
+                  }}
+                  autoCapitalize="characters"
+                  autoCorrect={false}
+                />
+              )}
+            />
+          </View>
+        </View>
+
+        <View className="w-full pb-4">
+          <ReusableButton
+            onPress={handleSubmit(onSubmit)}
+            buttonText="Submit"
+            variant="primary"
+            disabled={isPending}
+            isLoading={isPending}
+            height="large"
+            size="w-full"
+            containerStyle="mb-3"
           />
 
           <ReusableButton
-            buttonText="Confirm Code"
-            variant="border_primary"
-            activityIndicatorColor="#6744FF"
-            textStyle="text-primary-500"
+            onPress={handleSubmit(onSubmit)}
+            buttonText="Skip & Complete Sign Up"
+            variant="border"
+            disabled={isPending}
+            height="large"
+            size="w-full"
           />
-          <Text className="text-md text-neutral-500 text-center mb-4">
-            Plan will immediately apply to account after confirmation.
-          </Text>
         </View>
       </View>
-
-      <ReusableButton
-        onPress={handleSubmit(onSubmit)}
-        buttonText="Complete Sign Up"
-        variant="primary"
-        disabled={isPending}
-        isLoading={isPending}
-      />
-    </View>
+    </KeyboardAvoidingView>
   );
 };
 
 export default ClaimBenefitForm;
 
-const BadgeList = () => {
-  const badgeData = [
-    { name: "Custom Emojis", bg: "#FDF4FF", color: "#C026D3" },
-    { name: "Unlimited AI Prompts", bg: "#ECFEFF", color: "#0891B2" },
-    { name: "Profile Badge", bg: "#F0FDF4", color: "#16A34A" },
-    { name: "Join Up 100 Groups", bg: "#F3F2FF", color: "#6744FF" },
-    { name: "500 MB Upload", bg: "#FFFBEB", color: "#D97706" },
-  ];
-  return (
-    <View style={{ flexWrap: "wrap", gap: 10 }} className="flex-row  ">
-      {badgeData?.map((item) => (
-        <Text
-          key={item.name}
-          className="rounded-full p-3  text-md w-auto"
-          style={{ backgroundColor: item.bg, color: item.color }}
-        >
-          {item.name}
-        </Text>
-      ))}
-    </View>
-  );
-};
+const styles = StyleSheet.create({
+  referralImage: {
+    width: "100%",
+    height: 256,
+  },
+  input: {
+    backgroundColor: "white",
+    borderWidth: 1,
+    borderColor: "#E5E7EB",
+    borderRadius: 8,
+    padding: 12,
+    fontSize: 14,
+    color: "#1F2937",
+    height: 40,
+  },
+});

@@ -61,12 +61,10 @@ const UniversityVerificationForm = ({
 
   const handleskip = async () => {
     const data = await getRegisterData();
-    const res = await HandleRegister(data);
-    if (res?.isRegistered) {
-      storeRegisterData({ ...data, step: 4, subStep: 0 });
-      setStep(4);
-      setSubStep(0);
-    }
+    // Go to ClaimBenefitForm (step 4) instead of directly registering
+    storeRegisterData({ ...data, step: 4, subStep: 0 });
+    setStep(4);
+    setSubStep(0);
   };
   const handleNext = async () => {
     const storedData = await getRegisterData();

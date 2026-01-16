@@ -221,6 +221,10 @@ const FormContainer = ({ step, setStep, setSubStep, subStep }: Props) => {
       methods.getValues("userType") !== userTypeEnum.Applicant
     ) {
       return setSubStep(1);
+    } else if (step === 3 && subStep === 2) {
+      // Move to ClaimBenefitForm (step 4)
+      setStep(4);
+      setSubStep(0);
     } else {
       const newStep = step + 1;
       setStep(newStep);
@@ -256,6 +260,10 @@ const FormContainer = ({ step, setStep, setSubStep, subStep }: Props) => {
       ) {
         setSubStep(1);
       }
+    } else if (step === 4) {
+      // Go back to step 3, subStep 2 (UniversityEmailOtpVerification)
+      setStep(3);
+      setSubStep(2);
     } else {
       setStep(step - 1);
       setSubStep(0);
@@ -296,6 +304,12 @@ const FormContainer = ({ step, setStep, setSubStep, subStep }: Props) => {
     } else if (step === 3 && subStep === 1) {
       currStep = 3;
       currSubStep = 2;
+    } else if (step === 3 && subStep === 2) {
+      currStep = 4;
+      currSubStep = 0;
+    } else if (step === 4) {
+      currStep = 5;
+      currSubStep = 0;
     } else {
       currStep += 1;
       currSubStep = 0;
@@ -340,16 +354,8 @@ const FormContainer = ({ step, setStep, setSubStep, subStep }: Props) => {
       } else if (isAvailable?.isAvailable && isAvailable?.isUniversityDomain) {
         data.isUniversityVerified = true;
         data.universityEmail = data.email;
-        const isEmailVerified = methods.getValues("isEmailVerified");
-        const res = await HandleRegister({
-          ...data,
-          isEmailVerified: isEmailVerified,
-        } as FormDataType);
-        if (res?.isRegistered) {
-          storeRegisterData({ ...data, step: 4, subStep: 0 });
-          setStep(4);
-          setSubStep(0);
-        }
+        handleNext();
+        saveToLocalStorage();
       }
 
       return;
@@ -360,16 +366,21 @@ const FormContainer = ({ step, setStep, setSubStep, subStep }: Props) => {
 
       if (isAvailable?.isAvailable) {
         data.isUniversityVerified = true;
-        const res = await HandleRegister(data);
-        if (res?.isRegistered) {
-          storeRegisterData({ ...data, step: 4, subStep: 0 });
-          setStep(4);
-          setSubStep(0);
-        }
-        // handleNext();
-        // saveToLocalStorage();
+        handleNext();
+        saveToLocalStorage();
       }
 
+      return;
+    }
+
+    if (step === 4) {
+      // ClaimBenefitForm - Complete registration with referral code
+      const res = await HandleRegister(data);
+      if (res?.isRegistered) {
+        storeRegisterData({ ...data, step: 5, subStep: 0 });
+        setStep(5);
+        setSubStep(0);
+      }
       return;
     }
     if (step === 1 && subStep === 0) {
@@ -445,11 +456,11 @@ const FormContainer = ({ step, setStep, setSubStep, subStep }: Props) => {
           handlePrev={() => handlePrev()}
         />
       );
-    } else if (step === 3) {
+    } else if (step === 4) {
       return (
         <ClaimBenefitForm onSubmit={onSubmit} isPending={registerIsPending} />
       );
-    } else if (step === 4) {
+    } else if (step === 5) {
       return (
         <LoginForm
           email={methods.getValues("email")}

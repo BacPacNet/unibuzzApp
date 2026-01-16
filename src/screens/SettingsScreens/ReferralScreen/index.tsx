@@ -17,6 +17,7 @@ import { format } from "date-fns";
 import { useGetUserReferrals } from "@/services/user";
 import { Referral } from "@/types/users";
 import { NEXT_PROD_FE_BASE_URL } from "@env";
+import { useReferralShare } from "@/hooks/useReferralShare";
 
 const ReferralScreen = () => {
   const { goBack } = useNavigation();
@@ -27,6 +28,13 @@ const ReferralScreen = () => {
   const referralLink = `${baseUrl}/register?referralCode=${referralCode}`;
   const referredUsers = referralsData?.referrals || [];
   const totalReferrals = referralsData?.totalReferrals || 0;
+
+  // Use the custom referral share hook with platform-specific store URLs
+  const { shareReferral } = useReferralShare({
+    referralCode,
+    // Optionally use referralLink as downloadUrl, or let hook use store URLs
+    // downloadUrl: referralLink,
+  });
 
   const handleCopyLink = async () => {
     try {
@@ -81,23 +89,20 @@ const ReferralScreen = () => {
       >
         <BackHeader label="Settings" onPress={() => goBack()} />
         <View style={styles.paddingContainer}>
-          {/* Your Referral Link Section */}
+          {/* Refer Now Section */}
           <View style={styles.section}>
-            <Text style={styles.sectionTitle}>Your Referral Link</Text>
-            <View style={styles.linkContainer}>
-              <TextInput
-                style={styles.linkInput}
-                value={referralLink}
-                editable={false}
-                selectTextOnFocus={true}
-              />
-              <TouchableOpacity
-                style={styles.copyButton}
-                onPress={handleCopyLink}
-              >
-                <Text style={styles.copyButtonText}>Copy</Text>
-              </TouchableOpacity>
-            </View>
+            <Text style={styles.sectionTitle}>Refer Now</Text>
+            <Text style={styles.description}>
+              Share your referral code with friends and help them join the
+              community!
+            </Text>
+            <TouchableOpacity
+              style={styles.referNowButton}
+              onPress={shareReferral}
+              activeOpacity={0.8}
+            >
+              <Text style={styles.referNowButtonText}>Refer Now</Text>
+            </TouchableOpacity>
           </View>
 
           {/* Referrals Section */}
@@ -295,5 +300,19 @@ const styles = StyleSheet.create({
     color: "#EF4444",
     fontSize: 14,
     textAlign: "center",
+  },
+  referNowButton: {
+    backgroundColor: "#6744FF",
+    borderRadius: 8,
+    paddingVertical: 16,
+    paddingHorizontal: 24,
+    justifyContent: "center",
+    alignItems: "center",
+    marginTop: 8,
+  },
+  referNowButtonText: {
+    color: "#FFFFFF",
+    fontSize: 16,
+    fontWeight: "600",
   },
 });
