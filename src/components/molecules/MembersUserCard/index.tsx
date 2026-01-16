@@ -71,6 +71,13 @@ const MembersUserCard = ({
     (isCommunityAdmin && !isOfficialGroup) || !isCommunityAdmin;
   const insets = useSafeAreaInsets();
 
+  const showRemoveButtonState =
+    !isSelfProfile && isViewerAdmin && forCommunityGroup;
+
+  const isNotAllowedToRemove = isCommunityAdmin && isOfficialGroup;
+
+  const showFollowButton = !isSelfProfile && !showRemoveButtonState;
+
   const handleFollowClick = async (id: string) => {
     setIsFollowingState(true);
     setIsProcessing(true);
@@ -99,22 +106,10 @@ const MembersUserCard = ({
   const isStudent = role === "student";
 
   const renderCTA = (() => {
-    if (isSelfProfile || _id === currentUserId) {
-      return null;
-    }
+    if (isSelfProfile || _id === currentUserId) return null;
 
-    if (isViewerAdmin && !isAllowedToRemove && !showRemoveButton) {
-      return (
-        <ReusableButton
-          onPress={() => membersBottomSheet.current?.show()}
-          variant="border"
-          buttonText="Settings"
-          height="small"
-          size={100}
-        />
-      );
-    }
-    if (isViewerAdmin && isAllowedToRemove) {
+    // REMOVE
+    if (showRemoveButtonState && !isNotAllowedToRemove) {
       return (
         <ReusableButton
           onPress={() => handleRemoveClick?.(_id)}
@@ -122,11 +117,9 @@ const MembersUserCard = ({
           buttonContent={
             <View className="flex-row items-center justify-center gap-1">
               <Text className="text-2xs text-[#EF4444]">Remove</Text>
-              <UserMinus width={16} height={16} />
+              <UserMinus width={16} height={16} fill={"white"} />
             </View>
           }
-          buttonText="Remove"
-          textSize="text-2xs"
           height="small"
           size={100}
           disabled={disabled}
@@ -135,8 +128,9 @@ const MembersUserCard = ({
       );
     }
 
-    if (isFollowingState) {
-      return (
+    // FOLLOW / VIEW PROFILE
+    if (showFollowButton) {
+      return isFollowingState ? (
         <ReusableButton
           onPress={() => handleNavigate(_id)}
           variant="border"
@@ -145,47 +139,25 @@ const MembersUserCard = ({
           textSize="text-2xs"
           size={100}
         />
-      );
-    }
-
-    if (isChat && !isGroupAdmin) {
-      return (
+      ) : (
         <ReusableButton
-          onPress={() => handleRemoveClick?.(_id)}
-          variant="border"
-          buttonText="Remove"
+          variant="primary"
+          buttonContent={
+            <View className="flex-row items-center justify-center gap-1">
+              <Text className="text-white font-bold text-2xs">Follow</Text>
+              <UserPlus height={16} width={16} color="white" fill={"white"} />
+            </View>
+          }
+          onPress={() => handleFollowClick(_id)}
           height="small"
-          size={100}
-          disabled={disabled}
-          isLoading={isRemoving}
+          size={90}
+          disabled={isProcessing}
+          isLoading={isProcessing}
         />
       );
     }
 
-    if (isChat && isGroupAdmin) {
-      return null;
-    }
-
-    // if (forCommunityGroup) {
-    //   return null;
-    // }
-
-    return (
-      <ReusableButton
-        variant="primary"
-        buttonContent={
-          <View className="flex-row items-center justify-center gap-1">
-            <Text className="text-white font-bold text-2xs">Follow</Text>
-            <UserPlus height={16} width={16} color={"white"} fill={"white"} />
-          </View>
-        }
-        onPress={() => handleFollowClick(_id)}
-        height="small"
-        size={90}
-        disabled={isProcessing}
-        isLoading={isProcessing}
-      />
-    );
+    return null;
   })();
 
   return (

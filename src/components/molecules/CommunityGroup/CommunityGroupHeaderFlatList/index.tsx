@@ -285,9 +285,10 @@ const FlatListCommunityHeader: React.FC<Props> = ({
             <ReusableButton
               onPress={() => handleAcceptInvite()({} as any)}
               variant="primary"
-              size={120}
+              size={"fit"}
               buttonText={`Accept Request`}
               height="small"
+              textSize="text-2xs"
               isLoading={isJoinGroupPending}
               disabled={isJoinGroupPending}
             />
@@ -307,9 +308,11 @@ const FlatListCommunityHeader: React.FC<Props> = ({
               communityGroups?.status !== "pending"
             }
             variant="border"
-            size={120}
+            // size={120}
+            size={"fit"}
             buttonText={` ${totalCommunityGroupMember} Members`}
             height="small"
+            textSize="text-2xs"
           />
           {!isGroupPrivate ? (
             <TouchableOpacity

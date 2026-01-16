@@ -153,7 +153,7 @@ const CommunityScreen = ({ route }: any) => {
     setRefreshing(true);
 
     queryClient.invalidateQueries({
-      queryKey: ["communityGroupsPost", communityId, ""],
+      queryKey: ["communityGroupsPost"],
     });
     queryClient.invalidateQueries({
       queryKey: ["community"],

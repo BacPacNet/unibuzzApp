@@ -31,6 +31,7 @@ const UniversitySec = () => {
     currentCommunityGroupId,
     setSelectedCommunityGroupLogo,
     setSelectedCommunityId,
+    refetchFilterCommunityGroups,
   } = useCommunityContext();
 
   const userData = getUserStore();
@@ -147,7 +148,7 @@ const UniversitySec = () => {
     };
 
     mutateFilterCommunityGroups(data);
-  }, [community?._id, subscribedCommunities]);
+  }, [community?._id, subscribedCommunities, refetchFilterCommunityGroups]);
 
   return (
     <View>

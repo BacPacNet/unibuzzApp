@@ -11,6 +11,8 @@ const CommunityContext = createContext<{
   setSelectedCommunityId: (value: string) => void;
   isCommunityGroup: boolean;
   setIsCommunityGroup: (value: boolean) => void;
+  refetchFilterCommunityGroupsRef: () => void;
+  refetchFilterCommunityGroups: boolean;
 }>({
   currentCommunityId: "",
   setCurrentCommunityId: () => {},
@@ -22,6 +24,8 @@ const CommunityContext = createContext<{
   setSelectedCommunityId: () => {},
   isCommunityGroup: false,
   setIsCommunityGroup: () => {},
+  refetchFilterCommunityGroupsRef: () => {},
+  refetchFilterCommunityGroups: false,
 });
 
 interface CommunityProviderProps {
@@ -37,7 +41,11 @@ export const CommunityProvider: React.FC<CommunityProviderProps> = ({
     useState("");
   const [selectedCommunityId, setSelectedCommunityId] = useState("");
   const [isCommunityGroup, setIsCommunityGroup] = useState(false);
-
+  const [refetchFilterCommunityGroups, setRefetchFilterCommunityGroups] =
+    useState(false);
+  const refetchFilterCommunityGroupsRef = () => {
+    setRefetchFilterCommunityGroups(!refetchFilterCommunityGroups);
+  };
   return (
     <CommunityContext.Provider
       value={{
@@ -51,6 +59,8 @@ export const CommunityProvider: React.FC<CommunityProviderProps> = ({
         setSelectedCommunityId,
         isCommunityGroup,
         setIsCommunityGroup,
+        refetchFilterCommunityGroupsRef,
+        refetchFilterCommunityGroups,
       }}
     >
       {children}

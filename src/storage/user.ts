@@ -36,8 +36,6 @@ export const updateUserStoreUserName = async (
   firstName: string,
   lastName: string
 ) => {
-  console.log(firstName, lastName, "firstName, lastName");
-
   try {
     const rawUser = storage.getString(StorageKeys.USER);
     if (!rawUser) {
