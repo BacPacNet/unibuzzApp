@@ -21,11 +21,12 @@ type NavigationProp = StackNavigationProp<RootStackParamList, "SinglePost">;
 
 const SinglePost = ({ route }: any) => {
   const navigation = useNavigation<NavigationProp>();
-  const { postID, type, commentId } = route.params;
+  const { postID, type, commentId, isType } = route.params;
   const isReply = route.params.isReply || false;
+  const finalType = isType || type;
   const from = route?.params?.from || "";
   const { data, isFetching, isPending, isError, isLoading, refetch } =
-    useGetPost(postID, type, commentId || "");
+    useGetPost(postID, finalType, commentId || "");
 
   const item = data?.post;
   const comment = data?.comment;
