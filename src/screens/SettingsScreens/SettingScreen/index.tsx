@@ -54,6 +54,7 @@ const sections = [
       { id: "username", title: "Change Username" },
       { id: "password", title: "Change Password" },
       { id: "blockUsers", title: "Block Users" },
+      { id: "referral", title: "Referral" },
       { id: "deleteAccount", title: "Delete Account" },
       //   { id: "email", title: "Change Email" },
       //   { id: "deactivation", title: "Account Deactivation" },
@@ -105,6 +106,8 @@ const SettingsScreen = () => {
         return navigation.navigate("DeleteAccount");
       case "blockUsers":
         return navigation.navigate("BlockUsers");
+      case "referral":
+        return navigation.navigate("Referral");
     }
   };
 

@@ -202,3 +202,32 @@ export interface Following2 {
   followingCount: number;
   followerCount: number;
 }
+
+export interface ReferralProfile {
+  users_id: string;
+  profile_dp?: ProfileDp;
+  university_name?: string;
+  role?: string;
+  study_year?: string;
+  major?: string;
+  occupation?: string;
+  affiliation?: string;
+}
+
+export interface Referral {
+  _id: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  userName: string;
+  referCode: string;
+  referredBy: string;
+  createdAt: string;
+  profile: ReferralProfile;
+}
+
+export interface ReferralsResponse {
+  totalReferrals: number;
+  referCode: string;
+  referrals: Referral[];
+}

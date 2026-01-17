@@ -6,6 +6,7 @@ import DeleteAccountPage from "@/screens/SettingsScreens/DeleteAccountScreen";
 import SettingsScreen from "@/screens/SettingsScreens/SettingScreen";
 import UniversityVerificationScreen from "@/screens/SettingsScreens/UniversityVerificationScreen";
 import UserNameChangeScreen from "@/screens/SettingsScreens/UserNameChangeScreen";
+import ReferralScreen from "@/screens/SettingsScreens/ReferralScreen";
 import { createStackNavigator } from "@react-navigation/stack";
 
 const SettingsStack = () => {
@@ -29,6 +30,7 @@ const SettingsStack = () => {
       />
       <Stack.Screen name="DeleteAccount" component={DeleteAccountPage} />
       <Stack.Screen name="BlockUsers" component={BlockUsersScreen} />
+      <Stack.Screen name="Referral" component={ReferralScreen} />
     </Stack.Navigator>
   );
 };

@@ -37,6 +37,7 @@ const RegisterScreen = () => {
 
   const stepToShow = step == 2 ? 4 : step + 1;
   const subStepToShow = step !== 3 && subStep > 0 && subStep < 2 ? +1 : +0;
+  const totalSteps = 5;
 
   return (
     <SafeScreen>
@@ -48,14 +49,14 @@ const RegisterScreen = () => {
           contentContainerStyle={{ flexGrow: 1 }}
         >
           <View style={{ paddingHorizontal: 32 }} className="flex-1   bg-white">
-            {step !== 4 && (
+            {step !== 5 && (
               <View className=" py-8 flex flex-row items-center justify-center w-full ">
                 <View className="flex  items-end justify-end w-full ">
                   <View style={{ position: "relative" }} className="relative">
                     <AnimatedCircularProgress
                       size={48}
                       width={6}
-                      fill={(stepToShow + subStepToShow) * 25}
+                      fill={((stepToShow + subStepToShow) / totalSteps) * 100}
                       tintColor="#6744FF"
                       backgroundColor="#F3F2FF"
                       rotation={0}
@@ -72,7 +73,7 @@ const RegisterScreen = () => {
                       }}
                       className="text-3xs font-bold text-neutral-700"
                     >
-                      {stepToShow + subStepToShow} of 4
+                      {stepToShow + subStepToShow} of {totalSteps}
                     </Text>
                   </View>
                 </View>

@@ -14,6 +14,7 @@
   "include": [
     "./src/**/*",
     "index.d.ts",
+    "declarations.d.ts",
     ".eslintrc.js",
     "jest.setup.js",
     "jest.config.js",

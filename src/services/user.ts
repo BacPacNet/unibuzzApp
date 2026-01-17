@@ -3,7 +3,7 @@ import { client } from "./api-client";
 import { getToken } from "@/storage/token";
 import { Toast } from "react-native-toast-notifications";
 import { storeUser } from "@/storage/user";
-import { IUserProfileResponse } from "@/types/users";
+import { IUserProfileResponse, ReferralsResponse } from "@/types/users";
 import { useHandleDeletePushNotificationToken } from "./pushNotification";
 
 import { showToast } from "@/utils/toastWrapper";
@@ -213,3 +213,21 @@ export const useDeleteUserAccount = () => {
     },
   });
 };
+
+export async function getUserReferrals(
+  token: string
+): Promise<ReferralsResponse> {
+  const response = await client<ReferralsResponse, any>(`/users/referrals`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  return response;
+}
+
+export function useGetUserReferrals() {
+  const cookieValue = getToken() as string;
+  return useQuery({
+    queryKey: ["getUserReferrals"],
+    queryFn: () => getUserReferrals(cookieValue),
+    enabled: !!cookieValue,
+  });
+}
