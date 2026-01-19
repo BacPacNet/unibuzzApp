@@ -18,6 +18,9 @@ import { useGetUserReferrals } from "@/services/user";
 import { Referral } from "@/types/users";
 import { NEXT_PROD_FE_BASE_URL } from "@env";
 import { useReferralShare } from "@/hooks/useReferralShare";
+import { FONTS } from "@/constants/fonts";
+import ReusableButton from "@/components/atoms/ReusableButton";
+import ReferralImage from "@/assets/placeHolder/celebrate.svg";
 
 const ReferralScreen = () => {
   const { goBack } = useNavigation();
@@ -34,6 +37,7 @@ const ReferralScreen = () => {
     referralCode,
     // Optionally use referralLink as downloadUrl, or let hook use store URLs
     // downloadUrl: referralLink,
+    customMessage: referralLink,
   });
 
   const handleCopyLink = async () => {
@@ -91,22 +95,29 @@ const ReferralScreen = () => {
         <View style={styles.paddingContainer}>
           {/* Refer Now Section */}
           <View style={styles.section}>
-            <Text style={styles.sectionTitle}>Refer Now</Text>
+            <Text style={styles.sectionTitle}>Referrals</Text>
+            <ReferralImage width={"100%"} height={126} />
             <Text style={styles.description}>
-              Share your referral code with friends and help them join the
-              community!
+              Copy your referral link and share it to earn rewards.
             </Text>
-            <TouchableOpacity
+            {/* <TouchableOpacity
               style={styles.referNowButton}
               onPress={shareReferral}
               activeOpacity={0.8}
             >
               <Text style={styles.referNowButtonText}>Refer Now</Text>
-            </TouchableOpacity>
+            </TouchableOpacity> */}
+            <ReusableButton
+              variant="shade"
+              buttonText="Share Link"
+              size={"w-full"}
+              height="large"
+              onPress={shareReferral}
+            />
           </View>
 
           {/* Referrals Section */}
-          <View style={styles.section}>
+          {/* <View style={styles.section}>
             <Text style={styles.sectionTitle}>Referrals</Text>
             <Text style={styles.description}>
               View all users who have joined using your referral code. You have
@@ -158,7 +169,7 @@ const ReferralScreen = () => {
             ) : (
               <Text style={styles.emptyText}>No referrals yet</Text>
             )}
-          </View>
+          </View> */}
         </View>
       </KeyboardAwareScrollView>
     </View>
@@ -176,19 +187,17 @@ const styles = StyleSheet.create({
     padding: 16,
   },
   section: {
-    marginBottom: 32,
+    gap: 32,
   },
   sectionTitle: {
-    color: "#374151",
-    fontSize: 20,
-    fontWeight: "700",
-    marginBottom: 16,
+    fontSize: 28,
+    fontFamily: FONTS.poppins.bold,
+    color: "#3A3B3C",
   },
   description: {
     color: "#6B7280",
-    fontSize: 14,
+    fontSize: 16,
     lineHeight: 20,
-    marginBottom: 16,
   },
   linkContainer: {
     flexDirection: "row",
