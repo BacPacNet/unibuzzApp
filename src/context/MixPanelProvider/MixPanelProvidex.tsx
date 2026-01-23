@@ -5,6 +5,7 @@ interface MixPanelProviderProps {
   children: React.ReactNode;
 }
 
+
 const MIXPANEL_TOKEN = NEXT_PUBLIC_MIXPANEL_TOKEN;
 const isDevelopment = __DEV__;
 

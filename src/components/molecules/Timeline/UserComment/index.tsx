@@ -99,7 +99,7 @@ const UserComment = ({
         item?.level !== 0 && {
           paddingLeft: 16,
         },
-        showReply !== item?._id && {
+        showReply !== item?._id && item?.level == 0 && {
           borderBottomWidth: 1,
           borderBottomColor: "#E5E7EB",
         },
@@ -199,47 +199,57 @@ const UserComment = ({
         </View>
       </View>
 
-      {item?.replies?.length > 0 && showReply == item._id && (
-        <View
-          style={[
-            styles.repliesContainer,
-            showReply == item._id && {
-              borderTopWidth: 1,
-              borderTopColor: "#E5E7EB",
-            },
-          ]}
-        >
-          {item.replies
-            .slice(0, showTotalReply)
-            .map((reply: any, index: number) => (
-              <UserComment
-                setReplyingTo={setReplyingTo}
-                key={index}
-                item={reply}
-                width={width}
-                likePostCommentHandler={likePostCommentHandler}
-                setShowTotalReply={setShowTotalReply}
-                showTotalReply={showTotalReply}
-                type={type}
-                showBorder={true}
-                communities={reply?.commenterProfileId?.communities}
-                postId={postId}
-                postContentType={postContentType}
-                parentCommentId={item?._id}
-              />
-            ))}
-          {item?.level === 0 &&
-            showReply == item._id &&
-            item?.replies?.length > showTotalReply && (
-              <TouchableOpacity
-                onPress={() => setShowTotalReply(showTotalReply + 4)}
-                style={styles.showMoreButton}
-              >
-                <Text style={styles.showMoreText}>Show More</Text>
-              </TouchableOpacity>
-            )}
-        </View>
-      )}
+      {/* {item?.replies?.length > 0 && showReply == item._id && ( */}
+      {/* show replies by default  */}
+      {item?.replies?.length > 0  && (() => {
+        const currentCommentReplyCount = showTotalReply[item._id] || 2;
+        return (
+          <View
+            style={[
+              styles.repliesContainer,
+             {
+                borderTopWidth: 1,
+                borderTopColor: "#E5E7EB",
+              },
+              // showReply == item._id && {
+              //   borderTopWidth: 1,
+              //   borderTopColor: "#E5E7EB",
+              // },
+            ]}
+          >
+            {item.replies
+              .slice(0, currentCommentReplyCount)
+              .map((reply: any, index: number) => (
+                <UserComment
+                  setReplyingTo={setReplyingTo}
+                  key={index}
+                  item={reply}
+                  width={width}
+                  likePostCommentHandler={likePostCommentHandler}
+                  setShowTotalReply={setShowTotalReply}
+                  showTotalReply={showTotalReply}
+                  type={type}
+                  showBorder={ index === currentCommentReplyCount - 1 ? false : true}
+                  communities={reply?.commenterProfileId?.communities}
+                  postId={postId}
+                  postContentType={postContentType}
+                  parentCommentId={item?._id}
+                />
+              ))}
+            {item?.level === 0 &&
+          //   how more button for all 
+              // showReply == item._id &&
+              item?.replies?.length > currentCommentReplyCount && (
+                <TouchableOpacity
+                  onPress={() => setShowTotalReply(item._id, currentCommentReplyCount + 5)}
+                  style={styles.showMoreButton}
+                >
+                  <Text style={styles.showMoreText}>Show More</Text>
+                </TouchableOpacity>
+              )}
+          </View>
+        );
+      })()}
     </View>
   );
 };

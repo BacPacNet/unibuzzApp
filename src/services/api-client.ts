@@ -4,6 +4,7 @@ import axios, { AxiosRequestConfig, AxiosResponse } from "axios";
 import { NEXT_PUBLIC_CUSTOM_BASE_URL, NEXT_PUBLIC_API_BASE_URL } from "@env";
 import { forceDeauthenticate } from "@/hooks/Auth/forceDeautenticate";
 
+
 const api = axios.create({
   baseURL: NEXT_PUBLIC_API_BASE_URL,
 });
@@ -18,7 +19,7 @@ api.interceptors.response.use(
       return forceDeauthenticate();
     }
     return Promise.reject(error);
-  }
+  },
 );
 
 /**
@@ -45,7 +46,7 @@ const client = async <T, U>(
     userCode,
     email,
     ...rest
-  }: RequestData<U> = {}
+  }: RequestData<U> = {},
 ): Promise<ServerResponse<T>> => {
   const config: AxiosRequestConfig = {
     url: customBaseUrl
@@ -70,7 +71,7 @@ const client = async <T, U>(
           return resp.items;
         }
         return resp;
-      }
+      },
     ),
     ...rest,
   };

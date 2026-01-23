@@ -165,6 +165,7 @@ const MessageNewGroupFormContainer = forwardRef(
                 label="University"
                 onPress={() => openUniversityActionSheet()}
                 toShowCross={!!community.name}
+                onCrossPress={() => setValue("community", { name: "", id: "" })}
                 text={community.name ? community.name : "Select University"}
                 icon={<NavArrowDown width={20} height={20} />}
               />
@@ -242,7 +243,7 @@ const MessageNewGroupFormContainer = forwardRef(
           <SubscribedUniveristyBottomSheet
             options={userProiledata?.email || []}
             value={[]}
-            onSelect={(val) => setValue("community", val)}
+            onSelect={(val) => {setValue("community", val),universityActionSheetRef.current?.hide()}}
             err={false}
           />
         </ActionSheet>

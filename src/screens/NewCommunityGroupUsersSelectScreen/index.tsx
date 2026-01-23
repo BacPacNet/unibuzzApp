@@ -276,9 +276,8 @@ const NewCommunityGroupUsersSelectScreen = ({ route }: any) => {
           <View style={styles.bulkContainer}>
             <DummyButton
               label="University"
-              toShowCross={!!community.name}
+              toShowCross={false}
               text={universityName}
-              icon={<NavArrowDown width={20} height={20} />}
             />
             <RoleSelectorWithFields
               selectedType={selectedType}
@@ -348,6 +347,7 @@ const NewCommunityGroupUsersSelectScreen = ({ route }: any) => {
             buttonText="Add Members"
             variant="primary"
             height="large"
+         textSize="text-sm"
           />
         </View>
       </View>
@@ -540,6 +540,7 @@ const styles = StyleSheet.create({
   addUsersContainer: {
     marginTop: 32,
     paddingTop: 32,
+    marginBottom: 32,
     borderTopWidth: 1,
     borderTopColor: "#E5E7EB",
   },

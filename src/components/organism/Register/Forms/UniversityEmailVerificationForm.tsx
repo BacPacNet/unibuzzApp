@@ -56,6 +56,10 @@ const UniversityVerificationForm = ({
     universityEmail: getValues("universityEmail"),
     isRegistered: registeredData?.isRegistered || false,
   });
+  useTimeTracking(TRACK_EVENT.UNIVERSITY_VERIFICATION_STEP_VIEW_DURATION, {
+    email: getValues('email'),
+    screen:"info"
+  });
   const { mutate: generateUniversityEmailOTP } =
     useHandleUniversityEmailVerificationGenerate();
 

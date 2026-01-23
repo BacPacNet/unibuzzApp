@@ -6,6 +6,8 @@ import SupportingText from "@/components/atoms/SupportingText";
 import { useHandleLogin } from "@/services/auth";
 import { removeRegisterData } from "@/storage/register";
 import { AnimatedCircularProgress } from "react-native-circular-progress";
+import { trackMixpanel } from "@/mixpanel/track";
+import { TRACK_EVENT } from "@/content/constant";
 
 // Constants
 const COUNTDOWN_DURATION = 5;
@@ -29,17 +31,20 @@ const LoginForm: React.FC<LoginData> = ({ email, password }) => {
   const { mutate: mutateLogin, isSuccess } = useHandleLogin();
 
   // Memoized login data
-  const loginData = useCallback((): LoginData => ({
-    email,
-    password,
-  }), [email, password]);
+  const loginData = useCallback(
+    (): LoginData => ({
+      email,
+      password,
+    }),
+    [email, password],
+  );
 
   // Cleanup register data on successful login
-//   useEffect(() => {
-//     if (isSuccess) {
-//       removeRegisterData();
-//     }
-//   }, [isSuccess]);
+  //   useEffect(() => {
+  //     if (isSuccess) {
+  //       removeRegisterData();
+  //     }
+  //   }, [isSuccess]);
 
   // Countdown timer effect
   useEffect(() => {
@@ -60,6 +65,9 @@ const LoginForm: React.FC<LoginData> = ({ email, password }) => {
       setHasTriggeredLogin(true);
       setIsCounting(false);
       mutateLogin(loginData());
+      trackMixpanel(TRACK_EVENT.REGISTRATION_COMPLETE, {
+        email: loginData()?.email,
+      });
     }
   }, [hasTriggeredLogin, mutateLogin, loginData]);
 
@@ -100,12 +108,10 @@ const LoginForm: React.FC<LoginData> = ({ email, password }) => {
         onPress={handleManualLogin}
         style={[
           styles.manualLoginButton,
-          hasTriggeredLogin && styles.disabledButton
+          hasTriggeredLogin && styles.disabledButton,
         ]}
       >
-        <Text style={styles.manualLoginText}>
-          Not Redirected? Click here.
-        </Text>
+        <Text style={styles.manualLoginText}>Not Redirected? Click here.</Text>
       </TouchableOpacity>
     </View>
   );

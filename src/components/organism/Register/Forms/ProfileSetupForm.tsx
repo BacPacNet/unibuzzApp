@@ -10,6 +10,8 @@ import { ArrowLeft } from "iconoir-react-native";
 import RadioInput from "@/components/atoms/RadioInput";
 import Accordion from "@/components/atoms/Accordian";
 import { FONTS } from "@/constants/fonts";
+import { TRACK_EVENT } from "@/content/constant";
+import { useTimeTracking } from "@/hooks/useTimeTracking";
 
 const ProfileSetupForm = ({
   onSubmit,
@@ -23,7 +25,11 @@ const ProfileSetupForm = ({
     control,
     handleSubmit,
     watch,
+    getValues,
   } = useFormContext();
+  useTimeTracking(TRACK_EVENT.PROFILE_SETUP_STEP_VIEW_DURATION, {
+    email: getValues('email'),
+  });
   const currDob = watch("birthDate");
   return (
     <View style={styles.main}>

@@ -145,9 +145,9 @@ export type CommentsProp = {
     value2: string,
     isSelfLike: boolean
   ) => void;
-  setShowTotalReply: (value: number) => void;
+  setShowTotalReply: (commentId: string, count: number) => void;
   setModalVisible?: (value: boolean) => void;
-  showTotalReply: number;
+  showTotalReply: { [commentId: string]: number };
   handleNavigate?: any;
   type: PostType;
   showBorder?: boolean;

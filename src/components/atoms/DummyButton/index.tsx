@@ -2,6 +2,16 @@ import { FONTS } from "@/constants/fonts";
 import { Xmark } from "iconoir-react-native";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
+
+interface Props {
+  onPress?: () => void;
+  text: string;
+  icon?: React.ReactNode;
+  toShowCross?: boolean;
+  onCrossPress?: () => void;
+  label?: string;
+}
+
 const DummyButton = ({
   onPress,
   text,
@@ -9,7 +19,7 @@ const DummyButton = ({
   toShowCross,
   onCrossPress,
   label,
-}: any) => {
+}: Props) => {
   return (
     <View>
       {label && <Text style={styles.label}>{label}</Text>}

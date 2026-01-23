@@ -12,6 +12,8 @@ import { OtpInput } from "react-native-otp-entry";
 import { useHandleUniversityEmailVerificationGenerate } from "@/services/auth";
 import ReusableButton from "@/components/atoms/ReusableButton";
 import { ArrowLeft } from "iconoir-react-native";
+import { useTimeTracking } from "@/hooks/useTimeTracking";
+import { TRACK_EVENT } from "@/content/constant";
 
 interface Props {
   isVerificationSuccess: boolean;
@@ -45,7 +47,10 @@ const UniversityEmailOtpVerification = ({
     isPending,
     isError,
   } = useHandleUniversityEmailVerificationGenerate();
-
+  useTimeTracking(TRACK_EVENT.UNIVERSITY_VERIFICATION_STEP_VIEW_DURATION, {
+    email: getValues('email'),
+    screen:"otp"
+  });
   const handleUniversityEmailSendCode = () => {
     if (!email) {
       setError("universityEmail", {
