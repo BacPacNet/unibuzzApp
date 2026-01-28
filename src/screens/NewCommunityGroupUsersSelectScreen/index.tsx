@@ -270,6 +270,7 @@ const NewCommunityGroupUsersSelectScreen = ({ route }: any) => {
           }
           variant="border_primary"
           height="large"
+        
         />
 
         {showbulk ? (
@@ -347,7 +348,7 @@ const NewCommunityGroupUsersSelectScreen = ({ route }: any) => {
             buttonText="Add Members"
             variant="primary"
             height="large"
-         textSize="text-sm"
+         
           />
         </View>
       </View>
@@ -548,7 +549,7 @@ const styles = StyleSheet.create({
     height: "100%",
   },
   bulkButtonText: {
-    fontSize: 16,
+    fontSize: 14,
     fontFamily: FONTS.inter.medium,
     color: "#6744FF",
   },

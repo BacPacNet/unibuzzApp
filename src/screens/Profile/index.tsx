@@ -63,6 +63,7 @@ const Profile = ({ route }: ProfileProps) => {
       userProfileData?.lastName &&
       (userData?.firstName !== userProfileData?.firstName ||
         userData?.lastName !== userProfileData?.lastName)
+      && userId.toString() == userData?.id.toString()
     ) {
       updateUserStoreUserName(
         userProfileData?.firstName,
@@ -70,7 +71,7 @@ const Profile = ({ route }: ProfileProps) => {
       );
     }
 
-    if (userProfileData) {
+    if (userProfileData &&  userId.toString() == userData?.id.toString()) {
       updateUserProfileStoreUserUniversityPosition({
         role: userProfileData?.profile?.role,
         study_year: userProfileData?.profile?.study_year,
