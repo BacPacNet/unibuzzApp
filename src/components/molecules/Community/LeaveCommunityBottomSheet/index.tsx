@@ -67,6 +67,7 @@ const styles = StyleSheet.create({
     display: "flex",
     flexDirection: "column",
     gap: 16,
+   
   },
   title: {
     color: "#111827",
@@ -82,10 +83,17 @@ const styles = StyleSheet.create({
   },
   listContainer: {
     marginTop: 4,
+    width:"auto",
+    display:"flex",
+    flexDirection:"column",
+    justifyContent:"flex-start",
+    gap:2,
+   
   },
   bulletPoint: {
     color: "#374151",
     fontSize: 14,
+    
   },
   communityContainer: {
     flexDirection: "row",

@@ -36,6 +36,7 @@ export const CommunityDropDownModal = ({
         // snapPoints={[70, 100]}
         containerStyle={{
           paddingTop: 10,
+          
         }}
       >
         <LeaveCommunityBottomSheet
