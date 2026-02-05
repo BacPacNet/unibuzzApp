@@ -11,6 +11,7 @@ export const identifyUserInMixpanel = (userData: {
   email: string;
   firstName: string;
   lastName: string;
+  communities?: string[];
 }) => {
   getMixpanel()?.identify(userData.id);
   getMixpanel()
@@ -18,7 +19,15 @@ export const identifyUserInMixpanel = (userData: {
     .set({
       $email: userData.email,
       $name: `${userData.firstName || ""} ${userData.lastName || ""}`.trim(),
+      $communities: userData.communities,
     });
+};
+
+export const setUserCommunitiesInMixpanel = (verifiedCommunities: string[],unverifiedCommunities:string[]) => {
+    getMixpanel()?.getPeople().set({
+        $verifiedCommunities: verifiedCommunities,
+        $unverifiedCommunities: unverifiedCommunities,
+      })
 };
 
 export const trackCommunityGroupPostCommentReplyLike = (
@@ -26,7 +35,7 @@ export const trackCommunityGroupPostCommentReplyLike = (
   commentId: string,
   level: string,
   communityId: string,
-  communityGroupId: string
+  communityGroupId: string,
 ) => {
   getMixpanel()?.track(TRACK_EVENT.COMMUNITY_GROUP_POST_COMMENT_REPLY_LIKE, {
     postId: postId,
@@ -42,7 +51,7 @@ export const trackCommunityPostCommentReplyLike = (
   postId: string,
   commentId: string,
   level: string,
-  communityId: string
+  communityId: string,
 ) => {
   getMixpanel()?.track(TRACK_EVENT.COMMUNITY_POST_COMMENT_REPLY_LIKE, {
     postId: postId,
@@ -58,7 +67,7 @@ export const trackCommunityGroupPostCommentLike = (
   commentId: string,
   level: string,
   communityId: string,
-  communityGroupId: string
+  communityGroupId: string,
 ) => {
   getMixpanel()?.track(TRACK_EVENT.COMMUNITY_GROUP_POST_COMMENT_LIKE, {
     postId: postId,
@@ -74,7 +83,7 @@ export const trackCommunityPostCommentLike = (
   postId: string,
   commentId: string,
   level: string,
-  communityId: string
+  communityId: string,
 ) => {
   getMixpanel()?.track(TRACK_EVENT.COMMUNITY_POST_COMMENT_LIKE, {
     postId: postId,
@@ -88,7 +97,7 @@ export const trackCommunityPostCommentLike = (
 export const trackCommunityPostButtonClick = (
   buttonName: string,
   communityId: string,
-  communityGroupId?: string
+  communityGroupId?: string,
 ) => {
   if (communityGroupId && communityGroupId.length > 0) {
     trackMixpanel(TRACK_EVENT.COMMUNITY_GROUP_POST_BUTTON_CLICK, {
@@ -107,7 +116,7 @@ export const trackCommunityPostButtonClick = (
 export const trackCommunityPostTextEdit = (
   textEdit: string,
   communityId: string,
-  communityGroupId?: string
+  communityGroupId?: string,
 ) => {
   if (communityGroupId && communityGroupId.length > 0) {
     trackMixpanel(TRACK_EVENT.COMMUNITY_GROUP_POST_TEXT_EDIT, {
@@ -130,13 +139,13 @@ export const trackPostUploads = (data: Array<{ imageUrl: string | null }>) => {
     data.filter(
       (item: { imageUrl: string | null }) =>
         item.imageUrl &&
-        imageMimeTypes.includes(getMimeTypeFromUrl(item.imageUrl))
+        imageMimeTypes.includes(getMimeTypeFromUrl(item.imageUrl)),
     ) || [];
   const fileItems =
     data.filter(
       (item: { imageUrl: string | null }) =>
         item.imageUrl &&
-        !imageMimeTypes.includes(getMimeTypeFromUrl(item.imageUrl))
+        !imageMimeTypes.includes(getMimeTypeFromUrl(item.imageUrl)),
     ) || [];
 
   if (imageItems?.length > 0) {
@@ -159,7 +168,7 @@ export const trackPostUploads = (data: Array<{ imageUrl: string | null }>) => {
 export const trackCommunityPostUploads = (
   data: Array<{ imageUrl: string | null }>,
   communityId: string,
-  communityGroupId?: string
+  communityGroupId?: string,
 ) => {
   if (!data || data.length === 0) return;
 
@@ -167,13 +176,13 @@ export const trackCommunityPostUploads = (
     data.filter(
       (item: { imageUrl: string | null }) =>
         item.imageUrl &&
-        imageMimeTypes.includes(getMimeTypeFromUrl(item.imageUrl))
+        imageMimeTypes.includes(getMimeTypeFromUrl(item.imageUrl)),
     ) || [];
   const fileItems =
     data.filter(
       (item: { imageUrl: string | null }) =>
         item.imageUrl &&
-        !imageMimeTypes.includes(getMimeTypeFromUrl(item.imageUrl))
+        !imageMimeTypes.includes(getMimeTypeFromUrl(item.imageUrl)),
     ) || [];
 
   const hasCommunityGroupId = communityGroupId && communityGroupId.length > 0;
@@ -186,7 +195,7 @@ export const trackCommunityPostUploads = (
           : TRACK_EVENT.COMMUNITY_POST_IMAGE_UPLOAD,
         {
           imageUrl: item.imageUrl,
-        }
+        },
       );
     });
   }
@@ -199,7 +208,7 @@ export const trackCommunityPostUploads = (
           : TRACK_EVENT.COMMUNITY_POST_FILE_UPLOAD,
         {
           fileUrl: item.imageUrl,
-        }
+        },
       );
     });
   }
@@ -210,7 +219,7 @@ export const trackCommunityPostLike = (
   communityId: string,
   isSinglePost: boolean,
   isTimeline: boolean,
-  communityGroupId?: string
+  communityGroupId?: string,
 ) => {
   const hasCommunityGroupId = communityGroupId && communityGroupId.length > 0;
 
@@ -234,13 +243,13 @@ export const trackCommunityPostLike = (
       communityId,
       ...(hasCommunityGroupId ? { communityGroupId } : {}),
       source,
-    }
+    },
   );
 };
 
 // message events func
 export const trackMessageUploads = (
-  data: Array<{ imageUrl: string | null }>
+  data: Array<{ imageUrl: string | null }>,
 ) => {
   if (!data || data.length === 0) return;
 
@@ -248,13 +257,13 @@ export const trackMessageUploads = (
     data.filter(
       (item: { imageUrl: string | null }) =>
         item.imageUrl &&
-        imageMimeTypes.includes(getMimeTypeFromUrl(item.imageUrl))
+        imageMimeTypes.includes(getMimeTypeFromUrl(item.imageUrl)),
     ) || [];
   const fileItems =
     data.filter(
       (item: { imageUrl: string | null }) =>
         item.imageUrl &&
-        !imageMimeTypes.includes(getMimeTypeFromUrl(item.imageUrl))
+        !imageMimeTypes.includes(getMimeTypeFromUrl(item.imageUrl)),
     ) || [];
 
   if (imageItems?.length > 0) {

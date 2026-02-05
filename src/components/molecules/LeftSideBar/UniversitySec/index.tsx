@@ -22,7 +22,7 @@ import {
   storeSelectedCommunityGroup,
 } from "@/storage/selected-community-group";
 import { TRACK_EVENT } from "@/content/constant";
-import { trackMixpanel } from "@/mixpanel/track";
+import { setUserCommunitiesInMixpanel, trackMixpanel } from "@/mixpanel/track";
 
 type NavigationProp = StackNavigationProp<RootStackParamList, "Timeline">;
 const UniversitySec = () => {
@@ -55,12 +55,12 @@ const UniversitySec = () => {
   } = useGetFilteredSubscribedCommunities(community?._id || "");
 
   const handleCommunityClick = (id: string) => {
-    trackMixpanel(TRACK_EVENT.UNIVERSITY_COMMUNITY_PAGE_VIEW, {
-      communityId: id,
-      communityName: subscribedCommunities?.find(
-        (community) => community?._id === id
-      )?.name,
-    });
+    // trackMixpanel(TRACK_EVENT.UNIVERSITY_COMMUNITY_PAGE_VIEW, {
+    //   communityId: id,
+    //   communityName: subscribedCommunities?.find(
+    //     (community) => community?._id === id
+    //   )?.name,
+    // });
     navigation.navigate("Community", { communityId: id });
     setCurrSelectedGroup(community);
   };
@@ -82,7 +82,7 @@ const UniversitySec = () => {
 
   const handleCommunityGroupClick = (communityId: string, logo: string) => {
     setCommunity(
-      subscribedCommunities?.find((community) => community._id === communityId)
+      subscribedCommunities?.find((community) => community._id === communityId),
     );
 
     setSelectedCommunityGroupLogo(logo);
@@ -100,8 +100,8 @@ const UniversitySec = () => {
         group.adminUserId === userData?.id ||
         group.users?.some(
           (u: { _id: string; status: string }) =>
-            u._id === userData?.id && u.status === status.accepted
-        )
+            u._id === userData?.id && u.status === status.accepted,
+        ),
     );
   }, [userData, filteredCommunityGroups, community]);
 
@@ -115,25 +115,25 @@ const UniversitySec = () => {
     }
     const existingCommunityIndex = subscribedCommunities?.findIndex(
       (community) =>
-        community._id === selectedCommunityGroup?.selectedCommunityGroupId
+        community._id === selectedCommunityGroup?.selectedCommunityGroupId,
     );
     if (selectedCommunityGroup && existingCommunityIndex !== -1) {
       setCommunity(
         subscribedCommunities?.find(
           (community) =>
-            community._id === selectedCommunityGroup?.selectedCommunityGroupId
-        )
+            community._id === selectedCommunityGroup?.selectedCommunityGroupId,
+        ),
       );
 
       setSelectedCommunityGroupLogo(
-        selectedCommunityGroup?.selectedCommunityGroupLogo
+        selectedCommunityGroup?.selectedCommunityGroupLogo,
       );
       setSelectedCommunityId(selectedCommunityGroup?.selectedCommunityGroupId);
     } else {
       setCommunity(subscribedCommunities?.[0] as Community);
       storeSelectedCommunityGroup(
         subscribedCommunities?.[0]?._id || "",
-        subscribedCommunities?.[0]?.communityLogoUrl?.imageUrl || ""
+        subscribedCommunities?.[0]?.communityLogoUrl?.imageUrl || "",
       );
     }
   }, [subscribedCommunities, selectedCommunityGroup]);
@@ -149,6 +149,14 @@ const UniversitySec = () => {
 
     mutateFilterCommunityGroups(data);
   }, [community?._id, subscribedCommunities, refetchFilterCommunityGroups]);
+
+  useEffect(() => {
+    const verifiedCommunities = subscribedCommunities?.filter((community) => community?.isVerified).map((community) => community?.name)
+    const unverifiedCommunities = subscribedCommunities?.filter((community) => community?.isVerified === false).map((community) => community?.name)
+    if (userData?.id) {
+        setUserCommunitiesInMixpanel(verifiedCommunities || [], unverifiedCommunities || [])
+    }
+  }, [subscribedCommunities, userData?.id])
 
   return (
     <View>

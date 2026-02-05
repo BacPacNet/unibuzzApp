@@ -100,7 +100,7 @@ const MembersScreen = ({ route }: any) => {
 
   const dummyTabs = [
     {
-      label: "Accepted",
+      label: "Joined",
 
       content: (
         <View style={styles.paddingContainer} className="   ">

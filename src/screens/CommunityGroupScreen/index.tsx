@@ -170,6 +170,8 @@ const CommunityGroupScreen = ({ route }: any) => {
     (user: { status: status }) => user.status === status.accepted
   );
 
+ 
+  
   const handleScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
     const { contentOffset, layoutMeasurement, contentSize } = event.nativeEvent;
 
@@ -270,7 +272,8 @@ const CommunityGroupScreen = ({ route }: any) => {
     setRefreshing(false);
   }, [queryClient, communityId, communityGroupId, refetch]);
 
-  const handleToggleJoinCommunityGroup = () => {
+  const handleToggleJoinCommunityGroup = (value?: string) => {
+    
     if (communityGroups?.adminUserId == userData?.id) {
       setModalVisible(false);
       Toast.hideAll();
@@ -278,7 +281,7 @@ const CommunityGroupScreen = ({ route }: any) => {
     }
 
     if (!isUserJoinedCommunityGroup) {
-      joinCommunityGroup(communityGroupId, {
+      joinCommunityGroup({communityGroupId,value}, {
         onSuccess: () => {
           setIsUserJoinedCommunityGroup(true);
           refetchFilterCommunityGroupsRef();
@@ -481,7 +484,7 @@ const CommunityGroupScreen = ({ route }: any) => {
                 }
               />
             )}
-          {isFetching ? (
+          {isFetching  ? (
             <Refresh />
           ) : (
             <FlatList

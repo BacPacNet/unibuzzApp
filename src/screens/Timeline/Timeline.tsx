@@ -91,6 +91,7 @@ const Timeline = () => {
       email: userData?.email,
       firstName: userData?.firstName,
       lastName: userData?.lastName,
+     
     });
   }, [userData?.id, userData?.email, userData?.firstName, userData?.lastName]);
 

@@ -7,6 +7,8 @@ import ReusableButton from "@/components/atoms/ReusableButton";
 import { SelectInputWithSearch } from "@/components/atoms/SelectInputWithSearch";
 import SelectUniversityDropdownBottomSheet from "@/components/atoms/SelectUniversityDropDownBottomSheet";
 import CustomSwitch from "@/components/atoms/CustomSwitch";
+import { useTimeTracking } from "@/hooks/useTimeTracking";
+import { TRACK_EVENT } from "@/content/constant";
 
 const ProfileFacultyForm = ({
   onSubmit,
@@ -30,6 +32,10 @@ const ProfileFacultyForm = ({
   const universityName = watch("universityName");
 
   const [currDepartment, setCurrDepartment] = useState<any>([]);
+
+  useTimeTracking(TRACK_EVENT.PROFILE_FACULTY_SETUP_STEP_VIEW_DURATION, {
+    email: getValues('email'),
+  });
 
   useEffect(() => {
     setCurrDepartment(occupationAndDepartment[currOccupation] || []);

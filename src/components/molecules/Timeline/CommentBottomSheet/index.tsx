@@ -73,7 +73,7 @@ const CommentBottomSheet = ({
 }: Props) => {
   const [showReply, setShowReply] = useState(false);
   const [replyingTo, setReplyingTo] = useState<any>(null);
-  const [showTotalReply, setShowTotalReply] = useState(4);
+  const [showTotalReply, setShowTotalReply] = useState<{ [commentId: string]: number }>({});
   const [selectedOption, setSelectedOption] = useState<string>("Newest First");
   const [selectedSortValue, setSelectedSortValue] = useState(Sortby.DESC);
   const [isModalVisible, setModalVisible] = useState(false);
@@ -276,7 +276,12 @@ const CommentBottomSheet = ({
                 showReply={showReply}
                 setReplyingTo={setReplyingTo}
                 likePostCommentHandler={likePostCommentHandler}
-                setShowTotalReply={setShowTotalReply}
+                setShowTotalReply={(commentId: string, count: number) => {
+                  setShowTotalReply((prev) => ({
+                    ...prev,
+                    [commentId]: count,
+                  }));
+                }}
                 showTotalReply={showTotalReply}
                 handleNavigate={handleNavigate}
                 setModalVisible={setModalVisible}

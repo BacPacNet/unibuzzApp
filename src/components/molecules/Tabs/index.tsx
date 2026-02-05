@@ -32,7 +32,7 @@ export default function Tabs({ tabs, activeIndex = 0, onChange }: TabsProps) {
               setSelectedTab(index);
               onChange(index);
             }}
-            className={`flex-1 flex-row items-center justify-center py-4 gap-1 relative
+            className={`flex-1 flex-row items-center justify-center py-3 gap-1 relative
             `}
             style={[
               selectedTab === index ? styles.tabActive : styles.tabInactive,

@@ -9,6 +9,8 @@ import ReusableButton from "@/components/atoms/ReusableButton";
 import { FormInput } from "@/components/atoms/FormInput";
 import { FormInputPassword } from "@/components/atoms/FormInputPassword";
 import { Text } from "react-native";
+import { useTimeTracking } from "@/hooks/useTimeTracking";
+import { TRACK_EVENT } from "@/content/constant";
 
 type Props = {
   isPending: boolean;
@@ -27,10 +29,13 @@ const AccountCreationForm = ({ isPending, onSubmit }: Props) => {
     watch,
     handleSubmit,
     control,
+    getValues
   } = useFormContext();
 
   const password = watch("password");
-
+  useTimeTracking(TRACK_EVENT.ACCOUNT_CREATION_STEP_VIEW_DURATION, {
+    email: getValues('email'),
+  });
   return (
     <View style={styles.main}>
       <View className="flex w-full justify-center items-center  bg-white">

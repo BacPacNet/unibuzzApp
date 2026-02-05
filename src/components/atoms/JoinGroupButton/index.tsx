@@ -7,7 +7,7 @@ interface Props {
   isVerified: boolean;
   isPending: boolean;
   userStatus: status;
-  onClick: () => void;
+  onClick: (value?: string) => void;
 }
 
 const JoinGroupButton: React.FC<Props> = ({
@@ -33,7 +33,7 @@ const JoinGroupButton: React.FC<Props> = ({
 
     return (
       <ReusableButton
-        onPress={onClick}
+        onPress={()=>onClick( userStatus === status.pending ? "" : "request")}
         buttonText={
           userStatus === status.pending ? "Request Pending" : "Request Access"
         }

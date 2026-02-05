@@ -33,7 +33,7 @@ function CommunityGroupAll({
   if (communityGroups?.length === 0)
     return (
       <Text className="text-center text-neutral-500 mt-4">
-        No Groups Available
+        Joined groups will appear here.
       </Text>
     );
 

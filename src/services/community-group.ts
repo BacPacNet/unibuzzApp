@@ -191,13 +191,14 @@ export const useJoinCommunityGroup = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (communityGroupId: string) =>
+    mutationFn: ({communityGroupId,value}: {communityGroupId: string,value?: string}) =>
       joinCommunityGroupAPI(communityGroupId, cookieValue),
 
-    onSuccess: (response: any) => {
+    onSuccess: (response: any,req: {communityGroupId: string,value?: string}) => {
       queryClient.invalidateQueries({ queryKey: ["communityGroup"] });
+      if(req.value !== "request"){
       queryClient.invalidateQueries({ queryKey: ["communityGroupsPost"] });
-
+      }
       if (response.success && response.isGroupPrivate) {
         return showToast({ message: response.message });
       }

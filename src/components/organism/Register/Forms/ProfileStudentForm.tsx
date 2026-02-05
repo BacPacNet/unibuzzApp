@@ -10,7 +10,9 @@ import SelectUniversityDropdownBottomSheet from "@/components/atoms/SelectUniver
 import { SelectInputWithSearch } from "@/components/atoms/SelectInputWithSearch";
 import { ArrowLeft } from "iconoir-react-native";
 import CustomSwitch from "@/components/atoms/CustomSwitch";
-
+import { useTimeTracking } from "@/hooks/useTimeTracking";
+import { TRACK_EVENT } from "@/content/constant";
+    
 const ProfileStudentForm = ({
   onSubmit,
   handlePrev,
@@ -26,7 +28,9 @@ const ProfileStudentForm = ({
     handleSubmit,
     getValues,
   } = useFormContext();
-
+  useTimeTracking(TRACK_EVENT.PROFILE_STUDENT_SETUP_STEP_VIEW_DURATION, {
+    email: getValues('email'),
+  });
   type DegreeKeys = keyof typeof degreeAndMajors;
   const currDegree: DegreeKeys = watch("year");
   const currMa: DegreeKeys = watch("major");

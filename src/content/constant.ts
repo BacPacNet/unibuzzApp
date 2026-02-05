@@ -68,16 +68,22 @@ export enum TRACK_EVENT {
   NEW_GROUP_CHAT = "new_group_chat",
 
   //   university community events
-  UNIVERSITY_COMMUNITY_PAGE_VIEW = "university_community_page_view",
-  UNIVERSITY_COMMUNITY_PAGE_VIEW_DURATION = "university_community_page_view_duration",
+  //   UNIVERSITY_COMMUNITY_PAGE_VIEW = "university_community_page_view",
+  UNIVERSITY_COMMUNITY_PAGE_VIEW_DURATION = "university_community_page_view",
 
   //   groups events
   SIDEBAR_GROUP_FILTER = "sidebar_group_filter",
-  COMMUNITY_GROUP_PAGE_VIEW = "community_group_page_view",
-  COMMUNITY_GROUP_PAGE_VIEW_DURATION = "community_group_page_view_duration",
+  //   COMMUNITY_GROUP_PAGE_VIEW = "community_group_page_view",
+  COMMUNITY_GROUP_PAGE_VIEW_DURATION = "community_group_page_view",
   NEW_COMMUNITY_GROUP = "new_community_group",
 
   //   register page events
-  REGISTER_PAGE_VIEW_DURATION = "register_page_view_duration",
-  UNIVERSITY_VERIFICATION_STEP_VIEW_DURATION = "university_verification_step_view_duration",
+  REGISTER_PAGE_VIEW_DURATION = "register_page_view",
+  UNIVERSITY_VERIFICATION_STEP_VIEW_DURATION = "university_verification_step_view",
+  REGISTRATION_COMPLETE = "registration_complete",
+  ACCOUNT_CREATION_STEP_VIEW_DURATION = 'account_creation_step_view',
+  PROFILE_SETUP_STEP_VIEW_DURATION = 'profile_setup_step_view',
+  PROFILE_STUDENT_SETUP_STEP_VIEW_DURATION = 'profile_student_setup_step_view',
+  PROFILE_FACULTY_SETUP_STEP_VIEW_DURATION = 'profile_faculty_setup_step_view',
+  EMAIL_VERIFICATION_STEP_VIEW_DURATION = 'email_verification_step_view',
 }

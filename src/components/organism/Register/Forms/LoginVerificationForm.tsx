@@ -12,6 +12,8 @@ import { OtpInput } from "react-native-otp-entry";
 import { useHandleLoginEmailVerificationGenerate } from "@/services/auth";
 import ReusableButton from "@/components/atoms/ReusableButton";
 import { ArrowLeft } from "iconoir-react-native";
+import { useTimeTracking } from "@/hooks/useTimeTracking";
+import { TRACK_EVENT } from "@/content/constant";
 
 interface Props {
   isVerificationSuccess: boolean;
@@ -45,6 +47,9 @@ const LoginVerificationForm = ({
     isError,
   } = useHandleLoginEmailVerificationGenerate();
 
+  useTimeTracking(TRACK_EVENT.EMAIL_VERIFICATION_STEP_VIEW_DURATION, {
+    email: getValues('email'),
+  });
   const handleLoginEmailSendCode = () => {
     if (!email) {
       setError("email", {

@@ -60,7 +60,7 @@ type Props = {
   setImageSrcErr: (err: boolean) => void;
   communityGroups: CommunityGroup | any;
   userStatus: any;
-  handleToggleJoinCommunityGroup: () => void;
+  handleToggleJoinCommunityGroup: (value?: string) => void;
   setModalVisible: (visible: boolean) => void;
   membersBottomSheet: React.RefObject<any>;
   communityLogoUrl: string;
@@ -111,7 +111,7 @@ const FlatListCommunityHeader: React.FC<Props> = ({
   );
 
   const onJoinPress = useCallback(
-    () => handleToggleJoinCommunityGroup(),
+    (value?: string) => handleToggleJoinCommunityGroup(value),
     [handleToggleJoinCommunityGroup]
   );
   const totalCommunityGroupMember = communityGroups?.users.filter(
@@ -518,12 +518,13 @@ const styles = StyleSheet.create({
     height: 48,
     justifyContent: "center",
     alignItems: "center",
+   
   },
 
   badgeWrapper: {
     position: "absolute",
     bottom: -10,
-    right: 12,
+    right: 14,
     width: 20,
     height: 20,
     borderRadius: 10,

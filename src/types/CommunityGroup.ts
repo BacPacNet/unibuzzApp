@@ -28,8 +28,8 @@ export interface CommunityGroupUsers {
 
 export const AllFiltersCommunityGroupPost = {
   myPosts: "Your Posts",
-  pendingPosts: "Pending Posts",
-  allPosts: "All Posts",
+  pendingPosts: "Pending",
+  allPosts: "All",
 };
 export enum communityPostUpdateStatus {
   LIVE = "live",

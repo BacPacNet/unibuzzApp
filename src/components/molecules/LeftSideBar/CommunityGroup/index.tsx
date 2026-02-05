@@ -45,11 +45,11 @@ const GroupSelectors = ({
       from: isCommunityGroup ? "CommunityGroup" : "Community",
     });
 
-    trackMixpanel(TRACK_EVENT.COMMUNITY_GROUP_PAGE_VIEW, {
-      communityId: selectCommunityId,
-      groupId: data?._id,
-      groupName: data?.title,
-    });
+    // trackMixpanel(TRACK_EVENT.COMMUNITY_GROUP_PAGE_VIEW, {
+    //   communityId: selectCommunityId,
+    //   groupId: data?._id,
+    //   groupName: data?.title,
+    // });
   };
 
   const isSelected = currSelectedGroup?._id === data?._id;
