@@ -1,17 +1,20 @@
 import React from "react";
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import { User, Settings, CubeScanSolid } from "iconoir-react-native";
+import RewardIcon from "@/components/atoms/RewardIcon";
+import { useHeader } from "@/context/HeaderProvider/Header";
 
-const menuItems = [
-  { title: "Profile", icon: <User width={22} height={22} color="#555" /> },
-  { title: "Settings", icon: <Settings width={22} height={22} color="#555" /> },
-  //   {
-  //     title: "Upgrades",
-  //     icon: <CubeScanSolid width={22} height={22} color="#555" />,
-  //   },
-];
 
 const SidebarMenuSectionOne = ({ navigation, handleClick }: any) => {
+  const { isUserEligibleForRewards } = useHeader();
+  const menuItems = isUserEligibleForRewards ? [
+    { title: "Profile", icon: <User width={22} height={22} color="#555" /> },
+    { title: "Settings", icon: <Settings width={22} height={22} color="#555" /> },
+    { title: "Rewards", icon: <RewardIcon width={22} height={22} color="#555" /> },
+  ] : [
+    { title: "Profile", icon: <User width={22} height={22} color="#555" /> },
+    { title: "Settings", icon: <Settings width={22} height={22} color="#555" /> },
+  ];
   return (
     <View style={styles.container}>
       {menuItems.map((item, index) => (

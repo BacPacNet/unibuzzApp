@@ -1,5 +1,6 @@
 import { useFirebaseMessaging } from "@/hooks/useFirebaseMessaging";
-import React, { createContext, useContext, useState, ReactNode } from "react";
+import { useGetUserEligibleForRewards } from "@/services/user";
+import React, { createContext, useContext, useState, ReactNode, useEffect } from "react";
 
 const HeaderContext = createContext<{
   showHeader: boolean;
@@ -8,6 +9,7 @@ const HeaderContext = createContext<{
   setCurrScreen: (value: string) => void;
   isTabBarVisible: boolean;
   setIsTabBarVisible: (value: boolean) => void;
+  isUserEligibleForRewards: boolean;
 }>({
   showHeader: true,
   changeHeaderShownStatus: () => {},
@@ -15,6 +17,7 @@ const HeaderContext = createContext<{
   setCurrScreen: () => {},
   isTabBarVisible: true,
   setIsTabBarVisible: () => {},
+  isUserEligibleForRewards: false,
 });
 
 interface HeaderProviderProps {
@@ -25,7 +28,14 @@ export const HeaderProvider: React.FC<HeaderProviderProps> = ({ children }) => {
   const [showHeader, setShowHeader] = useState(true);
   const [currScreen, setCurrScreen] = useState("");
   const [isTabBarVisible, setIsTabBarVisible] = useState(true);
+
+  const { data: userEligibleForRewardsData, isSuccess } = useGetUserEligibleForRewards()
+  const [isUserEligibleForRewards, setIsUserEligibleForRewards] = useState<boolean>(false);
   useFirebaseMessaging();
+
+  useEffect(() => {
+    setIsUserEligibleForRewards(userEligibleForRewardsData?.eligible || false)
+  }, [userEligibleForRewardsData])
 
   const changeHeaderShownStatus = (value: boolean) => {
     setShowHeader(value);
@@ -40,6 +50,7 @@ export const HeaderProvider: React.FC<HeaderProviderProps> = ({ children }) => {
         setCurrScreen,
         isTabBarVisible,
         setIsTabBarVisible,
+        isUserEligibleForRewards
       }}
     >
       {children}

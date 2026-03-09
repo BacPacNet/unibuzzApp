@@ -4,10 +4,8 @@ import {
   NavigationContainer,
   useNavigation,
 } from "@react-navigation/native";
-
 import { LoginScreen, RegisterScreen } from "@/screens";
 import { useTheme } from "@/theme";
-
 import type { RootStackParamList } from "@/types/navigation";
 import OnboardingScreen from "@/screens/OnboardingScreen/OnboardingScreen";
 import { useEffect, useMemo, useState } from "react";
@@ -18,9 +16,7 @@ import { useAuth } from "@/context/AuthProvider/AuthContext";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { Menu } from "iconoir-react-native";
 import Notifications from "@/screens/NotificationsScreen";
-import Messages from "@/screens/MessagesScreen";
-import AI_Assistant from "@/screens/AIAssistantScreen";
-import { Animated, Image, Platform, Pressable, Text, View } from "react-native";
+import {  Image, Platform, Pressable, Text, View } from "react-native";
 import { getUserStore, getUserProfileStore } from "@/storage/user";
 import { Drawer } from "react-native-drawer-layout";
 import { createDrawerNavigator } from "@react-navigation/drawer";
@@ -50,6 +46,8 @@ import NewGroupPost from "@/screens/NewGroupPost";
 import SettingsStack from "./SettingsStack";
 import SinglePost from "@/screens/SinglePost/SinglePost";
 import ForgetPasswordScreen from "@/screens/ForgetPasswordScreen/ForgetPasswordScreen";
+import RewardsScreen from "@/screens/RewardScreen";
+import RedeemRewardsScreen from "@/screens/RedeemRewardsScreen";
 import { getTabIcons } from "@/constant/tabIcons";
 import {
   useGetUserNotificationTotalCount,
@@ -61,11 +59,11 @@ import MembersScreen from "@/screens/MembersScreen";
 import MessageStack from "./MessageStack";
 import InfoStack from "./InfoStack";
 import AboutUs from "@/screens/AboutUs";
-import { SafeScreen } from "@/components/template";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { useTabBarVisibility } from "@/hooks/useTabBarVisibility";
-import { getSelectedCommunityGroup } from "@/storage/selected-community-group";
 import { linking } from "@/linking/linking";
+import ReusableButton from "@/components/atoms/ReusableButton";
+import RewardIcon from "@/components/atoms/RewardIcon";
+
 
 const Stack = createStackNavigator<RootStackParamList>();
 const Tab = createBottomTabNavigator<RootStackParamList>();
@@ -73,7 +71,7 @@ const noHeaderScreens = [];
 function ApplicationNavigator() {
   const { variant, navigationTheme } = useTheme();
   const insets = useSafeAreaInsets();
-  const { isAuthenticated, setAuthenticated, deauthenticate } = useAuth();
+  const { setAuthenticated,  } = useAuth();
   const [isAppFirstLaunched, setIsAppFirstLaunched] = useState<boolean | null>(
     null
   );
@@ -318,6 +316,20 @@ function ApplicationNavigator() {
             tabBarButton: () => null,
           }}
         />
+        <Tab.Screen
+          name="Rewards"
+          component={RewardsScreen}
+          options={{
+            tabBarButton: () => null,
+          }}
+        />
+        <Tab.Screen
+          name="RedeemRewards"
+          component={RedeemRewardsScreen}
+          options={{
+            tabBarButton: () => null,
+          }}
+        />
       </Tab.Navigator>
     );
   }
@@ -327,6 +339,7 @@ function ApplicationNavigator() {
   }
 
   function UserProfileDrawerContent({ navigation, setRightDrawerOpen }: any) {
+
     const closeDrawer = () => {
       setRightDrawerOpen(false);
     };
@@ -350,18 +363,22 @@ function ApplicationNavigator() {
       }
     };
     return (
+      <>
+
+     
       <RightSideSidebar
         navigation={navigation}
         handleClick={handleClick}
         closeDrawer={closeDrawer}
       />
+      </>
     );
   }
 
   const LeftDrawer = createDrawerNavigator();
 
   const LeftDrawerScreen = ({ navigation, setRightDrawerOpen }: any) => {
-    const { showHeader, currScreen } = useHeader();
+    const { showHeader, currScreen,isUserEligibleForRewards } = useHeader();
 
     //const animateHeader = useCallback(() => {
     //  LayoutAnimation.configureNext(
@@ -442,6 +459,20 @@ function ApplicationNavigator() {
                   <Text style={{ color: "#6744FF" }}>Create</Text>
                 </Pressable>
               )}*/}
+       
+        {isUserEligibleForRewards && (
+        <View className="">
+          <ReusableButton variant="primary"
+          height="x-small"
+          buttonContent={
+          <View className="flex flex-row items-center gap-2 px-4">
+          <RewardIcon width={12} height={12} fill={"white"} />
+          <Text className="text-white text-2xs" >Earn Cash</Text>
+          </View>
+          }
+          onPress={() => navigation.navigate("Rewards")} />
+        </View>
+      )}
               <Pressable onPress={() => setRightDrawerOpen(true)}>
                 <Image
                   className="w-8 h-8 rounded-full object-cover"

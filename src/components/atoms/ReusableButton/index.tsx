@@ -26,7 +26,7 @@ interface ReusableButtonProps {
   activityIndicatorColor?: string;
   size?: "w-full" | "w-1/2" | "small" | "fit" | number;
   isRounded?: boolean;
-  height?: "small" | "medium" | "large";
+  height?: "small" | "medium" | "large" | "x-small";
   textSize?: "text-sm" | "text-2xs";
 }
 
@@ -103,6 +103,7 @@ const ReusableButton: React.FC<ReusableButtonProps> = ({
         height === "large" ? styles.large : {},
         height === "medium" ? styles.medium : {},
         height === "small" ? styles.small : {},
+        height === "x-small" ? styles.xSmall : {},
         getSizeStyle(size),
       ]}
     >
@@ -136,6 +137,9 @@ const styles = StyleSheet.create({
   },
   small: {
     height: 36,
+  },
+  xSmall: {
+    height: 28,
   },
   buttonText: {
     fontFamily: FONTS.inter.medium,

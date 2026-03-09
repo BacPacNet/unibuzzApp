@@ -46,7 +46,7 @@ type Props = {
   isSideBar?: boolean;
   userId?: string;
   ProfileSize?: "small" | "large";
-  followers: userFollowing[];
+  followers?: userFollowing[];
 };
 
 type NavigationProp = StackNavigationProp<RootStackParamList, "Profile">;

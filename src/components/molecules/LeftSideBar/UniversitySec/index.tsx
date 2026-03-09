@@ -143,7 +143,7 @@ const UniversitySec = () => {
 
     const data = {
       selectedType: [],
-      selectedFilters: [],
+      selectedFilters: {},
       sort: "userCountDesc",
     };
 
