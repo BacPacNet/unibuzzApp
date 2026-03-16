@@ -5,7 +5,6 @@ import { NEXT_PUBLIC_CUSTOM_BASE_URL, NEXT_PUBLIC_API_BASE_URL } from "@env";
 import { forceDeauthenticate } from "@/hooks/Auth/forceDeautenticate";
 
 
-
 const api = axios.create({
   baseURL: NEXT_PUBLIC_API_BASE_URL,
 });
@@ -79,7 +78,6 @@ const client = async <T, U>(
 
   try {
     const response: AxiosResponse<ServerResponse<T>> = await api(config);
-
     const { data: resData } = response;
     return resData;
   } catch (err: any) {

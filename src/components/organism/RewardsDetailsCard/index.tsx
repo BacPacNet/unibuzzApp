@@ -67,6 +67,7 @@ export default function RewardsDetailsCard() {
     try {
       const result = await Share.share({ message: referralLink });
       if (result.action === Share.dismissedAction) return;
+      if (result.action === Share.sharedAction && result.activityType == null) return;
       setShared(true);
       showToast({ message: "Referral link shared", type: "success", placement: "top" });
       setTimeout(() => setShared(false), 2000);

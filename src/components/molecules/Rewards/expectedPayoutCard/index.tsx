@@ -52,6 +52,7 @@ const ExpectedPayoutCard = ({ amount, previousMonthRedeemed }: Props) => {
         height="medium"
         buttonText="Redeem Reward"
         onPress={handleRedeemReward}
+        disabled={amount === 0 || previousMonthRedeemed}
         isRounded={false}
       />
     </View>

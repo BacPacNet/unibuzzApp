@@ -265,8 +265,15 @@ const FormContainer = ({ step, setStep, setSubStep, subStep }: Props) => {
       setStep(3);
       setSubStep(2);
     } else {
-      setStep(step - 1);
+      const newStep = step - 1;
+      setStep(newStep);
       setSubStep(0);
+      // if on step 0 then also changing the stored data
+      if (newStep === 0) {
+        const data = { ...methods.getValues(), step: 0, subStep: 0 };
+        setRegisterData(data);
+        storeRegisterData(data);
+      }
     }
   };
 
