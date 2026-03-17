@@ -52,7 +52,7 @@ const UniversitySec = () => {
     mutate: mutateFilterCommunityGroups,
     data: filteredCommunityGroups,
     isPending,
-  } = useGetFilteredSubscribedCommunities(community?._id || "");
+  } = useGetFilteredSubscribedCommunities();
 
   const handleCommunityClick = (id: string) => {
     // trackMixpanel(TRACK_EVENT.UNIVERSITY_COMMUNITY_PAGE_VIEW, {
@@ -147,7 +147,7 @@ const UniversitySec = () => {
       sort: "userCountDesc",
     };
 
-    mutateFilterCommunityGroups(data);
+    mutateFilterCommunityGroups({ communityId: community._id, data });
   }, [community?._id, subscribedCommunities, refetchFilterCommunityGroups]);
 
   useEffect(() => {

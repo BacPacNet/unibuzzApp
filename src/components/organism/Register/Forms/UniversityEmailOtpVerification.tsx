@@ -130,6 +130,7 @@ const UniversityEmailOtpVerification = ({
                           theme={{
                             containerStyle: { width: 300, gap: 10 },
                             pinCodeContainerStyle: { height: 50 },
+                            pinCodeTextStyle: { color: "#3A3B3C" },
                           }}
                         />
                       );

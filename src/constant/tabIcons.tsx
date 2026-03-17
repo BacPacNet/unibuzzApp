@@ -27,7 +27,14 @@ export const getTabIcons = (
   | "Groups",
   (focused: boolean) => JSX.Element
 > =>
-  ({
+  (() => {
+    const hasValidLogo =
+      typeof logo === "string" &&
+      logo.trim().length > 0 &&
+      logo !== "null" &&
+      logo !== "undefined";
+
+    return {
     Home: (focused: boolean) => (
       <HomeSimpleDoor
         fill={focused ? "#6744FF" : "#6B7280"}
@@ -44,7 +51,7 @@ export const getTabIcons = (
           borderRadius: 28 / 2,
         }}
       >
-        {logo ? (
+        {hasValidLogo ? (
           focused || isCommunityGroup ? (
             <Image
               source={{ uri: logo }}
@@ -142,4 +149,5 @@ export const getTabIcons = (
     BuzzBot: (focused: boolean) => (
       <Spark height={28} width={28} color={focused ? "#6744FF" : "black"} />
     ),
-  }) satisfies Record<string, (focused: boolean) => JSX.Element>;
+  } satisfies Record<string, (focused: boolean) => JSX.Element>;
+  })();

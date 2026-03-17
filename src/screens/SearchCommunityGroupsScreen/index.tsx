@@ -78,7 +78,7 @@ const SearchCommunityGroupScreen = () => {
     mutate,
     data: subscribedCommunities,
     isPending,
-  } = useGetFilteredSubscribedCommunities(selectedCommunityId || communityId);
+  } = useGetFilteredSubscribedCommunities();
 
   const {
     selectedTypeMain,
@@ -175,7 +175,11 @@ const SearchCommunityGroupScreen = () => {
     subscribedCommunitiesAllGroups,
   ]);
 
+  const effectiveCommunityId = selectedCommunityId || communityId;
+
   useEffect(() => {
+    if (!effectiveCommunityId) return;
+
     const data = {
       selectedType: selectedTypeMain,
       selectedFilters: selectedFiltersMain,
@@ -183,18 +187,20 @@ const SearchCommunityGroupScreen = () => {
       selectedLabel: selectedLabelMain,
     };
 
-
-    mutate(data, {
-      onSuccess: (res: any) => {
-        trackMixpanel(TRACK_EVENT.SIDEBAR_GROUP_FILTER, {
-          communityId,
-          selectedFilters: selectedFiltersMain,
-          selectedType: selectedTypeMain,
-          selectedLabel: selectedLabelMain,
-          sort,
-        });
-      },
-    });
+    mutate(
+      { communityId: effectiveCommunityId, data },
+      {
+        onSuccess: (res: any) => {
+          trackMixpanel(TRACK_EVENT.SIDEBAR_GROUP_FILTER, {
+            communityId,
+            selectedFilters: selectedFiltersMain,
+            selectedType: selectedTypeMain,
+            selectedLabel: selectedLabelMain,
+            sort,
+          });
+        },
+      }
+    );
   }, [
     sort,
     communityId,
@@ -203,6 +209,7 @@ const SearchCommunityGroupScreen = () => {
     change,
     selectedLabelMain,
     selectedCommunityId,
+    effectiveCommunityId,
     mutate,
   ]);
 

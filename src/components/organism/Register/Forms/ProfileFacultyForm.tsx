@@ -109,6 +109,7 @@ const ProfileFacultyForm = ({
             control={control}
             label="Department"
             rules={{ required: "Department is required!" }}
+            search={true}
           />
         </View>
       </View>

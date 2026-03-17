@@ -45,8 +45,9 @@ export async function getUserFilteredSubscribedCommunities(
   token: string,
   data: any
 ) {
-
-  
+  if (!communityId?.trim()) {
+    throw new Error("Community ID is required");
+  }
   const response: any = await client(`/community/filtered/${communityId}`, {
     method: "POST",
     headers: { Authorization: `Bearer ${token}` },
@@ -55,11 +56,19 @@ export async function getUserFilteredSubscribedCommunities(
   return response;
 }
 
-export function useGetFilteredSubscribedCommunities(communityId: string = "") {
+export type FilteredSubscribedCommunitiesPayload = {
+  communityId: string;
+  data: any;
+};
+
+/**
+ * Pass communityId at mutate time to avoid race conditions (e.g. community
+ * not set yet on first render). Usage: mutate({ communityId, data })
+ */
+export function useGetFilteredSubscribedCommunities() {
   const cookieValue = getToken() as string;
-  const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (data: any) =>
+    mutationFn: ({ communityId, data }: FilteredSubscribedCommunitiesPayload) =>
       getUserFilteredSubscribedCommunities(communityId, cookieValue, data),
 
     onError: (res: any) => {
