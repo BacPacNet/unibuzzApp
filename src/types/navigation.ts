@@ -8,7 +8,6 @@ export type RootStackParamList = {
   RegisterScreen: undefined;
   ForgetPassword: any;
   Rewards: undefined;
-  RedeemRewards: { amount: number };
   Timeline: undefined;
   NewPost: undefined;
   ProfileStack: any;

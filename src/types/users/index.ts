@@ -234,15 +234,25 @@ export interface ReferralsResponse {
 
 
 export interface RewardsResponse {
-  previousMonthProgress: number
-  previousMonthReward: number
   referCode: string
+  totalInvites: number
+  totalEarning: number
   thisMonthProgress: number
+  previousMonthProgress: number
   thisMonthReward: number
-  previousMonthRedeemed: boolean
+  previousMonthReward: number
+  thisMonthLeftoverInvites: number
+  previousMonthLeftoverInvites: number
+  currentUPI: string | null
 }
 
 export interface EligibleForRewardsResponse {
   eligible: boolean
 }
 
+
+
+
+export interface UpdateLatestRewardRedemptionUpiIdPayload {
+  upiId: string;
+}

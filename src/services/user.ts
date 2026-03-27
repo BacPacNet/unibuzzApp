@@ -1,9 +1,9 @@
-import { useInfiniteQuery, useMutation, useQuery } from "@tanstack/react-query";
+import { useInfiniteQuery, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { client } from "./api-client";
 import { getToken } from "@/storage/token";
 import { Toast } from "react-native-toast-notifications";
 import { storeUser } from "@/storage/user";
-import { EligibleForRewardsResponse, IUserProfileResponse, ReferralsResponse, RewardsResponse } from "@/types/users";
+import { EligibleForRewardsResponse, IUserProfileResponse, ReferralsResponse, RewardsResponse, UpdateLatestRewardRedemptionUpiIdPayload } from "@/types/users";
 import { useHandleDeletePushNotificationToken } from "./pushNotification";
 
 import { showToast } from "@/utils/toastWrapper";
@@ -265,22 +265,27 @@ export function useGetUserEligibleForRewards() {
 }
 
 
-const postUserRequestRewards = async (
-  data: { awsEmail: string },
-  token: string
-) => {
-  const res = await client(`/users/rewards/request`, {
-    method: "POST",
+
+export async function updateLatestRewardRedemptionUpiId(token: string, data: UpdateLatestRewardRedemptionUpiIdPayload) {
+  const response = await client(`/users/rewards/latest/upi-id`, {
+    method: 'PUT',
     headers: { Authorization: `Bearer ${token}` },
     data,
-  });
-  return res;
-};
-
-export function usePostUserRequestRewards() {
-  const cookieValue = getToken() as string;
-  return useMutation({
-    mutationFn: (data: { awsEmail: string }) =>
-      postUserRequestRewards(data, cookieValue),
-  });
+  })
+  return response
 }
+
+export function useUpdateLatestRewardRedemptionUpiId() {
+  const cookieValue = getToken() as string;
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: (data: UpdateLatestRewardRedemptionUpiIdPayload) => updateLatestRewardRedemptionUpiId(cookieValue, data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['getUserRewards'] })
+    },
+  })
+}
+
+
+

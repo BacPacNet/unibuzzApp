@@ -11,6 +11,7 @@ type Props = {
   isActive?: boolean;
   isCompleted?: boolean;
   isDisabled?: boolean;
+  showEarned?: boolean;
 };
 
 const MilestoneCard = ({
@@ -20,6 +21,7 @@ const MilestoneCard = ({
   isActive = false,
   isCompleted = false,
   isDisabled = false,
+  showEarned = false,
 }: Props) => {
   return (
     <View
@@ -33,7 +35,7 @@ const MilestoneCard = ({
         <View
           style={[
             styles.circle,
-            isCompleted && styles.circleDefault,
+            !isCompleted ? styles.circleDefault : styles.circleCompleted,
           ]}
         >
           {isCompleted ? (
@@ -59,14 +61,19 @@ const MilestoneCard = ({
         </View>
       </View>
       <View style={styles.rewardSection}>
-        <Text
+        {/* <Text
           style={[styles.rewardAmount, isActive && styles.textPrimary]}
         >
           ₹{rewardAmount}
         </Text>
         {isActive && (
           <Text style={[styles.earnedText, styles.textPrimary]}>Earned</Text>
-        )}
+        )} */}
+
+
+{!showEarned && !isCompleted ? <Text style={[styles.rewardAmount, isActive && styles.textPrimary]}>₹{rewardAmount}</Text> : showEarned ? <Text style={[styles.rewardAmount, styles.textPrimary]}>₹{rewardAmount}</Text> : ''}
+
+{showEarned ? <Text style={[styles.earnedText, styles.textPrimary]}>Earned</Text> : ''}
       </View>
     </View>
   );
@@ -100,12 +107,14 @@ const styles = StyleSheet.create({
   circle: {
     width: 48,
     height: 48,
-    borderRadius: 24,
+    borderRadius: 360,
     alignItems: "center",
     justifyContent: "center",
+    
+    
   },
   circleDefault: {
-    backgroundColor: "#F3F2FF",
+ backgroundColor:"#F3F2FF"
   },
   circleCompleted: {
     // backgroundColor: PRIMARY,

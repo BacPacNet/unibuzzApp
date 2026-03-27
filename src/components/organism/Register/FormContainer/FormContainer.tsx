@@ -172,11 +172,13 @@ const FormContainer = ({ step, setStep, setSubStep, subStep }: Props) => {
   const userUniversityEmailVerification = async (data: {
     universityEmail: string;
     UniversityOtp: string;
+    universityId: string;
   }) => {
     try {
       const dataToSend: any = {
         universityEmail: data.universityEmail,
         UniversityOtp: data.UniversityOtp,
+        universityId: data.universityId,
       };
       dataToSend.isUniversityVerified = true;
       const isAvailable =
@@ -364,7 +366,13 @@ const FormContainer = ({ step, setStep, setSubStep, subStep }: Props) => {
         methods.setValue("isUniversityVerified", true);
         methods.setValue("universityEmail", data?.email);
 
-        storeRegisterData({ ...data, isUniversityVerified: true,universityEmail: data?.email, step: 4, subStep: 0 });
+        storeRegisterData({
+          ...data,
+          isUniversityVerified: true,
+          universityEmail: data?.email,
+          step: 4,
+          subStep: 0,
+        });
         setStep(4);
         setSubStep(0);
       }
