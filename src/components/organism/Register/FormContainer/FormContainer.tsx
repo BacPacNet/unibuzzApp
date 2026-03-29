@@ -265,8 +265,15 @@ const FormContainer = ({ step, setStep, setSubStep, subStep }: Props) => {
       setStep(3);
       setSubStep(2);
     } else {
-      setStep(step - 1);
+      const newStep = step - 1;
+      setStep(newStep);
       setSubStep(0);
+      // if on step 0 then also changing the stored data
+      if (newStep === 0) {
+        const data = { ...methods.getValues(), step: 0, subStep: 0 };
+        setRegisterData(data);
+        storeRegisterData(data);
+      }
     }
   };
 
@@ -321,6 +328,7 @@ const FormContainer = ({ step, setStep, setSubStep, subStep }: Props) => {
         step: currStep,
         subStep: currSubStep,
       };
+
       setRegisterData(newData);
       storeRegisterData(newData);
     };
@@ -348,14 +356,17 @@ const FormContainer = ({ step, setStep, setSubStep, subStep }: Props) => {
 
     if (step === 3 && subStep === 0) {
       const isAvailable = await userLoginEmailVerification(data);
+      // return console.log("isAvailable",isAvailable);
       if (isAvailable?.isAvailable && !isAvailable?.isUniversityDomain) {
         handleNext();
         saveToLocalStorage();
       } else if (isAvailable?.isAvailable && isAvailable?.isUniversityDomain) {
-        data.isUniversityVerified = true;
-        data.universityEmail = data.email;
-        handleNext();
-        saveToLocalStorage();
+        methods.setValue("isUniversityVerified", true);
+        methods.setValue("universityEmail", data?.email);
+
+        storeRegisterData({ ...data, isUniversityVerified: true,universityEmail: data?.email, step: 4, subStep: 0 });
+        setStep(4);
+        setSubStep(0);
       }
 
       return;
@@ -363,9 +374,8 @@ const FormContainer = ({ step, setStep, setSubStep, subStep }: Props) => {
 
     if (step === 3 && subStep === 2) {
       const isAvailable = await userUniversityEmailVerification(data);
-
       if (isAvailable?.isAvailable) {
-        data.isUniversityVerified = true;
+        methods.setValue("isUniversityVerified", true);
         handleNext();
         saveToLocalStorage();
       }

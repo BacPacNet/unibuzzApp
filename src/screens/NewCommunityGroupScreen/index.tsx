@@ -64,7 +64,7 @@ const NewCommunityGroupScreen = () => {
   const userData = getUserStore();
   // Data fetching
   const { data: communityData, isFetching } = useGetCommunity(communityId);
-  const { mutate } = useGetFilteredSubscribedCommunities(communityId);
+  const { mutate } = useGetFilteredSubscribedCommunities();
 
   // Form handling
   const {

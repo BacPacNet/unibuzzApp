@@ -11,20 +11,15 @@ import {
 import { useForm } from "react-hook-form";
 import { Camera, UserPlus, User, NavArrowLeft, X } from "iconoir-react-native";
 import ReusableButton from "@/components/atoms/ReusableButton";
-
 import {
   useCreateGroupChat,
   useGetUserFollowingAndFollowers,
 } from "@/services/Messages";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
-
 import ActionSheet, { ActionSheetRef } from "react-native-actions-sheet";
-
 import SelectUsersForGroupChat from "../SelectUsersForGroupChat";
 import { launchImageLibrary } from "react-native-image-picker";
 import { replaceImage } from "@/services/uploadImage";
-import SelectBottomSheet from "../../SelectBottomSheet";
-import { currYear, occupationAndDepartment, value } from "@/types/register";
 import BackHeader from "@/components/atoms/BackHeader";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 

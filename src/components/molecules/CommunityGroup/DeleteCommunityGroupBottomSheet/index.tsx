@@ -25,7 +25,7 @@ const DeleteCommunityGroupBottomSheet = ({
     mutate: handleDeleteCommunityGroup,
     isPending: isDeleteCommunityGroupPending,
   } = useDeleteCommunityGroup();
-  const { mutate } = useGetFilteredSubscribedCommunities(communityId);
+  const { mutate } = useGetFilteredSubscribedCommunities();
   const handleDeleteCommunityGroupFunction = () => {
     const data = {
       selectedType: [],
@@ -35,7 +35,7 @@ const DeleteCommunityGroupBottomSheet = ({
 
     handleDeleteCommunityGroup(communityGroupId as string, {
       onSuccess: () => {
-        mutate(data);
+        mutate({ communityId, data });
         navigate("Groups", {
           screen: "SearchCommunityGroupScreen",
 
