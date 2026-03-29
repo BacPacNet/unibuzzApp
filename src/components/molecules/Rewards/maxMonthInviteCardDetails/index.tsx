@@ -10,7 +10,8 @@ const MaxMonthInviteCardDetails = () => {
         After your first 20 invites, you’ll earn <Text style={styles.highlight}>₹100</Text> for every
          <Text style={styles.highlight}> additional 5 invites</Text>. Subsequent milestones occur at 
          <Text style={styles.highlight}> 25</Text>,<Text style={styles.highlight}> 30</Text>, 
-         <Text style={styles.highlight}> 35</Text>, and so on.
+         <Text style={styles.highlight}> 35</Text>, and so on. Milestones will reset on the 1st of
+         every month.
       </Text>
     </View>
   );

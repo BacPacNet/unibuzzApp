@@ -1,18 +1,15 @@
 import React, { useMemo, useState } from "react";
-import { View, Text, StyleSheet, TextInput, Share, ActivityIndicator } from "react-native";
+import { View, Text, StyleSheet, Share, ActivityIndicator } from "react-native";
 import { NEXT_PROD_FE_BASE_URL } from "@env";
 import ReusableButton from "@/components/atoms/ReusableButton";
-import ExpectedPayoutCard from "@/components/molecules/Rewards/expectedPayoutCard";
 import MaxMonthInviteCardDetails from "@/components/molecules/Rewards/maxMonthInviteCardDetails";
 import MilestoneCard from "@/components/molecules/Rewards/milestoneCard";
 import MonthProgressCard from "@/components/molecules/Rewards/monthProgressCard";
-import RewardInfoCard from "@/components/molecules/Rewards/rewardInfoCard";
 import { useGetUserRewards } from "@/services/user";
 import { showToast } from "@/utils/toastWrapper";
-import InfoIcon from "@/assets/rewards/info.svg";
-import GiftIcon from "@/assets/rewards/gift.svg";
-import RedeemIcon from "@/assets/rewards/redem.svg";
 import { FONTS } from "@/constants/fonts";
+import EarningsHistoryCard from "@/components/molecules/Rewards/earningHistoryCard";
+import RedeemRewardsCard from "@/components/molecules/Rewards/redeemRewardCard";
 
 const rewardTiers = [
   {
@@ -32,27 +29,12 @@ const rewardTiers = [
   },
 ]
 
-const cards = [
-  {
-    Icon: InfoIcon,
-    title: 'Monthly Reset',
-    description: 'Milestones reset on the 1st of every month. Start fresh and earn more rewards!',
-  },
-  {
-    Icon: GiftIcon,
-    title: 'Gift Card Delivery',
-    description: 'Gift cards will be sent to your login email (personal or university email).',
-  },
-  {
-    Icon: RedeemIcon,
-    title: 'Redemption',
-    description: 'Rewards are redeemable on or after 1st April 2026. Gift cards will be issued in multiples of ₹100.',
-  },
-]
 
 export default function RewardsDetailsCard() {
   const { data, isLoading, error } = useGetUserRewards();
   const [shared, setShared] = useState(false);
+  const currentProgress = data?.thisMonthProgress || 0
+  const latestCompletedMilestone = rewardTiers.filter((tier) => currentProgress >= tier.invitesRequired).at(-1)?.invitesRequired || null
 
   const referralCode = (data?.referCode || "").toUpperCase();
   const referralLink = useMemo(() => {
@@ -100,7 +82,7 @@ export default function RewardsDetailsCard() {
       <View style={styles.header}>
         <Text style={styles.title}>Rewards</Text>
         <Text style={styles.subtitle}>
-          Share your unique link, and earn cash rewards when a student or faculty member from your current university signs up.
+        Share your unique link and earn cash rewards when someone from your university signs up. <Text style={styles.highlight}>Only verified students or faculty from your current university</Text> will count toward your rewards, so please remind them to complete their university verification during or after signing up!
         </Text>
       </View>
 
@@ -119,11 +101,6 @@ export default function RewardsDetailsCard() {
         </View>
       )}
 
-      <ExpectedPayoutCard
-        amount={data?.previousMonthReward || 0}
-        previousMonthRedeemed={data?.previousMonthRedeemed || false}
-      />
-
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>Milestones</Text>
         <MonthProgressCard
@@ -133,16 +110,18 @@ export default function RewardsDetailsCard() {
 
         <View style={styles.list}>
           {rewardTiers.map((tier) => {
-            const progress = data?.thisMonthProgress || 0;
-            const reached = progress >= tier.invitesRequired;
+            const isActive = currentProgress >= tier.invitesRequired
+            const isCompleted = currentProgress >= tier.invitesRequired
+            const showEarned = latestCompletedMilestone === tier.invitesRequired
             return (
               <MilestoneCard
                 key={tier.invitesRequired}
                 invitesRequired={tier.invitesRequired}
                 rewardAmount={tier.rewardAmount}
                 perInviteAmount={tier.perInviteAmount}
-                isActive={reached}
-                isCompleted={reached}
+                isActive={isActive}
+                isCompleted={isCompleted}
+                showEarned={showEarned}
                 isDisabled={false}
               />
             );
@@ -152,19 +131,10 @@ export default function RewardsDetailsCard() {
         <MaxMonthInviteCardDetails />
       </View>
 
-      <View style={styles.section}>
-        <Text style={styles.sectionTitle}>How it Works</Text>
-        <View style={styles.list}>
-          {cards.map((card) => (
-            <RewardInfoCard
-              key={card.title}
-              Icon={card.Icon as any}
-              title={card.title}
-              description={card.description}
-            />
-          ))}
-        </View>
-      </View>
+
+      <RedeemRewardsCard currentUpiId={data?.currentUPI || null} />
+      <EarningsHistoryCard completedReferrals={data?.totalInvites || 0} totalEarnings={data?.totalEarning || 0} />
+
     </View>
   );
 }
@@ -197,6 +167,11 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: "#3A3B3C",
     fontWeight: "400",
+  },
+  highlight: {
+    fontSize: 16,
+    color: "#3A3B3C",
+    fontWeight: "600",
   },
   errorText: {
     fontSize: 14,
@@ -240,4 +215,5 @@ const styles = StyleSheet.create({
     flexDirection: "column",
     gap: 12,
   },
+
 });

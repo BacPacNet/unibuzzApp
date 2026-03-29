@@ -17,6 +17,7 @@ type FormDataType = {
   UniversityOtp: string;
   universityEmail: string;
   universityName: string;
+  universityId: string;
 };
 
 export enum universitySettingsScreen {
@@ -40,7 +41,7 @@ const UniversityVerificationScreen = ({ route }: any) => {
   const userProfileData = getUserProfileStore();
   const email: any = userProfileData?.email || [];
   const [currScreen, setCurrScreen] = useState(
-    universitySettingsScreen.currentJoined
+    universitySettingsScreen.currentJoined,
   );
 
   const [showLoader, setShowLoader] = useState(false);
@@ -62,6 +63,7 @@ const UniversityVerificationScreen = ({ route }: any) => {
       universityEmail: universityEmail,
       UniversityOtp: otp,
       universityName: universityName,
+      universityId,
     };
     setShowLoader(true);
     mutateAddUniversity(data, {

@@ -47,7 +47,6 @@ import SettingsStack from "./SettingsStack";
 import SinglePost from "@/screens/SinglePost/SinglePost";
 import ForgetPasswordScreen from "@/screens/ForgetPasswordScreen/ForgetPasswordScreen";
 import RewardsScreen from "@/screens/RewardScreen";
-import RedeemRewardsScreen from "@/screens/RedeemRewardsScreen";
 import { getTabIcons } from "@/constant/tabIcons";
 import {
   useGetUserNotificationTotalCount,
@@ -323,13 +322,7 @@ function ApplicationNavigator() {
             tabBarButton: () => null,
           }}
         />
-        <Tab.Screen
-          name="RedeemRewards"
-          component={RedeemRewardsScreen}
-          options={{
-            tabBarButton: () => null,
-          }}
-        />
+ 
       </Tab.Navigator>
     );
   }
