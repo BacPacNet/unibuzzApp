@@ -3,7 +3,7 @@ import { client } from "./api-client";
 import { getToken } from "@/storage/token";
 import { Toast } from "react-native-toast-notifications";
 import { storeUser } from "@/storage/user";
-import { IUserProfileResponse, ReferralsResponse } from "@/types/users";
+import { EligibleForRewardsResponse, IUserProfileResponse, ReferralsResponse, RewardsResponse } from "@/types/users";
 import { useHandleDeletePushNotificationToken } from "./pushNotification";
 
 import { showToast } from "@/utils/toastWrapper";
@@ -229,5 +229,58 @@ export function useGetUserReferrals() {
     queryKey: ["getUserReferrals"],
     queryFn: () => getUserReferrals(cookieValue),
     enabled: !!cookieValue,
+  });
+}
+
+
+
+
+export async function getUserRewards(token: string): Promise<RewardsResponse> {
+  const response = await client<RewardsResponse, any>(`/users/rewards`, { headers: { Authorization: `Bearer ${token}` } })
+  return response
+}
+
+export function useGetUserRewards() {
+  const cookieValue = getToken() as string;
+  return useQuery({
+    queryKey: ['getUserRewards'],
+    queryFn: () => getUserRewards(cookieValue),
+    enabled: !!cookieValue,
+  })
+}
+
+
+export async function getUserEligibleForRewards(token: string): Promise<EligibleForRewardsResponse> {
+  const response = await client<EligibleForRewardsResponse, any>(`/users/eligible`, { headers: { Authorization: `Bearer ${token}` } })
+  return response
+}
+
+export function useGetUserEligibleForRewards() {
+  const cookieValue = getToken() as string;
+  return useQuery({
+    queryKey: ['getUserEligibleForRewards'],
+    queryFn: () => getUserEligibleForRewards(cookieValue),
+    enabled: !!cookieValue,
+  })
+}
+
+
+const postUserRequestRewards = async (
+  data: { awsEmail: string },
+  token: string
+) => {
+  const res = await client(`/users/rewards/request`, {
+    method: "POST",
+    headers: { Authorization: `Bearer ${token}` },
+    data,
+  });
+  return res;
+};
+
+export function usePostUserRequestRewards() {
+  const cookieValue = getToken() as string;
+  return useMutation({
+    mutationFn: (data: { awsEmail: string }) =>
+      postUserRequestRewards(data, cookieValue),
   });
 }

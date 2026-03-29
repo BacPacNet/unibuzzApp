@@ -6,12 +6,14 @@ import { useTheme } from "@/theme";
 
 function SafeScreen({
   children,
+  allowTopPadding = true,
   className = "bg-white",
   style,
 }: {
   children: React.ReactNode;
   className?: string;
   style?: StyleProp<ViewStyle>;
+  allowTopPadding?: boolean;
 }) {
   const { layout, variant, navigationTheme } = useTheme();
   const insets = useSafeAreaInsets();
@@ -22,7 +24,7 @@ function SafeScreen({
         layout.flex_1,
         {
           // Paddings to handle safe area
-          paddingTop: insets.top,
+          paddingTop: allowTopPadding ? insets.top : 0,
           paddingBottom: insets.bottom,
           //   paddingLeft: insets.left + 16,
           //   paddingRight: insets.right + 16,

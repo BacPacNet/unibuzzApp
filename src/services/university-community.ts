@@ -45,6 +45,8 @@ export async function getUserFilteredSubscribedCommunities(
   token: string,
   data: any
 ) {
+
+  
   const response: any = await client(`/community/filtered/${communityId}`, {
     method: "POST",
     headers: { Authorization: `Bearer ${token}` },

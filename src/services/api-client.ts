@@ -79,6 +79,7 @@ const client = async <T, U>(
 
   try {
     const response: AxiosResponse<ServerResponse<T>> = await api(config);
+
     const { data: resData } = response;
     return resData;
   } catch (err: any) {

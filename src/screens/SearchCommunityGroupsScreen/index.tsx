@@ -179,9 +179,10 @@ const SearchCommunityGroupScreen = () => {
     const data = {
       selectedType: selectedTypeMain,
       selectedFilters: selectedFiltersMain,
-      sort,
+      sort: sort || "latest",
       selectedLabel: selectedLabelMain,
     };
+
 
     mutate(data, {
       onSuccess: (res: any) => {
