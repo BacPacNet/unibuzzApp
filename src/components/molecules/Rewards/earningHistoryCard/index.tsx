@@ -32,7 +32,11 @@ function MetricCard({ title, value, icon }: MetricCardProps) {
 export default function EarningsHistoryCard({ completedReferrals, totalEarnings }: EarningsHistoryCardProps) {
   return (
     <View style={styles.container}>
-      <Text style={styles.heading}>Earnings History</Text>
+   <View style={styles.header}>
+   <Text style={styles.heading}>Earnings History</Text>
+      <Text style={styles.infoText}>You can see your total referral earnings calculated up to the end of the previous month.</Text>
+      
+   </View>
       <View style={styles.metricList}>
         <MetricCard
           title="Completed Referrals"
@@ -59,6 +63,9 @@ export default function EarningsHistoryCard({ completedReferrals, totalEarnings 
 const styles = StyleSheet.create({
   container: {
     gap: 12,
+  },
+  header: {
+    gap: 2,
   },
   heading: {
     fontSize: 20,
@@ -101,5 +108,12 @@ const styles = StyleSheet.create({
     lineHeight: 28,
     color: "#18191A",
     fontFamily: FONTS.poppins.semiBold,
+  },
+  infoText: {
+    color: "#3A3B3C",
+    fontSize: 14,
+    lineHeight: 20,
+    fontFamily: FONTS.inter.regular,
+    includeFontPadding: false,
   },
 });
