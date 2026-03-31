@@ -1,6 +1,6 @@
 {
   "name": "Unibuzz",
-  "version": "0.1.13",
+  "version": "0.1.14",
   "private": true,
   "scripts": {
     "android": "react-native run-android",
@@ -50,6 +50,7 @@
     "react-native-circular-progress": "^1.4.1",
     "react-native-color-matrix-image-filters": "^7.0.2",
     "react-native-date-picker": "^5.0.10",
+    "react-native-device-info": "^15.0.2",
     "react-native-document-picker": "^9.3.1",
     "react-native-dotenv": "^3.4.11",
     "react-native-drawer-layout": "^4.1.1",

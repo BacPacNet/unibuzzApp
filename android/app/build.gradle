@@ -80,8 +80,8 @@ android {
         applicationId "com.unibuzzapp"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 46
-        versionName "0.1.13"
+        versionCode 47
+        versionName "0.1.14"
     }
     
     kotlinOptions {
