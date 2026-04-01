@@ -80,14 +80,14 @@ android {
         applicationId "com.unibuzzapp"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 47
-        versionName "0.1.14"
+        versionCode 48
+        versionName "0.1.15"
     }
-    
+
     kotlinOptions {
         jvmTarget = "17"
     }
-    
+
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_17
         targetCompatibility JavaVersion.VERSION_17
@@ -97,7 +97,7 @@ android {
             storeFile file('debug.keystore')
             storePassword 'android'
             keyAlias 'androiddebugkey'
-            keyPassword 'android'   
+            keyPassword 'android'
         }
         release {
             if (project.hasProperty('MYAPP_UPLOAD_STORE_FILE')) {
@@ -133,11 +133,11 @@ dependencies {
     }
     // Temporarily comment out Firebase Analytics to resolve Kotlin compatibility issues
     // implementation("com.google.firebase:firebase-analytics")
-    
+
     // Force compatible versions of Google Play Services
     implementation('com.google.android.gms:play-services-measurement-api:21.5.0')
     implementation('com.google.android.gms:play-services-measurement-impl:21.5.0')
-    
+
     if (hermesEnabled.toBoolean()) {
         implementation("com.facebook.react:hermes-android")
     } else {

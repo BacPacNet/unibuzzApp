@@ -1,16 +1,20 @@
-import React, { useCallback, useEffect, useRef } from "react";
-import { Alert, AppState, Linking, Platform, type AppStateStatus } from "react-native";
+import { useCallback, useEffect, useRef } from "react";
+import {
+  Alert,
+  AppState,
+  Linking,
+  Platform,
+  type AppStateStatus,
+} from "react-native";
 
 type ForceUpdateModalProps = {
   visible: boolean;
-  currentVersion: string;
-  minRequiredVersion: string;
+  message: string;
 };
 
 export default function ForceUpdateModal({
   visible,
-  currentVersion,
-  minRequiredVersion,
+  message,
 }: ForceUpdateModalProps) {
   const lastShownAtRef = useRef<number>(0);
 
@@ -18,7 +22,9 @@ export default function ForceUpdateModal({
     if (Platform.OS === "ios") {
       Linking.openURL("https://apps.apple.com/us/app/unibuzz-app/id6751199821");
     } else {
-      Linking.openURL("https://play.google.com/store/apps/details?id=com.unibuzzapp&hl=en-US");
+      Linking.openURL(
+        "https://play.google.com/store/apps/details?id=com.unibuzzapp&hl=en-US",
+      );
     }
   };
 
@@ -31,7 +37,7 @@ export default function ForceUpdateModal({
 
     Alert.alert(
       "Update required",
-      `Your app version (${currentVersion}) is no longer supported. Please update to at least ${minRequiredVersion} to continue.`,
+      `${message}`,
       [
         {
           text: "Update",
@@ -45,7 +51,7 @@ export default function ForceUpdateModal({
       ],
       { cancelable: false },
     );
-  }, [visible, currentVersion, minRequiredVersion]);
+  }, [visible]);
 
   useEffect(() => {
     if (!visible) return;
