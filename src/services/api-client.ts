@@ -3,6 +3,8 @@ import { RequestData, ServerResponse } from "@/models/api-client";
 import axios, { AxiosRequestConfig, AxiosResponse } from "axios";
 import { NEXT_PUBLIC_CUSTOM_BASE_URL, NEXT_PUBLIC_API_BASE_URL } from "@env";
 import { forceDeauthenticate } from "@/hooks/Auth/forceDeautenticate";
+import { Platform } from "react-native";
+import DeviceInfo from "react-native-device-info";
 
 const api = axios.create({
   baseURL: NEXT_PUBLIC_API_BASE_URL,
@@ -53,7 +55,13 @@ const client = async <T, U>(
       : `${NEXT_PUBLIC_API_BASE_URL}/${endpoint}`,
     method: method || (data ? "POST" : "GET"),
     data: data ? JSON.stringify(data) : undefined,
-    headers: { ...headers, "Content-Type": "application/json" },
+    headers: {
+      ...headers,
+      "Content-Type": "application/json",
+      "X-Client-Type": "app",
+      "X-Client-Platform": Platform.OS,
+      "X-App-Version": DeviceInfo.getVersion(),
+    },
     params: {
       id,
       page,
@@ -80,8 +88,6 @@ const client = async <T, U>(
     const { data: resData } = response;
     return resData;
   } catch (err: any) {
-    console.log(err.response.data.message === "jwt expired");
-
     return Promise.reject(err);
   }
 };
