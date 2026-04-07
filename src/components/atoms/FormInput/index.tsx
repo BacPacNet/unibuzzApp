@@ -18,6 +18,7 @@ interface FormInputProps {
   disabled?: boolean;
   isTextArea?: boolean;
   currentValue?: string;
+  maxLength?: number;
 }
 
 export const FormInput = forwardRef<View, FormInputProps>(
@@ -37,9 +38,13 @@ export const FormInput = forwardRef<View, FormInputProps>(
       disabled = false,
       isTextArea = false,
       currentValue,
+      maxLength,
     },
     ref
   ) => {
+    const effectiveMaxLength =
+      keyboardType === "email-address" ? undefined : (maxLength ?? 50);
+
     return (
       // ✅ Single root native element with ref
       <View ref={ref} style={styles.container}>
@@ -53,7 +58,13 @@ export const FormInput = forwardRef<View, FormInputProps>(
         <Controller
           control={control}
           name={name}
-          rules={rules}
+          // rules={rules}
+          rules={{ ...rules, validate: (value) => {
+            if (effectiveMaxLength && value.length > effectiveMaxLength) {
+              return `This field must be less than ${effectiveMaxLength} characters`;
+            }
+            return true;
+          } }}
           render={({ field: { onChange, value } }) => (
             <TextInput
               editable={!disabled}
@@ -74,6 +85,7 @@ export const FormInput = forwardRef<View, FormInputProps>(
               multiline={isTextArea}
               numberOfLines={isTextArea ? 4 : 1}
               textAlignVertical={isTextArea ? "top" : "center"}
+              // maxLength={effectiveMaxLength}
             />
           )}
         />

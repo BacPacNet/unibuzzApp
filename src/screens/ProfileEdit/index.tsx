@@ -4,7 +4,6 @@ import {
   Text,
   ScrollView,
   TouchableOpacity,
-  SafeAreaView,
   KeyboardAvoidingView,
   Platform,
   StyleSheet,
@@ -34,7 +33,6 @@ import { Toast } from "react-native-toast-notifications";
 import SelectUniversityDropdownBottomSheet from "@/components/atoms/SelectUniversityDropDownBottomSheet";
 import CommunityLogo from "@/components/atoms/LogoHolder";
 import { FONTS } from "@/constants/fonts";
-import ImagePicker from "react-native-image-crop-picker";
 import ActionSheet, { ActionSheetRef } from "react-native-actions-sheet";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import ImageOptionSelectBottomSheet from "@/components/molecules/ImageOptionSelectBottomSheet";

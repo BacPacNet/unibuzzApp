@@ -180,7 +180,7 @@ const MessageUserStickyBar = ({
                 : "bg-neutral-300"
             }`}
           /> */}
-          <Text className="text-neutral-700 font-bold text-sm">{name}</Text>
+          <Text style={{ width: "65%" }} numberOfLines={1} ellipsizeMode="tail"  className="text-neutral-700 font-bold text-sm ">{name}</Text>
         </TouchableOpacity>
       </View>
       <View className="flex flex-row gap-4 items-center">
@@ -244,4 +244,5 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
+
 });
