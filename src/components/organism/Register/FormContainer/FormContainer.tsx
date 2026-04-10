@@ -23,7 +23,6 @@ import {
   useHandleUniversityEmailVerificationGenerate,
   useHandleUserEmailAndUserNameAvailability,
 } from "@/services/auth";
-import VerificationOption from "../Forms/VerificationOption";
 import UniversityEmailOtpVerification from "../Forms/UniversityEmailOtpVerification";
 import { useTimeTracking } from "@/hooks/useTimeTracking";
 import { TRACK_EVENT } from "@/content/constant";
@@ -118,9 +117,11 @@ const FormContainer = ({ step, setStep, setSubStep, subStep }: Props) => {
     }
   }, [registerData]);
   const currEmail = methods.watch("email");
+  const referralCode = methods.watch("referralCode");
   useTimeTracking(TRACK_EVENT.REGISTER_PAGE_VIEW_DURATION, {
     isRegistrationCompleted: registeredData?.isRegistered || false,
     email: currEmail || "",
+    referralCode: referralCode || "",
   });
 
   const userCheck = async (data: { email: string; userName: string }) => {
@@ -199,9 +200,13 @@ const FormContainer = ({ step, setStep, setSubStep, subStep }: Props) => {
       subStep === 0 &&
       methods.getValues("userType") == userTypeEnum.Applicant
     ) {
-      const newStep = step + 1;
-      setStep(newStep);
-      return setSubStep(0);
+      // Step 2 is deprecated; applicants move directly to login verification.
+      setStep(3);
+      setSubStep(0);
+      const data = {
+        email: methods.getValues("email"),
+      };
+      return generateLoginEmailOTP(data);
     } else if (
       step === 1 &&
       subStep === 0 &&
@@ -239,15 +244,12 @@ const FormContainer = ({ step, setStep, setSubStep, subStep }: Props) => {
       return;
     } else if (step === 1 && subStep === 1) {
       return setSubStep(0);
-    } else if (
-      step === 2 &&
-      subStep === 0 &&
-      methods.getValues("userType") !== userTypeEnum.Applicant
-    ) {
-      setStep(step - 1);
-      return setSubStep(1);
-    } else if (step === 2 && subStep === 1) {
-      setSubStep(0);
+    } else if (step === 2) {
+      // Guard legacy state: route back to profile setup path.
+      setStep(1);
+      setSubStep(
+        methods.getValues("userType") == userTypeEnum.Applicant ? 0 : 1,
+      );
     } else if (step === 3 && subStep === 2) {
       setSubStep(1);
     } else if (step === 3) {
@@ -294,18 +296,8 @@ const FormContainer = ({ step, setStep, setSubStep, subStep }: Props) => {
       subStep == 0 &&
       methods.getValues("userType") == userTypeEnum.Applicant
     ) {
-      currStep = 2;
-    } else if (
-      step === 2 &&
-      subStep === 0 &&
-      methods.getValues("userType") !== userTypeEnum.Applicant
-    ) {
-      currSubStep += 1;
-    } else if (
-      step === 2 &&
-      subStep === 0 &&
-      methods.getValues("userType") == userTypeEnum.Applicant
-    ) {
+      currStep = 3;
+    } else if (step === 2 && subStep === 0) {
       currStep = 3;
     } else if (step === 3 && subStep === 0) {
       currStep = 3;
@@ -438,11 +430,11 @@ const FormContainer = ({ step, setStep, setSubStep, subStep }: Props) => {
       );
     } else if (step === 2) {
       return (
-        <VerificationOption
-          setStep={setStep}
-          setSubStep={setSubStep}
+        <LoginVerificationForm
+          onSubmit={onSubmit}
+          isVerificationSuccess={userLoginEmailVerificationSuccess}
+          isPending={userLoginEmailVerificationIsPending}
           handlePrev={() => handlePrev()}
-          email={methods.getValues("email")}
         />
       );
     } else if (step === 3 && subStep === 0) {
@@ -483,6 +475,7 @@ const FormContainer = ({ step, setStep, setSubStep, subStep }: Props) => {
         <LoginForm
           email={methods.getValues("email")}
           password={methods.getValues("password")}
+          referralCode={referralCode || ""}
         />
       );
     }

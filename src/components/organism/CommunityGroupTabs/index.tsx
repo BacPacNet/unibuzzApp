@@ -65,6 +65,7 @@ const CommunityGroupTabs = ({
             communityLogo={communityLogo}
             isCommunityGroup={isCommunityGroup}
             selectCommunityId={communityId}
+            errMessage="You haven't joined any groups yet. Groups you join will appear here"
           />
         );
       case "My":

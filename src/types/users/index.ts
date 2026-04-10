@@ -229,6 +229,8 @@ export interface Referral {
 export interface ReferralsResponse {
   totalReferrals: number;
   referCode: string;
+  currentPage: number;
+  totalPages: number;
   referrals: Referral[];
 }
 

@@ -19,9 +19,10 @@ const PROGRESS_WIDTH = 10;
 interface LoginData {
   email: string;
   password: string;
+  referralCode?: string;
 }
 
-const LoginForm: React.FC<LoginData> = ({ email, password }) => {
+const LoginForm: React.FC<LoginData> = ({ email, password, referralCode }) => {
   // State
   const [countdown, setCountdown] = useState(COUNTDOWN_DURATION);
   const [isCounting, setIsCounting] = useState(true);
@@ -67,6 +68,7 @@ const LoginForm: React.FC<LoginData> = ({ email, password }) => {
       mutateLogin(loginData());
       trackMixpanel(TRACK_EVENT.REGISTRATION_COMPLETE, {
         email: loginData()?.email,
+        referralCode: referralCode || "",
       });
     }
   }, [hasTriggeredLogin, mutateLogin, loginData]);

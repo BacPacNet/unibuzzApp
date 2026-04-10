@@ -215,19 +215,32 @@ export const useDeleteUserAccount = () => {
 };
 
 export async function getUserReferrals(
-  token: string
+  token: string,
+  page: number,
+  limit: number
 ): Promise<ReferralsResponse> {
-  const response = await client<ReferralsResponse, any>(`/users/referrals`, {
-    headers: { Authorization: `Bearer ${token}` },
-  });
+  const response = await client<ReferralsResponse, any>(
+    `/users/referrals?page=${page}&limit=${limit}`,
+    {
+      headers: { Authorization: `Bearer ${token}` },
+    }
+  );
   return response;
 }
 
-export function useGetUserReferrals() {
+export function useGetUserReferrals(limit: number = 10) {
   const cookieValue = getToken() as string;
-  return useQuery({
-    queryKey: ["getUserReferrals"],
-    queryFn: () => getUserReferrals(cookieValue),
+  return useInfiniteQuery({
+    queryKey: ["getUserReferrals", limit],
+    queryFn: ({ pageParam = 1 }) =>
+      getUserReferrals(cookieValue, pageParam, limit),
+    getNextPageParam: (lastPage) => {
+      if (lastPage.currentPage < lastPage.totalPages) {
+        return lastPage.currentPage + 1;
+      }
+      return undefined;
+    },
+    initialPageParam: 1,
     enabled: !!cookieValue,
   });
 }
