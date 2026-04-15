@@ -14,7 +14,8 @@ export async function getAllUsersForConnections(
   major: string[],
   occupation: string[],
   affiliation: string[],
-  chatId?: string
+  chatId?: string,
+  role?: "student" | "faculty"
 ): Promise<ProfileConnection> {
   const params = new URLSearchParams();
 
@@ -22,6 +23,7 @@ export async function getAllUsersForConnections(
   params.append("limit", String(limit));
   if (name) params.append("name", name);
   if (universityName) params.append("universityName", universityName);
+  if (role) params.append("role", role);
   if (studyYear?.length) params.append("studyYear", studyYear.join(","));
   if (major?.length) params.append("major", major.join(","));
   if (occupation?.length) params.append("occupation", occupation.join(","));
@@ -41,7 +43,8 @@ export function useUsersProfileForConnections(
   major?: string[],
   occupation?: string[],
   affiliation?: string[],
-  chatId?: string
+  chatId?: string,
+  role?: "student" | "faculty"
 ) {
   const cookieValue = getToken() as string;
   const debouncedSearchTerm = useDebounce(name, 1000);
@@ -59,7 +62,8 @@ export function useUsersProfileForConnections(
         major || [],
         occupation || [],
         affiliation || [],
-        chatId
+        chatId,
+        role
       ),
     getNextPageParam: (lastPage) => {
       if (lastPage.currentPage < lastPage.totalPages) {

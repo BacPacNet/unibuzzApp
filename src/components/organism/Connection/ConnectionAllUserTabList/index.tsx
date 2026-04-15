@@ -27,6 +27,7 @@ const ConnectionAllUserTabList: React.FC<{
   const userProfileData = useMemo(() => getUserProfileStore(), []);
   const [selectedFilters, setSelectedFilters] = useState({
     selectedRadio: "",
+    role: null as "student" | "faculty" | null,
     studentYear: [],
     major: [],
     occupation: [],
@@ -69,7 +70,9 @@ const ConnectionAllUserTabList: React.FC<{
     selectedFilters.studentYear,
     selectedFilters.major,
     selectedFilters.occupation,
-    selectedFilters.affiliation
+    selectedFilters.affiliation,
+    undefined,
+    selectedFilters.role || undefined
   );
 
   const userProfiles = useMemo(
@@ -84,6 +87,7 @@ const ConnectionAllUserTabList: React.FC<{
     fetchUserProfiles();
     setSelectedFilters({
       selectedRadio: "",
+      role: null,
       studentYear: [],
       major: [],
       occupation: [],
