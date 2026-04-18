@@ -56,7 +56,7 @@ const SearchCommunityGroupScreen = () => {
   const [refreshing, setRefreshing] = useState(false);
   const [currTab, setCurrTab] = useState<
     (typeof SearchCommunityGroupTabs)[keyof typeof SearchCommunityGroupTabs]
-  >(SearchCommunityGroupTabs.Joined);
+  >(SearchCommunityGroupTabs.All);
   const {
     setSelectedCommunityGroupLogo,
     setSelectedCommunityId,

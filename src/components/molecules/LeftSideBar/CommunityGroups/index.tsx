@@ -13,6 +13,7 @@ type Props = {
   communityLogo: string;
   isCommunityGroup: boolean;
   selectCommunityId: string;
+  errMessage?: string;
 };
 
 function CommunityGroupAll({
@@ -27,13 +28,14 @@ function CommunityGroupAll({
   communityLogo,
   isCommunityGroup,
   selectCommunityId,
+  errMessage
 }: Props) {
   if (isCommunityGroupsLoading || communityGroups == undefined)
     return <ActivityIndicator />;
   if (communityGroups?.length === 0)
     return (
-      <Text className="text-center text-neutral-500 mt-4">
-        Joined groups will appear here.
+      <Text className="text-center text-neutral-500 mt-4 px-2">
+        {errMessage || "Joined groups will appear here."}
       </Text>
     );
 
