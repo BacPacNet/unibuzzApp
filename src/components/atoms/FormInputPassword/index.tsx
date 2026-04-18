@@ -70,7 +70,12 @@ export function FormInputPassword({
         <Controller
           control={control}
           name={name}
-          rules={rules}
+          rules={{ ...rules, validate: (value) => {
+            if (value.length > 16) {
+              return "Password must be less than 16 characters";
+            }
+            return true;
+          } }}
           render={({ field: { onChange, value } }) => (
             <TextInput
               placeholder={placeholder}

@@ -1,6 +1,6 @@
 {
   "name": "Unibuzz",
-  "version": "0.1.15",
+  "version": "0.1.16",
   "private": true,
   "scripts": {
     "android": "react-native run-android",
@@ -15,7 +15,7 @@
     "prettier-write": "prettier . --write"
   },
   "dependencies": {
-    "@10play/tentap-editor": "^0.6.1",
+    "@10play/tentap-editor": "^1.0.1",
     "@expo/vector-icons": "^14.0.4",
     "@gorhom/bottom-sheet": "^5.0.6",
     "@react-native-firebase/app": "^22.4.0",
@@ -71,7 +71,7 @@
     "react-native-svg": "^15.11.1",
     "react-native-toast-notifications": "^3.4.0",
     "react-native-ui-datepicker": "^2.0.4",
-    "react-native-webview": "^13.13.2",
+    "react-native-webview": "^13.16.1",
     "relative-time": "^1.0.0",
     "socket.io-client": "^4.8.1",
     "zod": "^3.23.8"

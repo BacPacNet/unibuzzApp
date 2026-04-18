@@ -29,7 +29,6 @@ import {
   ScrollView,
   StyleSheet,
   Text,
-  TouchableOpacity,
   View,
 } from "react-native";
 import ActionSheet, { ActionSheetRef } from "react-native-actions-sheet";
@@ -110,9 +109,7 @@ const EditCommunityGroupScreen = () => {
   const initialDescription = watch("description") || "";
   const communityGroupAccess = watch("communityGroupAccess") || "";
   const communityGroupLabel = watch("communityGroupLabel") || "";
-  const communityGroupType = watch("communityGroupType") || "";
-  const selectedUsers = watch("selectedUsers") || [];
-  const selectedFilters = watch("selectedFilters") || [];
+
 
   const imageOptionActionSheetRef = useRef<ActionSheetRef>(null);
   const insets = useSafeAreaInsets();

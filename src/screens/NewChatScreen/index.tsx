@@ -204,7 +204,7 @@ export default function NewChatScreen() {
                     control={control}
                     isError={!!errors.groupName}
                     errorMessage={
-                      errors.groupName ? "Group Name is required" : ""
+                      errors.groupName ? errors.groupName.message?.toString() : "Group Name is required"
                     }
                   />
                   <MessageNewGroupFormContainer ref={formRef} chatId="" />
@@ -218,7 +218,7 @@ export default function NewChatScreen() {
       <View style={styles.buttonContainer}>
         <ReusableButton
           buttonText="Start Chat"
-          onPress={() => handleIndividualUserClick()}
+          onPress={handleSubmit(handleIndividualUserClick)}
           variant="primary"
           height={"large"}
           isLoading={userChatPending || groupChatPending}

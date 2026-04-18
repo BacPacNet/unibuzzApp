@@ -1,6 +1,6 @@
 /* eslint-disable import/no-unresolved */
 import { RequestData, ServerResponse } from "@/models/api-client";
-import axios, { AxiosRequestConfig, AxiosResponse } from "axios";
+import axios, { AxiosError, AxiosRequestConfig, AxiosResponse } from "axios";
 import { NEXT_PUBLIC_CUSTOM_BASE_URL, NEXT_PUBLIC_API_BASE_URL } from "@env";
 import { forceDeauthenticate } from "@/hooks/Auth/forceDeautenticate";
 import { Platform } from "react-native";
@@ -9,6 +9,36 @@ import DeviceInfo from "react-native-device-info";
 const api = axios.create({
   baseURL: NEXT_PUBLIC_API_BASE_URL,
 });
+
+const GENERIC_SERVER_ERROR_MESSAGE =
+  "Something went wrong on our end. We're working to fix it as soon as possible. Please try again soon";
+
+const normalizeAxiosError = (error: unknown) => {
+  if (!axios.isAxiosError(error)) {
+    return error;
+  }
+
+  const axiosError = error as AxiosError<{ message?: string }>;
+  const statusCode = axiosError.response?.status;
+
+  if (!axiosError.response || (statusCode && statusCode >= 500)) {
+    return {
+      ...axiosError,
+      message: GENERIC_SERVER_ERROR_MESSAGE,
+      response: axiosError.response
+        ? {
+            ...axiosError.response,
+            data: {
+              ...axiosError.response.data,
+              message: GENERIC_SERVER_ERROR_MESSAGE,
+            },
+          }
+        : axiosError.response,
+    };
+  }
+
+  return error;
+};
 
 api.interceptors.response.use(
   (response) => response,
@@ -19,7 +49,7 @@ api.interceptors.response.use(
     ) {
       return forceDeauthenticate();
     }
-    return Promise.reject(error);
+    return Promise.reject(normalizeAxiosError(error));
   },
 );
 
@@ -87,8 +117,8 @@ const client = async <T, U>(
     const response: AxiosResponse<ServerResponse<T>> = await api(config);
     const { data: resData } = response;
     return resData;
-  } catch (err: any) {
-    return Promise.reject(err);
+  } catch (err: unknown) {
+    return Promise.reject(normalizeAxiosError(err));
   }
 };
 

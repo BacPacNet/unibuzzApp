@@ -74,6 +74,7 @@ const NewPost = ({ navigation }: any) => {
         color: "#84affe",
         width: 2,
       }),
+      
     ],
   });
   const toggleEventCall = useCallback((actionName: string) => {

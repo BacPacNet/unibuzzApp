@@ -131,8 +131,10 @@ function LoginScreen() {
                 height="large"
               />
               {isError && (
-                <Text className="text-red-500 text-sm mt-4 text-center">
-                  {error?.response?.data.message || "Something went wrong!"}
+                <Text className="text-red-500 text-sm mt-4 mb-2 text-center">
+                  {(error as any)?.response?.data?.message ||
+                    error?.message ||
+                    "Something went wrong!"}
                 </Text>
               )}
             </View>

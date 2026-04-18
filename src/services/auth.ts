@@ -46,9 +46,6 @@ export const useHandleLogin = () => {
       //    response.tokens.refresh.expires
       //  );
     },
-    onError: async (error: any) => {
-      console.log(error.name, "error");
-    },
   });
 };
 

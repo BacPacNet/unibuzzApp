@@ -47,7 +47,6 @@ export default function EditChatScreen({ route }: any) {
     control,
     handleSubmit,
     formState: { errors },
-    getValues,
   } = useForm({
     defaultValues: {
       groupName: groupCurrentName,
@@ -89,7 +88,7 @@ export default function EditChatScreen({ route }: any) {
   const { mutateAsync: uploadToS3 } = useUploadToS3();
   const { mutateAsync: editGroup, isPending } = useEditGroupChat(chatId);
 
-  const handleIndividualUserClick = async () => {
+  const handleIndividualUserClick = async (data: { groupName: string }) => {
     const formValues = formRef.current?.getFormValues();
     const filteredFaculty = formRef.current.getFilteredFacultyUsers();
     const filteredStudents = formRef.current.getFilteredUsers();
@@ -116,14 +115,12 @@ export default function EditChatScreen({ route }: any) {
       ...filteredFaculty.map((user: { users_id: string }) => user.users_id),
     ];
 
-    const groupName = getValues("groupName");
-
     const dataTopush = {
       groupLogo: ImageData?.groupLogo,
-      groupName: groupName,
+      groupName: data.groupName,
 
       users: mergedUsers,
-      community: formValues?.community,
+      // community: formValues?.community,
     };
 
     await editGroup(dataTopush);
@@ -171,7 +168,8 @@ export default function EditChatScreen({ route }: any) {
             name="groupName"
             control={control}
             isError={!!errors.groupName}
-            errorMessage={errors.groupName ? "Group Name is required" : ""}
+            errorMessage={errors.groupName ? errors.groupName.message?.toString() : "Group Name is required"}
+          maxLength={50}
           />
           <MessageNewGroupFormContainer ref={formRef} chatId={chatId} />
         </View>
@@ -180,7 +178,7 @@ export default function EditChatScreen({ route }: any) {
       <View style={styles.buttonContainer}>
         <ReusableButton
           buttonText="Update Chat"
-          onPress={() => handleIndividualUserClick()}
+          onPress={handleSubmit(handleIndividualUserClick)}
           variant="primary"
           height={"large"}
           isLoading={isPending}
