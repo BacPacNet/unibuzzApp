@@ -12,7 +12,10 @@ import { useDeleteCommunityPostComment } from "@/services/communityPost";
 import { userTypeEnum } from "@/types/register";
 import UserCard from "../UserCard";
 import { timeAgo } from "@/utils";
-import { htmlStyles } from "@/utils/renderHtlmStyles";
+import {
+  formatHtmlContentForCodeBlocks,
+  htmlStyles,
+} from "@/utils/renderHtlmStyles";
 
 const UserComment = ({
   postId,
@@ -131,7 +134,7 @@ const UserComment = ({
       <View>
         <RenderHTML
           contentWidth={width}
-          source={{ html: item?.content }}
+          source={{ html: formatHtmlContentForCodeBlocks(item?.content) }}
           tagsStyles={htmlStyles.tagsStyles}
           classesStyles={htmlStyles.classesStyles}
           ignoredDomTags={["label", "input"]}

@@ -82,6 +82,7 @@ const ConnectionsFilter = () => {
   const handleApplyFilters = () => {
     const { logoUrl, ...filteredValues } = getValues();
 
+    filteredValues.role = selectedType;
     if (!filteredValues?.universityName) {
       Toast.hideAll();
       Toast.show("Please select a filter to apply");
@@ -102,11 +103,16 @@ const ConnectionsFilter = () => {
       setValue("universityId", paramValues?.Currvalues?.universityId);
       setValue("communityId", paramValues?.Currvalues?.communityId);
       setValue("selectedUsers", paramValues?.Currvalues?.selectedUsers);
+      setSelectedType(paramValues?.Currvalues?.role ?? null);
+      return;
     }
+
+    setSelectedType(null);
   }, [paramValues]);
 
   const resetFilters = () => {
     reset();
+    setSelectedType(null);
   };
 
   const handleBack = () => {

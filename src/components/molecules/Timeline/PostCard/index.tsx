@@ -37,7 +37,10 @@ import {
   NEXT_DEV_FE_BASE_URL,
 } from "@env";
 import { ContentType } from "@/types/report-content";
-import { htmlStyles } from "@/utils/renderHtlmStyles";
+import {
+  formatHtmlContentForCodeBlocks,
+  htmlStyles,
+} from "@/utils/renderHtlmStyles";
 
 type ScreenNavigationProp = StackNavigationProp<RootStackParamList, "Home">;
 
@@ -286,7 +289,7 @@ const PostCard = memo(
           <View className="px-4">
             <RenderHtml
               contentWidth={width}
-              source={{ html: data?.content }}
+              source={{ html: formatHtmlContentForCodeBlocks(data?.content) }}
               tagsStyles={htmlStyles.tagsStyles}
               classesStyles={htmlStyles.classesStyles}
               ignoredDomTags={["label", "input"]}

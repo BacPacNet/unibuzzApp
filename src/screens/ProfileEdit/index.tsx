@@ -72,7 +72,7 @@ export default function ProfileEdit() {
       study_year: "",
       university_name: "",
       universityId: "",
-      communityId: "",
+      // communityId: "",
       universityLogo: "",
     },
   });
@@ -105,7 +105,6 @@ export default function ProfileEdit() {
   useEffect(() => {
     if (userProfile) {
       const { firstName, lastName, gender, profile } = userProfile || {};
-
       // Set individual form values when userProfile data loads
       setValue("firstName", firstName || "");
       setValue("lastName", lastName || "");
@@ -123,7 +122,7 @@ export default function ProfileEdit() {
       setValue("study_year", profile?.study_year || "");
       setValue("university_name", profile?.university_name || "");
       setValue("universityId", profile?.university_id || "");
-      setValue("communityId", profile?.communityId || "");
+      // setValue("communityId", profile?.communityId || "");
       setValue("universityLogo", profile?.universityLogo || "");
 
       setPreviewProfileImage(profile?.profile_dp?.imageUrl);
