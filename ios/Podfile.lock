@@ -1395,6 +1395,8 @@ PODS:
     - React-utils (= 0.74.5)
   - RNCMaskedView (0.3.1):
     - React-Core
+  - RNDeviceInfo (15.0.2):
+    - React-Core
   - RNFBApp (22.4.0):
     - Firebase/CoreOnly (= 11.15.0)
     - React-Core
@@ -1681,6 +1683,7 @@ DEPENDENCIES:
   - React-utils (from `../node_modules/react-native/ReactCommon/react/utils`)
   - ReactCommon/turbomodule/core (from `../node_modules/react-native/ReactCommon`)
   - "RNCMaskedView (from `../node_modules/@react-native-masked-view/masked-view`)"
+  - RNDeviceInfo (from `../node_modules/react-native-device-info`)
   - "RNFBApp (from `../node_modules/@react-native-firebase/app`)"
   - "RNFBMessaging (from `../node_modules/@react-native-firebase/messaging`)"
   - RNGestureHandler (from `../node_modules/react-native-gesture-handler`)
@@ -1842,6 +1845,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native/ReactCommon"
   RNCMaskedView:
     :path: "../node_modules/@react-native-masked-view/masked-view"
+  RNDeviceInfo:
+    :path: "../node_modules/react-native-device-info"
   RNFBApp:
     :path: "../node_modules/@react-native-firebase/app"
   RNFBMessaging:
@@ -1942,6 +1947,7 @@ SPEC CHECKSUMS:
   React-utils: 9fa4e5d0b5e6c6c85c958f19d6ef854337886417
   ReactCommon: 9f285823dbe955099978d9bff65a7653ca029256
   RNCMaskedView: de80352547bd4f0d607bf6bab363d826822bd126
+  RNDeviceInfo: 4c852998208b60dc192ae3529e5867817719ad1e
   RNFBApp: 12884d3bf9b3a0223efe4a0adce516edf72c4102
   RNFBMessaging: e954bfb053a5c6bb10b26bae4bbc58a4edd41131
   RNGestureHandler: d5aafad9a7d1506a8bcab6fbc04384372c8ca86b
