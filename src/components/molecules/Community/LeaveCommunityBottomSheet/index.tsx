@@ -26,12 +26,16 @@ const LeaveCommunityBottomSheet = ({
       </Text>
 
       <View style={styles.listContainer}>
-        <Text style={styles.bulletPoint}>
-          • You'll need to rejoin your groups.
-        </Text>
-        <Text style={styles.bulletPoint}>
-          • Group members will lose access to your groups.
-        </Text>
+        <View style={styles.bulletRow}>
+          <Text style={styles.bulletSymbol}>•</Text>
+          <Text style={styles.bulletPoint}>You'll need to rejoin your groups.</Text>
+        </View>
+        <View style={styles.bulletRow}>
+          <Text style={styles.bulletSymbol}>•</Text>
+          <Text style={styles.bulletPoint}>
+            Group members will lose access to your groups.
+          </Text>
+        </View>
       </View>
 
       <View style={styles.communityContainer}>
@@ -83,17 +87,28 @@ const styles = StyleSheet.create({
   },
   listContainer: {
     marginTop: 4,
-    width:"auto",
-    display:"flex",
-    flexDirection:"column",
-    justifyContent:"flex-start",
-    gap:2,
-   
+    width: "100%",
+    display: "flex",
+    flexDirection: "column",
+    justifyContent: "flex-start",
+    gap: 2,
+  },
+  bulletRow: {
+    flexDirection: "row",
+    alignItems: "flex-start",
+  },
+  bulletSymbol: {
+    color: "#374151",
+    fontSize: 14,
+    marginRight: 6,
+    lineHeight: 22,
   },
   bulletPoint: {
     color: "#374151",
     fontSize: 14,
-    
+    flex: 1,
+    flexWrap: "wrap",
+    lineHeight: 22,
   },
   communityContainer: {
     flexDirection: "row",

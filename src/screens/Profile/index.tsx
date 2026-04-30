@@ -12,7 +12,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { FlatListProfileHeaderPart } from "@/components/molecules/Profile/FlatListProfileHeader";
 import { LoadingState } from "@/components/atoms/LoadingState";
 import { styles } from "./styles";
-import { ProfileProps } from "./types";
+import { ProfileProps, ProfileRouteParams } from "./types";
 import { screenName } from "@/constant/screenName";
 import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
@@ -27,7 +27,7 @@ type NavigationProp = StackNavigationProp<RootStackParamList, "SinglePost">;
 
 const Profile = ({ route }: ProfileProps) => {
   const navigation = useNavigation<NavigationProp>();
-  const { userId } = route.params;
+  const { userId, values } = route.params as ProfileRouteParams;
   const chatId = (route?.params?.chatId as any) || null;
   const from = route?.params?.from || "";
   const userData = getUserStore();
@@ -118,7 +118,13 @@ const Profile = ({ route }: ProfileProps) => {
         screen: "Messages",
         params: { selectedUserId: chatId },
       });
-    } else {
+    }
+    if (from === screenName.connections) {
+      navigation.navigate("Connections", {
+        screen: "Connections",
+        params: { values },
+      });
+    } else {  
       navigation.goBack();
     }
   };

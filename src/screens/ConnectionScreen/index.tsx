@@ -9,11 +9,12 @@ import ConnectionFollowingUserTabList from "@/components/organism/Connection/Con
 
 const Connections = () => {
   const paramValues: any = useRoute().params;
-  const [filterParams, setFilterParams] = useState(paramValues?.values);
+  const incomingValues = paramValues?.values ?? paramValues?.params?.values;
+  const [filterParams, setFilterParams] = useState(incomingValues);
 
   useEffect(() => {
-    setFilterParams(paramValues?.values);
-  }, [paramValues]);
+    setFilterParams(paramValues?.values ?? paramValues?.params?.values ?? null);
+  }, [paramValues?.values, paramValues?.params?.values]);
 
   const dummyTabs = [
     {
