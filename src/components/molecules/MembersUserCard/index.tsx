@@ -11,6 +11,7 @@ import ActionSheet, { ActionSheetRef } from "react-native-actions-sheet";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import OfficailLogoPlaceHolder from "@/assets/community/official-logo.svg";
 import UserMinus from "@/assets/icons/user-minus.svg";
+import { screenName } from "@/constant/screenName";
 interface Props {
   _id: string;
   firstName: string;
@@ -36,6 +37,7 @@ interface Props {
   showRemoveButton?: boolean;
   forCommunityGroup?: boolean;
   isVerifiedUserOfCommunity?: boolean;
+  values?: any;
 }
 const MembersUserCard = ({
   _id,
@@ -61,6 +63,7 @@ const MembersUserCard = ({
   showRemoveButton = false,
   forCommunityGroup = false,
   isVerifiedUserOfCommunity = false,
+  values,
 }: Props) => {
   const navigate = useNavigation() as any;
   const { mutateAsync: toggleFollow } = useToggleFollow(isFollowing, false);
@@ -95,7 +98,8 @@ const MembersUserCard = ({
   const handleNavigate = (id: string) => {
     navigate.navigate("ProfileStack", {
       screen: "Profile",
-      params: { userId: id },
+      params: { userId: id, values, from: screenName.connections },
+      
     });
   };
 

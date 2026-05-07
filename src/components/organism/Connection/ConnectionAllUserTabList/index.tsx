@@ -178,6 +178,7 @@ const ConnectionAllUserTabList: React.FC<{
           isSelfProfile={userProfileData?.users_id === item._id}
           isViewerAdmin={userProfileData?.users_id === item._id}
           isGroupAdmin={false}
+          values={values}
         />
       )}
       getItemLayout={(_, index) => ({ length: 80, offset: 80 * index, index })}

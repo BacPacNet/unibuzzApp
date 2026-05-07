@@ -1,14 +1,14 @@
-import { ProfileStackParamList } from "@/navigators/ProfileStack";
 import { RouteProp } from "@react-navigation/native";
 
 export interface ProfileRouteParams {
   userId: string;
+  values?: any;
   from?: string;
   chatId?: string;
 }
 
 export interface ProfileProps {
-  route: RouteProp<ProfileStackParamList, "Profile">;
+  route: RouteProp<{ Profile: ProfileRouteParams }, "Profile">;
 }
 
 export interface ProfileData {

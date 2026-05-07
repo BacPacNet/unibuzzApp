@@ -29,8 +29,8 @@ const DeleteCommunityGroupBottomSheet = ({
   const handleDeleteCommunityGroupFunction = () => {
     const data = {
       selectedType: [],
-      selectedFilters: [],
-      sort: "",
+      selectedFilters: {},
+      sort: "userCountDesc",
     };
 
     handleDeleteCommunityGroup(communityGroupId as string, {

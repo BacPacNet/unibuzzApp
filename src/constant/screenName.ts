@@ -6,4 +6,5 @@ export const screenName = {
   message: "message",
   profile: "profile",
   UniversityVerification: "UniversityVerification",
+  connections: "connections",
 };
