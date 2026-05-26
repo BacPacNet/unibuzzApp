@@ -12,7 +12,7 @@ import { getUserProfileStore } from "@/storage/user";
 import { defaultBottomSheetSnapPoints } from "@/types/constant";
 import { UPLOAD_CONTEXT } from "@/types/uploads";
 import { NavArrowDown, Search, User } from "iconoir-react-native";
-import { useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import {
   View,
   Text,
@@ -31,6 +31,7 @@ import { AllUserSelectBottomSheet } from "@/components/molecules/Message/UserBot
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import ImageOptionSelectBottomSheet from "@/components/molecules/ImageOptionSelectBottomSheet";
 import { handleTakePhoto, pickImage } from "@/utils";
+import { isApplicantRole } from "@/lib/userProfileSubtitle";
 
 type NavigationProp = StackNavigationProp<RootStackParamList, "NewChatScreen">;
 export default function NewChatScreen() {
@@ -47,6 +48,7 @@ export default function NewChatScreen() {
     },
   });
   const userProfileData = getUserProfileStore();
+  const isApplicantUser = isApplicantRole(userProfileData?.role);
   const formRef = useRef<any>(null);
 
   const [selectedType, setSelectedType] = useState<"single" | "group" | null>(
@@ -131,51 +133,54 @@ export default function NewChatScreen() {
 
   const userActionSheetRef = useRef<ActionSheetRef>(null);
 
-  return (
-    <ScrollView style={styles.container}>
-      <BackHeader label="Messages" />
-      <View style={styles.bulkContainer}>
-        <ExpandableRadioGroup
-          selectedValue={selectedType}
-          onSelect={(val) => setSelectedType(val as any)}
-          optionsGap={32}
-          options={[
-            {
-              label: "Individual Chat",
-              value: "single",
-              content: (
-                <View>
-                  <DummyButton
-                    text={"Search User"}
-                    onPress={() => {
-                      userActionSheetRef.current?.show();
-                    }}
-                    toShowCross={false}
-                    icon={<Search width={20} height={20} />}
-                  />
-                  {selectedUsers.length > 0 && (
-                    <UserSelectCard
-                      item={selectedUsers[0]}
-                      selectedUsers={selectedUsers}
-                      setSelectedUsers={() => {}}
-                      isRemoveAllowed={true}
-                      handleRemoveUser={() => {
-                        setSelectedUsers([]);
-                      }}
-                      isBottomBorder={false}
-                    />
-                  )}
-                </View>
-              ),
-            },
+  useEffect(() => {
+    if (isApplicantUser) {
+      setSelectedType("single");
+    }
+  }, [isApplicantUser]);
+
+  const chatOptions = useMemo(
+    () => [
+      {
+        label: "Individual Chat",
+        value: "single" as const,
+        content: (
+          <View>
+            <DummyButton
+              text={"Search User"}
+              onPress={() => {
+                userActionSheetRef.current?.show();
+              }}
+              toShowCross={false}
+              icon={<Search width={20} height={20} />}
+            />
+            {selectedUsers.length > 0 && (
+              <UserSelectCard
+                item={selectedUsers[0]}
+                selectedUsers={selectedUsers}
+                setSelectedUsers={() => {}}
+                isRemoveAllowed={true}
+                handleRemoveUser={() => {
+                  setSelectedUsers([]);
+                }}
+                isBottomBorder={false}
+              />
+            )}
+          </View>
+        ),
+      },
+      ...(!isApplicantUser
+        ? [
             {
               label: "Group Chat",
-              value: "group",
+              value: "group" as const,
               content: (
                 <View>
                   <View style={styles.photoSection}>
                     <TouchableOpacity
-                      onPress={() => imageOptionActionSheetRef.current?.show()}
+                      onPress={() =>
+                        imageOptionActionSheetRef.current?.show()
+                      }
                       style={styles.photoUpload}
                     >
                       {imageToUpload ? (
@@ -204,14 +209,36 @@ export default function NewChatScreen() {
                     control={control}
                     isError={!!errors.groupName}
                     errorMessage={
-                      errors.groupName ? errors.groupName.message?.toString() : "Group Name is required"
+                      errors.groupName
+                        ? errors.groupName.message?.toString()
+                        : "Group Name is required"
                     }
                   />
                   <MessageNewGroupFormContainer ref={formRef} chatId="" />
                 </View>
               ),
             },
-          ]}
+          ]
+        : []),
+    ],
+    [
+      isApplicantUser,
+      selectedUsers,
+      imageToUpload,
+      control,
+      errors.groupName,
+    ]
+  );
+
+  return (
+    <ScrollView style={styles.container}>
+      <BackHeader label="Messages" />
+      <View style={styles.bulkContainer}>
+        <ExpandableRadioGroup
+          selectedValue={selectedType}
+          onSelect={(val) => setSelectedType(val as "single" | "group")}
+          optionsGap={32}
+          options={chatOptions}
         />
       </View>
 

@@ -3,6 +3,7 @@ import { View, Text, Image, StyleSheet, TouchableOpacity } from "react-native";
 import Avatar from "@/assets/avatar.svg";
 import ReusableButton from "@/components/atoms/ReusableButton";
 import { useNavigation } from "@react-navigation/native";
+import { getUserProfileSubtitleLines } from "@/lib/userProfileSubtitle";
 
 interface SettingsUnblockUserListItemProps {
   firstName: string;
@@ -39,7 +40,13 @@ const SettingsUnblockUserListItem: React.FC<
   const navigation = useNavigation() as any;
   const [imgError, setImgError] = useState(false);
 
-  const isStudent = role === "student";
+  const { line1, line2 } = getUserProfileSubtitleLines({
+    role,
+    study_year,
+    major,
+    occupation,
+    affiliation,
+  });
 
   const handleProfileClick = () => {
     navigation.navigate("ProfileStack", {
@@ -72,17 +79,8 @@ const SettingsUnblockUserListItem: React.FC<
             {firstName} {lastName}
           </Text>
 
-          {(study_year || occupation) && (
-            <Text style={styles.metaText}>
-              {isStudent ? study_year : occupation}
-            </Text>
-          )}
-
-          {(major || affiliation) && (
-            <Text style={styles.metaText}>
-              {isStudent ? major : affiliation}
-            </Text>
-          )}
+          {line1 ? <Text style={styles.metaText}>{line1}</Text> : null}
+          {line2 ? <Text style={styles.metaText}>{line2}</Text> : null}
         </View>
       </TouchableOpacity>
 

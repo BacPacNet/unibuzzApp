@@ -47,6 +47,34 @@ export const convertToDateObj = (dateStr: string) => {
 
   return isValid(parsed) ? parsed : null;
 };
+
+export const parseDateOfBirth = (dob?: string | null): string => {
+  if (!dob) return "";
+
+  if (dob.includes("/")) {
+    return dob;
+  }
+
+  if (!isNaN(Number(dob))) {
+    const date = new Date(Number(dob));
+    if (!isNaN(date.getTime())) {
+      const day = String(date.getDate()).padStart(2, "0");
+      const month = String(date.getMonth() + 1).padStart(2, "0");
+      const year = date.getFullYear();
+      return `${day}/${month}/${year}`;
+    }
+  }
+
+  const parsed = new Date(dob);
+  if (!isNaN(parsed.getTime())) {
+    const day = String(parsed.getDate()).padStart(2, "0");
+    const month = String(parsed.getMonth() + 1).padStart(2, "0");
+    const year = parsed.getFullYear();
+    return `${day}/${month}/${year}`;
+  }
+
+  return "";
+};
 export const validateUploadedFiles = (
   files: File[],
   options: {

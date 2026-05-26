@@ -161,6 +161,11 @@ const CommunityScreen = ({ route }: any) => {
     setRefreshing(false);
   }, []);
 
+  console.log("communityData", communityData);
+
+  const canLeaveCommunity = communityData?.isUserAllowedToLeave ?? true;
+  const canJoinCommunity = communityData?.isAllowedToJoin ?? true;
+
   const FlatListCommunityHeaderSec = () => {
     return (
       <View style={styles.card}>
@@ -184,7 +189,7 @@ const CommunityScreen = ({ route }: any) => {
               <Text style={styles.title}>{communityData?.name}</Text>
             </View>
 
-            {isUserJoinedCommunity && (
+            {isUserJoinedCommunity && canLeaveCommunity && !isGroupAdmin ? (
               <View>
                 <DropdownWrapper
                   position="left"
@@ -205,24 +210,20 @@ const CommunityScreen = ({ route }: any) => {
                   </TouchableOpacity>
                 </DropdownWrapper>
               </View>
-            )}
+            ) : !isUserJoinedCommunity && canJoinCommunity ? (
+              <ReusableButton
+                variant="primary"
+                isLoading={isJoinLoading || isLeaveLoading || isFetching}
+                disabled={isJoinLoading || isLeaveLoading || isFetching}
+                onPress={handleToggleJoinCommunity}
+                buttonText="Join Community"
+                size={126}
+                activityIndicatorColor="#fff"
+                height="small"
+              />
+            ) : null}
           </View>
           <Text style={styles.description}>{communityData?.about}</Text>
-          {!isUserJoinedCommunity && (
-            <ReusableButton
-              variant={isUserJoinedCommunity ? "border" : "primary"}
-              isLoading={isJoinLoading || isLeaveLoading || isFetching}
-              disabled={isJoinLoading || isLeaveLoading || isFetching}
-              onPress={handleToggleJoinCommunity}
-              buttonText={
-                !isUserJoinedCommunity ? "Join Community" : "Leave Community"
-              }
-              size={isUserJoinedCommunity ? 132 : 126}
-              activityIndicatorColor={
-                isUserJoinedCommunity ? "#3A3B3C" : "#fff"
-              }
-            />
-          )}
         </View>
       </View>
     );

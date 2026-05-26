@@ -11,7 +11,10 @@ import {
 } from "react-native";
 import { ArrowUp } from "iconoir-react-native";
 import DiscoverUniversityCard from "@/components/molecules/University/UniversityCard";
-import { useGetFilteredUniversity } from "@/services/universitySearch";
+import {
+  useGetFilteredUniversity,
+  useGetPartnerUniversities,
+} from "@/services/universitySearch";
 import UniversitySearchFilters, {
   UniversitySearchFiltersRef,
 } from "@/components/molecules/University/UniversityFilters";
@@ -32,6 +35,25 @@ const AllUniversities = () => {
     refetch,
   } = useGetFilteredUniversity(5, query);
 
+  const { data: partnerUniversities, refetch: refetchPartners } =
+    useGetPartnerUniversities();
+
+  const filteredUniversities =
+    data?.pages?.flatMap((page) => page.Universities) ?? [];
+
+  const partnerIds = new Set(
+    partnerUniversities?.map((u: { _id: string }) => u._id) ?? [],
+  );
+
+  const listData = isLoading
+    ? []
+    : [
+        ...(partnerUniversities ?? []),
+        ...filteredUniversities.filter(
+          (u: { _id: string }) => !partnerIds.has(u._id),
+        ),
+      ];
+
   const renderItem = ({ item }: any) => <DiscoverUniversityCard data={item} />;
 
   const handleScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
@@ -46,21 +68,23 @@ const AllUniversities = () => {
     flatListRef.current?.scrollToOffset({ offset: 0, animated: true });
   };
 
-  const onRefresh = React.useCallback(() => {
+  const onRefresh = React.useCallback(async () => {
     setRefreshing(true);
 
     universityFiltersRef.current?.handleReset();
-
     setQuery("");
+
+    await Promise.all([refetch(), refetchPartners()]);
+
     setRefreshing(false);
-  }, []);
+  }, [refetch, refetchPartners]);
 
   return (
     <View style={styles.container}>
       <FlatList
         ref={flatListRef}
-        data={data?.pages?.flatMap((page) => page.Universities) || []}
-        keyExtractor={(item, index) => item._id + item?.index}
+        data={listData}
+        keyExtractor={(item) => item._id}
         renderItem={renderItem}
         onEndReached={() => {
           if (hasNextPage && !isFetchingNextPage) {
@@ -87,11 +111,11 @@ const AllUniversities = () => {
             <View style={styles.centered}>
               <ActivityIndicator size="large" color="#7367f0" />
             </View>
-          ) : (
+          ) : !listData.length ? (
             <View style={styles.centered}>
-              <Text className="text-neutral-500">No Result Found</Text>
+              <Text style={styles.emptyText}>No Result Found</Text>
             </View>
-          )
+          ) : null
         }
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
@@ -116,6 +140,13 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
+    minHeight: 128,
+  },
+  emptyText: {
+    fontWeight: "700",
+    fontSize: 24,
+    color: "#171717",
+    textAlign: "center",
   },
   scrollTopButton: {
     position: "absolute",

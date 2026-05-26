@@ -9,7 +9,6 @@ import { CommentsProp, PostType } from "@/types/postType";
 import { useDeleteUserPostComment } from "@/services/timeline";
 import { useDeleteCommunityPostComment } from "@/services/communityPost";
 
-import { userTypeEnum } from "@/types/register";
 import UserCard from "../UserCard";
 import { timeAgo } from "@/utils";
 import {
@@ -39,8 +38,6 @@ const UserComment = ({
   const { mutate: deleteUserPost } = useDeleteUserPostComment();
   const { mutate: deleteCommunityPost } = useDeleteCommunityPostComment();
   const role = item?.commenterProfileId?.role;
-
-  const isStudent = role === userTypeEnum.Student;
   const isSelfLike = item?.likeCount?.some(
     (like: any) => like.userId === userData?.id
   );
@@ -114,7 +111,7 @@ const UserComment = ({
           firstName={item?.commenterId?.firstName}
           lastName={item?.commenterId?.lastName}
           imageUrl={item?.commenterProfileId?.profile_dp?.imageUrl}
-          isStudent={isStudent}
+          role={role}
           studyYear={item?.commenterProfileId?.study_year}
           major={item?.commenterProfileId?.major}
           occupation={item?.commenterProfileId?.occupation}

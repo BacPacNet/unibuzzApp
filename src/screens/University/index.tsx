@@ -32,6 +32,12 @@ import UniversityLimitReachedBottomSheet from "@/components/molecules/University
 import BackHeader from "@/components/atoms/BackHeader";
 import { FONTS } from "@/constants/fonts";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { userTypeEnum } from "@/types/register";
+import { MESSAGES } from "@/content/constant";
+import {
+  useGetPartnerUniversities,
+  useUniversitySearchByName,
+} from "@/services/universitySearch";
 
 type NavigationProp = StackNavigationProp<RootStackParamList, "University">;
 
@@ -49,6 +55,7 @@ interface UniversityData {
   web_pages?: string;
   total_students?: string;
   office_hours?: string;
+  isAllowedToJoin?: boolean;
 }
 
 interface UniversityCardProps {
@@ -66,30 +73,62 @@ const University = ({
   route: { params: { data: UniversityData } };
 }) => {
   const navigation = useNavigation<NavigationProp>();
-  const { data } = route.params;
+  const { data: routeData } = route.params;
+  const { data: searchedUniversity } = useUniversitySearchByName(
+    routeData?.name ?? "",
+  );
+  const { data: partnerUniversities } = useGetPartnerUniversities();
+  const university = searchedUniversity ?? routeData;
+  const isAllowedToJoin = useMemo(
+    () => partnerUniversities?.some((u) => u._id === university?._id),
+    [partnerUniversities, university?._id],
+  );
   const insets = useSafeAreaInsets();
   const { mutate: joinCommunityFromUniversity, isPending: isJoinLoading } =
     useJoinCommunityFromUniversity();
   const limitActionSheetRef = useRef<ActionSheetRef>(null);
   const userProfileData = getUserProfileStore();
   const [imageSrc, setImageSrc] = useState(
-    data?.campus || DEFAULT_CAMPUS_IMAGE
+    university?.campus || DEFAULT_CAMPUS_IMAGE
   );
 
   const isCommunityAlreadyJoined = useMemo(() => {
     return userProfileData?.communities?.some(
-      (c) => c.communityId === data?.communityId
+      (c) => c.communityId === university?.communityId
     );
-  }, [data, userProfileData]);
+  }, [university, userProfileData]);
 
   const handleViewCommunity = () => {
     navigation.navigate("Community", {
-      communityId: data?.communityId,
+      communityId: university?.communityId,
     });
   };
 
   const handleJoinCommunity = () => {
-    joinCommunityFromUniversity(data._id, {
+    const isStudentOrFaculty =
+      userProfileData?.role === userTypeEnum.Student ||
+      userProfileData?.role === userTypeEnum.Faculty;
+    const partneredUniversity = userProfileData?.email?.[0];
+    const isJoiningDifferentUniversity =
+      !!partneredUniversity?.UniversityName &&
+      (partneredUniversity.communityId
+        ? partneredUniversity.communityId !== university?.communityId
+        : partneredUniversity.UniversityName.toLowerCase() !==
+          university?.name?.toLowerCase());
+
+    if (isStudentOrFaculty && isJoiningDifferentUniversity) {
+      navigation.navigate("Home", { screen: "Timeline" });
+      Toast.hideAll();
+      Toast.show(
+        MESSAGES.ALREADY_AFFILIATED_WITH_UNIVERSITY(
+          partneredUniversity.UniversityName
+        ),
+        { placement: "top" }
+      );
+      return;
+    }
+
+    joinCommunityFromUniversity(university._id, {
       onSuccess: (response: any) => {
         if (response.statusCode === 406) {
           limitActionSheetRef.current?.show();
@@ -133,12 +172,12 @@ const University = ({
           style={{ marginTop: 32, marginBottom: 16 }}
           className="w-full rounded-b-2xl relative flex flex-row items-center gap-2"
         >
-          <CommunityLogo logoUrl={data?.logo || ""} />
+          <CommunityLogo logoUrl={university?.logo || ""} />
           <Text
             style={styles.universityName}
             className="flex flex-row items-center max-w-72"
           >
-            {data?.name}
+            {university?.name}
           </Text>
         </View>
 
@@ -146,32 +185,33 @@ const University = ({
           style={{ marginBottom: 32 }}
           className="flex flex-row items-center text-xs text-neutral-600"
         >
-          {data?.short_overview || "Not Available"}
+          {university?.short_overview || "Not Available"}
         </Text>
 
         <View style={{ marginBottom: 64 }}>
-          {isCommunityAlreadyJoined ? (
-            <ReusableButton
-              containerStyle="mt-4"
-              buttonText="View Community"
-              variant="primary"
-              onPress={handleViewCommunity}
-              height="large"
-            />
-          ) : (
-            <ReusableButton
-              containerStyle="mt-4"
-              buttonText="Join Community"
-              variant="primary"
-              onPress={handleJoinCommunity}
-              height="large"
-              disabled={isJoinLoading}
-            />
-          )}
+          {isAllowedToJoin &&
+            (isCommunityAlreadyJoined ? (
+              <ReusableButton
+                containerStyle="mt-4"
+                buttonText="View Community"
+                variant="shade"
+                onPress={handleViewCommunity}
+                height="large"
+              />
+            ) : (
+              <ReusableButton
+                containerStyle="mt-4"
+                buttonText="Join Community"
+                variant="primary"
+                onPress={handleJoinCommunity}
+                height="large"
+                disabled={isJoinLoading}
+              />
+            ))}
         </View>
 
-        <UniversityOverview description={data?.long_description} />
-        <UniversityContact data={data} />
+        <UniversityOverview description={university?.long_description} />
+        <UniversityContact data={university} />
       </View>
 
       <ActionSheet

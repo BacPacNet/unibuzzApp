@@ -1,3 +1,4 @@
+import React, { useEffect, useState } from "react";
 import {
   Eye,
   EyeClosed,
@@ -10,6 +11,83 @@ import {
 import { Image, Text, View } from "react-native";
 import UniversityLogoPlaceHolder from "@/assets/LogoCircle.svg";
 import { Grayscale } from "react-native-color-matrix-image-filters";
+
+const TAB_ICON_SIZE = 28;
+
+const isValidLogoUrl = (logo: string) =>
+  typeof logo === "string" &&
+  logo.trim().length > 0 &&
+  logo !== "null" &&
+  logo !== "undefined";
+
+const GroupsTabIcon = ({
+  logo,
+  focused,
+  isCommunityGroup,
+}: {
+  logo: string;
+  focused: boolean;
+  isCommunityGroup: boolean;
+}) => {
+  const [hasError, setHasError] = useState(false);
+
+  useEffect(() => {
+    setHasError(false);
+  }, [logo]);
+
+  const showPlaceholder = !isValidLogoUrl(logo) || hasError;
+
+  const placeholder = (
+    <UniversityLogoPlaceHolder
+      width={TAB_ICON_SIZE}
+      height={TAB_ICON_SIZE}
+      style={{
+        width: TAB_ICON_SIZE,
+        height: TAB_ICON_SIZE,
+        borderRadius: TAB_ICON_SIZE / 2,
+      }}
+    />
+  );
+
+  if (showPlaceholder) {
+    return (
+      <View
+        style={{
+          width: TAB_ICON_SIZE,
+          height: TAB_ICON_SIZE,
+          borderRadius: TAB_ICON_SIZE / 2,
+        }}
+      >
+        {placeholder}
+      </View>
+    );
+  }
+
+  const image = (
+    <Image
+      source={{ uri: logo }}
+      style={{
+        width: TAB_ICON_SIZE,
+        height: TAB_ICON_SIZE,
+        borderRadius: TAB_ICON_SIZE / 2,
+      }}
+      resizeMode="contain"
+      onError={() => setHasError(true)}
+    />
+  );
+
+  return (
+    <View
+      style={{
+        width: TAB_ICON_SIZE,
+        height: TAB_ICON_SIZE,
+        borderRadius: TAB_ICON_SIZE / 2,
+      }}
+    >
+      {focused || isCommunityGroup ? image : <Grayscale>{image}</Grayscale>}
+    </View>
+  );
+};
 
 export const getTabIcons = (
   unreadCount: number = 0,
@@ -28,12 +106,6 @@ export const getTabIcons = (
   (focused: boolean) => JSX.Element
 > =>
   (() => {
-    const hasValidLogo =
-      typeof logo === "string" &&
-      logo.trim().length > 0 &&
-      logo !== "null" &&
-      logo !== "undefined";
-
     return {
     Home: (focused: boolean) => (
       <HomeSimpleDoor
@@ -44,37 +116,11 @@ export const getTabIcons = (
       />
     ),
     Groups: (focused: boolean) => (
-      <View
-        style={{
-          width: 28,
-          height: 28,
-          borderRadius: 28 / 2,
-        }}
-      >
-        {hasValidLogo ? (
-          focused || isCommunityGroup ? (
-            <Image
-              source={{ uri: logo }}
-              style={{ width: 28, height: 28, borderRadius: 14 }}
-              resizeMode="contain"
-            />
-          ) : (
-            <Grayscale>
-              <Image
-                source={{ uri: logo }}
-                style={{ width: 28, height: 28, borderRadius: 14 }}
-                resizeMode="contain"
-              />
-            </Grayscale>
-          )
-        ) : (
-          <UniversityLogoPlaceHolder
-            width={28}
-            height={28}
-            style={{ width: 28, height: 28, borderRadius: 14 }}
-          />
-        )}
-      </View>
+      <GroupsTabIcon
+        logo={logo}
+        focused={focused}
+        isCommunityGroup={isCommunityGroup}
+      />
     ),
     Example: (focused: boolean) =>
       focused ? (

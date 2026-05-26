@@ -108,6 +108,7 @@ export const FlatListProfileHeaderPart = ({
           isSelfProfile={userData?.id == userId}
           toShow={true}
           isStudent={isStudent}
+          role={role}
           occupation={occupation}
           major={major}
           affiliation={affiliation}

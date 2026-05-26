@@ -11,16 +11,19 @@ import { Community } from "@/types/Community";
 import { Toast } from "react-native-toast-notifications";
 import { updateUserProfileCommunities } from "@/storage/user";
 
-export async function getCommunity(communityId: string) {
-  const response = await client(`/community/${communityId}`);
+export async function getCommunity(communityId: string, token: string) {
+  const response = await client(`/community/${communityId}`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
   return response;
 }
 
 export function useGetCommunity(communityId: string) {
+  const cookieValue = getToken() as string;
   return useQuery({
     queryKey: ["community", communityId],
-    queryFn: () => getCommunity(communityId),
-    enabled: !!communityId,
+    queryFn: () => getCommunity(communityId, cookieValue),
+    enabled: !!communityId ,
   }) as UseQueryResult<Community>;
 }
 

@@ -9,6 +9,7 @@ import PostCommunityHolder from "../../PostCommunityHolder/PostCommunityHolder";
 import ReportContentModal from "@/components/organism/reportUserModal";
 import { getUserStore } from "@/storage/user";
 import { ContentType as ContentTypeEnum } from "@/types/report-content";
+import { getUserProfileSubtitleLines } from "@/lib/userProfileSubtitle";
 
 interface CommenterProfile {
   profile_dp?: { imageUrl?: string };
@@ -36,7 +37,7 @@ interface UserCardProps {
   firstName: string;
   lastName: string;
   imageUrl?: string;
-  isStudent: boolean;
+  role?: string;
   studyYear?: string;
   major?: string;
   occupation?: string;
@@ -63,7 +64,7 @@ const UserCard: React.FC<UserCardProps> = ({
   firstName,
   lastName,
   imageUrl,
-  isStudent,
+  role,
   studyYear,
   major,
   occupation,
@@ -84,6 +85,14 @@ const UserCard: React.FC<UserCardProps> = ({
   const handleReportComment = () => {
     setVisible(true);
   };
+
+  const { line1, line2 } = getUserProfileSubtitleLines({
+    role,
+    study_year: studyYear,
+    major,
+    occupation,
+    affiliation,
+  });
 
   const commentCategory = useMemo(() => {
     if (postContentType === ContentTypeEnum.COMMUNITY_POST && level == 0) {
@@ -133,16 +142,12 @@ const UserCard: React.FC<UserCardProps> = ({
             {firstName} {lastName}
           </Text>
           <View className="flex">
-            <Text style={styles.userDetails}>
-              {isStudent ? studyYear : occupation}
-            </Text>
-            <Text style={styles.userDetails}>
-              {isStudent ? major : affiliation}
-            </Text>
+            {line1 ? <Text style={styles.userDetails}>{line1}</Text> : null}
+            {line2 ? <Text style={styles.userDetails}>{line2}</Text> : null}
           </View>
         </TouchableOpacity>
         <View className="mr-2">
-          {communities?.length && communities?.length > 0 && (
+          {communities?.length && communities?.length > 0 ? (
             <View className="flex flex-row items-center gap-2">
               {communities
                 ?.slice()
@@ -168,7 +173,7 @@ const UserCard: React.FC<UserCardProps> = ({
                   />
                 ))}
             </View>
-          )}
+          ) : null}
         </View>
 
         <DropdownWrapper

@@ -3,6 +3,7 @@ import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import avatar from "@/assets/avatarPlaceholder.png";
 import { Users } from "@/types/connections";
 import { Xmark } from "iconoir-react-native";
+import { getUserProfileSubtitleLines } from "@/lib/userProfileSubtitle";
 
 type Props = {
   item: Users;
@@ -29,6 +30,14 @@ export const UserSelectCard = ({
   const isSelected = selectedUsers?.some(
     (selectedUser: any) => selectedUser._id == item._id
   );
+
+  const { line1, line2 } = getUserProfileSubtitleLines({
+    role: item?.profile?.role,
+    study_year: item?.profile?.study_year,
+    major: item?.profile?.major,
+    occupation: item?.profile?.occupation,
+    affiliation: item?.profile?.affiliation,
+  });
 
   const handleClick = () => {
     if (handleUserSelect) {
@@ -77,16 +86,8 @@ export const UserSelectCard = ({
               {item.firstName} {item.lastName}
             </Text>
             <View>
-              <Text style={styles.info}>
-                {item?.profile?.role === "student"
-                  ? `${item.profile.study_year}`
-                  : item?.profile?.occupation}
-              </Text>
-              <Text style={styles.info}>
-                {item?.profile?.role === "student"
-                  ? item.profile.major
-                  : item?.profile?.affiliation}
-              </Text>
+              {line1 ? <Text style={styles.info}>{line1}</Text> : null}
+              {line2 ? <Text style={styles.info}>{line2}</Text> : null}
             </View>
           </View>
         </View>

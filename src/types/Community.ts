@@ -14,6 +14,8 @@ export interface Community {
   isVerified?: boolean;
   assistantId: string;
   communityGroups: CommunityGroup[];
+  isAllowedToJoin?: boolean;
+  isUserAllowedToLeave?: boolean;
 }
 
 export interface CommunityUsers {

@@ -16,7 +16,8 @@ import { useNavigation } from "@react-navigation/native";
 import { RootStackParamList } from "@/types/navigation";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { FONTS } from "@/constants/fonts";
-
+import { getUserProfileStore } from "@/storage/user";
+import { isApplicantRole } from "@/lib/userProfileSubtitle";
 interface Props {
   subscribedCommunities: Community[];
   communityId: string;
@@ -34,6 +35,8 @@ const NavbarSubscribedUniversity = ({
   isGroup,
 }: Props) => {
   const navigation = useNavigation<NavigationProp>();
+  const userProfileData = getUserProfileStore();
+  const isApplicantUser = isApplicantRole(userProfileData?.role);
   const handleAddUniversity = () => {
     navigation.navigate("DiscoverStack", {
       screen: "Discover",
@@ -62,7 +65,8 @@ const NavbarSubscribedUniversity = ({
           isGroup={isGroup}
         />
       ))}
-      <View style={[styles.buttonContainer, styles.lastButtonContainer]}>
+      {isApplicantUser ? (
+        <View style={[styles.buttonContainer, styles.lastButtonContainer]}>
         <ReusableButton
           buttonText="Add Your University"
           variant="shade"
@@ -71,6 +75,7 @@ const NavbarSubscribedUniversity = ({
           height="medium"
         />
       </View>
+      ) : null }
     </View>
   );
 };
