@@ -161,7 +161,6 @@ const CommunityScreen = ({ route }: any) => {
     setRefreshing(false);
   }, []);
 
-  console.log("communityData", communityData);
 
   const canLeaveCommunity = communityData?.isUserAllowedToLeave ?? true;
   const canJoinCommunity = communityData?.isAllowedToJoin ?? true;
