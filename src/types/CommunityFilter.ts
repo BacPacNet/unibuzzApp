@@ -1,8 +1,10 @@
-export const GroupCategories = ["Private", "Public", "Official", "Casual"];
+export const GroupCategories = ["Official", "Casual"];
 
-export const GroupAccess = ["Private", "Public"];
+export const GroupAccess = ["Open-campus", "University-wide", "Hidden"];
 export const GroupType = ["Official", "Casual"];
 export const GroupLabel = ["Course", "Club", "Circle", "Other"];
+
+
 
 export type Category =
   | "Academic"

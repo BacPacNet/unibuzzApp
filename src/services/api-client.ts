@@ -6,6 +6,7 @@ import { forceDeauthenticate } from "@/hooks/Auth/forceDeautenticate";
 import { Platform } from "react-native";
 import DeviceInfo from "react-native-device-info";
 
+
 const api = axios.create({
   baseURL: NEXT_PUBLIC_API_BASE_URL,
 });

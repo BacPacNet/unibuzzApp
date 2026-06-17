@@ -1,11 +1,10 @@
 import CollapsibleMultiSelect from "@/components/atoms/CollapsibleMultiSelect";
 import { useCommunityFilterContext } from "@/context/CommunityFilterProvider/CommunityFilterProvider";
 import {
-  GroupAccess,
-  GroupLabel,
-  GroupType,
-  subCategories,
-} from "@/types/CommunityFilter";
+  GROUP_FILTER_ACCESS_OPTIONS,
+  GROUP_FILTER_TYPE_OPTIONS,
+} from "@/types/CommunityGroup";
+import { GroupLabel, subCategories } from "@/types/CommunityFilter";
 import { useFocusEffect } from "@react-navigation/native";
 import { useCallback, useEffect, useState } from "react";
 import { StyleSheet, TouchableOpacity, View } from "react-native";
@@ -177,14 +176,22 @@ const SearchCommunityFilterBottomSheet = ({
         </View>
         <CollapsibleMultiSelect
           title="Group Access"
-          options={GroupAccess}
-          selectedOptions={selectedType}
+          options={[...GROUP_FILTER_ACCESS_OPTIONS]}
+          selectedOptions={selectedType.filter((item) =>
+            GROUP_FILTER_ACCESS_OPTIONS.includes(
+              item as (typeof GROUP_FILTER_ACCESS_OPTIONS)[number]
+            )
+          )}
           onSelect={(value: string) => handleSelectTypes(value)}
         />
         <CollapsibleMultiSelect
           title="Group Type"
-          options={GroupType}
-          selectedOptions={selectedType}
+          options={[...GROUP_FILTER_TYPE_OPTIONS]}
+          selectedOptions={selectedType.filter((item) =>
+            GROUP_FILTER_TYPE_OPTIONS.includes(
+              item as (typeof GROUP_FILTER_TYPE_OPTIONS)[number]
+            )
+          )}
           onSelect={(value: string) => handleSelectTypes(value)}
         />
         <CollapsibleMultiSelect

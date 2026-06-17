@@ -11,9 +11,10 @@ type Props = {
   imagesData: {
     imageUrl: string;
   }[];
+  skipFileItems?: boolean;
 };
 
-const ImageGridLayout = ({ imagesData }: Props) => {
+const ImageGridLayout = ({ imagesData,skipFileItems = false }: Props) => {
   const [isOpen, setIsOpen] = useState(false);
   const [photoIndex, setPhotoIndex] = useState(0);
   const [isPdfOpen, setIsPdfOpen] = useState(false);
@@ -23,7 +24,7 @@ const ImageGridLayout = ({ imagesData }: Props) => {
     imageMimeTypes.includes(getMimeTypeFromUrl(item.imageUrl))
   );
 
-  const fileItems = imagesData.filter(
+  const fileItems = skipFileItems ? [] : imagesData.filter(
     (item) => !imageMimeTypes.includes(getMimeTypeFromUrl(item.imageUrl))
   );
   const handleImageClick = (index: number) => {

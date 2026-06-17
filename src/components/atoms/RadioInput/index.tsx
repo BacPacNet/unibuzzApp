@@ -7,6 +7,7 @@ interface RadioOption {
   label: string;
   value: string;
   details?: string;
+  disabled?: boolean;
 }
 
 interface RadioInputProps {
@@ -29,13 +30,18 @@ const RadioInput = forwardRef<View, RadioInputProps>(
             {options.map((option) => (
               <TouchableOpacity
                 key={option.value}
-                style={styles.radioOption}
-                onPress={() => onChange(option.value)}
+                style={[
+                  styles.radioOption,
+                  option.disabled && styles.radioOptionDisabled,
+                ]}
+                onPress={() => !option.disabled && onChange(option.value)}
+                disabled={option.disabled}
               >
                 <View
                   style={[
                     styles.radioOuter,
                     value === option.value && styles.radioOuterSelected,
+                    option.disabled && styles.radioOuterDisabled,
                   ]}
                 >
                   {value === option.value && <View style={styles.radioInner} />}
@@ -44,12 +50,20 @@ const RadioInput = forwardRef<View, RadioInputProps>(
                   <Text
                     style={[
                       size === "small" ? styles.smallLabel : styles.label,
+                      option.disabled && styles.labelDisabled,
                     ]}
                   >
                     {option.label}
                   </Text>
                   {option?.details && (
-                    <Text style={styles.detailsText}>{option?.details}</Text>
+                    <Text
+                      style={[
+                        styles.detailsText,
+                        option.disabled && styles.labelDisabled,
+                      ]}
+                    >
+                      {option?.details}
+                    </Text>
                   )}
                 </View>
               </TouchableOpacity>
@@ -74,6 +88,9 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
     gap: 12,
   },
+  radioOptionDisabled: {
+    opacity: 0.5,
+  },
   radioOuter: {
     width: 18,
     height: 18,
@@ -87,6 +104,9 @@ const styles = StyleSheet.create({
   radioOuterSelected: {
     borderColor: "#6744FF",
   },
+  radioOuterDisabled: {
+    borderColor: "#E5E7EB",
+  },
   radioInner: {
     width: 8,
     height: 8,
@@ -97,6 +117,9 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: "#18191A",
     fontFamily: FONTS.inter.medium,
+  },
+  labelDisabled: {
+    color: "#9CA3AF",
   },
   smallLabel: {
     fontSize: 14,

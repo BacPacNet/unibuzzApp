@@ -2,7 +2,7 @@ import MultiSelectDropdown from "@/components/atoms/MultiSelectDropDown";
 import ReusableButton from "@/components/atoms/ReusableButton";
 import { SelectUserProfileChips } from "@/components/atoms/SelectedUserProfileChips";
 import SelectCommunityUsersBottomSheet from "@/components/molecules/CreateNewGroup/SelectCommunityUsersBottomSheet";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { ScrollView, StyleSheet, Text, View } from "react-native";
 import ActionSheet, { ActionSheetRef } from "react-native-actions-sheet";
@@ -30,16 +30,15 @@ import {
   useCommunityUsers,
 } from "@/services/community";
 import { FONTS } from "@/constants/fonts";
-import CustomSwitch from "@/components/atoms/CustomSwitch";
-import Badge from "@/assets/badge.svg";
+import { CommunityGroupAccess } from "@/types/CommunityGroup";
+import { isApplicantRole } from "@/lib/userProfileSubtitle";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 const NewCommunityGroupUsersSelectScreen = ({ route }: any) => {
   const universityName = route?.params?.universityName || "";
   const communityId = route?.params?.communityId || "";
   const isEditGroup = route?.params?.isEditGroup || false;
-  const isCommunityGroupPrivate =
-    route?.params?.isCommunityGroupPrivate || false;
+  const communityGroupAccess = route?.params?.communityGroupAccess || "";
 
   const communityGroupId = route?.params?.communityGroupId || "";
   const navigate = useNavigation();
@@ -69,7 +68,9 @@ const NewCommunityGroupUsersSelectScreen = ({ route }: any) => {
   const community = watch("community");
 
   const userProiledata = getUserProfileStore();
-  const [fetchVerifiedUsers, setFetchVerifiedUsers] = useState(false);
+  const [fetchVerifiedUsers, setFetchVerifiedUsers] = useState(
+    communityGroupAccess === CommunityGroupAccess.UniversityWide
+  );
 
   const { data: communityData } = useGetCommunity(community.id);
   //   const {
@@ -86,10 +87,20 @@ const NewCommunityGroupUsersSelectScreen = ({ route }: any) => {
     fetchNextPage,
   } = useCommunityFilteredUsers(communityId, fetchVerifiedUsers, "");
 
-  const communityUsers =
-    communityUsersData?.pages
-      .flatMap((page) => page.data)
-      .filter((user) => user.users_id !== userProiledata?.users_id) || [];
+  const communityUsers = useMemo(
+    () =>
+      communityUsersData?.pages
+        .flatMap((page) => page.data)
+        .filter((user) => user.users_id !== userProiledata?.users_id) || [],
+    [communityUsersData, userProiledata?.users_id]
+  );
+
+  const inviteableUsers = useMemo(() => {
+    if (communityGroupAccess !== CommunityGroupAccess.UniversityWide) {
+      return communityUsers;
+    }
+    return communityUsers.filter((user) => !isApplicantRole(user.role));
+  }, [communityUsers, communityGroupAccess]);
 
   const {
     studentYearState,
@@ -124,7 +135,6 @@ const NewCommunityGroupUsersSelectScreen = ({ route }: any) => {
   const occupationActionSheetRef = useRef<ActionSheetRef>(null);
   const affiliationActionSheetRef = useRef<ActionSheetRef>(null);
   const universityActionSheetRef = useRef<ActionSheetRef>(null);
-  const communityGroupAccess = watch("communityGroupAccess");
   const insets = useSafeAreaInsets();
   const [searchInput, setSearchInput] = useState<string>("");
   const [showbulk, setShowBulk] = useState(false);
@@ -167,25 +177,35 @@ const NewCommunityGroupUsersSelectScreen = ({ route }: any) => {
   };
 
   useEffect(() => {
-    const allUsers = communityUsers || [];
+    const allUsers = inviteableUsers || [];
     const allStudentUsers = allUsers.filter((user) => user.role == "student");
 
     const filters = { year: studentYear, major: major };
 
     const filtered = filterData(allStudentUsers as any, filters);
 
-    setFilterUsers(filtered);
-  }, [studentYear, major, communityData]);
+    setFilterUsers((prev) =>
+      prev.length === filtered.length &&
+      prev.every((user, index) => user._id === filtered[index]?._id)
+        ? prev
+        : filtered
+    );
+  }, [studentYear, major, inviteableUsers]);
 
   useEffect(() => {
-    const allUsers = communityUsers || [];
+    const allUsers = inviteableUsers || [];
     const allFacultyUsers = allUsers.filter((user) => user.role == "faculty");
 
     const filters = { occupation: occupation, affiliation: affiliation };
     const filtered = filterFacultyData(allFacultyUsers as any, filters);
 
-    setFilterFacultyUsers(filtered);
-  }, [occupation, affiliation]);
+    setFilterFacultyUsers((prev) =>
+      prev.length === filtered.length &&
+      prev.every((user, index) => user._id === filtered[index]?._id)
+        ? prev
+        : filtered
+    );
+  }, [occupation, affiliation, inviteableUsers]);
 
   useEffect(() => {
     setValue("selectedUsers", selectedUsersState);
@@ -206,10 +226,13 @@ const NewCommunityGroupUsersSelectScreen = ({ route }: any) => {
   }, []);
 
   useEffect(() => {
-    if (isCommunityGroupPrivate) {
+    if (communityGroupAccess === CommunityGroupAccess.UniversityWide) {
       setFetchVerifiedUsers(true);
+      setIndividualsUsers((prev) =>
+        prev.filter((user) => !isApplicantRole(user.role))
+      );
     }
-  }, [isCommunityGroupPrivate]);
+  }, [communityGroupAccess]);
 
   return (
     <ScrollView style={styles.container}>
@@ -219,14 +242,7 @@ const NewCommunityGroupUsersSelectScreen = ({ route }: any) => {
           <View style={styles.leftSection}>
             <Text style={styles.text}>Show verified members only</Text>
           </View>
-          <CustomSwitch
-            value={fetchVerifiedUsers}
-            onValueChange={setFetchVerifiedUsers}
-            disabled={
-              communityGroupAccess === "Private" || isCommunityGroupPrivate
-            }
-            size="small"
-          />
+       
         </View>
         <Text style={styles.inputLabels}>Add Individuals</Text>
 
@@ -383,6 +399,9 @@ const NewCommunityGroupUsersSelectScreen = ({ route }: any) => {
           myUserId={userProiledata?.users_id || ""}
           communityGroupId={communityGroupId}
           fetchVerifiedUsers={fetchVerifiedUsers}
+          excludeApplicants={
+            communityGroupAccess === CommunityGroupAccess.UniversityWide
+          }
         />
       </ActionSheet>
       <ActionSheet

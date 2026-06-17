@@ -1,19 +1,7 @@
 import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
 import { client } from "./api-client";
 import useDebounce from "@/hooks/useDebounce";
-import { UniversityInfo } from "@/types/university";
 
-// export async function getUniversitySearch(searchTerm: string): Promise<any[]> {
-//   if (!searchTerm) return [];
-
-//   // Fetch university data based on the search term
-//   const response = await client(
-//     `/university/searched?searchTerm=${encodeURIComponent(searchTerm)}`,
-//   );
-
-//   // TypeScript assumes `response` is of type `University[]`
-//   return response;
-// }
 
 export async function getUniversitySearch(
   searchTerm: string,
@@ -31,17 +19,6 @@ export async function getUniversitySearch(
   return response;
 }
 
-// export function useUniversitySearch(searchTerm: string) {
-//   const debouncedSearchTerm = useDebounce(searchTerm, 500);
-
-//   return useQuery<any, Error>({
-//     queryKey: ["universitySearch", debouncedSearchTerm],
-//     queryFn: () => getUniversitySearch(debouncedSearchTerm),
-//     enabled: Boolean(debouncedSearchTerm), // Only run if there's a search term
-//     staleTime: 1000 * 60 * 5, // Optional: Cache data for 5 minutes
-//     retry: false, // Optional: Prevent retries on failure
-//   });
-// }
 
 export function useUniversitySearch(
   show: boolean,
@@ -112,7 +89,7 @@ export function useGetPartnerUniversities() {
 export async function getUniversityByName(universityName: string) {
   if (!universityName) return null;
 
-  const response = await getUniversitySearch(universityName, 1, 10);
+  const response:any = await getUniversitySearch(universityName, 1, 10);
   const universities = response?.result?.universities ?? [];
 
   return (
@@ -131,4 +108,22 @@ export function useUniversitySearchByName(universityName: string) {
     staleTime: 0,
     retry: false,
   });
+}
+
+
+
+export async function getUniversitiesHighlightedPostd(universityId: string): Promise<any[]> {
+  const response = await client(`/university/highlights/${universityId}`)
+
+  return response
+}
+
+export function useGetUniversitiesHighlightedPostd(universityId: string) {
+  return useQuery<any, Error>({
+    queryKey: ['universitiesHighlightedPostd', universityId],
+    queryFn: () => getUniversitiesHighlightedPostd(universityId),
+    staleTime: 0,
+    retry: false,
+    enabled: !!universityId,
+  })
 }

@@ -1,4 +1,4 @@
-import React, { useCallback, useRef } from "react";
+import React, { useCallback, useMemo, useRef } from "react";
 import {
   View,
   Text,
@@ -11,10 +11,14 @@ import {
 import ReusableButton from "../../../atoms/ReusableButton";
 import JoinGroupButton from "../../../atoms/JoinGroupButton";
 import OfficailLogoPlaceHolder from "@/assets/community/official-logo.svg";
-import { CommunityGroupTypeEnum, status } from "@/types/CommunityGroup";
 import {
-  Globe,
-  Lock,
+  CommunityGroupAccess,
+  CommunityGroupTypeEnum,
+  CommunityGroupVisibility,
+  GROUP_ACCESS_TOOLTIP_CONFIG,
+  status,
+} from "@/types/CommunityGroup";
+import {
   Settings,
   WarningCircleSolid,
 } from "iconoir-react-native";
@@ -38,6 +42,7 @@ import LeaveCommunityGroupBottomSheet from "../LeaveCommunityGroupBottomSheet";
 import GenericInfoBottomSheet from "../../GenericInfoBottomSheet";
 import { verifyUniversityEmailMessage } from "@/content/constant";
 import DeleteCommunityGroupBottomSheet from "../DeleteCommunityGroupBottomSheet";
+import GroupAccessInfoTrigger from "../GroupAccessInfoTrigger";
 
 type CommunityGroup = {
   title: string;
@@ -178,6 +183,21 @@ const FlatListCommunityHeader: React.FC<Props> = ({
     deleteCommunityGroupBottomSheet.current?.show();
   };
 
+  const groupAccessTooltip = useMemo(() => {
+    const access = communityGroups?.communityGroupAccess;
+    if (access === CommunityGroupVisibility.PRIVATE) {
+      return {
+        title: "Private",
+        description:
+          "Must request access to join the group. Only verified users can request access.",
+      };
+    }
+    return (
+      GROUP_ACCESS_TOOLTIP_CONFIG[access] ??
+      GROUP_ACCESS_TOOLTIP_CONFIG[CommunityGroupAccess.OpenCampus]
+    );
+  }, [communityGroups?.communityGroupAccess]);
+
   return (
     <View style={styles.card}>
       {imageSrc && !ImageSrcErr ? (
@@ -295,9 +315,13 @@ const FlatListCommunityHeader: React.FC<Props> = ({
           ) : !isUserJoinedCommunityGroup && !isCommunityGroupNotLive ? (
             <JoinGroupButton
               isPrivate={isGroupPrivate}
+              isUniversityWide={communityGroups?.isUniversityWide}
               isVerified={isUserVerifiedForCommunity}
               isPending={isJoinCommunityPending}
               userStatus={userStatus}
+              isRequestRequiredToJoinGroup={
+                communityGroups?.isRequestRequiredToJoinGroup || false
+              }
               onClick={onJoinPress}
             />
           ) : null}
@@ -314,21 +338,11 @@ const FlatListCommunityHeader: React.FC<Props> = ({
             height="small"
             textSize="text-2xs"
           />
-          {!isGroupPrivate ? (
-            <TouchableOpacity
-              onPress={() => groupInfoBottomSheet.current?.show()}
-              style={styles.settingsGearContainer}
-            >
-              <Globe width={20} height={20} color="#6744FF" />
-            </TouchableOpacity>
-          ) : (
-            <TouchableOpacity
-              onPress={() => groupInfoBottomSheet.current?.show()}
-              style={styles.settingsGearContainer}
-            >
-              <Lock width={20} height={20} color="#6744FF" />
-            </TouchableOpacity>
-          )}
+          <GroupAccessInfoTrigger
+            communityGroupAccess={communityGroups?.communityGroupAccess}
+            onPress={() => groupInfoBottomSheet.current?.show()}
+            style={styles.settingsGearContainer}
+          />
         </View>
       </View>
       <ActionSheet
@@ -341,7 +355,11 @@ const FlatListCommunityHeader: React.FC<Props> = ({
           paddingTop: 10,
         }}
       >
-        <CommmunityGroupInfo />
+        <CommmunityGroupInfo
+          title={groupAccessTooltip.title}
+          description={groupAccessTooltip.description}
+          communityGroupAccess={communityGroups?.communityGroupAccess}
+        />
       </ActionSheet>
       <ActionSheet
         useBottomSafeAreaPadding

@@ -76,6 +76,7 @@ export enum PostType {
 export enum CommunityPostType {
   PUBLIC = "PUBLIC",
   FOLLOWER_ONLY = "FOLLOWER_ONLY",
+  UNIVERSITY_WIDE = 'UNIVERSITY_WIDE',
 }
 
 export enum UserPostType {
@@ -83,7 +84,21 @@ export enum UserPostType {
   FOLLOWER_ONLY = "FOLLOWER_ONLY",
   MUTUAL = "MUTUAL",
   ONLY_ME = "ONLY_ME",
+  UNIVERSITY_WIDE = 'UNIVERSITY_WIDE',
 }
+
+export const POST_VISIBILITY_LABELS: Record<UserPostType, string> = {
+  [UserPostType.PUBLIC]: 'All',
+  [UserPostType.FOLLOWER_ONLY]: 'Followers',
+  [UserPostType.UNIVERSITY_WIDE]: 'University',
+  [UserPostType.MUTUAL]: 'Mutual',
+  [UserPostType.ONLY_ME]: 'Only me',
+}
+
+export const TIMELINE_VISIBILITY_OPTIONS = [UserPostType.PUBLIC, UserPostType.FOLLOWER_ONLY, UserPostType.UNIVERSITY_WIDE]
+
+export const COMMUNITY_VISIBILITY_OPTIONS = [UserPostType.PUBLIC, UserPostType.UNIVERSITY_WIDE]
+
 export enum Sortby {
   ASC = "asc",
   DESC = "desc",

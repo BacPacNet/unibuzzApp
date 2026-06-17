@@ -32,7 +32,8 @@ export const useGroupCreation = (
   const handleCreateGroup = async (
     data: CreateCommunityGroupType,
     imageToUpload: ImageAsset | null,
-    bannerToUpload: ImageAsset | null
+    bannerToUpload: ImageAsset | null,
+    isRequestRequiredToJoinGroup?: boolean
   ) => {
     let logoImageData;
     let coverImageData;
@@ -56,6 +57,7 @@ export const useGroupCreation = (
       communityGroupLogoUrl: logoImageData?.data[0],
       communityGroupLogoCoverUrl: coverImageData?.data[0],
       universityAdminId: communityData?.adminId,
+      isRequestRequiredToJoinGroup,
     };
 
     return { payload, createGroup, setCreateSelectedFilters };

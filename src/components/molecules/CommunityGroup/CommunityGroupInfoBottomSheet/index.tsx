@@ -1,31 +1,33 @@
 import React from "react";
 import { View, Text, StyleSheet } from "react-native";
-import { Globe, Lock } from "iconoir-react-native";
+import { renderGroupAccessIcon } from "../GroupAccessInfoTrigger";
 
-const CommmunityGroupInfo = () => {
+type Props = {
+  title?: string;
+  description?: string;
+  communityGroupAccess?: string;
+  icon?: React.ReactNode;
+};
+
+const CommmunityGroupInfo: React.FC<Props> = ({
+  title = "Open Campus",
+  description = "Open to university members and external users.",
+  communityGroupAccess,
+  icon,
+}) => {
   return (
     <View style={styles.container}>
-      <Text style={styles.heading}>Private and Public Groups</Text>
+      <Text style={styles.heading}>Group Access</Text>
 
       <View style={styles.groupItem}>
-        <Globe width={24} height={24} color="#8B5CF6" style={styles.icon} />
+        {icon ?? (
+          <View style={styles.icon}>
+            {renderGroupAccessIcon(communityGroupAccess)}
+          </View>
+        )}
         <View style={styles.textContainer}>
-          <Text style={styles.title}>Public</Text>
-          <Text style={styles.description}>
-            All users can join these groups without requesting permission.
-            Labeled with globe icon.
-          </Text>
-        </View>
-      </View>
-
-      <View style={styles.groupItem}>
-        <Lock width={24} height={24} color="#8B5CF6" style={styles.icon} />
-        <View style={styles.textContainer}>
-          <Text style={styles.title}>Private</Text>
-          <Text style={styles.description}>
-            Must request access to join the group. Only verified users can
-            request access. Labeled with lock icon.
-          </Text>
+          <Text style={styles.title}>{title}</Text>
+          <Text style={styles.description}>{description}</Text>
         </View>
       </View>
     </View>
