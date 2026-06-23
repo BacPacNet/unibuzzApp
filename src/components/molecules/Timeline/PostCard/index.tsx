@@ -284,6 +284,7 @@ const PostCard = memo(
               : data?.userProfile?.communities
           }
           postType={postContentType}
+          promote={data?.promote}
         />
         {Number(data?.content?.length) > 1 && data?.content ? (
           <View className="px-4">

@@ -9,7 +9,8 @@ import { ImageAsset } from "./useImageUpload";
 export const useGroupCreation = (
   communityId: string,
   communityData: any,
-  isCommunityAdmin: boolean
+  isCommunityAdmin: boolean,
+  requirePostApproval: boolean
 ) => {
   const { createSelectedFilters, setCreateSelectedFilters } =
     useCommunityFilterContext();
@@ -58,6 +59,7 @@ export const useGroupCreation = (
       communityGroupLogoCoverUrl: coverImageData?.data[0],
       universityAdminId: communityData?.adminId,
       isRequestRequiredToJoinGroup,
+      requirePostApproval,
     };
 
     return { payload, createGroup, setCreateSelectedFilters };

@@ -1,5 +1,13 @@
 import { status } from "./CommunityGroup";
 
+
+export interface PostPromote {
+  universityId: string
+  isAdminOfUni: boolean
+}
+
+
+
 export interface Community {
   _id: string;
   communityCoverUrl: { imageUrl: string; publicId: string };
@@ -75,4 +83,5 @@ export interface communityPostType {
   imageUrl: [];
   commentCount: number;
   communityId?: string;
+  promote?: PostPromote
 }

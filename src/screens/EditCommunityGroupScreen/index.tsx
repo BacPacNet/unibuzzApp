@@ -130,6 +130,7 @@ const EditCommunityGroupScreen = () => {
   const [bannerToUpload, setBannerToUpload] = useState<ImageAsset | null>(null);
   const [isRequestRequiredToJoinGroup, setIsRequestRequiredToJoinGroup] =
     useState(communityGroups?.isRequestRequiredToJoinGroup ?? false);
+    const [requirePostApproval, setRequirePostApproval] = useState(communityGroups?.requirePostApproval ?? false)
 
   const { selectedUsersState, setSelectedUsersState, resetFilters } =
     useNewCommunityGroupStatesContext();
@@ -163,6 +164,7 @@ const EditCommunityGroupScreen = () => {
     setIsRequestRequiredToJoinGroup(
       communityGroups?.isRequestRequiredToJoinGroup ?? false
     );
+    setRequirePostApproval(communityGroups.requirePostApproval ?? false)
   }, [communityGroups]);
 
   useEffect(() => {
@@ -238,8 +240,15 @@ const EditCommunityGroupScreen = () => {
       communityGroupAccess: communityGroupAccess,
       communityGroupLabel: communityGroupLabel,
       ...communityGroupCategory,
-      selectedUsers: selectedUsersState,
+      selectedUsers: selectedUsersState.map((user) => {
+        const u = user as { users_id?: string; _id?: string };
+        return {
+          ...user,
+          users_id: u.users_id ?? u._id,
+        };
+      }),
       isRequestRequiredToJoinGroup,
+      requirePostApproval,
       ...(logoImageData && {
         communityGroupLogoUrl: logoImageData.data[0],
       }),
@@ -325,6 +334,8 @@ const EditCommunityGroupScreen = () => {
               communityGroupAccess={communityGroupAccess}
               isRequestRequiredToJoinGroup={isRequestRequiredToJoinGroup}
               onRequestRequiredChange={setIsRequestRequiredToJoinGroup}
+              requirePostApproval={requirePostApproval}
+              onRequirePostApprovalChange={setRequirePostApproval}
               readOnlyGroupAccess
             />
             <View style={styles.section}>

@@ -480,6 +480,7 @@ const CommunityGroupScreen = ({ route }: any) => {
                     communityGroupAdminId:
                       communityGroups?.adminUserId.toString(),
                     isGroupOfficial,
+                    requirePostApproval: communityGroups?.requirePostApproval || false,
                   })
                 }
               />

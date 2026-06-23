@@ -28,6 +28,8 @@ interface FormFieldsProps {
   communityGroupAccess?: string;
   isRequestRequiredToJoinGroup?: boolean;
   onRequestRequiredChange?: (value: boolean) => void;
+  requirePostApproval?: boolean;
+  onRequirePostApprovalChange?: (value: boolean) => void;
   readOnlyGroupAccess?: boolean;
 }
 
@@ -43,6 +45,8 @@ export const FormFields: React.FC<FormFieldsProps> = ({
   communityGroupAccess,
   isRequestRequiredToJoinGroup = false,
   onRequestRequiredChange,
+  requirePostApproval = false,
+  onRequirePostApprovalChange,
   readOnlyGroupAccess = false,
 }) => {
   const groupTypeOptions = useMemo(
@@ -175,13 +179,15 @@ export const FormFields: React.FC<FormFieldsProps> = ({
         )}
 
         {isNewGroup && (
-          <RadioInput
-            ref={fieldRefs?.communityGroupType}
-            name="communityGroupType"
-            control={control}
-            options={groupTypeOptions}
-            required
-          />
+          <>
+            <RadioInput
+              ref={fieldRefs?.communityGroupType}
+              name="communityGroupType"
+              control={control}
+              options={groupTypeOptions}
+              required
+            />
+          </>
         )}
         {isNewGroup ? null : isPending ? (
           <View style={styles.container}>
@@ -197,6 +203,18 @@ export const FormFields: React.FC<FormFieldsProps> = ({
           <View style={styles.container}>
             <Text style={styles.title}>Official</Text>
             <Text style={styles.subtitle}>Require university approval</Text>
+          </View>
+        )}
+        { groupType === CommunityGroupTypeEnum.OFFICIAL && (
+          <View style={styles.switchContainer}>
+            <CustomSwitch
+              value={requirePostApproval}
+              onValueChange={onRequirePostApprovalChange ?? (() => {})}
+              size="small"
+            />
+            <Text style={styles.switchLabel}>
+              Require posts to be approved before publishing.
+            </Text>
           </View>
         )}
       </View>

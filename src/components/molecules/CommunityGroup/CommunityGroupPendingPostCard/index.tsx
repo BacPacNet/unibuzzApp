@@ -145,6 +145,7 @@ const PendingPostCard = ({
           isPostOptionShown={false}
           communities={data?.userProfile?.communities}
           postType={ContentType.COMMUNITY_GROUP_POST}
+          promote={data?.promote}
         />
 
         {/* Post Text */}
