@@ -109,6 +109,7 @@ export interface CreateCommunityGroupType {
   repostOption: string;
   selectedFilters: [];
   isRequestRequiredToJoinGroup?: boolean
+  requirePostApproval?: boolean
 }
 
 export interface CommunityGroupType {
@@ -148,6 +149,7 @@ export interface CommunityGroupType {
   };
   users: CommunityGroupUsers[];
   isRequestRequiredToJoinGroup?: boolean
+  requirePostApproval?: boolean
 }
 export interface AdminUserId {
   _id: string;

@@ -13,7 +13,10 @@ import { BadgeCheck, Balcony, CheckCircleSolid } from "iconoir-react-native";
 import PostCommunityHolder from "../../PostCommunityHolder/PostCommunityHolder";
 import { ContentType } from "@/types/report-content";
 import ReportContentModal from "@/components/organism/reportUserModal";
+import PromotePostModal from "@/components/organism/PromotePostModal";
 import { getUserStore } from "@/storage/user";
+import { PostPromote } from "@/types/Community";
+import { PostType } from "@/types/postType";
 type Props = {
   name: string;
   year: string;
@@ -21,7 +24,7 @@ type Props = {
   university: string;
   dp: string;
   postId: string;
-  type: "Community" | "Timeline";
+  type: PostType.Community | PostType.Timeline;
   isAdmin: boolean;
   postAdminId: string;
   setVisible?: (visible: boolean) => void;
@@ -45,6 +48,7 @@ type Props = {
     isCommunityAdmin: boolean;
   }[];
   postType: ContentType;
+  promote?: PostPromote;
 };
 
 type NavigationProp = StackNavigationProp<RootStackParamList, "Timeline">;
@@ -53,7 +57,7 @@ const PostCardUserDetails = ({
   name,
   year,
   dp,
-
+  university,
   postId,
   type,
 
@@ -72,9 +76,11 @@ const PostCardUserDetails = ({
   isPostOptionShown = true,
   communities,
   postType,
+  promote,
 }: Props) => {
   const navigate = useNavigation<NavigationProp>();
   const [reportVisible, setReportVisible] = useState(false);
+  const [promoteVisible, setPromoteVisible] = useState(false);
   const userdata = getUserStore();
 
   const { line1, line2 } = getUserProfileSubtitleLines({
@@ -174,9 +180,16 @@ const PostCardUserDetails = ({
                   setReportVisible(true);
                   closeDropdown?.();
                 }}
+                handlePromotePost={() => {
+                  if (!promote?.universityId) return;
+                  setPromoteVisible(true);
+                  closeDropdown?.();
+                }}
                 isAdmin={isAdmin}
                 postId={postId}
                 type={type}
+                promote={promote}
+                universityName={university}
                 closeDropdown={closeDropdown}
               />
             )}
@@ -196,6 +209,14 @@ const PostCardUserDetails = ({
         reporterId={userdata?.id || ""}
         contentType={postType}
         setModalVisible={setReportVisible}
+      />
+      <PromotePostModal
+        visible={promoteVisible}
+        setModalVisible={setPromoteVisible}
+        postID={postId}
+        isType={type}
+        universityId={promote?.universityId || ""}
+        universityName={university || ""}
       />
     </View>
   );

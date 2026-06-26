@@ -1,4 +1,5 @@
 import { ContentType } from "./report-content";
+import { PostPromote } from "./Community";
 
 export enum PostType {
   Community = "Community",
@@ -86,6 +87,7 @@ export type PostCardType = {
     likeCount: string[];
     communityName: string;
     communityGroupName: string;
+    promote?: PostPromote;
   };
   isTimeline: boolean;
   communityGroupId?: string;

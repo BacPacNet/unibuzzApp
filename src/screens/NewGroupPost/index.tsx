@@ -73,6 +73,7 @@ const NewGroupPost = ({ navigation }: any) => {
   const communityGroupAdminId =
     (route.params as any)?.communityGroupAdminId || " ";
   const isGroupOfficial = (route.params as any)?.isGroupOfficial || false;
+  const requirePostApproval = (route.params as any)?.requirePostApproval || false;
   const userProfileData = getUserProfileStore();
   const [images, setImages] = useState<ImageAsset[]>([]);
   const [files, setFiles] = useState<fileType[]>([]);
@@ -221,6 +222,7 @@ const NewGroupPost = ({ navigation }: any) => {
         ) || false,
       isCommunityAdmin: communityGroupAdminId == userProfileData?.users_id,
       isGroupOfficial: isGroupOfficial,
+      ...(requirePostApproval && { requirePostApproval }),
     };
 
 

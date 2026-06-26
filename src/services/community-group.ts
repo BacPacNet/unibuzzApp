@@ -11,6 +11,7 @@ import { client } from "./api-client";
 import { Toast } from "react-native-toast-notifications";
 import { notificationStatus as notificationStatusEnum } from "@/types/notifications";
 import { showToast } from "@/utils/toastWrapper";
+import { CommunityPostData } from "@/types/constant";
 
 export async function getAllCommunityGroups(
   communityId: string,
@@ -155,12 +156,15 @@ export const useCreateGroupPost = () => {
   const cookieValue = getToken() as string;
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (data: any) => CreateGroupPost(data, cookieValue),
-
+    // mutationFn: (data: any) => CreateGroupPost(data, cookieValue),
+    mutationFn: (data: CommunityPostData) => {
+      const { requirePostApproval: _, ...postData } = data
+      return CreateGroupPost(postData, cookieValue)
+    },
     onSuccess: (_, req) => {
       queryClient.invalidateQueries({ queryKey: ["communityGroupsPost"] });
       Toast.hideAll();
-      if (!req?.isCommunityAdmin && req?.isGroupOfficial) {
+      if (req?.requirePostApproval) {
         Toast.show("Your post has been submitted for approval.", {
           placement: "top",
           textStyle: { color: "#220B6A" },

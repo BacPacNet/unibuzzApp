@@ -67,7 +67,7 @@ const NewCommunityGroupScreen = () => {
   // Data fetching
   const { data: communityData, isFetching } = useGetCommunity(communityId);
   const { mutate } = useGetFilteredSubscribedCommunities();
-
+  const [requirePostApproval, setRequirePostApproval] = useState(false);
   // Form handling
   const {
     control,
@@ -125,7 +125,8 @@ const NewCommunityGroupScreen = () => {
   } = useGroupCreation(
     communityId,
     communityData,
-    communityData?.adminId.includes(userData?.id?.toString() || "") || false
+    communityData?.adminId.includes(userData?.id?.toString() || "") || false,
+    requirePostApproval
   );
   const { setSelectedUsersState, selectedUsersState, resetFilters } =
     useNewCommunityGroupStatesContext();
@@ -191,7 +192,7 @@ const NewCommunityGroupScreen = () => {
           data,
           imageToUpload,
           bannerToUpload,
-          isRequestRequiredToJoinGroup
+          isRequestRequiredToJoinGroup,
         );
 
       createGroup(
@@ -259,6 +260,12 @@ const NewCommunityGroupScreen = () => {
   }, [communityGroupAccess]);
 
   useEffect(() => {
+    if (communityGroupType !== CommunityGroupTypeEnum.OFFICIAL) {
+      setRequirePostApproval(false);
+    }
+  }, [communityGroupType]);
+
+  useEffect(() => {
     if (communityGroupAccess === CommunityGroupAccess.UniversityWide) {
       const filtered = selectedUsersState.filter(
         (user) => !isApplicantRole((user as any).role)
@@ -305,9 +312,12 @@ const NewCommunityGroupScreen = () => {
               setCreateSelectedFilters={setCreateSelectedFilters}
               isNewGroup={true}
               fieldRefs={fieldRefs}
+              groupType={communityGroupType}
               communityGroupAccess={communityGroupAccess}
               isRequestRequiredToJoinGroup={isRequestRequiredToJoinGroup}
               onRequestRequiredChange={setIsRequestRequiredToJoinGroup}
+              requirePostApproval={requirePostApproval}
+              onRequirePostApprovalChange={setRequirePostApproval}
             />
 
             <View style={styles.section}>

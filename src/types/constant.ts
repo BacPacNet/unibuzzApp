@@ -124,6 +124,7 @@ export interface CommunityPostData extends PostInputData {
   isPostVerified: boolean;
   isCommunityAdmin?: boolean;
   isGroupOfficial?: boolean;
+  requirePostApproval?: boolean
 }
 
 export interface PostCommentData {

@@ -1,11 +1,10 @@
-import React, { useState } from "react";
+import React from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import { OpenInBrowser, WhiteFlag, Bin } from "iconoir-react-native";
+import { OpenInBrowser, WhiteFlag, Bin, Globe } from "iconoir-react-native";
 import { useNavigation } from "@react-navigation/native";
 import { RootStackParamList } from "@/types/navigation";
 import { StackNavigationProp } from "@react-navigation/stack";
-import { ContentType } from "@/types/report-content";
-import { getUserStore } from "@/storage/user";
+import { PostPromote } from "@/types/Community";
 
 type ScreenNavigationProp = StackNavigationProp<RootStackParamList, "Home">;
 
@@ -17,6 +16,9 @@ type Props = {
 
   closeDropdown: () => void;
   handleReportPost: () => void;
+  handlePromotePost: () => void;
+  promote?: PostPromote;
+  universityName?: string;
 };
 
 const PostCardOption = ({
@@ -26,6 +28,8 @@ const PostCardOption = ({
   type,
   closeDropdown,
   handleReportPost,
+  handlePromotePost,
+  promote,
 }: Props) => {
   const navigation = useNavigation<ScreenNavigationProp>();
 
@@ -38,6 +42,18 @@ const PostCardOption = ({
 
   return (
     <View className="flex gap-2 absolute bg-white shadow-md w-48 top-12 right-4 z-10 rounded-md">
+      {promote?.isAdminOfUni && (
+        <TouchableOpacity
+          onPress={() => {
+            handlePromotePost();
+            closeDropdown?.();
+          }}
+          className="flex flex-row items-center gap-2 p-2"
+        >
+          <Globe width={20} height={20} color="#6744FF" />
+          <Text style={styles.text}>Promote This Post</Text>
+        </TouchableOpacity>
+      )}
       <TouchableOpacity
         onPress={() => {
           openPost();

@@ -1,7 +1,19 @@
-import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
+import { useInfiniteQuery, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { client } from "./api-client";
 import useDebounce from "@/hooks/useDebounce";
+import { getToken } from "@/storage/token";
+import { showToast } from "@/utils/toastWrapper";
+import { AxiosErrorType } from "@/types/constant";
 
+
+
+export type HighlightPostType = 'CommunityPost' | 'UserPost'
+
+export type AddUniversityHighlightPostPayload = {
+  postId: string
+  postType: HighlightPostType
+  position: number
+}
 
 export async function getUniversitySearch(
   searchTerm: string,
@@ -125,5 +137,43 @@ export function useGetUniversitiesHighlightedPostd(universityId: string) {
     staleTime: 0,
     retry: false,
     enabled: !!universityId,
+  })
+}
+
+
+
+export async function addUniversityHighlightPost(universityId: string, data: AddUniversityHighlightPostPayload, token: string) {
+  const response = await client(`/university/highlights/${universityId}`, {
+    method: 'POST',
+    headers: { Authorization: `Bearer ${token}` },
+    data,
+  })
+  return response
+}
+
+export function useAddUniversityHighlightPost(universityId: string) {
+  const cookieValue = getToken() as string;
+  const queryClient = useQueryClient()
+
+
+  return useMutation({
+    mutationFn: (data: AddUniversityHighlightPostPayload) => addUniversityHighlightPost(universityId, data, cookieValue),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['universitiesHighlightedPostd', universityId] })
+      queryClient.invalidateQueries({ queryKey: ['communityGroupsPost'] })
+      queryClient.invalidateQueries({ queryKey: ['timelinePosts'] })
+      showToast({
+        message: "Post has been successfully featured in the university's discovery page.",
+        type: "success",
+        placement: "bottom",
+      })
+    },
+    onError: (error: AxiosErrorType) => {
+      showToast({
+        message: (error.response?.data.message as string) || "Something went wrong",
+        type: "danger",
+        placement: "bottom",
+      })
+    },
   })
 }
