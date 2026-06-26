@@ -4,5 +4,17 @@
 <dict>
 	<key>aps-environment</key>
 	<string>development</string>
+	<!-- 🔗 Deep links - Associated Domains for Universal Links -->
+	<key>com.apple.developer.associated-domains</key>
+	<array>
+		<!-- 🔗 Deep links - Production (unibuzz.org) -->
+		<string>applinks:unibuzz.org</string>
+		<!-- 🔗 Deep links - Production (www.unibuzz.org) -->
+		<string>applinks:www.unibuzz.org</string>
+		<!-- 🔗 Deep links - Testing (dev-unibuzz.vercel.app) -->
+		<string>applinks:dev-unibuzz.vercel.app</string>
+		<!-- 🔗 Deep links - Testing (saiyangym.netlify.app) -->
+		<string>applinks:saiyangym.netlify.app</string>
+	</array>
 </dict>
 </plist>

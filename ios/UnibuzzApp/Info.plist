@@ -147,5 +147,15 @@
 	<false/>
 	<key>UISupportsDocumentBrowser</key>
 	<false/>
+	<!-- 🔗 Deep links - Custom scheme -->
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>unibuzz</string>
+			</array>
+		</dict>
+	</array>
 </dict>
 </plist>
