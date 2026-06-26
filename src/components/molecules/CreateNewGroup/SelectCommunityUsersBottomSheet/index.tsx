@@ -1,12 +1,10 @@
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import { ActivityIndicator, Text, TextInput, View } from "react-native";
 import { FlatList } from "react-native-actions-sheet";
 import { NewGroupUserListItem } from "../UserList";
 import { Users } from "@/types/connections";
-import {
-  useCommunityFilteredUsers,
-  useCommunityUsers,
-} from "@/services/community";
+import { useCommunityFilteredUsers } from "@/services/community";
+import { isApplicantRole } from "@/lib/userProfileSubtitle";
 
 type Props = {
   setSelectedUsers: (value: Users[]) => void;
@@ -15,6 +13,7 @@ type Props = {
   myUserId: string;
   communityGroupId?: string;
   fetchVerifiedUsers?: boolean;
+  excludeApplicants?: boolean;
 };
 
 const SelectCommunityUsersBottomSheet = ({
@@ -24,31 +23,33 @@ const SelectCommunityUsersBottomSheet = ({
   myUserId,
   communityGroupId,
   fetchVerifiedUsers,
+  excludeApplicants = false,
 }: Props) => {
   const [searchInput, setSearchInput] = useState("");
-  const selectedUserIds = selectedUsers.map((user) => user?.users_id || "");
+  const selectedUserIds = useMemo(
+    () => selectedUsers.map((user) => user?.users_id || ""),
+    [selectedUsers]
+  );
 
-  const {
-    data: communityUsersData,
-    isFetching,
-    hasNextPage: communityHasNextPage,
-    isFetchingNextPage: communityIsFetchingNextPage,
-    fetchNextPage: communityFetchNextPage,
-  } = useCommunityFilteredUsers(
+  const { data: communityUsersData, isFetching } = useCommunityFilteredUsers(
     communityId,
     fetchVerifiedUsers,
     searchInput,
     communityGroupId
   );
 
-  const communityUsers =
-    communityUsersData?.pages
-      .flatMap((page) => page.data)
-      .filter(
-        (user) =>
-          user?.users_id !== myUserId &&
-          !selectedUserIds?.includes(user?.users_id || "")
-      ) || [];
+  const communityUsers = useMemo(
+    () =>
+      communityUsersData?.pages
+        .flatMap((page) => page.data)
+        .filter(
+          (user) =>
+            user?.users_id !== myUserId &&
+            !selectedUserIds?.includes(user?.users_id || "") &&
+            !(excludeApplicants && isApplicantRole(user.role))
+        ) || [],
+    [communityUsersData, myUserId, selectedUserIds, excludeApplicants]
+  );
 
   const renderItem = ({ item }: { item: any }) => {
     return (
@@ -56,6 +57,7 @@ const SelectCommunityUsersBottomSheet = ({
         item={item}
         selectedUsers={selectedUsers}
         setSelectedUsers={setSelectedUsers}
+        excludeApplicants={excludeApplicants}
       />
     );
   };

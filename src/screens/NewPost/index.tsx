@@ -23,8 +23,8 @@ import {
 } from "react-native";
 import { launchImageLibrary } from "react-native-image-picker";
 import DocumentPicker from "react-native-document-picker";
-import { UserPostType } from "@/types/postType";
-import { PostInputData } from "@/types/constant";
+import { PostInputData, TIMELINE_VISIBILITY_OPTIONS, UserPostType } from "@/types/constant";
+import PostVisibilityDropdown from "@/components/molecules/PostVisibilityDropdown";
 import { UPLOAD_CONTEXT } from "@/types/uploads";
 import { useUploadToS3 } from "@/services/upload";
 import { validateUploadedFiles } from "@/utils";
@@ -285,7 +285,12 @@ const NewPost = ({ navigation }: any) => {
           onPress={() => navigation.goBack()}
           isLeftPadding={false}
         />
-        <View className="flex flex-row items-center gap-4 px-4">
+        <View className="flex flex-row items-center gap-2 px-4">
+          <PostVisibilityDropdown
+            value={postAccessType}
+            onChange={setPostAccessType}
+            options={TIMELINE_VISIBILITY_OPTIONS}
+          />
           <ReusableButton
             variant="primary"
             size={58}

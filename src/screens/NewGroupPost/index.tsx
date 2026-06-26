@@ -22,10 +22,11 @@ import {
 } from "react-native";
 import { launchImageLibrary } from "react-native-image-picker";
 import {
+  COMMUNITY_VISIBILITY_OPTIONS,
   CommunityPostData,
-  CommunityPostType,
   UserPostType,
 } from "@/types/constant";
+import PostVisibilityDropdown from "@/components/molecules/PostVisibilityDropdown";
 import { useCreateGroupPost } from "@/services/community-group";
 import { Toast } from "react-native-toast-notifications";
 import { getUserProfileStore } from "@/storage/user";
@@ -108,9 +109,12 @@ const NewGroupPost = ({ navigation }: any) => {
 
   useTabBarVisibility(navigation);
 
-  const [postAccessType] = useState<CommunityPostType | UserPostType>(
+  const [postVisibility, setPostVisibility] = useState<UserPostType>(
+
     UserPostType.PUBLIC
   );
+
+  const isGroupPost = Boolean(communityGroupId?.length);
 
   const handleImagePick = useCallback(() => {
     launchImageLibrary(
@@ -208,7 +212,7 @@ const NewGroupPost = ({ navigation }: any) => {
     setIsPostCreating(true);
     const basePayload: CommunityPostData = {
       content: cleanedText,
-      communityPostsType: UserPostType[postAccessType as never],
+      communityPostsType: communityGroupId ? postVisibility : UserPostType.PUBLIC,
       communityId,
       communityGroupId: communityGroupId || null,
       isPostVerified:
@@ -218,6 +222,7 @@ const NewGroupPost = ({ navigation }: any) => {
       isCommunityAdmin: communityGroupAdminId == userProfileData?.users_id,
       isGroupOfficial: isGroupOfficial,
     };
+
 
     if (images?.length || files?.length) {
       const mergedFiles = [
@@ -316,7 +321,14 @@ const NewGroupPost = ({ navigation }: any) => {
           onPress={() => handleBack()}
           isLeftPadding={false}
         />
-        <View className="flex flex-row items-center gap-4 px-4">
+        <View className="flex flex-row items-center gap-2 px-4">
+          {isGroupPost && (
+            <PostVisibilityDropdown
+              value={postVisibility}
+              onChange={setPostVisibility}
+              options={COMMUNITY_VISIBILITY_OPTIONS}
+            />
+          )}
           <ReusableButton
             variant="primary"
             size={58}

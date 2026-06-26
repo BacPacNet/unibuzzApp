@@ -31,9 +31,11 @@ import {
 
 // Types
 import {
+  CommunityGroupAccess,
   CommunityGroupTypeEnum,
   CreateCommunityGroupType,
 } from "@/types/CommunityGroup";
+import { isApplicantRole } from "@/lib/userProfileSubtitle";
 import { RootStackParamList } from "@/types/navigation";
 
 // Custom hooks
@@ -132,6 +134,8 @@ const NewCommunityGroupScreen = () => {
   const [isProfileLoading, setIsProfileLoading] = useState(false);
   const [showFilterError, setShowFilterError] = useState(false);
   const [imageToUpload, setImageToUpload] = useState<ImageAsset | null>(null);
+  const [isRequestRequiredToJoinGroup, setIsRequestRequiredToJoinGroup] =
+    useState(false);
   const isFilterSelectionValid = (filters: Record<string, string[]>) => {
     return (
       Object.keys(filters).length > 0 &&
@@ -157,7 +161,7 @@ const NewCommunityGroupScreen = () => {
       params: {
         universityName: communityData?.name,
         communityId: communityId,
-        isCommunityGroupPrivate: communityGroupAccess === "Private",
+        communityGroupAccess,
       },
     });
   };
@@ -183,7 +187,12 @@ const NewCommunityGroupScreen = () => {
 
     try {
       const { payload, createGroup, setCreateSelectedFilters } =
-        await handleCreateGroup(data, imageToUpload, bannerToUpload);
+        await handleCreateGroup(
+          data,
+          imageToUpload,
+          bannerToUpload,
+          isRequestRequiredToJoinGroup
+        );
 
       createGroup(
         {
@@ -234,6 +243,32 @@ const NewCommunityGroupScreen = () => {
     }
   }, [createSelectedFilters, showFilterError]);
 
+  useEffect(() => {
+    if (
+      communityGroupAccess === CommunityGroupAccess.Hidden &&
+      communityGroupType === CommunityGroupTypeEnum.OFFICIAL
+    ) {
+      setValue("communityGroupType", CommunityGroupTypeEnum.CASUAL);
+    }
+  }, [communityGroupAccess, communityGroupType, setValue]);
+
+  useEffect(() => {
+    if (communityGroupAccess === CommunityGroupAccess.Hidden) {
+      setIsRequestRequiredToJoinGroup(false);
+    }
+  }, [communityGroupAccess]);
+
+  useEffect(() => {
+    if (communityGroupAccess === CommunityGroupAccess.UniversityWide) {
+      const filtered = selectedUsersState.filter(
+        (user) => !isApplicantRole((user as any).role)
+      );
+      if (filtered.length !== selectedUsersState.length) {
+        setSelectedUsersState(filtered);
+      }
+    }
+  }, [communityGroupAccess]);
+
   // Loading state
   if (isFetching) {
     return (
@@ -270,6 +305,9 @@ const NewCommunityGroupScreen = () => {
               setCreateSelectedFilters={setCreateSelectedFilters}
               isNewGroup={true}
               fieldRefs={fieldRefs}
+              communityGroupAccess={communityGroupAccess}
+              isRequestRequiredToJoinGroup={isRequestRequiredToJoinGroup}
+              onRequestRequiredChange={setIsRequestRequiredToJoinGroup}
             />
 
             <View style={styles.section}>

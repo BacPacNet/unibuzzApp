@@ -1,21 +1,22 @@
 import { useState } from "react";
 import { Image, Text, TouchableOpacity, View } from "react-native";
-import BouncyCheckbox from "react-native-bouncy-checkbox";
 import avatar from "@/assets/avatarPlaceholder.png";
 import { Users } from "@/types/connections";
 import Badge from "@/assets/badge.svg";
-import { getUserProfileSubtitleLines } from "@/lib/userProfileSubtitle";
+import { getUserProfileSubtitleLines, isApplicantRole } from "@/lib/userProfileSubtitle";
 
 type Props = {
   item: any;
   selectedUsers: Users[];
   setSelectedUsers: (value: Users[]) => void;
+  excludeApplicants?: boolean;
 };
 
 export const NewGroupUserListItem = ({
   item,
   selectedUsers,
   setSelectedUsers,
+  excludeApplicants = false,
 }: Props) => {
   const [imageError, setImageError] = useState(false);
   const imageUri = item?.profile_dp?.imageUrl;
@@ -25,6 +26,10 @@ export const NewGroupUserListItem = ({
   );
 
   const handleClick = () => {
+    if (excludeApplicants && isApplicantRole(item?.role)) {
+      return;
+    }
+
     if (isSelected) {
       setSelectedUsers(selectedUsers.filter((u: any) => u._id !== item._id));
     } else {

@@ -1,13 +1,27 @@
+import {
+  CommunityGroupAccess,
+  GROUP_ACCESS_TOOLTIP_CONFIG,
+} from "@/types/CommunityGroup";
+
 export const GROUP_ACCESS_OPTIONS = [
   {
-    label: "Public",
-    value: "Public",
-    details: "Anyone can join",
+    label: GROUP_ACCESS_TOOLTIP_CONFIG[CommunityGroupAccess.OpenCampus].title,
+    value: CommunityGroupAccess.OpenCampus,
+    details:
+      GROUP_ACCESS_TOOLTIP_CONFIG[CommunityGroupAccess.OpenCampus].description,
   },
   {
-    label: "Private",
-    value: "Private",
-    details: "Permission to join required",
+    label: GROUP_ACCESS_TOOLTIP_CONFIG[CommunityGroupAccess.UniversityWide].title,
+    value: CommunityGroupAccess.UniversityWide,
+    details:
+      GROUP_ACCESS_TOOLTIP_CONFIG[CommunityGroupAccess.UniversityWide]
+        .description,
+  },
+  {
+    label: GROUP_ACCESS_TOOLTIP_CONFIG[CommunityGroupAccess.Hidden].title,
+    value: CommunityGroupAccess.Hidden,
+    details:
+      GROUP_ACCESS_TOOLTIP_CONFIG[CommunityGroupAccess.Hidden].description,
   },
 ];
 

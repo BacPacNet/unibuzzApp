@@ -4,25 +4,42 @@ import { status } from "@/types/CommunityGroup";
 
 interface Props {
   isPrivate: boolean;
+  isUniversityWide?: boolean;
+  isApplicant?: boolean;
   isVerified: boolean;
   isPending: boolean;
   userStatus: status;
-  onClick: (value?: string) => void;
+  onClick: () => void;
+  isRequestRequiredToJoinGroup: boolean;
 }
 
 const JoinGroupButton: React.FC<Props> = ({
   isPrivate,
+  isUniversityWide,
+  isApplicant,
   isVerified,
   isPending,
   userStatus,
   onClick,
+  isRequestRequiredToJoinGroup,
 }) => {
-  //  private
-  if (isPrivate) {
-    if (!isVerified) {
+  if (isUniversityWide && isApplicant) {
+    return (
+      <ReusableButton
+        buttonText="University Members Only"
+        variant="primary"
+        containerStyle="opacity-60 "
+        disabled
+        size={"fit"}
+      />
+    );
+  }
+
+  if (isRequestRequiredToJoinGroup) {
+    if (isUniversityWide && !isVerified) {
       return (
         <ReusableButton
-          buttonText="Verified Users Only"
+          buttonText="University Members Only"
           variant="primary"
           containerStyle="opacity-60 "
           disabled
@@ -33,14 +50,12 @@ const JoinGroupButton: React.FC<Props> = ({
 
     return (
       <ReusableButton
-        onPress={()=>onClick( userStatus === status.pending ? "" : "request")}
+        onPress={onClick}
         buttonText={
           userStatus === status.pending ? "Request Pending" : "Request Access"
         }
         disabled={userStatus === status.pending}
-        // isLoading={userStatus === status.pending}
         variant="primary"
-        // size={130}
         size={"fit"}
         height="small"
         textSize="text-2xs"
@@ -49,7 +64,6 @@ const JoinGroupButton: React.FC<Props> = ({
     );
   }
 
-  //  public
   return (
     <ReusableButton
       onPress={onClick}

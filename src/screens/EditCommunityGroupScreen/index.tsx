@@ -9,7 +9,12 @@ import useCustomBackHandler from "@/hooks/useCustomBackHandler";
 import { useUpdateCommunityGroup } from "@/services/community-group";
 import { useGetCommunity } from "@/services/university-community";
 import { useUploadToS3 } from "@/services/upload";
-import { CreateCommunityGroupType, status } from "@/types/CommunityGroup";
+import {
+  CommunityGroupAccess,
+  CreateCommunityGroupType,
+  status,
+} from "@/types/CommunityGroup";
+import { isApplicantRole } from "@/lib/userProfileSubtitle";
 import { RootStackParamList } from "@/types/navigation";
 
 import { UPLOAD_CONTEXT } from "@/types/uploads";
@@ -123,8 +128,10 @@ const EditCommunityGroupScreen = () => {
   const [isProfileLoading, setIsProfileLoading] = useState(false);
   const [imageToUpload, setImageToUpload] = useState<ImageAsset | null>(null);
   const [bannerToUpload, setBannerToUpload] = useState<ImageAsset | null>(null);
+  const [isRequestRequiredToJoinGroup, setIsRequestRequiredToJoinGroup] =
+    useState(communityGroups?.isRequestRequiredToJoinGroup ?? false);
 
-  const { selectedUsersState, resetFilters } =
+  const { selectedUsersState, setSelectedUsersState, resetFilters } =
     useNewCommunityGroupStatesContext();
   useFocusEffect(
     useCallback(() => {
@@ -152,7 +159,28 @@ const EditCommunityGroupScreen = () => {
       communityGroups?.communityGroupLogoCoverUrl?.imageUrl ?? ""
     );
     setCreateSelectedFilters(communityGroups?.communityGroupCategory);
+    setSelectedUsersState(communityGroups?.users ?? []);
+    setIsRequestRequiredToJoinGroup(
+      communityGroups?.isRequestRequiredToJoinGroup ?? false
+    );
   }, [communityGroups]);
+
+  useEffect(() => {
+    if (communityGroupAccess === CommunityGroupAccess.Hidden) {
+      setIsRequestRequiredToJoinGroup(false);
+    }
+  }, [communityGroupAccess]);
+
+  useEffect(() => {
+    if (communityGroupAccess === CommunityGroupAccess.UniversityWide) {
+      const filtered = selectedUsersState.filter(
+        (user) => !isApplicantRole((user as any).role)
+      );
+      if (filtered.length !== selectedUsersState.length) {
+        setSelectedUsersState(filtered);
+      }
+    }
+  }, [communityGroupAccess]);
 
   const handleNavigateToFilterScreen = () => {
     navigate.navigate("Groups", {
@@ -211,6 +239,7 @@ const EditCommunityGroupScreen = () => {
       communityGroupLabel: communityGroupLabel,
       ...communityGroupCategory,
       selectedUsers: selectedUsersState,
+      isRequestRequiredToJoinGroup,
       ...(logoImageData && {
         communityGroupLogoUrl: logoImageData.data[0],
       }),
@@ -259,7 +288,7 @@ const EditCommunityGroupScreen = () => {
         communityId: communityId,
         isEditGroup: true,
         communityGroupId: communityGroups?._id,
-        isCommunityGroupPrivate: communityGroupAccess === "Private",
+        communityGroupAccess,
       },
     });
   };
@@ -293,6 +322,10 @@ const EditCommunityGroupScreen = () => {
               isPending={groupStatus === status.pending}
               groupType={communityGroups?.communityGroupType}
               fieldRefs={fieldRefs}
+              communityGroupAccess={communityGroupAccess}
+              isRequestRequiredToJoinGroup={isRequestRequiredToJoinGroup}
+              onRequestRequiredChange={setIsRequestRequiredToJoinGroup}
+              readOnlyGroupAccess
             />
             <View style={styles.section}>
               <View style={styles.buttonContainer}>

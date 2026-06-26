@@ -2,12 +2,14 @@ import {
   View,
   Text,
   Image,
-  ScrollView,
   Linking,
   Pressable,
   StyleSheet,
+  useWindowDimensions,
 } from "react-native";
-import React, { useMemo, useRef, useState } from "react";
+import React, { useCallback, useMemo, useRef, useState } from "react";
+import { Gesture, GestureDetector, ScrollView } from "react-native-gesture-handler";
+import { runOnJS } from "react-native-reanimated";
 import ReusableButton from "@/components/atoms/ReusableButton";
 import {
   Mail,
@@ -36,8 +38,11 @@ import { userTypeEnum } from "@/types/register";
 import { MESSAGES } from "@/content/constant";
 import {
   useGetPartnerUniversities,
+  useGetUniversitiesHighlightedPostd,
   useUniversitySearchByName,
 } from "@/services/universitySearch";
+import DiscoverPostCard from "@/components/molecules/Timeline/DiscoverPostCard";
+import { PostType } from "@/types/postType";
 
 type NavigationProp = StackNavigationProp<RootStackParamList, "University">;
 
@@ -77,10 +82,17 @@ const University = ({
   const { data: searchedUniversity } = useUniversitySearchByName(
     routeData?.name ?? "",
   );
+  const { data: highlightedPosts } = useGetUniversitiesHighlightedPostd(
+    searchedUniversity?._id || "",
+  );
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const totalHighlightedPosts = highlightedPosts?.length ?? 0;
+  const { height: screenHeight } = useWindowDimensions();
+  const highlightedPostsMinHeight = screenHeight - 290;
   const { data: partnerUniversities } = useGetPartnerUniversities();
   const university = searchedUniversity ?? routeData;
   const isAllowedToJoin = useMemo(
-    () => partnerUniversities?.some((u) => u._id === university?._id),
+    () => partnerUniversities?.some((u: any) => u._id === university?._id),
     [partnerUniversities, university?._id],
   );
   const insets = useSafeAreaInsets();
@@ -104,6 +116,36 @@ const University = ({
     });
   };
 
+
+  const handleSwipeNext = useCallback(() => {
+    setCurrentIndex((prev) =>
+      prev === totalHighlightedPosts - 1 ? 0 : prev + 1,
+    );
+  }, [totalHighlightedPosts]);
+
+  const handleSwipePrev = useCallback(() => {
+    setCurrentIndex((prev) =>
+      prev === 0 ? totalHighlightedPosts - 1 : prev - 1,
+    );
+  }, [totalHighlightedPosts]);
+
+  const highlightedPostsSwipeGesture = useMemo(
+    () =>
+      Gesture.Pan()
+        .activeOffsetX([-20, 20])
+        .failOffsetY([-15, 15])
+        .onEnd((event) => {
+          if (event.translationX < -40) {
+            runOnJS(handleSwipeNext)();
+          } else if (event.translationX > 40) {
+            runOnJS(handleSwipePrev)();
+          }
+        }),
+    [handleSwipeNext, handleSwipePrev],
+  );
+
+  const currentHighlightedPost = highlightedPosts?.[currentIndex];
+
   const handleJoinCommunity = () => {
     const isStudentOrFaculty =
       userProfileData?.role === userTypeEnum.Student ||
@@ -117,7 +159,7 @@ const University = ({
           university?.name?.toLowerCase());
 
     if (isStudentOrFaculty && isJoiningDifferentUniversity) {
-      navigation.navigate("Home", { screen: "Timeline" });
+      navigation.navigate("Home", { screen: "Timeline" } as any);
       Toast.hideAll();
       Toast.show(
         MESSAGES.ALREADY_AFFILIATED_WITH_UNIVERSITY(
@@ -151,6 +193,8 @@ const University = ({
 
   return (
     <ScrollView
+      directionalLockEnabled
+      nestedScrollEnabled
       contentContainerStyle={{
         flexGrow: 1,
         backgroundColor: "white",
@@ -170,7 +214,7 @@ const University = ({
 
         <View
           style={{ marginTop: 32, marginBottom: 16 }}
-          className="w-full rounded-b-2xl relative flex flex-row items-center gap-2"
+          className="w-full rounded-b-2xl relative flex flex-row items-center justify-center gap-2"
         >
           <CommunityLogo logoUrl={university?.logo || ""} />
           <Text
@@ -183,7 +227,7 @@ const University = ({
 
         <Text
           style={{ marginBottom: 32 }}
-          className="flex flex-row items-center text-xs text-neutral-600"
+          className="flex flex-row items-center text-xs text-neutral-600 text-center"
         >
           {university?.short_overview || "Not Available"}
         </Text>
@@ -209,9 +253,63 @@ const University = ({
               />
             ))}
         </View>
+{highlightedPosts?.length > 0 && currentHighlightedPost && (
+          <View
+            style={[
+              styles.highlightedPostsSection,
+              { minHeight: highlightedPostsMinHeight },
+            ]}
+          >
+            <Text style={styles.secTitle}>From the University</Text>
 
+            <GestureDetector gesture={highlightedPostsSwipeGesture}>
+              <View style={styles.highlightedPostsCarousel}>
+                <DiscoverPostCard
+                key={currentHighlightedPost._id}
+                user={`${currentHighlightedPost.user?.firstName ?? ""} ${currentHighlightedPost.user?.lastName ?? ""}`.trim()}
+                adminId={currentHighlightedPost.user?._id}
+                university={currentHighlightedPost.profile?.university_name}
+                year={currentHighlightedPost.profile?.study_year}
+                text={currentHighlightedPost.content}
+                date={currentHighlightedPost.createdAt}
+                avatarLink={currentHighlightedPost.profile?.profile_dp?.imageUrl}
+                postID={currentHighlightedPost._id}
+                type={
+                  "communityId" in currentHighlightedPost
+                    ? PostType.Community
+                    : PostType.Timeline
+                }
+                images={currentHighlightedPost.imageUrl || []}
+                idx={currentIndex}
+                major={currentHighlightedPost.profile?.major}
+                affiliation={currentHighlightedPost.profile?.affiliation}
+                occupation={currentHighlightedPost.profile?.occupation}
+                role={currentHighlightedPost.profile?.role}
+                communityName={currentHighlightedPost.communityName}
+                communityGroupName={currentHighlightedPost.communityGroupName}
+                isCommunityAdmin={currentHighlightedPost.profile?.isCommunityAdmin}
+                communities={currentHighlightedPost.profile?.communities}
+              />
+              </View>
+            </GestureDetector>
+
+            <View style={styles.paginationDots}>
+              {highlightedPosts.map((_: unknown, index: number) => (
+                <View
+                  key={index}
+                  style={[
+                    styles.dot,
+                    currentIndex === index && styles.activeDot,
+                  ]}
+                />
+              ))}
+            </View>
+          </View>
+        )}
         <UniversityOverview description={university?.long_description} />
         <UniversityContact data={university} />
+
+        
       </View>
 
       <ActionSheet
@@ -226,12 +324,12 @@ const University = ({
 };
 
 const UniversityOverview = ({ description }: { description?: string }) => (
-  <View style={{ marginBottom: 32 }} className="flex flex-col gap-4">
-    <Text style={{ fontSize: 24 }} className="text-neutral-700 font-bold">
+  <View style={{ marginBottom: 32,marginTop: 64 }} className="flex flex-col gap-4">
+    <Text style={styles.secTitle} >
       Overview
     </Text>
     <View className="flex flex-col gap-4">
-      <Text className="text-xs text-neutral-500">{description}</Text>
+      <Text className="text-xs text-neutral-500 text-center">{description}</Text>
     </View>
   </View>
 );
@@ -299,8 +397,8 @@ const UniversityContact = ({ data }: { data: UniversityData }) => {
   return (
     <View className="flex flex-col gap-4 mt-4">
       <Text
-        style={{ fontSize: 24, paddingTop: 32 }}
-        className="text-neutral-900 text-base font-extrabold"
+        style={[styles.secTitle, { paddingTop: 32 }]}
+       
       >
         Contact Info
       </Text>
@@ -376,5 +474,37 @@ const styles = StyleSheet.create({
     fontFamily: FONTS.inter.semiBold,
     color: "#3A3B3C",
     fontSize: 16,
+  },
+  highlightedPostsSection: {
+    marginTop: 32,
+    gap: 24,
+  },
+  highlightedPostsCarousel: {
+    flex: 1,
+    justifyContent: "flex-start",
+  },
+
+  paginationDots: {
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+    gap: 8,
+    marginTop: 8,
+  },
+  dot: {
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+    backgroundColor: "#D4D4D4",
+  },
+  activeDot: {
+    backgroundColor: "#6744FF",
+  },
+  secTitle: {
+    fontSize: 24,
+    fontWeight: "700",
+    color: "#3A3B3C",
+    fontFamily: "poppins",
+    textAlign: "center",
   },
 });

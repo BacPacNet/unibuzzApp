@@ -54,7 +54,12 @@ const AllUniversities = () => {
         ),
       ];
 
-  const renderItem = ({ item }: any) => <DiscoverUniversityCard data={item} />;
+  const renderItem = ({ item }: any) => (
+    <DiscoverUniversityCard
+      data={item}
+      isPartnerUniversity={partnerIds.has(item._id)}
+    />
+  );
 
   const handleScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
     const { contentOffset, layoutMeasurement } = event.nativeEvent;

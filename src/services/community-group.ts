@@ -143,6 +143,7 @@ export const useUpdateCommunityGroup = () => {
 };
 
 export async function CreateGroupPost(data: any, token: string) {
+ console.log("dalkljjhta",data);
   const response = await client(`/communitypost`, {
     method: "POST",
     headers: { Authorization: `Bearer ${token}` },
