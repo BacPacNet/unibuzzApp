@@ -7,7 +7,6 @@ import {
   Text,
   StyleSheet,
 } from "react-native";
-
 import FormContainer from "@/components/organism/Register/FormContainer/FormContainer";
 import { AnimatedCircularProgress } from "react-native-circular-progress";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -18,6 +17,7 @@ const RegisterScreen = () => {
   const [step, setStep] = useState(0);
   const [subStep, setSubStep] = useState(0);
   const insets = useSafeAreaInsets();
+
 
   useEffect(() => {
     const loadRegisterData = async () => {

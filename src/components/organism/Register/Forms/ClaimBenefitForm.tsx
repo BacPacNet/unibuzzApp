@@ -72,7 +72,7 @@ const ClaimBenefitForm = ({
           </View>
         </View>
 
-        <View className="w-full pb-4">
+        <View style={styles.buttonContainer}>
           <ReusableButton
             onPress={handleSubmit(onSubmit)}
             buttonText="Submit"
@@ -114,5 +114,11 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: "#1F2937",
     height: 40,
+  },
+  buttonContainer: {
+
+    paddingBottom:16,
+    borderRadius: 8,
+    paddingTop: 24,
   },
 });
