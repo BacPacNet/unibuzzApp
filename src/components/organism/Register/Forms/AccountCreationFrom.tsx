@@ -9,19 +9,21 @@ import ReusableButton from "@/components/atoms/ReusableButton";
 import { FormInput } from "@/components/atoms/FormInput";
 import { FormInputPassword } from "@/components/atoms/FormInputPassword";
 import { Text } from "react-native";
+import { ArrowLeft } from "iconoir-react-native";
 import { useTimeTracking } from "@/hooks/useTimeTracking";
 import { TRACK_EVENT } from "@/content/constant";
 
 type Props = {
   isPending: boolean;
   onSubmit: (data: any) => Promise<void>;
+  handlePrev?: () => void;
 };
 
 type RegisterScreenNavigationProp = StackNavigationProp<
   RootStackParamList,
   "RegisterScreen"
 >;
-const AccountCreationForm = ({ isPending, onSubmit }: Props) => {
+const AccountCreationForm = ({ isPending, onSubmit, handlePrev }: Props) => {
   const navigation = useNavigation<RegisterScreenNavigationProp>();
 
   const {
@@ -142,6 +144,22 @@ const AccountCreationForm = ({ isPending, onSubmit }: Props) => {
               variant="border"
               height="large"
             />
+
+            {handlePrev && (
+              <ReusableButton
+                onPress={handlePrev}
+                buttonText="Back"
+                containerStyle="flex items-center justify-center"
+                buttonContent={
+                  <View className="flex flex-row items-center justify-center gap-2">
+                    <ArrowLeft width={20} height={20} color="#6744FF" />
+                    <Text className="text-primary-500">Back</Text>
+                  </View>
+                }
+                variant="shade"
+                height="large"
+              />
+            )}
           </View>
         </View>
       </View>

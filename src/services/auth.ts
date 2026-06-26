@@ -7,6 +7,7 @@ import { Toast, useToast } from "react-native-toast-notifications";
 import { useNavigation } from "@react-navigation/native";
 import { useAuth } from "@/context/AuthProvider/AuthContext";
 import { removeRegisterData } from "@/storage/register";
+import { removeLoginData } from "@/storage/login";
 import { MESSAGES } from "@/content/constant";
 import { useUserPasswordReset } from "@/context/UserPasswordResetProvider/UserPasswordResetProvider";
 
@@ -41,6 +42,7 @@ export const useHandleLogin = () => {
       setAuthenticated();
       toast.show("Login Successfull");
       removeRegisterData();
+      removeLoginData();
       //  setRefreshCookieValue(
       //    response.tokens.refresh.token,
       //    response.tokens.refresh.expires
@@ -78,15 +80,21 @@ interface data {
   confirmpassword: string;
   birthDate: string;
   gender: string;
-  country: string;
   firstName: string;
   lastName: string;
+  userType: string;
   verificationEmail: string;
   verificationOtp: string;
-  universityEmail: string;
+  universityId: string;
+  universityName: string;
+  universityLogo: string;
+  universityDomain: string[];
   UniversityOtp: string;
   UniversityOtpOK: string;
   referralCode: string;
+  isJoinUniversity: boolean;
+  isEmailVerified: boolean;
+  selectedUniversityIds: string[];
 }
 
 async function register_v2(data: data) {

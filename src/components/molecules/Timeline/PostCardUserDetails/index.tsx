@@ -6,7 +6,7 @@ import { useNavigation } from "@react-navigation/native";
 import { RootStackParamList } from "@/types/navigation";
 import { StackNavigationProp } from "@react-navigation/stack";
 import PostOption from "@/assets/icons/postOption";
-import { userTypeEnum } from "@/storage/register";
+import { getUserProfileSubtitleLines } from "@/lib/userProfileSubtitle";
 import DropdownWrapper from "../../SelectDropDownWrapper";
 import PostCardOption from "../PostCardOption";
 import { BadgeCheck, Balcony, CheckCircleSolid } from "iconoir-react-native";
@@ -77,21 +77,14 @@ const PostCardUserDetails = ({
   const [reportVisible, setReportVisible] = useState(false);
   const userdata = getUserStore();
 
-  const normalizedRole = role
-    ? role.charAt(0).toUpperCase() + role.slice(1).toLowerCase()
-    : null;
+  const { line1, line2 } = getUserProfileSubtitleLines({
+    role,
+    study_year: year,
+    major,
+    occupation,
+    affiliation,
+  });
 
-  const isStudent = normalizedRole === userTypeEnum.Student;
-
-  let roleInfo;
-
-  if (isStudent) {
-    roleInfo = year || "Student (Year not specified)";
-  } else if (normalizedRole) {
-    roleInfo = normalizedRole;
-  } else {
-    roleInfo = occupation || "Unknown Role";
-  }
   const handleNavigate = () => {
     navigate.navigate("ProfileStack", {
       screen: "Profile",
@@ -123,18 +116,22 @@ const PostCardUserDetails = ({
             </Text>
           </View>
           <View>
-            <Text style={styles.fontSize} className="text-neutral-500 ">
-              {isStudent ? year : occupation}
-            </Text>
-            <Text style={styles.fontSize} className="text-neutral-500 ">
-              {isStudent ? major : affiliation}
-            </Text>
+            {line1 ? (
+              <Text style={styles.fontSize} className="text-neutral-500 ">
+                {line1}
+              </Text>
+            ) : null}
+            {line2 ? (
+              <Text style={styles.fontSize} className="text-neutral-500 ">
+                {line2}
+              </Text>
+            ) : null}
           </View>
         </View>
       </TouchableOpacity>
       <View className="flex flex-row items-center gap-2">
         <View>
-          {communities?.length && communities?.length > 0 && (
+          {communities?.length && communities?.length > 0 ? (
             <View className="flex flex-row items-center gap-2">
               {communities
                 ?.slice()
@@ -160,7 +157,7 @@ const PostCardUserDetails = ({
                   />
                 ))}
             </View>
-          )}
+          ) : null}
         </View>
         {isPostOptionShown && (
           <DropdownWrapper

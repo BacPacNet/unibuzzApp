@@ -50,7 +50,7 @@ const sections = [
     id: "account",
     title: "Account",
     items: [
-      { id: "UniversityVerification", title: "University Verification" },
+      // { id: "UniversityVerification", title: "University Verification" },
       { id: "username", title: "Change Username" },
       { id: "password", title: "Change Password" },
       { id: "blockUsers", title: "Block Users" },

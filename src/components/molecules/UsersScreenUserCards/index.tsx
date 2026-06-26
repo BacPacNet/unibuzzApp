@@ -7,6 +7,7 @@ import { useToggleFollow } from "@/services/connection";
 import { useNavigation } from "@react-navigation/native";
 import { Toast } from "react-native-toast-notifications";
 import { screenName } from "@/constant/screenName";
+import { getUserProfileSubtitleLines } from "@/lib/userProfileSubtitle";
 
 interface UserProfile {
   profile_dp?: { imageUrl?: string };
@@ -99,8 +100,14 @@ const UsersScreenUserCardItem = ({
       />
     );
 
-  const isStudent = item?.profile?.role === "student";
   const profile = item?.profile ?? {};
+  const { line1, line2 } = getUserProfileSubtitleLines({
+    role: item?.role ?? profile?.role,
+    study_year: profile.study_year,
+    major: profile.major,
+    occupation: profile.occupation,
+    affiliation: profile.affiliation,
+  });
 
   return (
     <View style={styles.container}>
@@ -121,24 +128,8 @@ const UsersScreenUserCardItem = ({
           {`${item?.firstName || ""} ${item?.lastName || ""}`}
         </Text>
 
-        <View style={styles.metaRow}>
-          {isStudent && profile.study_year && (
-            <Text style={styles.metaText}>{profile.study_year} Yr.</Text>
-          )}
-          {/* {isStudent && profile.degree && (
-            <Text style={styles.metaText}>{profile.degree}</Text>
-          )} */}
-          {!isStudent && profile.occupation && (
-            <Text style={styles.metaText}>{profile.occupation}</Text>
-          )}
-        </View>
-
-        {isStudent && profile.major && (
-          <Text style={styles.metaText}>{profile.major}</Text>
-        )}
-        {!isStudent && profile.affiliation && (
-          <Text style={styles.metaText}>{profile.affiliation}</Text>
-        )}
+        {line1 ? <Text style={styles.metaText}>{line1}</Text> : null}
+        {line2 ? <Text style={styles.metaText}>{line2}</Text> : null}
       </View>
       <View className="flex justify-end w-max">{renderCTA}</View>
     </View>

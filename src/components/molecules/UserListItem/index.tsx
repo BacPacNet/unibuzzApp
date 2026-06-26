@@ -9,7 +9,7 @@ import {
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { useToggleFollow } from "@/services/connection";
-import { userTypeEnum } from "@/types/register";
+import { getUserProfileSubtitleLines } from "@/lib/userProfileSubtitle";
 import defaultAvatar from "@/assets/avatar.png";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { RootStackParamList } from "@/types/navigation";
@@ -88,7 +88,13 @@ const UserListItem: React.FC<Props> = ({
   };
   //   const handleProfileClick = () => navigation.navigate('UserProfile', { userId: id })
 
-  const isStudent = role == userTypeEnum.Student;
+  const { line1, line2 } = getUserProfileSubtitleLines({
+    role,
+    study_year,
+    major,
+    occupation,
+    affiliation,
+  });
   const showRemoveButton =
     !isSelfProfile && isViewerAdmin && showCommunityGroupMember;
   const showFollowButton = !isSelfProfile && !showRemoveButton;
@@ -109,10 +115,8 @@ const UserListItem: React.FC<Props> = ({
             {firstName} {lastName}
           </Text>
 
-          <Text style={styles.subText}>
-            {isStudent ? study_year : occupation}
-          </Text>
-          <Text style={styles.subText}>{isStudent ? major : affiliation}</Text>
+          {line1 ? <Text style={styles.subText}>{line1}</Text> : null}
+          {line2 ? <Text style={styles.subText}>{line2}</Text> : null}
         </View>
       </TouchableOpacity>
 

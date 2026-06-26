@@ -26,6 +26,7 @@ type Props = {
   placeholder: any;
   iconSize?: number;
   isLableShown?: boolean;
+  isApplicantUser?: boolean;
   logoSize?: number;
   subLogoSize?: number;
 };
@@ -37,6 +38,7 @@ const CommunityDropdown = ({
   placeholder,
   iconSize = 16,
   isLableShown = true,
+  isApplicantUser = false,
   logoSize = 24,
   subLogoSize = 24,
 }: Props) => {
@@ -54,6 +56,39 @@ const CommunityDropdown = ({
   const handleError = () => {
     setHasError(true);
   };
+
+  const triggerContent = (
+    <>
+      {isLableShown && <Text style={styles.groupText}>GROUPS</Text>}
+      {isApplicantUser ? (
+        <View style={styles.logoContainer}>
+          {!hasError && selectedImage && selectedImage?.length > 0 ? (
+            <Image
+              source={{ uri: selectedImage }}
+              style={[styles.logo, { width: logoSize, height: logoSize }]}
+              resizeMode="contain"
+              onError={handleError}
+            />
+          ) : (
+            <UniversityLogoPlaceholder width={24} height={24} />
+          )}
+          <NavArrowDown width={iconSize} height={iconSize} strokeWidth={2} />
+        </View>
+      ) : null}
+    </>
+  );
+
+  if (!isApplicantUser) {
+    return (
+      <View style={styles.container}>
+        <View
+          style={[styles.trigger, { paddingStart: isLableShown ? 24 : 0 }]}
+        >
+          {triggerContent}
+        </View>
+      </View>
+    );
+  }
 
   return (
     <View style={styles.container}>
@@ -103,20 +138,7 @@ const CommunityDropdown = ({
           style={[styles.trigger, { paddingStart: isLableShown ? 24 : 0 }]}
           activeOpacity={0.7}
         >
-          {isLableShown && <Text style={styles.groupText}>GROUPS</Text>}
-          <View style={styles.logoContainer}>
-            {!hasError && selectedImage && selectedImage?.length > 0 ? (
-              <Image
-                source={{ uri: selectedImage }}
-                style={[styles.logo, { width: logoSize, height: logoSize }]}
-                resizeMode="contain"
-                onError={handleError}
-              />
-            ) : (
-              <UniversityLogoPlaceholder width={24} height={24} />
-            )}
-            <NavArrowDown width={iconSize} height={iconSize} strokeWidth={2} />
-          </View>
+          {triggerContent}
         </TouchableOpacity>
       </DropdownWrapper>
     </View>

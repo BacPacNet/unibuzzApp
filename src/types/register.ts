@@ -5,26 +5,23 @@ export interface FormDataType {
   confirmpassword: string;
   birthDate: string;
   gender: string;
-  country: string;
   firstName: string;
   lastName: string;
   userType: string;
-  year: string;
-  degree: string;
-  major: string;
-  department: string;
-  occupation: string;
   universityId: string;
   verificationEmail: string;
   universityLogo: string;
+  universityDomain: string[];
   verificationOtp: string;
-  universityEmail: string;
   universityName: string;
   UniversityOtp: string;
   UniversityOtpOK: string;
   referralCode: string;
   isJoinUniversity: boolean;
-  isUniversityVerified: boolean;
+  isEmailVerified: boolean;
+  selectedUniversityIds: string[];
+  communityId?: string;
+  step?: number;
 }
 
 export const value = [

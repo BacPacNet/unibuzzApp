@@ -26,6 +26,7 @@ import { Toast } from "react-native-toast-notifications";
 import { useCreateUserChat } from "@/services/Messages";
 import ProfileDropdownMenu from "@/components/atoms/ProfileDropdownMenu";
 import ReusableButton from "@/components/atoms/ReusableButton";
+import { getUserProfileSubtitleLines } from "@/lib/userProfileSubtitle";
 
 type userFollowing = {
   userId: string;
@@ -40,6 +41,7 @@ type Props = {
   isSelfProfile?: boolean;
   toShow: boolean;
   isStudent: boolean;
+  role?: string;
   occupation?: string;
   major?: string;
   affiliation?: string;
@@ -60,6 +62,7 @@ const ProfileCard = ({
   isSelfProfile,
   toShow = false,
   isStudent,
+  role,
   major,
   occupation,
   affiliation,
@@ -93,23 +96,23 @@ const ProfileCard = ({
     });
   };
 
-  const first =
-    isSideBar && isStudent
-      ? userProfile?.study_year
-      : isStudent
-        ? year
-        : userProfile?.occupation || occupation;
-
-  const second =
-    isSideBar && isStudent
-      ? userProfile?.major
-      : isStudent && !isSideBar
-        ? major
-        : !isStudent && !isSideBar
-          ? affiliation
-          : !isStudent && isSideBar
-            ? userProfile?.affiliation
-            : affiliation;
+  const { line1, line2 } = getUserProfileSubtitleLines(
+    isSideBar
+      ? {
+          role: userProfile?.role,
+          study_year: userProfile?.study_year,
+          major: userProfile?.major,
+          occupation: userProfile?.occupation,
+          affiliation: userProfile?.affiliation,
+        }
+      : {
+          role,
+          study_year: year,
+          major,
+          occupation,
+          affiliation,
+        }
+  );
 
   const sharePost = async (
     message = `Hey, check out ${name} profile ${NEXT_PUBLIC_API_BASE_URL}/${userId}`
@@ -246,22 +249,26 @@ const ProfileCard = ({
               {name ? name : user?.firstName + " " + user?.lastName}
             </Text>
             <View style={styles.universityContainer}>
-              <Text
-                style={[
-                  styles.year,
-                  { fontSize: ProfileSize === "large" ? 14 : 10 },
-                ]}
-              >
-                {first}
-              </Text>
-              <Text
-                style={[
-                  styles.year,
-                  { fontSize: ProfileSize === "large" ? 14 : 10 },
-                ]}
-              >
-                {second}
-              </Text>
+              {line1 ? (
+                <Text
+                  style={[
+                    styles.year,
+                    { fontSize: ProfileSize === "large" ? 14 : 10 },
+                  ]}
+                >
+                  {line1}
+                </Text>
+              ) : null}
+              {line2 ? (
+                <Text
+                  style={[
+                    styles.year,
+                    { fontSize: ProfileSize === "large" ? 14 : 10 },
+                  ]}
+                >
+                  {line2}
+                </Text>
+              ) : null}
             </View>
           </View>
         </View>

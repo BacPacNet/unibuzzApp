@@ -1,15 +1,13 @@
 import React from "react";
-import { View, Text, StyleSheet, ScrollView } from "react-native";
+import { View, Text, StyleSheet } from "react-native";
 import { useFormContext } from "react-hook-form";
-import { userType } from "@/types/register";
 import Title from "@/components/atoms/Title";
 import ReusableButton from "@/components/atoms/ReusableButton";
 import { FormInput } from "@/components/atoms/FormInput";
 import { DateSelect } from "@/components/atoms/DateSelect";
 import { ArrowLeft } from "iconoir-react-native";
 import RadioInput from "@/components/atoms/RadioInput";
-import Accordion from "@/components/atoms/Accordian";
-import { FONTS } from "@/constants/fonts";
+import { GenderOptions } from "@/types/register";
 import { TRACK_EVENT } from "@/content/constant";
 import { useTimeTracking } from "@/hooks/useTimeTracking";
 
@@ -27,45 +25,41 @@ const ProfileSetupForm = ({
     watch,
     getValues,
   } = useFormContext();
+
   useTimeTracking(TRACK_EVENT.PROFILE_SETUP_STEP_VIEW_DURATION, {
-    email: getValues('email'),
+    email: getValues("email"),
   });
+
   const currDob = watch("birthDate");
+
   return (
     <View style={styles.main}>
       <View className="flex w-full items-center ">
-        {/* Header */}
         <View style={styles.titlemargin} className="flex items-start  w-full">
           <Title>Profile Setup</Title>
         </View>
 
-        {/* Form */}
         <View style={styles.mainContainer} className="w-full ">
-          {/* First Name */}
-
           <FormInput
             label="First Name"
             placeholder="Enter First Name"
-            isLabelShown={true}
-            rules={{
-              required: "First name is required!",
-            }}
+            isLabelShown
+            rules={{ required: "First name is required!" }}
             name="firstName"
             control={control}
             isError={!!ProfileFormErrors.firstName}
             errorMessage={
-              ProfileFormErrors.firstName ? "Please enter your first name!" : ""
+              ProfileFormErrors.firstName
+                ? "Please enter your first name!"
+                : ""
             }
           />
 
-          {/* Last Name */}
           <FormInput
             placeholder="Enter Last Name"
-            isLabelShown={true}
+            isLabelShown
             label="Last Name"
-            rules={{
-              required: "Last name is required!",
-            }}
+            rules={{ required: "Last name is required!" }}
             name="lastName"
             control={control}
             isError={!!ProfileFormErrors.lastName}
@@ -74,9 +68,8 @@ const ProfileSetupForm = ({
             }
           />
 
-          {/* Birth Date */}
           <DateSelect
-            isLabelShown={true}
+            isLabelShown
             label="Birth Date"
             placeholder="DD/MM/YYYY"
             name="birthDate"
@@ -114,65 +107,18 @@ const ProfileSetupForm = ({
             }}
           />
 
-          {/* User Type */}
-
-          <View className="flex flex-col gap-2">
-            <Text className="text-neutral-700 text-xs">Status</Text>
+          {/* <View className="flex flex-col gap-2">
+            <Text className="text-neutral-700 text-xs">Gender</Text>
             <RadioInput
-              name="userType"
+              name="gender"
               control={control}
-              options={[
-                {
-                  label: "Student",
-                  value: userType[0],
-                },
-                {
-                  label: "Faculty",
-                  value: userType[1],
-                },
-              ]}
+              options={GenderOptions.map((g) => ({ label: g, value: g }))}
               required
               size="small"
             />
-
-            <Accordion
-              title="What is your status?"
-              contentStyle={{
-                display: "flex",
-                flexDirection: "column",
-                gap: 12,
-              }}
-            >
-              <View className="flex flex-col gap-2">
-                <Text
-                  style={styles.descriptionTitle}
-                  className=" text-neutral-700"
-                >
-                  • Students:
-                </Text>
-                <Text className="text-neutral-700">
-                  For current university students. Select if you are already
-                  enrolled.
-                </Text>
-              </View>
-              <View className="flex flex-col gap-2">
-                <Text
-                  style={styles.descriptionTitle}
-                  className=" text-neutral-700"
-                >
-                  • Faculty:
-                </Text>
-                <Text className="text-neutral-700">
-                  For current employers or employees of a university. Select if
-                  you have an occupation.
-                </Text>
-              </View>
-              {/* <View className="flex flex-col gap-2">
-        <Text className="font-bold text-neutral-700">• Applicant:</Text><Text> For those still under K–12 education. Select if you are not enrolled in a university.</Text>
-        </View> */}
-            </Accordion>
-          </View>
+          </View> */}
         </View>
+
         <View style={styles.buttonContainer}>
           <ReusableButton
             onPress={handleSubmit(onSubmit)}
@@ -220,8 +166,5 @@ const styles = StyleSheet.create({
     flexDirection: "column",
     gap: 16,
     marginTop: 64,
-  },
-  descriptionTitle: {
-    fontFamily: FONTS.inter.bold,
   },
 });

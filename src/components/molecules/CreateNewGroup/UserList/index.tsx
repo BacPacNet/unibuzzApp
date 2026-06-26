@@ -4,6 +4,7 @@ import BouncyCheckbox from "react-native-bouncy-checkbox";
 import avatar from "@/assets/avatarPlaceholder.png";
 import { Users } from "@/types/connections";
 import Badge from "@/assets/badge.svg";
+import { getUserProfileSubtitleLines } from "@/lib/userProfileSubtitle";
 
 type Props = {
   item: any;
@@ -33,6 +34,14 @@ export const NewGroupUserListItem = ({
 
   let bouncyCheckboxRef: any = null;
 
+  const { line1, line2 } = getUserProfileSubtitleLines({
+    role: item?.role,
+    study_year: item?.study_year,
+    major: item?.major,
+    occupation: item?.occupation,
+    affiliation: item?.affiliation,
+  });
+
   return (
     <TouchableOpacity
       onPress={handleClick}
@@ -60,14 +69,16 @@ export const NewGroupUserListItem = ({
             </View>
 
             <View>
-              <Text style={{ fontSize: 12 }} className="text-neutral-500">
-                {item?.role === "student"
-                  ? `${item?.study_year}`
-                  : item?.occupation}
-              </Text>
-              <Text style={{ fontSize: 12 }} className="text-neutral-500">
-                {item?.role === "student" ? item?.major : item?.affiliation}
-              </Text>
+              {line1 ? (
+                <Text style={{ fontSize: 12 }} className="text-neutral-500">
+                  {line1}
+                </Text>
+              ) : null}
+              {line2 ? (
+                <Text style={{ fontSize: 12 }} className="text-neutral-500">
+                  {line2}
+                </Text>
+              ) : null}
             </View>
           </View>
 

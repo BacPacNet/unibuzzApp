@@ -1,6 +1,7 @@
 import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
 import { client } from "./api-client";
 import useDebounce from "@/hooks/useDebounce";
+import { UniversityInfo } from "@/types/university";
 
 // export async function getUniversitySearch(searchTerm: string): Promise<any[]> {
 //   if (!searchTerm) return [];
@@ -88,5 +89,46 @@ export function useGetFilteredUniversity(limit: number, query: string = "") {
       return undefined;
     },
     initialPageParam: 1,
+  });
+}
+
+
+
+export async function getPartnerUniversities(): Promise<any[]> {
+  const response = await client(`/university/partnered`)
+
+  return response
+}
+
+export function useGetPartnerUniversities() {
+  return useQuery<any, Error>({
+    queryKey: ['partnerUniversities'],
+    queryFn: () => getPartnerUniversities(),
+    staleTime: 0,
+    retry: false,
+  })
+}
+
+export async function getUniversityByName(universityName: string) {
+  if (!universityName) return null;
+
+  const response = await getUniversitySearch(universityName, 1, 10);
+  const universities = response?.result?.universities ?? [];
+
+  return (
+    universities.find(
+      (u: { name: string }) =>
+        u.name?.toLowerCase() === universityName.toLowerCase(),
+    ) ?? universities[0] ?? null
+  );
+}
+
+export function useUniversitySearchByName(universityName: string) {
+  return useQuery<any, Error>({
+    queryKey: ["universityByName", universityName],
+    queryFn: () => getUniversityByName(universityName),
+    enabled: !!universityName,
+    staleTime: 0,
+    retry: false,
   });
 }

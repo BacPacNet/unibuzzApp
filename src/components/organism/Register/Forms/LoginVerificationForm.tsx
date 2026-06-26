@@ -95,8 +95,8 @@ const LoginVerificationForm = ({
           <Title className="text-start">Verification</Title>
         </View>
         <Text className=" text-sm text-neutral-500">
-          We emailed you a six-digit code to {email}. Enter the code below to
-          confirm your email address.
+          We emailed you a six-digit code to {email}. Enter it
+          below to confirm your email address.
         </Text>
         <View className="w-full flex  mb-4">
           <View>

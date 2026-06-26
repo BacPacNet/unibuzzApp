@@ -5,6 +5,7 @@ import { SelectUserProfileChips } from "@/components/atoms/SelectedUserProfileCh
 import SubscribedUniveristyBottomSheet from "@/components/molecules/SearchCommunity/SubscribedUniveristyBottomSheet";
 import RoleSelectorWithFields from "@/components/molecules/SearchCommunity/UserSelectionFields";
 import { filterData, filterFacultyData } from "@/lib/communityGroup";
+import { isApplicantRole } from "@/lib/userProfileSubtitle";
 import { useCommunityUsers } from "@/services/community";
 import { getUserProfileStore } from "@/storage/user";
 import {
@@ -56,6 +57,8 @@ const MessageNewGroupFormContainer = forwardRef(
     const community = watch("community");
 
     const userProiledata = getUserProfileStore();
+    const isApplicantUser = isApplicantRole(userProiledata?.role);
+    const firstVerifiedUniversity = userProiledata?.email?.[0];
 
     const [searchInput, setSearchInput] = useState<string>("");
     const [showbulk, setShowBulk] = useState(false);
@@ -101,6 +104,15 @@ const MessageNewGroupFormContainer = forwardRef(
     const handleAddUsers = () => {
       setShowBulk(true);
     };
+
+    useEffect(() => {
+      if (!isApplicantUser && firstVerifiedUniversity?.communityId) {
+        setValue("community", {
+          name: firstVerifiedUniversity.UniversityName ?? "",
+          id: firstVerifiedUniversity.communityId ?? "",
+        });
+      }
+    }, [isApplicantUser, firstVerifiedUniversity, setValue]);
 
     useEffect(() => {
       const allUsers = communityUsers || [];
@@ -161,14 +173,14 @@ const MessageNewGroupFormContainer = forwardRef(
 
           {showbulk ? (
             <View style={styles.bulkContainer}>
-              <DummyButton
+              {/* <DummyButton
                 label="University"
                 onPress={() => openUniversityActionSheet()}
                 toShowCross={!!community.name}
                 onCrossPress={() => setValue("community", { name: "", id: "" })}
                 text={community.name ? community.name : "Select University"}
                 icon={<NavArrowDown width={20} height={20} />}
-              />
+              /> */}
               <RoleSelectorWithFields
                 selectedType={selectedType}
                 setSelectedType={setSelectedType}

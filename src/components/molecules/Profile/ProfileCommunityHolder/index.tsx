@@ -70,7 +70,7 @@ const ProfileCommunityHolder = ({
           )}
         </View>
 
-        {isActive && (
+        {/* {isActive && (
           <View style={styles.activeWrapper}>
             <DropdownWrapper
               position="top"
@@ -89,7 +89,7 @@ const ProfileCommunityHolder = ({
               </TouchableOpacity>
             </DropdownWrapper>
           </View>
-        )}
+        )} */}
       </View>
     </View>
   );

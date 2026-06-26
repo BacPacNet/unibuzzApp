@@ -10,6 +10,8 @@ export const MESSAGES = {
   POST_NOT_FOUND: "Post Not Found",
   POST_NOT_FOUND_DESCRIPTION:
     "The post you're looking for doesn't exist or may have been removed by the user.",
+  ALREADY_AFFILIATED_WITH_UNIVERSITY: (universityName: string) =>
+    `You are already affiliated with ${universityName}.`,
 };
 export const verifyUniversityEmailMessage =
   "You need to verify your university email to join private groups";

@@ -2,6 +2,7 @@ import React, { useEffect, useMemo, useRef, useState } from "react";
 import { StyleSheet, Text, View } from "react-native";
 import NavbarSubscribedUniversity from "../SubscribedUniversity";
 import { getUserProfileStore, getUserStore } from "@/storage/user";
+import { isApplicantRole } from "@/lib/userProfileSubtitle";
 import {
   useGetFilteredSubscribedCommunities,
   useGetSubscribedCommunities,
@@ -35,6 +36,9 @@ const UniversitySec = () => {
   } = useCommunityContext();
 
   const userData = getUserStore();
+  const userProfileData = getUserProfileStore();
+  const isApplicantUser = isApplicantRole(userProfileData?.role);
+  const firstVerifiedUniversity = userProfileData?.email?.[0];
   const selectedCommunityGroup = getSelectedCommunityGroup();
 
   const {
@@ -130,13 +134,29 @@ const UniversitySec = () => {
       );
       setSelectedCommunityId(selectedCommunityGroup?.selectedCommunityGroupId);
     } else {
-      setCommunity(subscribedCommunities?.[0] as Community);
-      storeSelectedCommunityGroup(
-        subscribedCommunities?.[0]?._id || "",
-        subscribedCommunities?.[0]?.communityLogoUrl?.imageUrl || "",
-      );
+      let defaultCommunity: Community;
+      if (!isApplicantUser && firstVerifiedUniversity?.communityId) {
+        defaultCommunity = (subscribedCommunities.find(
+          (c) => c._id === firstVerifiedUniversity.communityId,
+        ) ?? subscribedCommunities[0]) as Community;
+      } else {
+        defaultCommunity = subscribedCommunities[0] as Community;
+      }
+
+      const logo = defaultCommunity.communityLogoUrl?.imageUrl || "";
+      setCommunity(defaultCommunity);
+      setSelectedCommunityGroupLogo(logo);
+      setSelectedCommunityId(defaultCommunity._id);
+      storeSelectedCommunityGroup(defaultCommunity._id, logo);
     }
-  }, [subscribedCommunities, selectedCommunityGroup]);
+  }, [
+    subscribedCommunities,
+    selectedCommunityGroup,
+    isApplicantUser,
+    firstVerifiedUniversity,
+    setSelectedCommunityGroupLogo,
+    setSelectedCommunityId,
+  ]);
 
   useEffect(() => {
     if (!community?._id) return;
@@ -180,6 +200,7 @@ const UniversitySec = () => {
             handleCommunityGroupClick={handleCommunityGroupClick}
             placeholder="Select Community"
             iconSize={16}
+            isApplicantUser={isApplicantUser}
           />
         </View>
 

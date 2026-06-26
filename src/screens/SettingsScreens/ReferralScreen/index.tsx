@@ -18,6 +18,7 @@ import { useGetUserReferrals } from "@/services/user";
 import { Referral } from "@/types/users";
 import { NEXT_PROD_FE_BASE_URL } from "@env";
 import { useReferralShare } from "@/hooks/useReferralShare";
+import { getUserProfileSubtitleLines } from "@/lib/userProfileSubtitle";
 
 const REFERRALS_PAGE_SIZE = 15;
 
@@ -68,7 +69,16 @@ const ReferralScreen = () => {
   };
 
   const renderReferralItem = useCallback(
-    ({ item: user }: { item: Referral }) => (
+    ({ item: user }: { item: Referral }) => {
+      const { line1, line2 } = getUserProfileSubtitleLines({
+        role: user.profile?.role,
+        study_year: user.profile?.study_year,
+        major: user.profile?.major,
+        occupation: user.profile?.occupation,
+        affiliation: user.profile?.affiliation,
+      });
+
+      return (
       <View style={styles.referredUserItem}>
         <View style={styles.userLeftSection}>
           <View style={styles.avatarWrapper}>
@@ -85,12 +95,8 @@ const ReferralScreen = () => {
             <Text style={styles.userName}>
               {user.firstName} {user.lastName}
             </Text>
-            {user.profile?.study_year && (
-              <Text style={styles.userMeta}>{user.profile.study_year}</Text>
-            )}
-            {user.profile?.major && (
-              <Text style={styles.userMeta}>{user.profile.major}</Text>
-            )}
+            {line1 ? <Text style={styles.userMeta}>{line1}</Text> : null}
+            {line2 ? <Text style={styles.userMeta}>{line2}</Text> : null}
           </View>
         </View>
         <View style={styles.userRightSection}>
@@ -98,7 +104,8 @@ const ReferralScreen = () => {
           <Text style={styles.referredDate}>{formatDate(user.createdAt)}</Text>
         </View>
       </View>
-    ),
+      );
+    },
     []
   );
 

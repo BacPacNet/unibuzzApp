@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   View,
   Text,
@@ -14,11 +14,10 @@ import { FormInput } from "@/components/atoms/FormInput";
 
 import { useNavigation } from "@react-navigation/native";
 import { useForm } from "react-hook-form";
-import { editProfileInputs, GenderOptions } from "@/types/Profile";
+import { editProfileInputs } from "@/types/Profile";
 import { SelectInputWithSearch } from "@/components/atoms/SelectInputWithSearch";
 import { City, Country } from "country-state-city";
 
-import StatusOptions from "@/components/organism/EditProfile/StatusSec";
 import { useGetUserData } from "@/services/user";
 import { getUserProfileStore } from "@/storage/user";
 
@@ -30,13 +29,11 @@ import { useHeader } from "@/context/HeaderProvider/Header";
 import { UPLOAD_CONTEXT } from "@/types/uploads";
 import { useUploadToS3 } from "@/services/upload";
 import { Toast } from "react-native-toast-notifications";
-import SelectUniversityDropdownBottomSheet from "@/components/atoms/SelectUniversityDropDownBottomSheet";
-import CommunityLogo from "@/components/atoms/LogoHolder";
 import { FONTS } from "@/constants/fonts";
 import ActionSheet, { ActionSheetRef } from "react-native-actions-sheet";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import ImageOptionSelectBottomSheet from "@/components/molecules/ImageOptionSelectBottomSheet";
-import { handleTakePhoto, pickImage } from "@/utils";
+import { handleTakePhoto, parseDateOfBirth, pickImage } from "@/utils";
 
 type ImageAsset = {
   uri: string;
@@ -53,6 +50,7 @@ export default function ProfileEdit() {
     control,
     setValue,
     watch,
+    reset,
     formState: { errors, isDirty },
   } = useForm<editProfileInputs>({
     defaultValues: {
@@ -64,16 +62,16 @@ export default function ProfileEdit() {
       bio: "",
       city: "",
       country: "",
-      degree: "",
+      // degree: "",
       dob: "",
-      major: "",
-      occupation: "",
+      // major: "",
+      // occupation: "",
       phone_number: "",
-      study_year: "",
-      university_name: "",
-      universityId: "",
-      // communityId: "",
-      universityLogo: "",
+      // study_year: "",
+      // university_name: "",
+      // universityId: "",
+      // universityLogo: "",
+      profilePicture: null,
     },
   });
 
@@ -82,7 +80,6 @@ export default function ProfileEdit() {
 
   const { changeHeaderShownStatus } = useHeader();
   const [cityOptions, setCityOptions] = useState<string[]>([]);
-  const [userType, setUserType] = useState(userProfileData?.role || "student");
   const [previewProfileImage, setPreviewProfileImage] = useState<string | null>(
     null
   );
@@ -105,29 +102,31 @@ export default function ProfileEdit() {
   useEffect(() => {
     if (userProfile) {
       const { firstName, lastName, gender, profile } = userProfile || {};
-      // Set individual form values when userProfile data loads
-      setValue("firstName", firstName || "");
-      setValue("lastName", lastName || "");
-      setValue("displayEmail", profile?.displayEmail || "");
-      setValue("gender", gender || "");
-      setValue("affiliation", profile?.affiliation || "");
-      setValue("bio", profile?.bio || "");
-      setValue("city", profile?.city || "");
-      setValue("country", profile?.country || "");
-      setValue("degree", profile?.degree || "");
-      setValue("dob", profile?.dob || "");
-      setValue("major", profile?.major || "");
-      setValue("occupation", profile?.occupation || "");
-      setValue("phone_number", profile?.phone_number || "");
-      setValue("study_year", profile?.study_year || "");
-      setValue("university_name", profile?.university_name || "");
-      setValue("universityId", profile?.university_id || "");
-      // setValue("communityId", profile?.communityId || "");
-      setValue("universityLogo", profile?.universityLogo || "");
+      const userDefault = {
+        firstName: firstName || "",
+        lastName: lastName || "",
+        displayEmail: profile?.displayEmail || "",
+        gender: gender || "",
+        affiliation: profile?.affiliation || "",
+        bio: profile?.bio || "",
+        city: profile?.city || "",
+        country: profile?.country || "",
+        // degree: profile?.degree || "",
+        dob: parseDateOfBirth(profile?.dob),
+        // major: profile?.major || "",
+        // occupation: profile?.occupation || "",
+        phone_number: profile?.phone_number || "",
+        // study_year: profile?.study_year || "",
+        // university_name: profile?.university_name || "",
+        // universityId: profile?.university_id || "",
+        // universityLogo: profile?.universityLogo || "",
+        profilePicture: null,
+      };
+      reset(userDefault);
 
       setPreviewProfileImage(profile?.profile_dp?.imageUrl);
     }
-  }, [userProfile, setValue]);
+  }, [userProfile, reset]);
 
   const handleCountryChange = (selectedCountry: string) => {
     const getCountyCode = Country.getAllCountries().find(
@@ -175,7 +174,7 @@ export default function ProfileEdit() {
     mutateEditProfile({
       ...data,
       profile_dp: profileImageData,
-      role: userType,
+      role: userProfile?.role || userProfileData?.role,
     });
     setIsProfileLoading(false);
     navigate.goBack();
@@ -195,33 +194,6 @@ export default function ProfileEdit() {
       Toast.show("Form has errors. Please check.");
     }
   };
-
-  const mergedUniversities = useMemo(() => {
-    const joinedUniversity = userProfile?.profile?.communities || [];
-    const veriFiedEmails = userProfile?.profile?.email || [];
-
-    return [
-      ...joinedUniversity.map((u) => ({
-        _id: u._id,
-        name: u.name,
-        UniversityEmail:
-          veriFiedEmails.find((e) => e.communityId === u._id)
-            ?.UniversityEmail || "",
-        logo: u.logo,
-        isVerifiedMember: u.isVerifiedMember || false,
-        isCommunityAdmin: (u as any).isCommunityAdmin || false,
-      })),
-      ...veriFiedEmails
-        .filter((e) => !joinedUniversity.some((u) => u._id === e.communityId))
-        .map((e) => ({
-          _id: e.communityId,
-          name: e.UniversityName,
-          UniversityEmail: e.UniversityEmail,
-          logo: (e as any).logo || "",
-          isVerifiedMember: false,
-        })),
-    ];
-  }, [userProfile]);
 
   return (
     <View style={styles.container}>
@@ -378,7 +350,7 @@ export default function ProfileEdit() {
                 keyboardType="phone-pad"
               />
 
-              <SelectUniversityDropdownBottomSheet
+              {/* <SelectUniversityDropdownBottomSheet
                 control={control}
                 setValue={setValue as any}
                 name="university_name"
@@ -400,11 +372,11 @@ export default function ProfileEdit() {
                     {watch("university_name")}
                   </Text>
                 </View>
-              )}
+              )} */}
             </View>
 
             {/* Status Section */}
-            <View style={styles.section}>
+            {/* <View style={styles.section}>
               <View style={styles.statusHeader}>
                 <Text style={styles.sectionTitle}>
                   What is your status? <Text style={styles.required}>*</Text>
@@ -419,14 +391,19 @@ export default function ProfileEdit() {
                 userType={userType}
                 control={control}
               />
-            </View>
+            </View> */}
 
             {/* Action Buttons */}
             <View style={styles.actions}>
               <ReusableButton
                 buttonText="Update Profile"
                 variant="primary"
-                isLoading={isProfileLoading}
+                isLoading={isProfileLoading || isPending}
+                disabled={
+                  (!isDirty && !imageToUpload) ||
+                  isProfileLoading ||
+                  isPending
+                }
                 onPress={handleSubmit(onSubmit, onError)}
                 height="large"
               />

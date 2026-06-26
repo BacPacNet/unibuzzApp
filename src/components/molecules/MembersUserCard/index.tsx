@@ -12,6 +12,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import OfficailLogoPlaceHolder from "@/assets/community/official-logo.svg";
 import UserMinus from "@/assets/icons/user-minus.svg";
 import { screenName } from "@/constant/screenName";
+import { getUserProfileSubtitleLines } from "@/lib/userProfileSubtitle";
 interface Props {
   _id: string;
   firstName: string;
@@ -107,7 +108,13 @@ const MembersUserCard = ({
     setIsFollowingState(isFollowing);
   }, [isFollowing]);
 
-  const isStudent = role === "student";
+  const { line1, line2 } = getUserProfileSubtitleLines({
+    role,
+    study_year,
+    major,
+    occupation,
+    affiliation,
+  });
 
   const renderCTA = (() => {
     if (isSelfProfile || _id === currentUserId) return null;
@@ -201,17 +208,8 @@ const MembersUserCard = ({
           )}
         </View>
 
-        <View style={styles.metaRow}>
-          {(study_year || occupation) && (
-            <Text style={styles.metaText}>
-              {isStudent ? study_year : occupation}
-            </Text>
-          )}
-        </View>
-
-        {(affiliation || major) && (
-          <Text style={styles.metaText}>{isStudent ? major : affiliation}</Text>
-        )}
+        {line1 ? <Text style={styles.metaText}>{line1}</Text> : null}
+        {line2 ? <Text style={styles.metaText}>{line2}</Text> : null}
       </TouchableOpacity>
 
       <View className="flex justify-end w-max">{renderCTA}</View>

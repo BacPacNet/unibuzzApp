@@ -31,12 +31,16 @@ import { status } from "@/types/CommunityGroup";
 import TabSwitch from "@/components/molecules/ManageGroup/TabSwitch";
 import CommunityDropdown from "@/components/molecules/LeftSideBar/CommunityDropDown";
 import { useCommunityContext } from "@/context/CommunityProvider/CommunityProvider";
-import { storeSelectedCommunityGroup } from "@/storage/selected-community-group";
+import {
+  getSelectedCommunityGroup,
+  storeSelectedCommunityGroup,
+} from "@/storage/selected-community-group";
 import ReusableButton from "@/components/atoms/ReusableButton";
 import { SearchCommunityGroupTabs } from "@/constant/searchCommunityGroupTabs";
 import VerifyToCreateGroupBottomSheet from "@/components/molecules/CommunityGroup/VerifyToCreateGroupBottomSheet";
 import { TRACK_EVENT } from "@/content/constant";
 import { trackMixpanel } from "@/mixpanel/track";
+import { isApplicantRole } from "@/lib/userProfileSubtitle";
 
 type NavigationProp = StackNavigationProp<
   RootStackParamList,
@@ -52,6 +56,8 @@ const SearchCommunityGroupScreen = () => {
   const navigation = useNavigation<NavigationProp>();
   const insets = useSafeAreaInsets();
   const userProfileData = getUserProfileStore();
+  const isApplicantUser = isApplicantRole(userProfileData?.role);
+  const firstVerifiedUniversity = userProfileData?.email?.[0];
   const [community, setCommunity] = useState<Community>();
   const [refreshing, setRefreshing] = useState(false);
   const [currTab, setCurrTab] = useState<
@@ -175,7 +181,19 @@ const SearchCommunityGroupScreen = () => {
     subscribedCommunitiesAllGroups,
   ]);
 
-  const effectiveCommunityId = selectedCommunityId || communityId;
+  const effectiveCommunityId =
+    selectedCommunityId || communityId || community?._id;
+
+  const tabs = useMemo(() => {
+    const allTabs = [
+      SearchCommunityGroupTabs.All,
+      SearchCommunityGroupTabs.Joined,
+      SearchCommunityGroupTabs.Create,
+    ];
+    return isApplicantUser
+      ? allTabs.filter((tab) => tab !== SearchCommunityGroupTabs.Create)
+      : allTabs;
+  }, [isApplicantUser]);
 
   useEffect(() => {
     if (!effectiveCommunityId) return;
@@ -210,6 +228,7 @@ const SearchCommunityGroupScreen = () => {
     selectedLabelMain,
     selectedCommunityId,
     effectiveCommunityId,
+    community?._id,
     mutate,
   ]);
 
@@ -232,22 +251,74 @@ const SearchCommunityGroupScreen = () => {
   };
 
   useEffect(() => {
-    if (selectedCommunityId && subscribedCommunitiesForUser) {
-      setCommunity(
-        subscribedCommunitiesForUser.find(
-          (community: any) => community._id === selectedCommunityId
-        )
+    if (!subscribedCommunitiesForUser?.length) return;
+
+    const storedSelection = getSelectedCommunityGroup();
+
+    if (selectedCommunityId) {
+      const selected = subscribedCommunitiesForUser.find(
+        (c) => c._id === selectedCommunityId
       );
-    } else if (communityId && subscribedCommunitiesForUser) {
-      setCommunity(
-        subscribedCommunitiesForUser.find(
-          (community: any) => community._id === communityId
-        )
-      );
-    } else if (subscribedCommunitiesForUser) {
-      setCommunity(subscribedCommunitiesForUser[0] as Community);
+      if (selected) {
+        setCommunity(selected as Community);
+        return;
+      }
     }
-  }, [subscribedCommunitiesForUser, communityId, selectedCommunityId]);
+
+    if (storedSelection?.selectedCommunityGroupId) {
+      const stored = subscribedCommunitiesForUser.find(
+        (c) => c._id === storedSelection.selectedCommunityGroupId
+      );
+      if (stored) {
+        setCommunity(stored as Community);
+        setSelectedCommunityId(storedSelection.selectedCommunityGroupId);
+        setSelectedCommunityGroupLogo(storedSelection.selectedCommunityGroupLogo);
+        return;
+      }
+    }
+
+    if (communityId) {
+      const fromRoute = subscribedCommunitiesForUser.find(
+        (c) => c._id === communityId
+      );
+      if (fromRoute) {
+        setCommunity(fromRoute as Community);
+        return;
+      }
+    }
+
+    let defaultCommunity: Community;
+    if (!isApplicantUser && firstVerifiedUniversity?.communityId) {
+      defaultCommunity = (subscribedCommunitiesForUser.find(
+        (c) => c._id === firstVerifiedUniversity.communityId
+      ) ?? subscribedCommunitiesForUser[0]) as Community;
+    } else {
+      defaultCommunity = subscribedCommunitiesForUser[0] as Community;
+    }
+
+    const logo = defaultCommunity.communityLogoUrl?.imageUrl || "";
+    setCommunity(defaultCommunity);
+    setSelectedCommunityId(defaultCommunity._id);
+    setSelectedCommunityGroupLogo(logo);
+    storeSelectedCommunityGroup(defaultCommunity._id, logo);
+  }, [
+    subscribedCommunitiesForUser,
+    communityId,
+    selectedCommunityId,
+    isApplicantUser,
+    firstVerifiedUniversity,
+    setSelectedCommunityId,
+    setSelectedCommunityGroupLogo,
+  ]);
+
+  useEffect(() => {
+    if (
+      isApplicantUser &&
+      currTab === SearchCommunityGroupTabs.Create
+    ) {
+      setCurrTab(SearchCommunityGroupTabs.All);
+    }
+  }, [isApplicantUser, currTab]);
 
   const resetFilter = () => {
     setSelectedFiltersMain({});
@@ -275,24 +346,39 @@ const SearchCommunityGroupScreen = () => {
           flexDirection: "row",
           alignItems: "center",
           justifyContent: "space-between",
-          paddingHorizontal: 16,
+          // paddingHorizontal: 16,
           paddingTop: 20,
         }}
       >
-        <View style={{ flex: 1, marginRight: 12 }}>
+        <View
+          style={{
+            flex: isApplicantUser ? 1 : undefined,
+           
+          }}
+        >
           <CommunityDropdown
             selectedCommunityImage={
               community?.communityLogoUrl?.imageUrl as string
             }
-            subscribedCommunities={subscribedCommunitiesForUser as Community[]}
+            subscribedCommunities={
+              subscribedCommunitiesForUser as Community[]
+            }
             handleCommunityGroupClick={handleCommunityGroupClick}
             placeholder="Select Community"
             iconSize={16}
             logoSize={48}
-            isLableShown={false}
+            isLableShown
+            isApplicantUser={isApplicantUser}
           />
         </View>
-        <View style={{ flexShrink: 0, width: "80%" }}>
+        <View
+          style={{
+            flexShrink: 0,
+            flex: isApplicantUser ? 1 : undefined,
+            width: isApplicantUser ? "100%" : "70%",
+            marginRight: isApplicantUser ? 0 : 24,
+          }}
+        >
           <TabSwitch
             currTab={currTab}
             setCurrTab={(value: string) =>
@@ -300,11 +386,7 @@ const SearchCommunityGroupScreen = () => {
                 value as (typeof SearchCommunityGroupTabs)[keyof typeof SearchCommunityGroupTabs]
               )
             }
-            tabs={[
-              SearchCommunityGroupTabs.All,
-              SearchCommunityGroupTabs.Joined,
-              SearchCommunityGroupTabs.Create,
-            ]}
+            tabs={tabs}
           />
         </View>
       </View>

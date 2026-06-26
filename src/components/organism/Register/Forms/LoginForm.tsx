@@ -5,6 +5,7 @@ import Title from "@/components/atoms/Title";
 import SupportingText from "@/components/atoms/SupportingText";
 import { useHandleLogin } from "@/services/auth";
 import { removeRegisterData } from "@/storage/register";
+import { removeLoginData } from "@/storage/login";
 import { AnimatedCircularProgress } from "react-native-circular-progress";
 import { trackMixpanel } from "@/mixpanel/track";
 import { TRACK_EVENT } from "@/content/constant";
@@ -19,10 +20,9 @@ const PROGRESS_WIDTH = 10;
 interface LoginData {
   email: string;
   password: string;
-  referralCode?: string;
 }
 
-const LoginForm: React.FC<LoginData> = ({ email, password, referralCode }) => {
+const LoginForm: React.FC<LoginData> = ({ email, password }) => {
   // State
   const [countdown, setCountdown] = useState(COUNTDOWN_DURATION);
   const [isCounting, setIsCounting] = useState(true);
@@ -65,10 +65,11 @@ const LoginForm: React.FC<LoginData> = ({ email, password, referralCode }) => {
     if (!hasTriggeredLogin) {
       setHasTriggeredLogin(true);
       setIsCounting(false);
+      removeLoginData();
       mutateLogin(loginData());
       trackMixpanel(TRACK_EVENT.REGISTRATION_COMPLETE, {
         email: loginData()?.email,
-        referralCode: referralCode || "",
+        referralCode: "",
       });
     }
   }, [hasTriggeredLogin, mutateLogin, loginData]);

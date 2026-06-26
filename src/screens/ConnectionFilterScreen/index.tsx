@@ -27,16 +27,28 @@ import ActionSheet, { ActionSheetRef } from "react-native-actions-sheet";
 import { Toast } from "react-native-toast-notifications";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import useCustomBackHandler from "@/hooks/useCustomBackHandler";
+import { isApplicantRole } from "@/lib/userProfileSubtitle";
+import { getUserProfileStore } from "@/storage/user";
+import { EmailType } from "@/types/users";
 
 type NavigationProp = StackNavigationProp<
   RootStackParamList,
   "ConnectionsFilter"
 >;
 
+const toVerifiedUniversityFormValues = (university: EmailType) => ({
+  universityName: university.UniversityName ?? "",
+  universityId: university._id ?? "",
+  communityId: university.communityId ?? "",
+});
+
 const ConnectionsFilter = () => {
   const navigation = useNavigation<NavigationProp>();
   const paramValues: any = useRoute().params;
   const insets = useSafeAreaInsets();
+  const userProfileData = getUserProfileStore();
+  const isApplicantUser = isApplicantRole(userProfileData?.role);
+  const firstVerifiedUniversity = userProfileData?.email?.[0];
   const {
     register: GroupRegister,
     watch,
@@ -83,6 +95,17 @@ const ConnectionsFilter = () => {
     const { logoUrl, ...filteredValues } = getValues();
 
     filteredValues.role = selectedType;
+    if (
+      isApplicantUser &&
+      selectedType &&
+      !filteredValues?.universityName
+    ) {
+      Toast.hideAll();
+      Toast.show(
+        "Select university to filter based on student or faculty."
+      );
+      return;
+    }
     if (!filteredValues?.universityName) {
       Toast.hideAll();
       Toast.show("Please select a filter to apply");
@@ -110,9 +133,25 @@ const ConnectionsFilter = () => {
     setSelectedType(null);
   }, [paramValues]);
 
+  useEffect(() => {
+    if (isApplicantUser || paramValues?.Currvalues) return;
+    if (firstVerifiedUniversity) {
+      const values = toVerifiedUniversityFormValues(firstVerifiedUniversity);
+      setValue("universityName", values.universityName);
+      setValue("universityId", values.universityId);
+      setValue("communityId", values.communityId);
+    }
+  }, [isApplicantUser, firstVerifiedUniversity, paramValues, setValue]);
+
   const resetFilters = () => {
     reset();
     setSelectedType(null);
+    if (!isApplicantUser && firstVerifiedUniversity) {
+      const values = toVerifiedUniversityFormValues(firstVerifiedUniversity);
+      setValue("universityName", values.universityName);
+      setValue("universityId", values.universityId);
+      setValue("communityId", values.communityId);
+    }
   };
 
   const handleBack = () => {
@@ -147,17 +186,19 @@ const ConnectionsFilter = () => {
       </View>
 
       <View style={styles.bulkContainer}>
-        <SelectUniversityDropdownBottomSheet
-          placeholder="Select University Name"
-          icon="single"
-          search={true}
-          control={control}
-          name="universityName"
-          rules={{ required: "University is required!" }}
-          setValue={setValue}
-          isMarginBottom={false}
-          label="University"
-        />
+        {isApplicantUser ? (
+          <SelectUniversityDropdownBottomSheet
+            placeholder="Select University Name"
+            icon="single"
+            search={true}
+            control={control}
+            name="universityName"
+            rules={{ required: "University is required!" }}
+            setValue={setValue}
+            isMarginBottom={false}
+            label="University"
+          />
+        ) : null}
         <RoleSelectorWithFields
           selectedType={selectedType}
           setSelectedType={setSelectedType}
