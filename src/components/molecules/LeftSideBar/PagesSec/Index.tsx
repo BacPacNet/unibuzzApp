@@ -13,6 +13,9 @@ const menuItems = [
   //     title: "Community",
   //   },
   {
+    title: "Blogs",
+  },
+  {
     title: "About Us",
   },
 ];
@@ -37,6 +40,7 @@ const LeftSideBarPagesSection = () => {
   const stackInfo = getCurrentStackInfo();
 
   const isDiscoverScreen = stackInfo?.currentScreen === "DiscoverStack";
+  const isBlogsScreen = stackInfo?.currentScreen === "Blogs";
   const isAboutUsScreen = stackInfo?.currentScreen === "AboutUs";
 
   const handleRedirect = (route: string) => {
@@ -46,6 +50,8 @@ const LeftSideBarPagesSection = () => {
       });
     } else if (route == "Community") {
       navigation.navigate("Timeline");
+    } else if (route == "Blogs") {
+      navigation.navigate("Blogs");
     } else if (route == "About Us") {
       navigation.navigate("AboutUs");
     }
@@ -64,9 +70,11 @@ const LeftSideBarPagesSection = () => {
               styles.menuText,
               isDiscoverScreen && item.title === "Discover"
                 ? styles.activeMenuText
-                : isAboutUsScreen && item.title === "About Us"
+                : isBlogsScreen && item.title === "Blogs"
                   ? styles.activeMenuText
-                  : null,
+                  : isAboutUsScreen && item.title === "About Us"
+                    ? styles.activeMenuText
+                    : null,
             ]}
           >
             {item.title}

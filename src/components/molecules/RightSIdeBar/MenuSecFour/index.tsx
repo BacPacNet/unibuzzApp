@@ -9,8 +9,8 @@ import {
 import {
   Group,
   OpenBook,
+  Page,
   PrivacyPolicy,
-  PresentationSolid,
   Linkedin,
   Instagram,
 } from "iconoir-react-native";
@@ -24,6 +24,11 @@ type RegisterScreenNavigationProp = StackNavigationProp<
 >;
 
 const menuItems = [
+  {
+    title: "Blogs",
+    icon: <Page width={22} height={22} color="#555" />,
+    screen: "Blogs",
+  },
   {
     title: "Privacy Policy",
     icon: <PrivacyPolicy width={22} height={22} color="#555" />,
@@ -65,6 +70,8 @@ const SidebarMenuSectionFour = ({
       Linking.openURL("https://www.linkedin.com/company/unibuzznetworks/");
     } else if (screen === "Instagram") {
       Linking.openURL("https://www.instagram.com/uni.buzz/#");
+    } else if (screen === "Blogs") {
+      navigation.navigate("Blogs");
     } else {
       navigation.navigate("InfoStackScreen", { screen });
     }

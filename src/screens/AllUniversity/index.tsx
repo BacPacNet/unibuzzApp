@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useCallback, useState } from "react";
 import {
   View,
   FlatList,
@@ -8,6 +8,7 @@ import {
   ActivityIndicator,
   NativeScrollEvent,
   NativeSyntheticEvent,
+  BackHandler,
 } from "react-native";
 import { ArrowUp } from "iconoir-react-native";
 import DiscoverUniversityCard from "@/components/molecules/University/UniversityCard";
@@ -19,8 +20,14 @@ import UniversitySearchFilters, {
   UniversitySearchFiltersRef,
 } from "@/components/molecules/University/UniversityFilters";
 import { RefreshControl } from "react-native";
+import { useFocusEffect, useNavigation } from "@react-navigation/native";
+import { StackNavigationProp } from "@react-navigation/stack";
+import { RootStackParamList } from "@/types/navigation";
+
+type NavigationProp = StackNavigationProp<RootStackParamList>;
 
 const AllUniversities = () => {
+  const navigation = useNavigation<NavigationProp>();
   const [query, setQuery] = useState<any>();
   const [showScrollTop, setShowScrollTop] = useState(false);
   const [refreshing, setRefreshing] = React.useState(false);
@@ -53,6 +60,41 @@ const AllUniversities = () => {
           (u: { _id: string }) => !partnerIds.has(u._id),
         ),
       ];
+
+  useFocusEffect(
+    useCallback(() => {
+      const onHardwareBackPress = () => {
+        const state = navigation.getState();
+        const previousRoute = state?.routes?.[state.index - 1];
+
+        if (previousRoute?.name === "University") {
+          const fromBlogs =
+            (previousRoute.params as { from?: string } | undefined)?.from ===
+            "blogs";
+
+          navigation.reset({
+            index: 0,
+            routes: [{ name: "Discover" }],
+          });
+
+          if (fromBlogs) {
+            navigation.navigate("Blogs");
+          }
+
+          return true;
+        }
+
+        return false;
+      };
+
+      const subscription = BackHandler.addEventListener(
+        "hardwareBackPress",
+        onHardwareBackPress,
+      );
+
+      return () => subscription.remove();
+    }, [navigation]),
+  );
 
   const renderItem = ({ item }: any) => (
     <DiscoverUniversityCard

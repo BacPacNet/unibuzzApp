@@ -28,6 +28,7 @@ export type RootStackParamList = {
   DiscoverStack: any;
   University: {
     data: any;
+    from?: string;
   };
   YourConnections: {
     index: any;
@@ -71,6 +72,11 @@ export type RootStackParamList = {
   MembersScreen: any;
   InfoStackScreen: any;
   AboutUs: undefined;
+  Blogs: undefined;
+  AggarwalCollegeBlog: undefined;
+  BestEngineeringCollegesBlog: undefined;
+  CampusLifePlacementsBlog: undefined;
+  KietUnibuzzBlog: undefined;
 };
 
 export type RootScreenProps<
