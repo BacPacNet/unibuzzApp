@@ -58,6 +58,11 @@ import MembersScreen from "@/screens/MembersScreen";
 import MessageStack from "./MessageStack";
 import InfoStack from "./InfoStack";
 import AboutUs from "@/screens/AboutUs";
+import Blogs from "@/screens/Blogs";
+import AggarwalCollegeBlog from "@/screens/Blogs/AggarwalCollegeBlog";
+import BestEngineeringCollegesBlog from "@/screens/Blogs/BestEngineeringCollegesBlog";
+import CampusLifePlacementsBlog from "@/screens/Blogs/CampusLifePlacementsBlog";
+import KietUnibuzzBlog from "@/screens/Blogs/KietUnibuzzBlog";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { linking } from "@/linking/linking";
 import ReusableButton from "@/components/atoms/ReusableButton";
@@ -304,6 +309,41 @@ function ApplicationNavigator() {
         <Tab.Screen
           name="AboutUs"
           component={AboutUs}
+          options={{
+            tabBarButton: () => null,
+          }}
+        />
+        <Tab.Screen
+          name="Blogs"
+          component={Blogs}
+          options={{
+            tabBarButton: () => null,
+          }}
+        />
+        <Tab.Screen
+          name="AggarwalCollegeBlog"
+          component={AggarwalCollegeBlog}
+          options={{
+            tabBarButton: () => null,
+          }}
+        />
+        <Tab.Screen
+          name="BestEngineeringCollegesBlog"
+          component={BestEngineeringCollegesBlog}
+          options={{
+            tabBarButton: () => null,
+          }}
+        />
+        <Tab.Screen
+          name="CampusLifePlacementsBlog"
+          component={CampusLifePlacementsBlog}
+          options={{
+            tabBarButton: () => null,
+          }}
+        />
+        <Tab.Screen
+          name="KietUnibuzzBlog"
+          component={KietUnibuzzBlog}
           options={{
             tabBarButton: () => null,
           }}

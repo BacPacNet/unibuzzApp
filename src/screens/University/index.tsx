@@ -6,8 +6,9 @@ import {
   Pressable,
   StyleSheet,
   useWindowDimensions,
+  BackHandler,
 } from "react-native";
-import React, { useCallback, useMemo, useRef, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Gesture, GestureDetector, ScrollView } from "react-native-gesture-handler";
 import { runOnJS } from "react-native-reanimated";
 import ReusableButton from "@/components/atoms/ReusableButton";
@@ -26,7 +27,7 @@ import {
 } from "@/storage/user";
 import { useJoinCommunityFromUniversity } from "@/services/university-community";
 import { Toast } from "react-native-toast-notifications";
-import { useNavigation } from "@react-navigation/native";
+import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import { RootStackParamList } from "@/types/navigation";
 import { StackNavigationProp } from "@react-navigation/stack";
 import ActionSheet, { ActionSheetRef } from "react-native-actions-sheet";
@@ -75,10 +76,10 @@ const DEFAULT_CAMPUS_IMAGE =
 const University = ({
   route,
 }: {
-  route: { params: { data: UniversityData } };
+  route: { params: { data: UniversityData; from?: string } };
 }) => {
   const navigation = useNavigation<NavigationProp>();
-  const { data: routeData } = route.params;
+  const { data: routeData, from } = route.params;
   const { data: searchedUniversity } = useUniversitySearchByName(
     routeData?.name ?? "",
   );
@@ -95,6 +96,7 @@ const University = ({
     () => partnerUniversities?.some((u: any) => u._id === university?._id),
     [partnerUniversities, university?._id],
   );
+
   const insets = useSafeAreaInsets();
   const { mutate: joinCommunityFromUniversity, isPending: isJoinLoading } =
     useJoinCommunityFromUniversity();
@@ -102,6 +104,46 @@ const University = ({
   const userProfileData = getUserProfileStore();
   const [imageSrc, setImageSrc] = useState(
     university?.campus || DEFAULT_CAMPUS_IMAGE
+  );
+  const [logoSrc, setLogoSrc] = useState(university?.logo || "");
+
+  useEffect(() => {
+    setImageSrc(university?.campus || DEFAULT_CAMPUS_IMAGE);
+    setLogoSrc(university?.logo || "");
+  }, [university?.campus, university?.logo]);
+
+  const handleBackPress = useCallback(() => {
+    if (from === "blogs") {
+      navigation.reset({
+        index: 0,
+        routes: [{ name: "Discover" }],
+      });
+      navigation.navigate("Blogs");
+      return;
+    }
+
+    if (navigation.canGoBack()) {
+      navigation.goBack();
+      return;
+    }
+
+    navigation.navigate("Discover");
+  }, [from, navigation]);
+
+  useFocusEffect(
+    useCallback(() => {
+      const onHardwareBackPress = () => {
+        handleBackPress();
+        return true;
+      };
+
+      const subscription = BackHandler.addEventListener(
+        "hardwareBackPress",
+        onHardwareBackPress,
+      );
+
+      return () => subscription.remove();
+    }, [handleBackPress]),
   );
 
   const isCommunityAlreadyJoined = useMemo(() => {
@@ -202,7 +244,7 @@ const University = ({
     >
       <BackHeader
         label="Search Institution"
-        onPress={() => navigation.goBack()}
+        onPress={handleBackPress}
       />
 
       <View style={styles.container}>
@@ -216,7 +258,7 @@ const University = ({
           style={{ marginTop: 32, marginBottom: 16 }}
           className="w-full rounded-b-2xl relative flex flex-row items-center justify-center gap-2"
         >
-          <CommunityLogo logoUrl={university?.logo || ""} />
+          <CommunityLogo logoUrl={logoSrc} />
           <Text
             style={styles.universityName}
             className="flex flex-row items-center max-w-72"
