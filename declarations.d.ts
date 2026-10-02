@@ -14,5 +14,5 @@ declare module "@env" {
   export const NEXT_DEV_FE_BASE_URL: string;
   export const NEXT_PROD_BE_BASE_URL: string;
   export const NEXT_PUBLIC_MIXPANEL_TOKEN: string;
-  export const NODE_ENV: string;
+  export const APP_ENV: string;
 }

@@ -1,5 +1,5 @@
 import axios, { AxiosRequestConfig, AxiosResponse } from "axios";
-import { NODE_ENV } from "@env";
+import { APP_ENV } from "@env";
 import { Toast } from "react-native-toast-notifications";
 import { useMutation } from "@tanstack/react-query";
 import { getToken } from "@/storage/token";
@@ -17,7 +17,7 @@ export async function makeBaseApiCall<T>(
   data: any
 ): Promise<ServerResponse<T>> {
   const baseURL =
-    NODE_ENV === "development"
+    APP_ENV === "development"
       ? "https://38l5g2xzuk.execute-api.ap-south-1.amazonaws.com/dev/chatbot"
       : "https://38l5g2xzuk.execute-api.ap-south-1.amazonaws.com/prod/chatbot";
 
