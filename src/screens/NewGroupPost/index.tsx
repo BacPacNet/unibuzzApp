@@ -31,7 +31,7 @@ import { useCreateGroupPost } from "@/services/community-group";
 import { Toast } from "react-native-toast-notifications";
 import { getUserProfileStore } from "@/storage/user";
 import { UPLOAD_CONTEXT } from "@/types/uploads";
-import { useUploadToS3 } from "@/services/upload";
+import { buildUploadFiles, getUploadedItems, useUploadToS3 } from "@/services/upload";
 import { validateUploadedFiles } from "@/utils";
 import DocumentPicker from "react-native-document-picker";
 import MediaPreviewList from "@/components/molecules/MediaPreview";
@@ -226,55 +226,49 @@ const NewGroupPost = ({ navigation }: any) => {
     };
 
 
-    if (images?.length || files?.length) {
-      const mergedFiles = [
-        ...(images || []).map((image) => ({
-          uri: image.uri,
-          fileName: image.fileName || `upload_${Date.now()}.jpg`,
-          type: image.type || "image/jpeg",
-        })),
-        ...(files || []).map((file: any) => ({
-          uri: file.uri,
-          fileName: file.name || `file_${Date.now()}`,
-          type: file.type || "application/octet-stream",
-        })),
-      ];
+    try {
+      if (images.length || files.length) {
+        const uploadResponse = await uploadToS3({
+          files: buildUploadFiles(images, files),
+          context: UPLOAD_CONTEXT.COMMUNITY,
+        });
+        const uploadedFiles = getUploadedItems(uploadResponse);
 
-      const uploadPayload = {
-        files: mergedFiles,
-        context: UPLOAD_CONTEXT.COMMUNITY,
-      };
+        if (!uploadedFiles.length) {
+          Toast.hideAll();
+          Toast.show("Couldn't upload the selected files. Please try again.");
+          return;
+        }
 
-      const uploadResponse = await uploadToS3(uploadPayload);
-      if (uploadResponse.success) {
         trackCommunityPostUploads(
-          uploadResponse.data,
+          uploadedFiles,
           communityId,
           communityGroupId
         );
-        basePayload.imageUrl = uploadResponse.data;
+        basePayload.imageUrl = uploadedFiles;
       }
+
+      CreateGroupPost(basePayload, {
+        onSuccess: () => {
+          handleBack();
+          setImages([]);
+          setFiles([]);
+
+          editor.setContent("");
+          trackCommunityPostButtonClick(
+            communityGroupId && communityGroupId?.length > 0
+              ? "community_group_post_create"
+              : "community_post_create",
+            communityId,
+            communityGroupId
+          );
+        },
+      });
+    } catch {
+      return;
+    } finally {
+      setIsPostCreating(false);
     }
-
-    CreateGroupPost(basePayload, {
-      onSuccess: () => {
-        handleBack();
-        setImages([]);
-        setFiles([]);
-
-        editor.setContent("");
-        trackCommunityPostButtonClick(
-          communityGroupId && communityGroupId?.length > 0
-            ? "community_group_post_create"
-            : "community_post_create",
-          communityId,
-          communityGroupId
-        );
-      },
-    });
-
-    // handleBack();
-    setIsPostCreating(false);
   };
 
   const handleBack = () => {

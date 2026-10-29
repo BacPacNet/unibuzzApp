@@ -26,7 +26,7 @@ import DocumentPicker from "react-native-document-picker";
 import { PostInputData, TIMELINE_VISIBILITY_OPTIONS, UserPostType } from "@/types/constant";
 import PostVisibilityDropdown from "@/components/molecules/PostVisibilityDropdown";
 import { UPLOAD_CONTEXT } from "@/types/uploads";
-import { useUploadToS3 } from "@/services/upload";
+import { buildUploadFiles, getUploadedItems, useUploadToS3 } from "@/services/upload";
 import { validateUploadedFiles } from "@/utils";
 import { Toast } from "react-native-toast-notifications";
 import MediaPreviewList from "@/components/molecules/MediaPreview";
@@ -212,45 +212,43 @@ const NewPost = ({ navigation }: any) => {
     }
     setIsPostCreating(true);
 
-    if (images?.length || files?.length) {
-      const mergedFiles = [
-        ...(images || []).map((image) => ({
-          uri: image.uri,
-          fileName: image.fileName || `upload_${Date.now()}.jpg`,
-          type: image.type || "image/jpeg",
-        })),
-        ...(files || []).map((file: any) => ({
-          uri: file.uri,
-          fileName: file.name || `file_${Date.now()}`,
-          type: file.type || "application/octet-stream",
-        })),
-      ];
-
-      const uploadPayload = {
-        files: mergedFiles,
-        context: UPLOAD_CONTEXT.TIMELINE,
-      };
-
-      const uploadResponse = await uploadToS3(uploadPayload);
-      if (uploadResponse.success) {
-        trackPostUploads(uploadResponse.data);
-        payload.imageUrl = uploadResponse.data;
-      }
-    }
-
-    CreateTimelinePost(payload, {
-      onSuccess: () => {
-        setImages([]);
-        setFiles([]);
-        editor.setContent("");
-        trackMixpanel(TRACK_EVENT.USER_POST_BUTTON_CLICK, {
-          buttonName: "post_create",
+    try {
+      if (images.length || files.length) {
+        const uploadResponse = await uploadToS3({
+          files: buildUploadFiles(images, files),
+          context: UPLOAD_CONTEXT.TIMELINE,
         });
-        navigation.goBack();
-      },
-    });
+        const uploadedFiles = getUploadedItems(uploadResponse);
 
-    setIsPostCreating(false);
+        if (!uploadedFiles.length) {
+          Toast.hideAll();
+          Toast.show("Couldn't upload the selected files. Please try again.", {
+            type: "warning",
+            placement: "top",
+          });
+          return;
+        }
+
+        trackPostUploads(uploadedFiles);
+        payload.imageUrl = uploadedFiles;
+      }
+
+      CreateTimelinePost(payload, {
+        onSuccess: () => {
+          setImages([]);
+          setFiles([]);
+          editor.setContent("");
+          trackMixpanel(TRACK_EVENT.USER_POST_BUTTON_CLICK, {
+            buttonName: "post_create",
+          });
+          navigation.goBack();
+        },
+      });
+    } catch {
+      return;
+    } finally {
+      setIsPostCreating(false);
+    }
   };
 
   useFocusEffect(

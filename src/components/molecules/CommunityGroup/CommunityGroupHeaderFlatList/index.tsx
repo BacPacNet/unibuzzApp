@@ -43,6 +43,8 @@ import GenericInfoBottomSheet from "../../GenericInfoBottomSheet";
 import { verifyUniversityEmailMessage } from "@/content/constant";
 import DeleteCommunityGroupBottomSheet from "../DeleteCommunityGroupBottomSheet";
 import GroupAccessInfoTrigger from "../GroupAccessInfoTrigger";
+import { getUserProfileStore } from "@/storage/user";
+import { isApplicantRole } from "@/lib/userProfileSubtitle";
 
 type CommunityGroup = {
   title: string;
@@ -104,6 +106,10 @@ const FlatListCommunityHeader: React.FC<Props> = ({
 }) => {
   const { mutate: joinGroup, isPending: isJoinGroupPending } =
     useJoinCommunityGroup();
+  const userProfileData = getUserProfileStore();
+  const isGroupUniversityWide =
+    communityGroups?.communityGroupAccess === CommunityGroupAccess.UniversityWide;
+  const isApplicantUser = isApplicantRole(userProfileData?.role);
   const universityVerificationBottomSheet = useRef<ActionSheetRef>(null);
   const groupInfoBottomSheet = useRef<ActionSheetRef>(null);
   const leaveCommunityGroupBottomSheet = useRef<ActionSheetRef>(null);
@@ -315,7 +321,8 @@ const FlatListCommunityHeader: React.FC<Props> = ({
           ) : !isUserJoinedCommunityGroup && !isCommunityGroupNotLive ? (
             <JoinGroupButton
               isPrivate={isGroupPrivate}
-              isUniversityWide={communityGroups?.isUniversityWide}
+              isUniversityWide={isGroupUniversityWide}
+              isApplicant={isApplicantUser}
               isVerified={isUserVerifiedForCommunity}
               isPending={isJoinCommunityPending}
               userStatus={userStatus}

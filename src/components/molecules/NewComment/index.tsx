@@ -29,7 +29,7 @@ import { PostCommentData, Sortby } from "@/types/constant";
 import { Toast } from "react-native-toast-notifications";
 import { getUserProfileStore } from "@/storage/user";
 import { UPLOAD_CONTEXT } from "@/types/uploads";
-import { useUploadToS3 } from "@/services/upload";
+import { buildUploadFiles, getUploadedItems, useUploadToS3 } from "@/services/upload";
 import { validateUploadedFiles } from "@/utils";
 import DocumentPicker from "react-native-document-picker";
 import MediaPreviewList from "@/components/molecules/MediaPreview";
@@ -239,53 +239,54 @@ const NewComment = ({
       postID: postId,
     };
 
-    if (images?.length || files?.length) {
-      const mergedFiles = [
-        ...(images || []).map((image) => ({
-          uri: image.uri,
-          fileName: image.fileName || `upload_${Date.now()}.jpg`,
-          type: image.type || "image/jpeg",
-        })),
-        ...(files || []).map((file: any) => ({
-          uri: file.uri,
-          fileName: file.name || `file_${Date.now()}`,
-          type: file.type || "application/octet-stream",
-        })),
-      ];
-      const uploadPayload = {
-        files: mergedFiles,
-        context: UPLOAD_CONTEXT.POST_COMMENT,
-      };
+    try {
+      if (images.length || files.length) {
+        const imageData = await uploadToS3({
+          files: buildUploadFiles(images, files),
+          context: UPLOAD_CONTEXT.POST_COMMENT,
+        });
+        const uploadedFiles = getUploadedItems(imageData);
 
-      const imageData = await uploadToS3(uploadPayload);
+        if (!uploadedFiles.length) {
+          Toast.hideAll();
+          Toast.show("Couldn't upload the selected files. Please try again.", {
+            type: "warning",
+            placement: "top",
+          });
+          return;
+        }
 
-      payload.imageUrl = imageData.data;
-    }
-
-    if (type === PostType.Timeline) {
-      if (level) {
-        payload.level = 0;
-        payload.commentId = commentData?.commentId;
-        const res = await CreateUserPostCommentReply(payload);
-
-        setShowReply(res?.commentReply?._id);
-      } else {
-        await mutateUserPostComment(payload);
+        payload.imageUrl = uploadedFiles;
       }
-    } else if (type === PostType.Community) {
-      if (level) {
-        payload.level = 0;
 
-        payload.commentId = commentData?.commentId;
-        const res = await CreateGroupPostCommentReply(payload);
-        setShowReply(res?.commentReply?._id);
-      } else {
-        payload.adminId = adminID;
-        await mutateGroupPostComment(payload);
+      if (type === PostType.Timeline) {
+        if (level) {
+          payload.level = 0;
+          payload.commentId = commentData?.commentId;
+          const res = await CreateUserPostCommentReply(payload);
+
+          setShowReply(res?.commentReply?._id);
+        } else {
+          await mutateUserPostComment(payload);
+        }
+      } else if (type === PostType.Community) {
+        if (level) {
+          payload.level = 0;
+
+          payload.commentId = commentData?.commentId;
+          const res = await CreateGroupPostCommentReply(payload);
+          setShowReply(res?.commentReply?._id);
+        } else {
+          payload.adminId = adminID;
+          await mutateGroupPostComment(payload);
+        }
       }
+      setModalVisible(false);
+    } catch {
+      return;
+    } finally {
+      setIsPostCreating(false);
     }
-    setModalVisible(false);
-    setIsPostCreating(false);
   };
 
   const handleBack = () => {

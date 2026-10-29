@@ -31,6 +31,8 @@ const JoinGroupButton: React.FC<Props> = ({
         containerStyle="opacity-60 "
         disabled
         size={"fit"}
+        height="small"
+        textSize="text-2xs"
       />
     );
   }
@@ -44,6 +46,8 @@ const JoinGroupButton: React.FC<Props> = ({
           containerStyle="opacity-60 "
           disabled
           size={"fit"}
+          height="small"
+          textSize="text-2xs"
         />
       );
     }

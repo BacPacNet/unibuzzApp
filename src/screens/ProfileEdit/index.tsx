@@ -153,31 +153,61 @@ export default function ProfileEdit() {
     }
   }, [currCountryWatch && !currCityWatch]);
 
-  const onSubmit = async (data: any) => {
+  const onSubmit = async (data: editProfileInputs) => {
     setIsProfileLoading(true);
 
-    let logoImageData: any;
-    let profileImageData = userProfile?.profile?.profile_dp;
+    try {
+      let profileImageData = userProfile?.profile?.profile_dp;
 
-    if (imageToUpload) {
-      const uploadPayload = {
-        files: [imageToUpload],
-        context: UPLOAD_CONTEXT.DP,
-      };
+      if (imageToUpload) {
+        const logoImageData = await uploadToS3({
+          files: [imageToUpload],
+          context: UPLOAD_CONTEXT.DP,
+        });
 
-      logoImageData = await uploadToS3(uploadPayload);
+        const uploaded = logoImageData?.data?.[0];
+        if (uploaded?.imageUrl) {
+          profileImageData = {
+            imageUrl: uploaded.imageUrl,
+            publicId: uploaded.publicId ?? "",
+          };
+        }
+      }
 
-      profileImageData = logoImageData?.data[0];
-      setValue("profile_dp", logoImageData as any);
+      // Account role on the user document is "user". Profile role is
+      // student | faculty | applicant. Sending the account role fails
+      // the profile enum and the update returns a 500.
+      const profileRole = userProfile?.profile?.role || userProfileData?.role;
+      const allowedRoles = ["student", "faculty", "applicant"];
+
+      await mutateEditProfile({
+        firstName: data.firstName,
+        lastName: data.lastName,
+        displayEmail: data.displayEmail,
+        bio: data.bio,
+        city: data.city,
+        country: data.country,
+        dob: data.dob,
+        phone_number: data.phone_number,
+        affiliation: data.affiliation,
+        ...(profileRole && allowedRoles.includes(profileRole)
+          ? { role: profileRole }
+          : {}),
+        ...(profileImageData?.imageUrl
+          ? {
+              profile_dp: {
+                imageUrl: profileImageData.imageUrl,
+                publicId: profileImageData.publicId ?? "",
+              },
+            }
+          : {}),
+      });
+      navigate.goBack();
+    } catch {
+      // useEditProfile already surfaces the API error.
+    } finally {
+      setIsProfileLoading(false);
     }
-
-    mutateEditProfile({
-      ...data,
-      profile_dp: profileImageData,
-      role: userProfile?.role || userProfileData?.role,
-    });
-    setIsProfileLoading(false);
-    navigate.goBack();
   };
 
   const onError = (errors: any) => {

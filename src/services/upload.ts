@@ -6,6 +6,8 @@ import { Toast } from "react-native-toast-notifications";
 import { getToken } from "@/storage/token";
 import { NEXT_PUBLIC_API_BASE_URL } from "@env";
 import { Platform } from "react-native";
+import DeviceInfo from "react-native-device-info";
+import { forceDeauthenticate } from "@/hooks/Auth/forceDeautenticate";
 
 export async function resolveFilePath(uri: string, fileName: string) {
   // iOS works with file:// directly
@@ -45,6 +47,37 @@ export interface S3UploadRequest {
   context: UploadContextType;
 }
 
+type LocalImage = {
+  uri: string;
+  fileName?: string;
+  type?: string;
+};
+
+type LocalFile = {
+  uri: string;
+  name?: string | null;
+  type?: string | null;
+};
+
+export function buildUploadFiles(images: LocalImage[], files: LocalFile[]) {
+  return [
+    ...images.map((image) => ({
+      uri: image.uri,
+      fileName: image.fileName || `upload_${Date.now()}.jpg`,
+      type: image.type || "image/jpeg",
+    })),
+    ...files.map((file) => ({
+      uri: file.uri,
+      fileName: file.name || `file_${Date.now()}`,
+      type: file.type || "application/octet-stream",
+    })),
+  ];
+}
+
+export function getUploadedItems(response?: S3UploadResponse | null) {
+  return (response?.data ?? []).filter((item) => item.imageUrl);
+}
+
 async function uploadToS3WithRNFetchBlob(
   uploadPayload: S3UploadRequest,
   token: string
@@ -65,10 +98,9 @@ async function uploadToS3WithRNFetchBlob(
     });
   }
 
-  // Add context field
   body.push({
     name: "context",
-    data: JSON.stringify(uploadPayload.context),
+    data: uploadPayload.context,
   });
 
   const response = await RNFetchBlob.fetch(
@@ -76,27 +108,46 @@ async function uploadToS3WithRNFetchBlob(
     `${NEXT_PUBLIC_API_BASE_URL}/upload`,
     {
       Authorization: `Bearer ${token}`,
-      "Content-Type": "multipart/form-data",
+      "X-Client-Type": "app",
+      "X-Client-Platform": Platform.OS,
+      "X-App-Version": DeviceInfo.getVersion(),
     },
     body
   );
 
-  return response.json();
+  const status = response.info().status;
+  const parsed = (await Promise.resolve(response.json())) as S3UploadResponse & {
+    error?: string;
+    message?: string;
+  };
+
+  if (status < 200 || status >= 300 || !parsed?.success) {
+    throw new Error(
+      parsed?.error || parsed?.message || "Failed to upload files"
+    );
+  }
+
+  return parsed;
 }
 
 export const useUploadToS3 = () => {
-  const cookieValue = getToken() as string;
-
   return useMutation<S3UploadResponse, Error, S3UploadRequest>({
     mutationFn: async (uploadPayload) => {
-      return await uploadToS3WithRNFetchBlob(uploadPayload, cookieValue);
+      const token = getToken();
+      if (!token) {
+        forceDeauthenticate();
+        throw new Error("jwt expired");
+      }
+      return await uploadToS3WithRNFetchBlob(uploadPayload, token);
     },
-    onSuccess: () => {},
     onError: (error: any) => {
+      const message = error.response?.data?.message || error.message;
+      if (message === "jwt expired" || message === "jwt malformed") {
+        forceDeauthenticate();
+        return;
+      }
       Toast.hideAll();
-      Toast.show(
-        error.response?.data?.message || MESSAGES.SOMETHING_WENT_WRONG
-      );
+      Toast.show(message || MESSAGES.SOMETHING_WENT_WRONG);
     },
   });
 };
